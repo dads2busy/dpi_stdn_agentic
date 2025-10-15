@@ -55,8 +55,8 @@ def validate_config(config_data: dict) -> dict:
         'materials_use_topp': True,
         'materials_iteration_count': 10,
         'materials_count_threshold': 5,
-        'materials_hs_codes_listing': '../data/hs_codes_and_usgs_names.csv',
-        'materials_top_countries_repository': '../data/material_top_countries_granite3.1-dense_8b.json',
+        'materials_hs_codes_listing': '../../data/hs_codes_and_usgs_names.csv',
+        'materials_top_countries_repository': '../../data/material_top_countries_granite3.1-dense_8b.json',
         'years_to_query': [2023, 2024]
     }
     
