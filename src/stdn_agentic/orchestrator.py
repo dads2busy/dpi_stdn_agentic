@@ -59,10 +59,18 @@ class STDNOrchestrator:
         
         try:
             # Step 1: Extract components with timeout
+            component_prompt = (
+                f"You are {role}. Create a list only of the primary technology "
+                f"components used in the manufacture of "
+                f"{tech}. The list should not include raw materials. "
+                f"The list should not include the tools or machines used to manufacture {tech}."
+                f"Do not include tapes, adhesives, glues, or connectors. Return only "
+                f"a comma-delimited list of only the technology component names. Do not return any explanatory text."
+            )
+
             component_result = await asyncio.wait_for(
                 self.component_agent.run(
-                    f"You are {role}. Create a list of the primary technology components "
-                    f"used in the manufacture of {tech}.",
+                    component_prompt,
                     deps=self.deps,
                     usage=usage,
                     usage_limits=self.usage_limits,
@@ -81,8 +89,9 @@ class STDNOrchestrator:
             # Step 2: Extract materials for components
             materials_prompt = (
                 f"ComponentList contains: {', '.join(components)}. "
-                f"For each component, return raw materials using only: {self.deps.material_ontology}. "
-                "Create a separate element for each raw material."
+                f"For each item in ComponentList, return a list of each single raw material used in the component's construction using only elements from this list of mineral commodities: {self.deps.material_ontology}. "
+                f"Create a separate element for each raw material. "
+                f"Do not return imprecise descriptive phrases or examples. Create a separate element in the list for each raw material found."
             )
             
             materials_result = await asyncio.wait_for(
