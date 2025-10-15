@@ -4,8 +4,8 @@ Initialize dependencies for STDN agents
 
 import pandas as pd
 import ollama
-from .models import STDNDependencies, ConfigModel
-from .utils import read_json_to_dict, create_ontology, create_ontology_dict
+from stdn_agentic.models import STDNDependencies, ConfigModel
+from stdn_agentic.utils import read_json_to_dict, create_ontology, create_ontology_dict
 
 
 def initialize_dependencies(config: ConfigModel) -> STDNDependencies:

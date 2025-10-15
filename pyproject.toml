@@ -1,6 +1,15 @@
 [project]
 name = "stdn-agentic"
 version = "0.1.0"
+description = "Supply Technology Dependency Network (STDN) generation using Pydantic AI agents"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "pydantic>=2.5.0",
+    "pydantic-ai>=0.0.14",
+    "pandas>=2.0.0",
+    "ollama>=0.3.0",
+]
 
 [project.scripts]
 stdn = "stdn_agentic.main:main"
@@ -9,16 +18,12 @@ stdn = "stdn_agentic.main:main"
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
-description = "Add your description here"
-readme = "README.md"
-requires-python = ">=3.12"
-dependencies = [
-    "pydantic>=2.12.2",
-    "pydantic-ai>=0.0.14",
-    "ollama>=0.3.0",
-    "pandas>=2.0.0",
-    "asyncio",
-    "argparse",
-    "dataclasses",
-    "typing-extensions"
+[tool.uv]
+dev-dependencies = [
+    "pytest>=7.0.0",
+    "ruff>=0.1.0",
 ]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/stdn_agentic"]
+

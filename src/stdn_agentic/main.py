@@ -9,9 +9,9 @@ import pandas as pd
 from datetime import datetime
 from pydantic_ai import RunUsage
 
-from .models import ConfigModel
-from .orchestrator import STDNOrchestrator
-from .utils import read_json_to_dict, validate_config
+from stdn_agentic.models import ConfigModel
+from stdn_agentic.orchestrator import STDNOrchestrator
+from stdn_agentic.utils import read_json_to_dict, validate_config
 
 
 async def process_all_technologies(config: ConfigModel):

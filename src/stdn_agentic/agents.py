@@ -4,7 +4,7 @@ Pydantic AI agents for component and material extraction
 
 from pydantic_ai import Agent, RunContext, ModelRetry
 from stdn_agentic.models import STDNDependencies, ComponentList, ComponentMaterialsList
-from .utils import intersect_lists
+from stdn_agentic.utils import intersect_lists
 
 
 # Component extraction agent
