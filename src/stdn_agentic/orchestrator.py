@@ -59,26 +59,25 @@ class STDNOrchestrator:
         
         try:
             # Step 1: Extract components with timeout
-            component_prompt = (
-                f"You are {role}. Create a list only of the primary technology "
-                f"components used in the manufacture of "
-                f"{tech}. The list should not include raw materials. "
-                f"The list should not include the tools or machines used to manufacture {tech}."
-                f"Do not include tapes, adhesives, glues, or connectors. Return only "
-                f"a comma-delimited list of only the technology component names. Do not return any explanatory text."
+            components_prompt = (
+                f"You are {role}. Create a list only of the primary technology components "
+                f"used in the manufacture of {tech}. The list should not include raw materials. "
+                f"The list should not include the tools or machines used to manufacture {tech}. "
+                f"The list should not include tapes, adhesives, glues, or connectors. "
+                f"Do not return any explanatory text."
             )
 
             component_result = await asyncio.wait_for(
                 self.component_agent.run(
-                    component_prompt,
+                    components_prompt,
                     deps=self.deps,
                     usage=usage,
-                    usage_limits=self.usage_limits,
-                    model=self.config.model
+                    usage_limits=self.usage_limits
                 ),
                 timeout=timeout
             )
             
+            # Access the structured data directly from result
             if not component_result.output.component_list:
                 print(f"Could not find components for {tech}")
                 return None
@@ -87,29 +86,37 @@ class STDNOrchestrator:
             print(f"Found {len(components)} components for {tech}")
             
             # Step 2: Extract materials for components
-            materials_prompt = (
-                f"ComponentList contains: {', '.join(components)}. "
-                f"For each item in ComponentList, return a list of each single raw material used in the component's construction using only elements from this list of mineral commodities: {self.deps.material_ontology}. "
-                f"Create a separate element for each raw material. "
-                f"Do not return imprecise descriptive phrases or examples. Create a separate element in the list for each raw material found."
-            )
+            components_str = ', '.join(components)
+            if not components_str.strip():
+                print(f"Empty component list for {tech}")
+                return None
             
+            materials_prompt = (
+                f"You are a materials expert. "
+                f"For the technology '{tech}', we have identified these components: {components_str}. "
+                f"For each component, create a list of raw materials that are used in the "
+                f"manufacture of that component "
+                f"using ONLY elements from this list of mineral commodities: "
+                f"{self.deps.material_ontology}. "
+                f"Just provide the material names. Do not provide any other information."
+            )
+
             materials_result = await asyncio.wait_for(
                 self.materials_agent.run(
                     materials_prompt,
                     deps=self.deps,
                     usage=usage,
-                    usage_limits=self.usage_limits,
-                    model=self.config.model
+                    usage_limits=self.usage_limits
                 ),
                 timeout=timeout
             )
             
             # Step 3: Build output structure with country data
+            # Access materials data directly
             output_struct = self._build_output_structure(
                 tech=tech,
                 domain=domain,
-                materials_data=materials_result.output
+                materials_data=materials_result.output  # Pass the whole result
             )
             
             # Step 4: Write JSON output
@@ -135,17 +142,22 @@ class STDNOrchestrator:
             return {'tech': tech, 'success': False, 'error': 'timeout'}
         except Exception as e:
             print(f"Tech {tech} could not be evaluated: {e}")
+            import traceback
+            traceback.print_exc()  # Print full error for debugging
             return {'tech': tech, 'success': False, 'error': str(e)}
+  
+
     
     def _build_output_structure(
         self,
         tech: str,
         domain: str,
-        materials_data: ComponentMaterialsList
+        materials_data: ComponentMaterialsList  # Changed type hint
     ) -> Dict:
         """Build the output structure with country enrichment"""
         output_struct = {'technology': tech, 'component_list': []}
         
+        # Access component_list directly from the result object
         for component_rec in materials_data.component_list:
             component = component_rec.component
             raw_materials = intersect_lists(
@@ -183,6 +195,7 @@ class STDNOrchestrator:
             output_struct['component_list'].append(component_dict)
         
         return output_struct
+
     
     def write_csv_output(self, results: List[Dict], start_new_file: bool = True):
         """Write results to CSV file"""

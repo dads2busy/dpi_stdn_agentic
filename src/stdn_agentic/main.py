@@ -17,9 +17,6 @@ from stdn_agentic.orchestrator import STDNOrchestrator
 from stdn_agentic.country_agent import get_country_data_generator
 from stdn_agentic.utils import read_json_to_dict, validate_config
 
-# Load environment variables
-load_dotenv()
-
 
 def find_config_file(specified_path: str = None) -> str:
     """

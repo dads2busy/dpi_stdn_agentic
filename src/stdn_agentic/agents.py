@@ -9,7 +9,6 @@ from typing import List
 from stdn_agentic.models import STDNDependencies
 from stdn_agentic.utils import intersect_lists
 
-
 # ============================================================================
 # DATA MODELS FOR AGENTS
 # ============================================================================
@@ -50,7 +49,7 @@ class CountryList(BaseModel):
 component_agent = Agent[STDNDependencies, ComponentList](
     model='ollama:qwen2.5:7b',
     deps_type=STDNDependencies,
-    result_type=ComponentList,
+    output_type=ComponentList,
     system_prompt=(
         "You are an expert in technology manufacturing. "
         "Create a list only of the primary technology components used in manufacture. "
@@ -67,7 +66,7 @@ component_agent = Agent[STDNDependencies, ComponentList](
 materials_agent = Agent[STDNDependencies, ComponentMaterialsList](
     model='ollama:qwen2.5:7b',
     deps_type=STDNDependencies,
-    result_type=ComponentMaterialsList,
+    output_type=ComponentMaterialsList,
     system_prompt=(
         "You are a materials science expert. "
         "Extract raw materials for components using ONLY elements from the provided ontology. "
@@ -97,10 +96,9 @@ async def validate_materials(
 # COUNTRY DATA EXTRACTION AGENT
 # ============================================================================
 
-# Note: This agent uses a different dependencies type, so we don't specify deps_type
 country_data_agent = Agent[None, CountryList](
     model='ollama:qwen2.5:7b',
-    result_type=CountryList,
+    output_type=CountryList,
     system_prompt=(
         "You are an expert in global mineral production and supply chains. "
         "Provide accurate data about top producing countries for specific materials. "
