@@ -16,9 +16,9 @@ def initialize_dependencies(config: ConfigModel) -> STDNDependencies:
     
     # Load material ontology
     df = pd.read_csv(config.materials_hs_codes_listing)
-    material_list = create_ontology(df, 'Elements_Compounds')
+    material_list = create_ontology(df, config.materials_column_name)
     material_ontology = ', '.join(material_list)
-    material_dict = create_ontology_dict(df, 'Elements_Compounds')
+    material_dict = create_ontology_dict(df, config.materials_column_name)
     
     # Load top countries data
     top_countries = read_json_to_dict(config.materials_top_countries_repository)

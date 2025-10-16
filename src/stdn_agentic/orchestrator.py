@@ -9,9 +9,9 @@ from datetime import datetime
 from typing import Optional, List, Dict
 from pydantic_ai import UsageLimits, RunUsage
 
-from stdn_agentic.models import STDNDependencies, ConfigModel, ComponentMaterialsList
+from stdn_agentic.models import STDNDependencies, ConfigModel
 from stdn_agentic.dependencies import initialize_dependencies
-from stdn_agentic.agents import get_component_agent, get_materials_agent
+from stdn_agentic.agents import ComponentMaterialsList, get_component_agent, get_materials_agent
 from stdn_agentic.utils import intersect_lists, embed_comma_delimited_str
 
 
