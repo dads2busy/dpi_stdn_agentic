@@ -21,7 +21,11 @@ class ComponentList(BaseModel):
 class ComponentMaterials(BaseModel):
     """Raw materials for a single component"""
     component: str
-    raw_materials_list: list[str]
+    raw_materials_list: list[str] = Field(
+        ...,
+        alias='materials',
+        description="List of raw materials used in this component"
+    )
 
 
 class ComponentMaterialsList(BaseModel):
@@ -67,6 +71,7 @@ materials_agent = Agent[STDNDependencies, ComponentMaterialsList](
     model='ollama:qwen2.5:7b',
     deps_type=STDNDependencies,
     output_type=ComponentMaterialsList,
+    output_retries=3,
     system_prompt=(
         "You are a materials science expert. "
         "Extract raw materials for components using ONLY elements from the provided ontology. "

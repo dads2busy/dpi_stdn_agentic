@@ -71,6 +71,7 @@ class STDNOrchestrator:
                 self.component_agent.run(
                     components_prompt,
                     deps=self.deps,
+                    model=self.deps.model,
                     usage=usage,
                     usage_limits=self.usage_limits
                 ),
@@ -105,6 +106,7 @@ class STDNOrchestrator:
                 self.materials_agent.run(
                     materials_prompt,
                     deps=self.deps,
+                    model=self.deps.model,
                     usage=usage,
                     usage_limits=self.usage_limits
                 ),
