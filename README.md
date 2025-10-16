@@ -1,4 +1,4 @@
-# STDN Agentic - Supply Technology Dependency Network Generator
+# STDN Agentic - Shallow Technology Dependency Network Generator
 
 A multi-agent AI system built with Pydantic AI that automatically extracts technology components, identifies raw materials, and maps global supply chains for complex technologies using local LLMs via Ollama.
 
