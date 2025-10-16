@@ -4,7 +4,7 @@ A multi-agent AI system built with Pydantic AI that automatically extracts techn
 
 ## Overview
 
-This project uses an agentic AI framework to analyze technologies and generate **Supply Technology Dependency Networks (STDNs)**. It breaks down technologies into their component parts, identifies the raw materials needed for each component, and enriches the data with country-level production information.
+This project uses an agentic AI framework to analyze technologies and generate **Shallow Technology Dependency Networks (STDNs)**. It breaks down technologies into their component parts, identifies the raw materials needed for each component, and enriches the data with country-level production information.
 
 ### What It Does
 
