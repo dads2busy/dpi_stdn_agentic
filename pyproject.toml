@@ -44,16 +44,16 @@ viz = [
 [project.scripts]
 stdn = "stdn_agentic.main:main"
 
-[tool.uv]
-dev-dependencies = [
+# NEW FORMAT - replaces [tool.uv.dev-dependencies]
+[dependency-groups]
+dev = [
     "pytest>=7.0.0",
     "pytest-asyncio>=0.20.0",
     "pytest-cov>=4.0.0",
     "pytest-mock>=3.10.0",
     "ruff>=0.1.0",
     "black>=23.0.0",
-    "basedpyright>=1.33.0",
-    "mypy>=1.18.2",
+    "basedpyright>=1.0.0",
 ]
 
 [tool.hatch.build.targets.wheel]
@@ -94,7 +94,7 @@ select = [
     "F",      # pyflakes
     "I",      # isort
     "C",      # flake8-comprehensions
-    "B",      # flake8-bugbear
+    "B",      # flake8-bugbear",
 ]
 ignore = [
     "E501",   # line too long
@@ -114,7 +114,7 @@ exclude = [
 [tool.black]
 line-length = 100
 target-version = ["py310"]
-include = '\.pyi?$'
+include = '\\.pyi?$'
 exclude = '''
 /(
     \.git
