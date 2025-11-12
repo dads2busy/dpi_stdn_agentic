@@ -361,7 +361,7 @@ from pydantic_ai import RunUsage
 
 # Load configuration
 config = ConfigModel(
-    import_tech_list="./data/technologies.csv",
+    import_tech_list="./data/tech_list.csv",
     model="ollama:qwen2:7b",
     database_path="./data/usgs.db",
     output_dir="./output",
