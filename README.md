@@ -317,7 +317,7 @@ uv run basedpyright src/
 
 ### Basic Usage
 
-**Step 1**: Create a technology list CSV (`technologies.csv`):
+**Step 1**: Create a technology list CSV (`tech_list.csv`):
 
 ```csv
 tech,role,domain
@@ -331,7 +331,7 @@ wind turbine,analyst,renewable energy
 
 ```json
 {
-  "import_tech_list": "./data/technologies.csv",
+  "import_tech_list": "./data/tech_list.csv",
   "model": "ollama:qwen2:7b",
   "database_path": "./data/world_mineral_commodity_reports_2022-2025_v8.db",
   "output_dir": "./output",
