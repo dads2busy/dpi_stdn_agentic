@@ -18,7 +18,7 @@ from typing import Any, Dict, List, Optional
 
 from pydantic_ai import RunUsage
 
-from ..agents import get_component_agent, get_materials_agent
+from ..agents import ComponentList, get_component_agent, get_materials_agent
 from ..debate import MultiAgentDebater  # FIXED: from ..debate not .debate
 from ..dependencies import initialize_dependencies
 from ..models import ConfigModel, STDNDependencies
@@ -197,8 +197,17 @@ For each component, identify 2-8 key materials from the list above. Use exact na
 
     async def extract_components_with_debate(
         self, technology: str, role: str, usage: RunUsage, num_agents: int = 3
-    ) -> Dict[str, Any]:
+    ) -> Optional[ComponentList]:
         """Extract components using multi-agent debate"""
+
+        from dataclasses import asdict
+
+        from ..agents import ComponentList
+
+        # Check that debater is initialized
+        if not self.debater:
+            print("❌ Debater not initialized - cannot run debate")
+            return None
 
         print(f"\n{'=' * 80}")
         print(f"DEBATE-BASED COMPONENT EXTRACTION: {technology}")
@@ -208,6 +217,8 @@ For each component, identify 2-8 key materials from the list above. Use exact na
         print(f"📋 Collecting proposals from {num_agents} agents...\n")
 
         agent_proposals = {}
+        agent_responses_for_transcript = []
+
         for agent_num in range(1, num_agents + 1):
             agent_id = f"Agent_{agent_num}"
 
@@ -231,6 +242,16 @@ For each component, identify 2-8 key materials from the list above. Use exact na
                     }
                     for comp in components
                 ]
+
+                # Store for transcript
+                agent_responses_for_transcript.append(
+                    {
+                        "agent_id": agent_id,
+                        "components": agent_proposals[agent_id],
+                        "persona": f"Component extraction perspective {agent_num}",
+                    }
+                )
+
                 print(f"  ✓ {agent_id}: {len(agent_proposals[agent_id])} components proposed")
 
         if not agent_proposals:
@@ -244,26 +265,85 @@ For each component, identify 2-8 key materials from the list above. Use exact na
         debate_result = self.debater.run_debate(technology, agent_proposals)
 
         # Save transcript if enabled
-        if self.reporter and debate_result:
-            self.reporter.save_debate_transcript(
-                technology=technology,
-                agent_responses=[],
-                debate_rounds=self.debater.debate_history,
-                final_consensus=debate_result.get("final_consensus", {}),
-                file_format="txt",
-            )
+        if self.reporter and self.debater and debate_result:
+            try:
+                # Convert DebateRound dataclass objects to dictionaries
+                debate_rounds_dict = [
+                    asdict(round_obj) for round_obj in self.debater.debate_history
+                ]
+
+                transcript_path = self.reporter.save_debate_transcript(
+                    technology=technology,
+                    agent_responses=agent_responses_for_transcript,
+                    debate_rounds=debate_rounds_dict,
+                    final_consensus=debate_result.get("final_consensus", {}),
+                    file_format="txt",
+                )
+                print(f"\n📄 Transcript saved: {transcript_path}")
+
+                # Also save JSON version
+                self.reporter.save_debate_transcript(
+                    technology=technology,
+                    agent_responses=agent_responses_for_transcript,
+                    debate_rounds=debate_rounds_dict,
+                    final_consensus=debate_result.get("final_consensus", {}),
+                    file_format="json",
+                )
+            except Exception as e:
+                print(f"⚠️  Warning: Could not save transcript: {e}")
+                import traceback
+
+                traceback.print_exc()
 
         # Extract final components
         if debate_result and "final_consensus" in debate_result:
-            final_components = [
-                c["component"] for c in debate_result["final_consensus"].get("components", [])
-            ]
+            consensus = debate_result["final_consensus"]
 
-            # Return in ComponentList format
-            from ..agents import ComponentList
+            # Debug: print what we got
+            print(f"\n🔍 Debug - Consensus type: {type(consensus)}")
+            if isinstance(consensus, dict):
+                print(f"🔍 Debug - Consensus keys: {list(consensus.keys())}")
 
-            return ComponentList(component_list=final_components)
+            # Try multiple ways to extract components
+            final_components = []
 
+            if isinstance(consensus, dict):
+                # Try different possible keys
+                if "components" in consensus:
+                    components_data = consensus["components"]
+                    final_components = [
+                        c["component"] if isinstance(c, dict) else str(c) for c in components_data
+                    ]
+                elif "consensus_components" in consensus:
+                    final_components = consensus["consensus_components"]
+                elif "agreed_components" in consensus:
+                    final_components = consensus["agreed_components"]
+
+            # If still empty, try extracting from debate history as fallback
+            if not final_components and self.debater.debate_history:
+                print("⚠️  Attempting to extract from debate history...")
+                last_round = self.debater.debate_history[-1]
+                last_round_dict = asdict(last_round)
+                print(f"🔍 Debug - Last round keys: {list(last_round_dict.keys())}")
+
+                # Try different possible keys in the debate round
+                if "consensus_components" in last_round_dict:
+                    final_components = last_round_dict["consensus_components"]
+                elif "components" in last_round_dict:
+                    final_components = last_round_dict["components"]
+                elif "agreed_components" in last_round_dict:
+                    final_components = last_round_dict["agreed_components"]
+
+            print(f"📊 Final components extracted: {final_components}")
+
+            if final_components:
+                # Return in ComponentList format
+                return ComponentList(component_list=final_components)
+            else:
+                print("⚠️  Warning: Debate completed but no final components extracted")
+                return None
+
+        print("⚠️  Warning: Debate did not produce valid result")
         return None
 
     def write_csv_output(self, results: List[Dict], start_new_file: bool = False):

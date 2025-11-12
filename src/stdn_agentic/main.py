@@ -18,6 +18,7 @@ For government/policy work, this ensures:
 
 import argparse
 import asyncio
+import csv
 import os
 from datetime import datetime
 from pathlib import Path
@@ -118,51 +119,103 @@ async def process_all_technologies(
     Main function to process all technologies in the tech list.
 
     Args:
-        config: Configuration model with all settings
+        config: Configuration model with paths and settings
 
     Returns:
-        List of results from processing all technologies
+        List of successfully processed technology results
     """
     print(f"\n{'=' * 80}")
     print(f"STDN Generation Started: {datetime.now()}")
     print(f"{'=' * 80}\n")
 
-    # Initialize orchestrator
-    orchestrator = STDNOrchestrator(config)
+    # Read debate settings from environment
+    enable_debate = os.getenv("ENABLE_DEBATE", "false").lower() == "true"
+    max_debate_rounds = int(os.getenv("MAX_DEBATE_ROUNDS", "3"))
+    convergence_threshold = float(os.getenv("CONVERGENCE_THRESHOLD", "0.8"))
+    save_transcripts = os.getenv("SAVE_TRANSCRIPTS", "true").lower() == "true"
 
-    # Load technology list
-    tech_list_df = pd.read_csv(config.import_tech_list)
-    print(f"Loaded {len(tech_list_df)} technologies from {config.import_tech_list}\n")
+    # Initialize orchestrator WITH debate settings
+    orchestrator = STDNOrchestrator(
+        config,
+        enable_debate=enable_debate,
+        max_debate_rounds=max_debate_rounds,
+        convergence_threshold=convergence_threshold,
+        save_transcripts=save_transcripts,
+    )
 
-    # Track usage across all runs
-    usage = RunUsage()
+    if enable_debate:
+        print(f"\n🎤 Multi-agent debate ENABLED:")
+        print(f"   Max rounds: {max_debate_rounds}")
+        print(f"   Convergence threshold: {convergence_threshold}")
+        print(f"   Save transcripts: {save_transcripts}\n")
+
+    # Load technologies from CSV
+    tech_list_path = Path(config.import_tech_list)
+    if not tech_list_path.exists():
+        print(f"Error: Technology list not found: {tech_list_path}")
+        return []
+
+    technologies = []
+    with open(tech_list_path, "r", encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        technologies = list(reader)
+
+    print(f"Loaded {len(technologies)} technologies from {tech_list_path}\n")
 
     # Process each technology
     results = []
-    for idx, row in tech_list_df.iterrows():
-        try:
-            result = await orchestrator.process_technology(
-                tech=row["tech"],
-                role=row["role"],
-                domain=row["domain"],
-                usage=usage,
-            )
-            if result:
-                results.append(result)
-                print(f"✓ Processed: {row['tech']}")
-            else:
-                print(f"✗ Failed to process: {row['tech']}")
-        except Exception as e:
-            print(f"✗ Error processing {row['tech']}: {e}")
+    usage = RunUsage()
+
+    for i, tech_row in enumerate(technologies, 1):
+        tech = tech_row.get("tech", "")
+        role = tech_row.get("role", "analyst")
+        domain = tech_row.get("domain", "technology")
+
+        if not tech:
+            print(f"⚠️  Skipping row {i}: missing 'tech' column")
             continue
 
-    # Write consolidated output
-    orchestrator.write_csv_output(results, start_new_file=True)
+        try:
+            # Process technology through orchestrator
+            result = await orchestrator.process_technology(
+                tech=tech,
+                role=role,
+                domain=domain,
+                usage=usage,
+            )
 
-    print(f"\nUsage: {usage}")
+            if result:
+                results.append(result)
+
+                # Write result immediately to CSV (incremental output)
+                orchestrator.write_csv_output([result], start_new_file=(i == 1))
+
+                print(f"✓ Successfully processed: {tech}")
+            else:
+                print(f"✗ Failed to process: {tech}")
+
+        except Exception as e:
+            print(f"❌ Error processing {tech}: {e}")
+            import traceback
+
+            traceback.print_exc()
+            continue
+
+    # Print summary
     print(f"\n{'=' * 80}")
     print(f"STDN Generation Completed: {datetime.now()}")
     print(f"{'=' * 80}\n")
+
+    print(f"Successfully processed: {len(results)}/{len(technologies)} technologies")
+
+    if results:
+        print(f"\n✓ Output saved to: {orchestrator.output_file}")
+        if enable_debate and save_transcripts:
+            print(f"✓ Debate transcripts saved to: ./src/stdn_agentic/debate_transcripts/results/")
+    else:
+        print("\nWarning: No technologies were successfully processed.")
+
+    print(f"\nUsage: {usage}")
 
     return results
 

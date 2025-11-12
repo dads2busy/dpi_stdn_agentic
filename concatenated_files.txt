@@ -151,11 +151,17 @@ COMPONENT_SYSTEM_PROMPT = """You are an expert supply chain analyst specializing
 
 Your task is to identify PRIMARY MANUFACTURING COMPONENTS for a given technology product.
 
+**BE COMPREHENSIVE**: Identify ALL major components that would need to be procured or manufactured separately. For complex technologies, this could be 8-15+ components.
+
 INCLUDE in your component list:
 - Major subassemblies (e.g., display module, power module, processing unit)
 - Functional modules with distinct supply chains
 - Structural components that form the product architecture
 - Procurable, separately-manufactured parts
+- Critical subsystems (cooling, control, sensing, actuation)
+- Interface components (connectors, ports, communication modules)
+- Power delivery systems (batteries, power supplies, voltage regulators)
+- Enclosures and housing (chassis, cases, protective elements)
 
 EXCLUDE from your component list:
 - Raw materials (metals, plastics, chemicals, elements)
@@ -169,14 +175,18 @@ When identifying components:
 2. Consider which parts have separate supply chains
 3. Identify parts that could be sourced from different suppliers
 4. Look at the assembly hierarchy from subassemblies down to major parts
+5. Consider the product's functional subsystems (power, processing, sensing, actuation, communication, etc.)
+
+Examples for different technologies:
+- **Smartphone**: display, battery, processor, memory, camera, antenna, speaker, microphone, charging port, chassis, circuit board, sensors
+- **Quantum Computer**: cryogenic system, vacuum chamber, qubit array, control electronics, dilution refrigerator, signal amplifiers, shielding, wiring harness, power system, readout electronics, classical computer interface
+- **MRI Machine**: magnet assembly, gradient coils, RF coils, patient table, cooling system, power supply, control console, computer system, shielding enclosure
 
 Return a JSON response with a list of component names.
-Focus on accuracy over completeness - better to miss a component than to
-incorrectly classify a raw material or tool as a component.
 
 Be specific: "lithium-ion battery pack" not "battery"
 Be clear: "aluminum chassis" not just "frame"
-Be strategic: Include only items that represent distinct procurement challenges"""
+Be thorough: Include ALL major components, not just the most obvious ones"""
 
 
 def _get_configured_model() -> str:
@@ -4300,7 +4310,7 @@ from typing import Any, Dict, List, Optional
 
 from pydantic_ai import RunUsage
 
-from ..agents import get_component_agent, get_materials_agent
+from ..agents import ComponentList, get_component_agent, get_materials_agent
 from ..debate import MultiAgentDebater  # FIXED: from ..debate not .debate
 from ..dependencies import initialize_dependencies
 from ..models import ConfigModel, STDNDependencies
@@ -4479,8 +4489,10 @@ For each component, identify 2-8 key materials from the list above. Use exact na
 
     async def extract_components_with_debate(
         self, technology: str, role: str, usage: RunUsage, num_agents: int = 3
-    ) -> Dict[str, Any]:
+    ) -> Optional[ComponentList]:  # FIXED: Returns ComponentList or None
         """Extract components using multi-agent debate"""
+
+        from ..agents import ComponentList  # Import at top
 
         print(f"\n{'=' * 80}")
         print(f"DEBATE-BASED COMPONENT EXTRACTION: {technology}")
@@ -4490,6 +4502,8 @@ For each component, identify 2-8 key materials from the list above. Use exact na
         print(f"📋 Collecting proposals from {num_agents} agents...\n")
 
         agent_proposals = {}
+        agent_responses_for_transcript = []
+
         for agent_num in range(1, num_agents + 1):
             agent_id = f"Agent_{agent_num}"
 
@@ -4513,6 +4527,16 @@ For each component, identify 2-8 key materials from the list above. Use exact na
                     }
                     for comp in components
                 ]
+
+                # Store for transcript
+                agent_responses_for_transcript.append(
+                    {
+                        "agent_id": agent_id,
+                        "components": agent_proposals[agent_id],
+                        "persona": f"Component extraction perspective {agent_num}",
+                    }
+                )
+
                 print(f"  ✓ {agent_id}: {len(agent_proposals[agent_id])} components proposed")
 
         if not agent_proposals:
@@ -4527,13 +4551,26 @@ For each component, identify 2-8 key materials from the list above. Use exact na
 
         # Save transcript if enabled
         if self.reporter and debate_result:
-            self.reporter.save_debate_transcript(
-                technology=technology,
-                agent_responses=[],
-                debate_rounds=self.debater.debate_history,
-                final_consensus=debate_result.get("final_consensus", {}),
-                file_format="txt",
-            )
+            try:
+                transcript_path = self.reporter.save_debate_transcript(
+                    technology=technology,
+                    agent_responses=agent_responses_for_transcript,
+                    debate_rounds=self.debater.debate_history,
+                    final_consensus=debate_result.get("final_consensus", {}),
+                    file_format="txt",
+                )
+                print(f"\n📄 Transcript saved: {transcript_path}")
+
+                # Also save JSON version
+                self.reporter.save_debate_transcript(
+                    technology=technology,
+                    agent_responses=agent_responses_for_transcript,
+                    debate_rounds=self.debater.debate_history,
+                    final_consensus=debate_result.get("final_consensus", {}),
+                    file_format="json",
+                )
+            except Exception as e:
+                print(f"⚠️  Warning: Could not save transcript: {e}")
 
         # Extract final components
         if debate_result and "final_consensus" in debate_result:
@@ -4542,16 +4579,90 @@ For each component, identify 2-8 key materials from the list above. Use exact na
             ]
 
             # Return in ComponentList format
-            from ..agents import ComponentList
-
             return ComponentList(component_list=final_components)
 
         return None
 
     def write_csv_output(self, results: List[Dict], start_new_file: bool = False):
         """Write results to CSV file"""
-        # Your existing CSV writing code...
-        pass
+        import csv
+        from pathlib import Path
+
+        if not results:
+            print("No results to write")
+            return
+
+        output_path = Path(self.output_file)
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+
+        # Determine write mode
+        mode = "w" if start_new_file else "a"
+        write_header = start_new_file or not output_path.exists()
+
+        # Define CSV columns
+        fieldnames = [
+            "technology",
+            "role",
+            "domain",
+            "timestamp",
+            "component",
+            "materials",
+            "countries",
+        ]
+
+        with open(output_path, mode, newline="", encoding="utf-8") as f:
+            writer = csv.DictWriter(f, fieldnames=fieldnames)
+
+            if write_header:
+                writer.writeheader()
+
+            # Write each result
+            for result in results:
+                tech = result.get("technology", "")
+                role = result.get("role", "")
+                domain = result.get("domain", "")
+                timestamp = result.get("timestamp", "")
+
+                # Get materials data
+                materials_data = result.get("materials", [])
+
+                if not materials_data:
+                    # No materials - write tech row with empty data
+                    if self.write_nulls:
+                        writer.writerow(
+                            {
+                                "technology": tech,
+                                "role": role,
+                                "domain": domain,
+                                "timestamp": timestamp,
+                                "component": "",
+                                "materials": "",
+                                "countries": "",
+                            }
+                        )
+                    continue
+
+                # Write one row per component
+                for comp_data in materials_data:
+                    component = comp_data.get("component", "")
+                    materials = comp_data.get("materials", [])
+
+                    # Format materials as comma-delimited string
+                    materials_str = embed_comma_delimited_str(",".join(materials))
+
+                    writer.writerow(
+                        {
+                            "technology": tech,
+                            "role": role,
+                            "domain": domain,
+                            "timestamp": timestamp,
+                            "component": component,
+                            "materials": materials_str,
+                            "countries": "",  # TODO: Add country data when implemented
+                        }
+                    )
+
+        print(f"\n✓ Output written to: {output_path}")
 
 
 ===================================================
