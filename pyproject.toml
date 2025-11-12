@@ -1,31 +1,126 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
 [project]
 name = "stdn-agentic"
 version = "0.1.0"
 description = "Supply Technology Dependency Network (STDN) generation using Pydantic AI agents"
 readme = "README.md"
 requires-python = ">=3.10"
+license = {text = "MIT"}
+
 dependencies = [
     "pydantic>=2.5.0",
     "pydantic-ai>=0.0.14",
     "pandas>=2.0.0",
     "ollama>=0.3.0",
     "python-dotenv>=1.0.0",
-    "duckdb>=1.2.2"
+    "duckdb>=1.2.2",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-asyncio>=0.20.0",
+    "pytest-cov>=4.0.0",
+    "pytest-mock>=3.10.0",
+    "ruff>=0.1.0",
+    "black>=23.0.0",
+]
+
+test = [
+    "pytest>=7.0.0",
+    "pytest-asyncio>=0.20.0",
+    "pytest-cov>=4.0.0",
+    "pytest-mock>=3.10.0",
+]
+
+viz = [
+    "networkx>=3.0",
+    "matplotlib>=3.5.0",
 ]
 
 [project.scripts]
 stdn = "stdn_agentic.main:main"
 
-[build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
-
 [tool.uv]
 dev-dependencies = [
     "pytest>=7.0.0",
+    "pytest-asyncio>=0.20.0",
+    "pytest-cov>=4.0.0",
+    "pytest-mock>=3.10.0",
     "ruff>=0.1.0",
+    "black>=23.0.0",
+    "basedpyright>=1.33.0",
+    "mypy>=1.18.2",
 ]
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/stdn_agentic"]
 
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py", "*_test.py"]
+asyncio_mode = "auto"
+addopts = "-v --strict-markers"
+
+[tool.coverage.run]
+source = ["src/stdn_agentic"]
+branch = true
+omit = [
+    "*/tests/*",
+    "*/test_*.py",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+    "class .*\\bProtocol\\):",
+    "@(abc\\.)?abstractmethod",
+]
+
+[tool.ruff]
+target-version = "py310"
+line-length = 100
+select = [
+    "E",      # pycodestyle errors
+    "W",      # pycodestyle warnings
+    "F",      # pyflakes
+    "I",      # isort
+    "C",      # flake8-comprehensions
+    "B",      # flake8-bugbear
+]
+ignore = [
+    "E501",   # line too long
+    "B008",   # do not perform function calls in argument defaults
+    "W191",   # indentation contains tabs
+]
+
+exclude = [
+    ".git",
+    "__pycache__",
+    "dist",
+    "build",
+    ".venv",
+    ".env",
+]
+
+[tool.black]
+line-length = 100
+target-version = ["py310"]
+include = '\.pyi?$'
+exclude = '''
+/(
+    \.git
+  | \.venv
+  | \.env
+  | build
+  | dist
+)/
+'''
