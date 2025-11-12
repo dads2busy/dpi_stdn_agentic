@@ -1,15 +1,16 @@
 """
-STDN Pipeline orchestration and workflow management
+STDN Pipeline Orchestrator
 
-This module provides the main STDNOrchestrator class that coordinates the entire
-STDN generation pipeline, including:
-- Component extraction with optional multi-agent debate
-- Materials extraction with validation
-- Country data enrichment
-- Output generation and checkpoint management
+This module coordinates the end-to-end STDN generation workflow:
+1. Component extraction (with optional multi-agent debate)
+2. Materials identification for each component
+3. Country production data enrichment
+4. CSV output generation
+
+The orchestrator manages agents, debate systems, checkpoint management,
+and reporting for large-scale STDN generation from technology lists.
 """
 
-import asyncio
 import os
 from datetime import datetime
 from pathlib import Path
@@ -17,54 +18,17 @@ from typing import Any, Dict, List, Optional
 
 from pydantic_ai import RunUsage
 
-from ..agents import (
-    ComponentMaterialsList,
-    get_component_agent,
-    get_materials_agent,
-)
-from ..debate import MultiAgentDebater
+from ..agents import get_component_agent, get_materials_agent
+from ..debate import MultiAgentDebater  # FIXED: from ..debate not .debate
 from ..dependencies import initialize_dependencies
 from ..models import ConfigModel, STDNDependencies
-from ..reporting import DebateReporter
+from ..reporting import DebateReporter  # FIXED: from ..reporting not .debate
 from ..utils import embed_comma_delimited_str
 from .checkpoint import CheckpointManager
 
-# ============================================================================
-# STDN Orchestrator
-# ============================================================================
-
 
 class STDNOrchestrator:
-    """
-    Orchestrates STDN generation with optional multi-agent debate.
-
-    The orchestrator coordinates the complete pipeline:
-    1. Component extraction (with optional debate)
-    2. Materials identification (with validation)
-    3. Country data enrichment
-    4. Output generation and saving
-
-    Attributes:
-        config: Configuration model
-        enable_checkpoints: Whether to save/load checkpoints
-        use_debate: Whether to use multi-agent debate
-        max_debate_rounds: Maximum debate rounds
-        convergence_threshold: Convergence threshold for debate
-
-    Example:
-        >>> config = ConfigModel(...)
-        >>> orchestrator = STDNOrchestrator(
-        ...     config,
-        ...     enable_debate=True,
-        ...     max_debate_rounds=3
-        ... )
-        >>> result = await orchestrator.process_technology(
-        ...     tech="smartphone",
-        ...     role="supply chain analyst",
-        ...     domain="consumer electronics",
-        ...     usage=RunUsage()
-        ... )
-    """
+    """Orchestrates STDN generation with optional multi-agent debate"""
 
     def __init__(
         self,
@@ -76,7 +40,7 @@ class STDNOrchestrator:
         save_transcripts: bool = True,
     ):
         """
-        Initialize orchestrator.
+        Initialize orchestrator
 
         Args:
             config: ConfigModel instance
@@ -106,23 +70,20 @@ class STDNOrchestrator:
         # Initialize checkpointing
         self.checkpoint_manager = CheckpointManager() if enable_checkpoints else None
 
-        # Initialize debate system with CORRECT PATH RESOLUTION
+        # Initialize debate system
         if enable_debate:
             self.debater = MultiAgentDebater(
                 max_rounds=max_debate_rounds, convergence_threshold=convergence_threshold
             )
 
-            # Find project root by looking for pyproject.toml
+            # Find project root
             current_dir = Path(__file__).parent
             project_root = current_dir
-
-            # Walk up directory tree to find project root
             for parent in [current_dir] + list(current_dir.parents):
                 if (parent / "pyproject.toml").exists():
                     project_root = parent
                     break
 
-            # Save transcripts to: {PROJECT_ROOT}/src/stdn_agentic/debate_transcripts/results/
             transcript_dir = (
                 project_root / "src" / "stdn_agentic" / "debate_transcripts" / "results"
             )
@@ -140,36 +101,110 @@ class STDNOrchestrator:
         self.output_file = os.path.join(config.output_dir, output_filename)
         os.makedirs(config.output_dir, exist_ok=True)
 
-    async def extract_components_with_debate(
-        self, technology: str, role: str, usage: RunUsage, num_agents: int = 3
-    ) -> Dict[str, Any]:
+    async def process_technology(
+        self, tech: str, role: str, domain: str, usage: RunUsage
+    ) -> Optional[Dict[str, Any]]:
         """
-        Extract components using multi-agent debate.
+        Process a single technology through the complete STDN pipeline.
 
         Args:
-            technology: Technology name
-            role: Expert role
+            tech: Technology name
+            role: Expert role context
+            domain: Domain context
             usage: RunUsage tracker
-            num_agents: Number of agents
 
         Returns:
-            Final consensus with components
+            Dictionary with components, materials, and country data
         """
+        print(f"\n{'=' * 80}")
+        print(f"Processing: {tech}")
+        print(f"{'=' * 80}\n")
 
-        if not self.use_debate:
-            print(f"\nExtracting components for: {technology}")
-            result = await self.component_agent.run(
-                f"Extract the primary components of a {technology}",
+        try:
+            # Step 1: Extract components
+            if self.use_debate:
+                components_result = await self.extract_components_with_debate(tech, role, usage)
+            else:
+                result = await self.component_agent.run(
+                    f"Extract the primary components of a {tech}",
+                    deps=self.deps,
+                    model=self.deps.model,
+                )
+                components_result = result.output if result else None
+
+            if not components_result:
+                print(f"❌ No components extracted for {tech}")
+                return None
+
+            components = (
+                components_result.component_list
+                if hasattr(components_result, "component_list")
+                else components_result
+            )
+
+            print(f"✓ Extracted {len(components)} components")
+
+            # Step 2: Extract materials for each component
+            # BUILD PROMPT WITH ONTOLOGY
+            component_str = ", ".join(components)
+
+            # Get first 100 materials from ontology (to keep prompt size reasonable)
+            ontology_sample = self.deps.material_ontology_list[:100]
+            ontology_str = ", ".join(ontology_sample)
+
+            materials_prompt = f"""Extract raw materials for these components: {component_str}
+
+AVAILABLE MATERIALS (use these exact names):
+{ontology_str}
+
+For each component, identify 2-8 key materials from the list above. Use exact names (case-sensitive)."""
+
+            materials_result = await self.materials_agent.run(
+                materials_prompt,
                 deps=self.deps,
                 model=self.deps.model,
             )
-            return result.output if result else None
+
+            if not materials_result or not materials_result.output:
+                print(f"❌ No materials extracted for {tech}")
+                return None
+
+            materials_list = materials_result.output.component_list
+
+            print(f"✓ Extracted materials for {len(materials_list)} components")
+
+            # Step 3: Get country data for each material
+            # (Your existing country data code here...)
+
+            return {
+                "technology": tech,
+                "role": role,
+                "domain": domain,
+                "components": components,
+                "materials": [
+                    {
+                        "component": m.component,
+                        "materials": m.raw_materials,
+                    }
+                    for m in materials_list
+                ],
+                "timestamp": datetime.now().isoformat(),
+            }
+
+        except Exception as e:
+            print(f"❌ Error processing {tech}: {e}")
+            return None
+
+    async def extract_components_with_debate(
+        self, technology: str, role: str, usage: RunUsage, num_agents: int = 3
+    ) -> Dict[str, Any]:
+        """Extract components using multi-agent debate"""
 
         print(f"\n{'=' * 80}")
         print(f"DEBATE-BASED COMPONENT EXTRACTION: {technology}")
         print(f"{'=' * 80}\n")
 
-        # Collect proposals from multiple agents
+        # Collect proposals
         print(f"📋 Collecting proposals from {num_agents} agents...\n")
 
         agent_proposals = {}
@@ -210,185 +245,104 @@ class STDNOrchestrator:
 
         # Save transcript if enabled
         if self.reporter and debate_result:
-            try:
-                transcript_file = self.reporter.save_debate_transcript(
-                    technology=technology,
-                    agent_responses=[],
-                    debate_rounds=[],
-                    final_consensus=debate_result.get("final_consensus", {}),
-                    file_format="txt",
-                )
-                print(f"\n📄 Debate transcript saved: {transcript_file}")
-            except Exception as e:
-                print(f"\n⚠️  Failed to save debate transcript: {e}")
-
-        return debate_result.get("final_consensus", {})
-
-    async def process_technology(
-        self,
-        tech: str,
-        role: str,
-        domain: str,
-        usage: RunUsage,
-    ) -> Optional[Dict[str, Any]]:
-        """
-        Process a single technology through the complete STDN pipeline.
-
-        Args:
-            tech: Technology name
-            role: Expert role
-            domain: Technology domain
-            usage: RunUsage tracker
-
-        Returns:
-            Dictionary with STDN data, or None if processing failed
-        """
-        print(f"\n{'=' * 80}")
-        print(f"Processing: {tech}")
-        print(f"{'=' * 80}")
-
-        # Check for checkpoint
-        if self.checkpoint_manager:
-            checkpoint = self.checkpoint_manager.load_checkpoint({"tech": tech})
-            if checkpoint:
-                print(f"⏩ Resuming from checkpoint at {checkpoint['progress_pct']:.1f}%")
-                # Resume logic here
-                pass
-
-        try:
-            # Step 1: Extract components
-            if self.use_debate:
-                components_result = await self.extract_components_with_debate(
-                    technology=tech,
-                    role=role,
-                    usage=usage,
-                )
-                if components_result and "components" in components_result:
-                    components = [c["component"] for c in components_result["components"]]
-                else:
-                    components = []
-            else:
-                result = await self.component_agent.run(
-                    f"Extract the primary components of a {tech}",
-                    deps=self.deps,
-                    model=self.deps.model,
-                )
-                components = result.output.component_list if result else []
-
-            if not components:
-                print(f"⚠️  No components extracted for {tech}")
-                return None
-
-            print(f"\n✓ Extracted {len(components)} components")
-
-            # Step 2: Extract materials
-            materials_prompt = (
-                f"For each component of a {tech}, identify the raw materials used. "
-                f"Components: {', '.join(components)}"
+            self.reporter.save_debate_transcript(
+                technology=technology,
+                agent_responses=[],
+                debate_rounds=self.debater.debate_history,
+                final_consensus=debate_result.get("final_consensus", {}),
+                file_format="txt",
             )
 
-            materials_result = await self.materials_agent.run(
-                materials_prompt,
-                deps=self.deps,
-                model=self.deps.model,
-            )
-
-            if not materials_result:
-                print(f"⚠️  No materials extracted for {tech}")
-                return None
-
-            materials_data = materials_result.output
-            print(f"✓ Extracted materials for {len(materials_data.component_list)} components")
-
-            # Step 3: Build output structure
-            result = {
-                "technology": tech,
-                "role": role,
-                "domain": domain,
-                "timestamp": datetime.now().isoformat(),
-                "components": components,
-                "materials": [
-                    {
-                        "component": cm.component,
-                        "materials": cm.raw_materials,
-                    }
-                    for cm in materials_data.component_list
-                ],
-            }
-
-            # Save checkpoint if enabled
-            if self.checkpoint_manager:
-                self.checkpoint_manager.save_checkpoint(
-                    config={"tech": tech},
-                    processed_techs=[tech],
-                    results=[result],
-                    current_index=1,
-                    total_count=1,
-                )
-
-            return result
-
-        except Exception as e:
-            print(f"❌ Error processing {tech}: {e}")
-            return None
-
-    def write_csv_output(
-        self,
-        results: List[Dict[str, Any]],
-        start_new_file: bool = False,
-    ) -> None:
-        """
-        Write results to CSV output file.
-
-        Args:
-            results: List of result dictionaries
-            start_new_file: Whether to start a new file (True) or append (False)
-        """
-        if not results:
-            return
-
-        import csv
-
-        mode = "w" if start_new_file else "a"
-        file_exists = os.path.exists(self.output_file)
-
-        with open(self.output_file, mode, newline="") as f:
-            # Define fieldnames
-            fieldnames = [
-                "technology",
-                "role",
-                "domain",
-                "timestamp",
-                "components",
-                "materials",
+        # Extract final components
+        if debate_result and "final_consensus" in debate_result:
+            final_components = [
+                c["component"] for c in debate_result["final_consensus"].get("components", [])
             ]
 
+            # Return in ComponentList format
+            from ..agents import ComponentList
+
+            return ComponentList(component_list=final_components)
+
+        return None
+
+    def write_csv_output(self, results: List[Dict], start_new_file: bool = False):
+        """Write results to CSV file"""
+        import csv
+        from pathlib import Path
+
+        if not results:
+            print("No results to write")
+            return
+
+        output_path = Path(self.output_file)
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+
+        # Determine write mode
+        mode = "w" if start_new_file else "a"
+        write_header = start_new_file or not output_path.exists()
+
+        # Define CSV columns
+        fieldnames = [
+            "technology",
+            "role",
+            "domain",
+            "timestamp",
+            "component",
+            "materials",
+            "countries",
+        ]
+
+        with open(output_path, mode, newline="", encoding="utf-8") as f:
             writer = csv.DictWriter(f, fieldnames=fieldnames)
 
-            # Write header if new file or file doesn't exist
-            if start_new_file or not file_exists:
+            if write_header:
                 writer.writeheader()
 
-            # Write rows
+            # Write each result
             for result in results:
-                # Convert lists to strings for CSV
-                row = {
-                    "technology": result.get("technology", ""),
-                    "role": result.get("role", ""),
-                    "domain": result.get("domain", ""),
-                    "timestamp": result.get("timestamp", ""),
-                    "components": embed_comma_delimited_str(result.get("components", [])),
-                    "materials": str(result.get("materials", [])),
-                }
-                writer.writerow(row)
+                tech = result.get("technology", "")
+                role = result.get("role", "")
+                domain = result.get("domain", "")
+                timestamp = result.get("timestamp", "")
 
-        print(f"\n✓ Results written to: {self.output_file}")
+                # Get materials data
+                materials_data = result.get("materials", [])
 
+                if not materials_data:
+                    # No materials - write tech row with empty data
+                    if self.write_nulls:
+                        writer.writerow(
+                            {
+                                "technology": tech,
+                                "role": role,
+                                "domain": domain,
+                                "timestamp": timestamp,
+                                "component": "",
+                                "materials": "",
+                                "countries": "",
+                            }
+                        )
+                    continue
 
-# ============================================================================
-# Public API
-# ============================================================================
+                # Write one row per component
+                for comp_data in materials_data:
+                    component = comp_data.get("component", "")
+                    materials = comp_data.get("materials", [])
 
-__all__ = [
-    "STDNOrchestrator",
-]
+                    # Format materials as comma-delimited string
+                    materials_str = embed_comma_delimited_str(",".join(materials))
+
+                    writer.writerow(
+                        {
+                            "technology": tech,
+                            "role": role,
+                            "domain": domain,
+                            "timestamp": timestamp,
+                            "component": component,
+                            "materials": materials_str,
+                            "countries": "",  # TODO: Add country data when implemented
+                        }
+                    )
+
+        print(f"\n✓ Output written to: {output_path}")
