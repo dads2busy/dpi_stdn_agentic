@@ -1,10 +1,12 @@
-Here's the complete, rewritten README.md with comprehensive multi-agent debate instructions integrated throughout:
 
 # STDN Agentic - Supply Technology Dependency Network Generator
 
 > A modular, multi-agent system for generating Supply Technology Dependency Networks (STDNs) using Pydantic AI agents with USGS database integration and LLM fallback.
 
-[![Python 3.10+](https://img.shields.IT](https://https://opensource.org/licenses/MIT.shields.io/badge/tests-passing-brightgreen.
+[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Tests](https://img.shields.io/badge/tests-passing-brightgreen.svg)]()
+
 ## Table of Contents
 
 - [Overview](#overview)
@@ -136,9 +138,9 @@ The STDN generation pipeline processes technologies through multiple stages, wit
 │              ▼                                                           │
 │  ┌────────────────────────┐                                             │
 │  │  MultiAgentDebater     │  Run consensus rounds with critiques        │
-│  │  (Convergence Check)   │  • Jaccard similarity scoring              │
-│  └───────────┬────────────┘  • Agent critiques & refinement            │
-│              │               • Majority voting                          │
+│  │  (Convergence Check)   │  -  Jaccard similarity scoring              │
+│  └───────────┬────────────┘  -  Agent critiques & refinement            │
+│              │               -  Majority voting                          │
 │              │                                                           │
 │              ▼                                                           │
 │  ┌────────────────────────┐                                             │
@@ -152,14 +154,14 @@ The STDN generation pipeline processes technologies through multiple stages, wit
 │  STAGE 2: MATERIALS EXTRACTION                                          │
 │  ┌────────────────────────┐                                             │
 │  │  MaterialsAgent        │  For each component:                        │
-│  │  (with Validation)     │  • Display → glass, indium, tin            │
-│  └───────────┬────────────┘  • Battery → lithium, cobalt, nickel       │
-│              │               • Processor → silicon, copper, gold        │
+│  │  (with Validation)     │  -  Display → glass, indium, tin            │
+│  └───────────┬────────────┘  -  Battery → lithium, cobalt, nickel       │
+│              │               -  Processor → silicon, copper, gold        │
 │              ▼                                                           │
 │  ┌────────────────────────┐                                             │
 │  │  validate_materials()  │  Check against material ontology            │
-│  │  (Tool Function)       │  • Filter invalid materials                │
-│  └───────────┬────────────┘  • Retry if no valid materials found       │
+│  │  (Tool Function)       │  -  Filter invalid materials                │
+│  └───────────┬────────────┘  -  Retry if no valid materials found       │
 │              │                                                           │
 │              ▼                                                           │
 │  ┌────────────────────────┐                                             │
@@ -216,8 +218,8 @@ The STDN generation pipeline processes technologies through multiple stages, wit
 │  STAGE 4: OUTPUT GENERATION                                             │
 │  ┌────────────────────────┐                                             │
 │  │  DebateReporter        │  Generate transcripts:                      │
-│  │  (if debate enabled)   │  • Text format for review                  │
-│  └───────────┬────────────┘  • JSON format for analysis                │
+│  │  (if debate enabled)   │  -  Text format for review                  │
+│  └───────────┬────────────┘  -  JSON format for analysis                │
 │              │                                                           │
 │              ▼                                                           │
 │  ┌────────────────────────┐                                             │
@@ -234,9 +236,9 @@ The STDN generation pipeline processes technologies through multiple stages, wit
 
 ┌─────────────────────────────────────────────────────────────────────────┐
 │  CROSS-CUTTING CONCERNS                                                 │
-│  • ErrorHandler: Retry logic & error recovery at each stage            │
-│  • StateManager: Track pipeline progress & transitions                 │
-│  • MaterialCache: Reduce redundant queries (24hr TTL)                  │
+│  -  ErrorHandler: Retry logic & error recovery at each stage            │
+│  -  StateManager: Track pipeline progress & transitions                 │
+│  -  MaterialCache: Reduce redundant queries (24hr TTL)                  │
 └─────────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -258,7 +260,7 @@ The STDN generation pipeline processes technologies through multiple stages, wit
 
 ### Quick Start
 
-```bash
+```
 # Clone repository
 git clone https://github.com/NSSAC/dpi_stdn_agentic.git
 cd dpi_stdn_agentic
@@ -278,7 +280,7 @@ cp .env.example .env
 
 Create a `.env` file in the project root:
 
-```bash
+```
 # LLM Configuration (Ollama)
 OLLAMA_BASE_URL=http://localhost:11434/v1
 OLLAMA_MODEL=qwen2:7b
@@ -307,7 +309,7 @@ SAVE_TRANSCRIPTS=true
 
 ### Verify Installation
 
-```bash
+```
 # Test imports
 uv run python -c "from stdn_agentic import STDNOrchestrator; print('✓ Installation successful')"
 
@@ -324,7 +326,7 @@ uv run basedpyright src/
 
 **Step 1**: Create a technology list CSV (`tech_list.csv`):
 
-```csv
+```
 tech,role,domain
 smartphone,supply chain analyst,consumer electronics
 electric vehicle,policy analyst,automotive
@@ -334,7 +336,7 @@ wind turbine,analyst,renewable energy
 
 **Step 2**: Create a configuration JSON (`config.json`):
 
-```json
+```
 {
   "import_tech_list": "./data/tech_list.csv",
   "model": "ollama:qwen2:7b",
@@ -347,8 +349,8 @@ wind turbine,analyst,renewable energy
 
 **Step 3**: Run the pipeline:
 
-```bash
-# Process all technologies in the list (uses .env settings)
+```
+# Process all technologies in the CSV (uses .env settings)
 uv run stdn -i config.json
 
 # Or run programmatically
@@ -357,38 +359,37 @@ uv run python -m stdn_agentic.main --config config.json
 
 ### Running with Multi-Agent Debate
 
-There are three ways to enable multi-agent debate for consensus-based component extraction:
+**Multi-agent debate automatically runs for ALL technologies in your CSV file.** The following methods differ only in *how you configure the debate parameters*:
 
-#### Method 1: Environment Variables (Easiest)
+#### Method 1: Environment Variables (Simplest - Recommended)
 
-Set debate parameters in your `.env` file:
+Enable debate for all technologies by setting environment variables:
 
-```bash
-# Enable multi-agent debate
+**`.env` file:**
+```
 ENABLE_DEBATE=true
 MAX_DEBATE_ROUNDS=3
 CONVERGENCE_THRESHOLD=0.8
-SAVE_TRANSCRIPTS=true
 ```
 
-Then run normally:
-
-```bash
+**Then run normally to process all technologies:**
+```
 uv run stdn -i config.json
 ```
 
-#### Method 2: Programmatic (Most Control)
+This will automatically run multi-agent debate for **every technology** in your `tech_list.csv`.
 
-Create a Python script (e.g., `run_with_debate.py`):
+#### Method 2: Programmatic Configuration (Single Technology)
 
-```python
+Use this when you want to process just **one specific technology** with full control:
+
+```
 import asyncio
 from stdn_agentic import STDNOrchestrator
 from stdn_agentic.models import ConfigModel
 from pydantic_ai import RunUsage
 
 async def main():
-    # Load configuration
     config = ConfigModel(
         import_tech_list="./data/tech_list.csv",
         model="ollama:qwen2:7b",
@@ -397,16 +398,15 @@ async def main():
         output_csv_filename="stdn_debate_results"
     )
 
-    # Create orchestrator with debate enabled
     orchestrator = STDNOrchestrator(
         config,
-        enable_debate=True,          # Enable multi-agent consensus
-        max_debate_rounds=3,         # Run up to 3 debate rounds
-        convergence_threshold=0.8,    # Stop at 80% convergence
-        save_transcripts=True         # Save debate logs
+        enable_debate=True,
+        max_debate_rounds=3,
+        convergence_threshold=0.8,
+        save_transcripts=True
     )
 
-    # Process a single technology
+    # Process ONLY ONE technology
     usage = RunUsage()
     result = await orchestrator.process_technology(
         tech="smartphone",
@@ -416,24 +416,22 @@ async def main():
     )
 
     print(f"\nComponents: {result['components']}")
-    print(f"Materials: {len(result['materials'])} extracted")
-    print(f"Debate transcripts: ./debate_transcripts/results/")
+    print(f"Debate transcript: ./debate_transcripts/results/")
 
 if __name__ == "__main__":
     asyncio.run(main())
 ```
 
 Run it:
-
-```bash
-uv run python run_with_debate.py
+```
+uv run python run_single_tech.py
 ```
 
-#### Method 3: Batch Processing with Debate
+#### Method 3: Programmatic Batch Processing (Advanced)
 
-Process multiple technologies from CSV with debate:
+Use this when you want **custom logic** for processing all technologies (e.g., error handling, progress tracking, custom filtering):
 
-```python
+```
 import asyncio
 import csv
 from stdn_agentic import STDNOrchestrator
@@ -454,35 +452,161 @@ async def process_batch():
         enable_debate=True,
         max_debate_rounds=3,
         convergence_threshold=0.8,
-        enable_checkpoints=True,  # Save progress for resume
+        enable_checkpoints=True,  # Add checkpoint support
         save_transcripts=True
     )
 
-    # Read technologies
-    with open("./data/tech_list.csv", 'r') as f:
+    # Read all technologies from CSV
+    with open(config.import_tech_list, 'r') as f:
         technologies = list(csv.DictReader(f))
+
+    print(f"Processing {len(technologies)} technologies with debate...")
 
     results = []
     usage = RunUsage()
 
     for i, tech_row in enumerate(technologies, 1):
-        print(f"\nProcessing {i}/{len(technologies)}: {tech_row['tech']}")
+        print(f"\n[{i}/{len(technologies)}] {tech_row['tech']}")
 
-        result = await orchestrator.process_technology(
-            tech=tech_row['tech'],
-            role=tech_row.get('role', 'analyst'),
-            domain=tech_row.get('domain', 'technology'),
-            usage=usage
-        )
-        results.append(result)
+        try:
+            result = await orchestrator.process_technology(
+                tech=tech_row['tech'],
+                role=tech_row.get('role', 'analyst'),
+                domain=tech_row.get('domain', 'technology'),
+                usage=usage
+            )
+            results.append(result)
 
-        # Write incrementally
-        orchestrator.write_csv_output([result], start_new_file=(i == 1))
+            # Write incrementally
+            orchestrator.write_csv_output([result], start_new_file=(i == 1))
 
-    print(f"\n✓ Processed {len(results)} technologies")
+        except Exception as e:
+            print(f"❌ Error: {e}")
+            continue  # Skip failed tech and continue
+
+    print(f"\n✓ Processed {len(results)}/{len(technologies)} technologies")
     print(f"✓ Output: {orchestrator.output_file}")
 
 asyncio.run(process_batch())
+```
+
+Run it:
+```
+uv run python run_batch_custom.py
+```
+
+**When to use each method:**
+
+| Method | Use When... | Processes |
+|--------|-------------|-----------|
+| **Method 1** (`.env`) | You want the simplest setup | All technologies in CSV |
+| **Method 2** (Single tech) | Testing or processing one specific technology | One technology only |
+| **Method 3** (Custom batch) | You need custom error handling, filtering, or progress tracking | All technologies in CSV (with custom logic) |
+
+### How It Works: Debate for Multiple Technologies
+
+When debate is enabled (via any method), the system runs **independent debate sessions** for each technology:
+
+```
+Technology 1: smartphone
+  ├─ Agent 1 proposes components
+  ├─ Agent 2 proposes components
+  ├─ Agent 3 proposes components
+  ├─ Debate Round 1, 2, 3...
+  └─ Consensus → Save transcript
+
+Technology 2: electric vehicle
+  ├─ Agent 1 proposes components
+  ├─ Agent 2 proposes components
+  ├─ Agent 3 proposes components
+  ├─ Debate Round 1, 2, 3...
+  └─ Consensus → Save transcript
+
+Technology 3: solar panel
+  ├─ Agent 1 proposes components
+  ├─ Agent 2 proposes components
+  ├─ Agent 3 proposes components
+  ├─ Debate Round 1, 2, 3...
+  └─ Consensus → Save transcript
+```
+
+Each technology gets:
+- ✅ Independent 3-agent debate
+- ✅ Separate debate transcript
+- ✅ Consensus-based components
+
+### Advanced Usage Examples
+
+#### Query USGS Database Directly
+
+```
+from stdn_agentic.data import USGSClient
+
+# Connect to database
+with USGSClient("./data/world_mineral_commodity_reports_2022-2025_v8.db", top_n=5) as client:
+    # Query top lithium producers
+    countries = client.query_top_countries("Lithium", 2025, 2024)
+    print(f"Top producers: {countries['country'].tolist()}")
+
+    # Get world production totals
+    totals = client.query_world_totals("Lithium", 2025, 2024)
+    print(f"World production: {totals.get('PRODUCTION', 0)}")
+
+    # Get country-specific details
+    details = client.query_country_details("Lithium", "Chile", 2025, 2024)
+    for detail in details:
+        print(f"{detail['meas_type']}: {detail['value']} {detail['meas_unit']}")
+```
+
+#### Use Repository Pattern with Fallback
+
+```
+from stdn_agentic.data import CountryDataRepository
+from stdn_agentic.dependencies import initialize_dependencies
+
+deps = initialize_dependencies(config)
+
+repo = CountryDataRepository(
+    database_path="./data/world_mineral_commodity_reports_2022-2025_v8.db",
+    deps=deps,
+    top_n=5,
+    use_llm_fallback=True  # Enable LLM fallback
+)
+
+# Get country data (tries USGS first, falls back to LLM)
+countries = await repo.get_country_data("Lithium", 2025, 2024)
+
+for country in countries:
+    print(f"{country['country']}: {country['percentage']:.1f}%")
+
+# Check cache stats
+stats = repo.get_cache_stats()
+print(f"Cached materials: {stats['cached_materials']}")
+```
+
+#### Use Agent Factory Directly
+
+```
+from stdn_agentic.agents import AgentFactory
+from stdn_agentic.dependencies import initialize_dependencies
+
+# Initialize dependencies
+deps = initialize_dependencies(config)
+
+# Create agent factory with caching
+factory = AgentFactory(config={"enable_caching": True})
+
+# Get agents
+component_agent = factory.create_component_agent()
+materials_agent = factory.create_materials_agent()
+country_agent = factory.create_country_agent()
+
+# Run component extraction
+result = await component_agent.run(
+    "Extract components from a smartphone",
+    deps=deps
+)
+print(result.output.component_list)
 ```
 
 ## Multi-Agent Debate System
@@ -589,7 +713,7 @@ Final Consensus Components (6):
 
 Test debate functionality:
 
-```bash
+```
 cat > test_debate.py << 'EOF'
 import asyncio
 from stdn_agentic import STDNOrchestrator
@@ -615,109 +739,6 @@ EOF
 uv run python test_debate.py
 ```
 
-### Advanced Usage Examples
-
-#### Custom Debate Configuration
-
-```python
-# High-quality extraction with more rounds
-orchestrator = STDNOrchestrator(
-    config,
-    enable_debate=True,
-    max_debate_rounds=5,          # More rounds for better quality
-    convergence_threshold=0.9,     # Stricter consensus
-    save_transcripts=True
-)
-```
-
-#### Combine Debate with Checkpointing
-
-```python
-# Long-running batch job with debate + checkpointing
-orchestrator = STDNOrchestrator(
-    config,
-    enable_debate=True,
-    max_debate_rounds=3,
-    enable_checkpoints=True,  # Resume if interrupted
-    save_transcripts=True
-)
-
-# Checkpoints saved to ./checkpoints/
-# Transcripts saved to ./debate_transcripts/results/
-```
-
-#### Use Agent Factory Directly
-
-```python
-from stdn_agentic.agents import AgentFactory
-from stdn_agentic.dependencies import initialize_dependencies
-
-# Initialize dependencies
-deps = initialize_dependencies(config)
-
-# Create agent factory with caching
-factory = AgentFactory(config={"enable_caching": True})
-
-# Get agents
-component_agent = factory.create_component_agent()
-materials_agent = factory.create_materials_agent()
-country_agent = factory.create_country_agent()
-
-# Run component extraction
-result = await component_agent.run(
-    "Extract components from a smartphone",
-    deps=deps
-)
-print(result.output.component_list)
-```
-
-#### Query USGS Database Directly
-
-```python
-from stdn_agentic.data import USGSClient
-
-# Connect to database
-with USGSClient("./data/world_mineral_commodity_reports_2022-2025_v8.db", top_n=5) as client:
-    # Query top lithium producers
-    countries = client.query_top_countries("Lithium", 2025, 2024)
-    print(f"Top producers: {countries['country'].tolist()}")
-
-    # Get world production totals
-    totals = client.query_world_totals("Lithium", 2025, 2024)
-    print(f"World production: {totals.get('PRODUCTION', 0)}")
-
-    # Get country-specific details
-    details = client.query_country_details("Lithium", "Chile", 2025, 2024)
-    for detail in details:
-        print(f"{detail['meas_type']}: {detail['value']} {detail['meas_unit']}")
-```
-
-#### Use Repository Pattern with Fallback
-
-```python
-from stdn_agentic.data import CountryDataRepository
-from stdn_agentic.dependencies import initialize_dependencies
-
-deps = initialize_dependencies(config)
-
-repo = CountryDataRepository(
-    database_path="./data/world_mineral_commodity_reports_2022-2025_v8.db",
-    deps=deps,
-    top_n=5,
-    use_llm_fallback=True  # Enable LLM fallback
-)
-
-# Get country data (tries USGS first, falls back to LLM)
-countries = await repo.get_country_data("Lithium", 2025, 2024)
-
-for country in countries:
-    print(f"{country['country']}: {country['percentage']:.1f}%")
-
-# Check cache stats
-stats = repo.get_cache_stats()
-print(f"Cached materials: {stats['cached_materials']}")
-```
-
 ## Development
 
 ### Project Structure
@@ -732,7 +753,7 @@ This project uses modern Python architecture patterns:
 
 ### Running Tests
 
-```bash
+```
 # All tests
 uv run pytest tests/ -v
 
@@ -754,7 +775,7 @@ open htmlcov/index.html
 
 ### Type Checking
 
-```bash
+```
 # Check entire project
 uv run basedpyright src/stdn_agentic/
 
@@ -767,7 +788,7 @@ uv run basedpyright --strict src/stdn_agentic/
 
 ### Code Formatting & Linting
 
-```bash
+```
 # Format code with black
 uv run black src/ tests/
 
@@ -815,7 +836,7 @@ The primary data source is the USGS (United States Geological Survey) Mineral Co
 
 **Database Schema:**
 
-```sql
+```
 -- Main table structure
 CREATE TABLE world_mineral_commodity_report (
     src_yr INTEGER,           -- Source year of report
@@ -833,7 +854,7 @@ CREATE TABLE world_mineral_commodity_report (
 
 Material names are validated against a curated ontology (`data/material_ontology.csv`):
 
-```csv
+```
 material_name,category,aliases
 Lithium,metal,"lithium carbonate,lithium hydroxide"
 Cobalt,metal,"cobalt oxide,cobalt sulfate"
@@ -857,7 +878,7 @@ When USGS data is unavailable, the system falls back to LLM-based estimation:
 
 Main pipeline orchestrator.
 
-```python
+```
 orchestrator = STDNOrchestrator(
     config: ConfigModel,
     enable_checkpoints: bool = False,
@@ -880,7 +901,7 @@ result = await orchestrator.process_technology(
 
 Creates and manages agent instances.
 
-```python
+```
 factory = AgentFactory(config: Optional[Dict[str, Any]] = None)
 
 # Create agents
@@ -896,7 +917,7 @@ agents = factory.create_all_agents()
 
 Coordinates country data retrieval with USGS + LLM fallback.
 
-```python
+```
 repo = CountryDataRepository(
     database_path: str,
     deps: STDNDependencies,
@@ -916,7 +937,7 @@ countries = await repo.get_country_data(
 
 Direct USGS database client.
 
-```python
+```
 with USGSClient(database_path: str, top_n: int = 5) as client:
     # Query top countries
     countries = client.query_top_countries(material, src_year, meas_year)
@@ -932,7 +953,7 @@ with USGSClient(database_path: str, top_n: int = 5) as client:
 
 #### `ComponentList`
 
-```python
+```
 from stdn_agentic.agents import ComponentList
 
 components = ComponentList(
@@ -942,7 +963,7 @@ components = ComponentList(
 
 #### `ComponentMaterialsList`
 
-```python
+```
 from stdn_agentic.agents import ComponentMaterialsList, ComponentMaterials
 
 materials = ComponentMaterialsList(
@@ -957,7 +978,7 @@ materials = ComponentMaterialsList(
 
 #### `CountryList`
 
-```python
+```
 from stdn_agentic.agents import CountryList, CountryPercentage
 
 countries = CountryList(
@@ -1009,7 +1030,7 @@ MIT License - see [LICENSE](LICENSE) file for details.
 
 If you use this software in your research, please cite:
 
-```bibtex
+```
 @software{stdn_agentic,
   title = {STDN Agentic: Supply Technology Dependency Network Generator},
   author = {Aaron Schroeder and Mandy Wilson},
@@ -1018,7 +1039,7 @@ If you use this software in your research, please cite:
 }
 ```
 
-***
+---
 
 **Questions or Issues?** Open an issue on [GitHub](https://github.com/NSSAC/dpi_stdn_agentic/issues)
 
