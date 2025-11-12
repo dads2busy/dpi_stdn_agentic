@@ -1,10 +1,10 @@
-Here's a comprehensive README with an ASCII process diagram showing the full pipeline flow:
+Here's the complete, rewritten README.md with comprehensive multi-agent debate instructions integrated throughout:
 
 # STDN Agentic - Supply Technology Dependency Network Generator
 
 > A modular, multi-agent system for generating Supply Technology Dependency Networks (STDNs) using Pydantic AI agents with USGS database integration and LLM fallback.
 
-[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.ps://img.shieldsmg.shields.io/badge/tests-passing-brightgreen.
+[![Python 3.10+](https://img.shields.IT](https://https://opensource.org/licenses/MIT.shields.io/badge/tests-passing-brightgreen.
 ## Table of Contents
 
 - [Overview](#overview)
@@ -12,6 +12,10 @@ Here's a comprehensive README with an ASCII process diagram showing the full pip
 - [Pipeline Flow](#pipeline-flow)
 - [Installation](#installation)
 - [Usage](#usage)
+  - [Basic Usage](#basic-usage)
+  - [Running with Multi-Agent Debate](#running-with-multi-agent-debate)
+  - [Advanced Usage Examples](#advanced-usage-examples)
+- [Multi-Agent Debate System](#multi-agent-debate-system)
 - [Development](#development)
 - [Data Sources](#data-sources)
 - [API Reference](#api-reference)
@@ -256,7 +260,7 @@ The STDN generation pipeline processes technologies through multiple stages, wit
 
 ```bash
 # Clone repository
-git clone https://github.com/yourusername/dpi_stdn_agentic.git
+git clone https://github.com/NSSAC/dpi_stdn_agentic.git
 cd dpi_stdn_agentic
 
 # Install dependencies with uv
@@ -294,10 +298,11 @@ OUTPUT_CSV_FILENAME=stdn_results
 CACHE_DIR=./.cache
 CACHE_TTL_HOURS=24
 
-# Debate Settings (optional)
+# Multi-Agent Debate Settings
 ENABLE_DEBATE=true
 MAX_DEBATE_ROUNDS=3
 CONVERGENCE_THRESHOLD=0.8
+SAVE_TRANSCRIPTS=true
 ```
 
 ### Verify Installation
@@ -343,64 +348,302 @@ wind turbine,analyst,renewable energy
 **Step 3**: Run the pipeline:
 
 ```bash
-# Process all technologies in the list
+# Process all technologies in the list (uses .env settings)
 uv run stdn -i config.json
 
 # Or run programmatically
 uv run python -m stdn_agentic.main --config config.json
 ```
 
-### Advanced Usage
+### Running with Multi-Agent Debate
 
-#### Enable Multi-Agent Debate
+There are three ways to enable multi-agent debate for consensus-based component extraction:
+
+#### Method 1: Environment Variables (Easiest)
+
+Set debate parameters in your `.env` file:
+
+```bash
+# Enable multi-agent debate
+ENABLE_DEBATE=true
+MAX_DEBATE_ROUNDS=3
+CONVERGENCE_THRESHOLD=0.8
+SAVE_TRANSCRIPTS=true
+```
+
+Then run normally:
+
+```bash
+uv run stdn -i config.json
+```
+
+#### Method 2: Programmatic (Most Control)
+
+Create a Python script (e.g., `run_with_debate.py`):
 
 ```python
+import asyncio
 from stdn_agentic import STDNOrchestrator
 from stdn_agentic.models import ConfigModel
 from pydantic_ai import RunUsage
 
-# Load configuration
-config = ConfigModel(
-    import_tech_list="./data/tech_list.csv",
-    model="ollama:qwen2:7b",
-    database_path="./data/usgs.db",
-    output_dir="./output",
-    output_csv_filename="results"
-)
+async def main():
+    # Load configuration
+    config = ConfigModel(
+        import_tech_list="./data/tech_list.csv",
+        model="ollama:qwen2:7b",
+        database_path="./data/world_mineral_commodity_reports_2022-2025_v8.db",
+        output_dir="./output",
+        output_csv_filename="stdn_debate_results"
+    )
 
-# Create orchestrator with debate enabled
-orchestrator = STDNOrchestrator(
-    config,
-    enable_debate=True,           # Enable multi-agent consensus
-    max_debate_rounds=3,          # Run up to 3 debate rounds
-    convergence_threshold=0.8,     # Stop at 80% convergence
-    save_transcripts=True          # Save debate logs
-)
+    # Create orchestrator with debate enabled
+    orchestrator = STDNOrchestrator(
+        config,
+        enable_debate=True,          # Enable multi-agent consensus
+        max_debate_rounds=3,         # Run up to 3 debate rounds
+        convergence_threshold=0.8,    # Stop at 80% convergence
+        save_transcripts=True         # Save debate logs
+    )
 
-# Process a single technology
-usage = RunUsage()
-result = await orchestrator.process_technology(
-    tech="smartphone",
-    role="supply chain analyst",
-    domain="consumer electronics",
-    usage=usage
-)
+    # Process a single technology
+    usage = RunUsage()
+    result = await orchestrator.process_technology(
+        tech="smartphone",
+        role="supply chain analyst",
+        domain="consumer electronics",
+        usage=usage
+    )
 
-print(f"Components: {result['components']}")
-print(f"Materials: {result['materials']}")
+    print(f"\nComponents: {result['components']}")
+    print(f"Materials: {len(result['materials'])} extracted")
+    print(f"Debate transcripts: ./debate_transcripts/results/")
+
+if __name__ == "__main__":
+    asyncio.run(main())
 ```
 
-#### Enable Checkpointing for Long Runs
+Run it:
+
+```bash
+uv run python run_with_debate.py
+```
+
+#### Method 3: Batch Processing with Debate
+
+Process multiple technologies from CSV with debate:
 
 ```python
+import asyncio
+import csv
+from stdn_agentic import STDNOrchestrator
+from stdn_agentic.models import ConfigModel
+from pydantic_ai import RunUsage
+
+async def process_batch():
+    config = ConfigModel(
+        import_tech_list="./data/tech_list.csv",
+        model="ollama:qwen2:7b",
+        database_path="./data/world_mineral_commodity_reports_2022-2025_v8.db",
+        output_dir="./output",
+        output_csv_filename="batch_debate_results"
+    )
+
+    orchestrator = STDNOrchestrator(
+        config,
+        enable_debate=True,
+        max_debate_rounds=3,
+        convergence_threshold=0.8,
+        enable_checkpoints=True,  # Save progress for resume
+        save_transcripts=True
+    )
+
+    # Read technologies
+    with open("./data/tech_list.csv", 'r') as f:
+        technologies = list(csv.DictReader(f))
+
+    results = []
+    usage = RunUsage()
+
+    for i, tech_row in enumerate(technologies, 1):
+        print(f"\nProcessing {i}/{len(technologies)}: {tech_row['tech']}")
+
+        result = await orchestrator.process_technology(
+            tech=tech_row['tech'],
+            role=tech_row.get('role', 'analyst'),
+            domain=tech_row.get('domain', 'technology'),
+            usage=usage
+        )
+        results.append(result)
+
+        # Write incrementally
+        orchestrator.write_csv_output([result], start_new_file=(i == 1))
+
+    print(f"\n✓ Processed {len(results)} technologies")
+    print(f"✓ Output: {orchestrator.output_file}")
+
+asyncio.run(process_batch())
+```
+
+## Multi-Agent Debate System
+
+### How It Works
+
+The multi-agent debate system improves extraction quality through consensus:
+
+1. **Independent Extraction**: 3 agents extract components independently
+2. **Proposal Collection**: Each agent proposes components with confidence scores
+3. **Debate Rounds**: Agents critique each other's proposals
+4. **Convergence Scoring**: Jaccard similarity measures agreement
+5. **Consensus Building**: Majority voting determines final components
+
+### Debate Parameters
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `enable_debate` | bool | `False` | Enable multi-agent consensus |
+| `max_debate_rounds` | int | `3` | Maximum debate rounds (1-10) |
+| `convergence_threshold` | float | `0.8` | Stop when convergence ≥ threshold (0.0-1.0) |
+| `save_transcripts` | bool | `True` | Save detailed debate logs |
+
+**Convergence Threshold Guide:**
+- `0.6`: Low consensus (60% agreement)
+- `0.8`: Good consensus (80% agreement) ← **Recommended**
+- `0.9`: High consensus (90% agreement)
+- `1.0`: Perfect consensus (rarely achieved)
+
+**Rounds Guide:**
+- `2 rounds`: Fast, moderate quality
+- `3 rounds`: Balanced speed/quality ← **Recommended**
+- `5 rounds`: High quality, slower
+
+### Example Output
+
+When debate is enabled, you'll see:
+
+```
+================================================================================
+DEBATE-BASED COMPONENT EXTRACTION: smartphone
+================================================================================
+
+📋 Collecting proposals from 3 agents...
+  ✓ Agent_1: 5 components proposed
+  ✓ Agent_2: 6 components proposed
+  ✓ Agent_3: 5 components proposed
+
+🎤 Running debate...
+
+ROUND 1: Convergence: 45.2%
+ROUND 2: Convergence: 72.8%
+ROUND 3: CONVERGENCE REACHED (85.3%)
+
+📄 Debate transcript saved: ./debate_transcripts/results/smartphone_20251112_160530.txt
+
+✓ Extracted 6 components
+```
+
+### Debate Transcript Format
+
+Transcripts are saved to `./debate_transcripts/results/` in both TXT and JSON formats:
+
+**Text format** (`smartphone_20251112_160530.txt`):
+```
+================================================================================
+MULTI-AGENT DEBATE TRANSCRIPT: smartphone
+Generated: 2025-11-12T16:05:30.425631
+================================================================================
+
+PHASE 1: INDEPENDENT COMPONENT EXTRACTION
+--------------------------------------------------------------------------------
+
+Agent_1:
+  Proposed Components (5):
+    - display (confidence: 0.95)
+    - battery (confidence: 0.93)
+    - processor (confidence: 0.91)
+    ...
+
+PHASE 2: DEBATE AND CRITIQUE
+--------------------------------------------------------------------------------
+
+DEBATE ROUND 1
+Convergence Score: 45.2%
+
+Agent_1 Response:
+  Critique:
+    🤔 Agent_2 proposed 'antenna' (confidence: 0.87). Worth considering.
+    ❌ Agent_3 proposed 'casing' but confidence is only 0.70. May be weak.
+    ...
+
+PHASE 3: FINAL CONSENSUS
+--------------------------------------------------------------------------------
+
+Final Consensus Components (6):
+  ✓ display (confidence: 0.943)
+  ✓ battery (confidence: 0.927)
+  ✓ processor (confidence: 0.915)
+  ...
+```
+
+### Quick Test
+
+Test debate functionality:
+
+```bash
+cat > test_debate.py << 'EOF'
+import asyncio
+from stdn_agentic import STDNOrchestrator
+from stdn_agentic.models import ConfigModel
+from pydantic_ai import RunUsage
+
+async def test():
+    config = ConfigModel(
+        import_tech_list="./data/tech_list.csv",
+        model="ollama:qwen2:7b",
+        database_path="./data/world_mineral_commodity_reports_2022-2025_v8.db",
+        output_dir="./output",
+        output_csv_filename="test"
+    )
+
+    orch = STDNOrchestrator(config, enable_debate=True, max_debate_rounds=2)
+    result = await orch.process_technology("smartphone", "analyst", "tech", RunUsage())
+    print(f"Components: {result['components']}")
+
+asyncio.run(test())
+EOF
+
+uv run python test_debate.py
+```
+
+### Advanced Usage Examples
+
+#### Custom Debate Configuration
+
+```python
+# High-quality extraction with more rounds
 orchestrator = STDNOrchestrator(
     config,
-    enable_checkpoints=True,  # Save state every N technologies
-    enable_debate=True
+    enable_debate=True,
+    max_debate_rounds=5,          # More rounds for better quality
+    convergence_threshold=0.9,     # Stricter consensus
+    save_transcripts=True
+)
+```
+
+#### Combine Debate with Checkpointing
+
+```python
+# Long-running batch job with debate + checkpointing
+orchestrator = STDNOrchestrator(
+    config,
+    enable_debate=True,
+    max_debate_rounds=3,
+    enable_checkpoints=True,  # Resume if interrupted
+    save_transcripts=True
 )
 
-# Pipeline will automatically save/resume from checkpoints
-# Checkpoint files saved to ./checkpoints/
+# Checkpoints saved to ./checkpoints/
+# Transcripts saved to ./debate_transcripts/results/
 ```
 
 #### Use Agent Factory Directly
@@ -412,7 +655,7 @@ from stdn_agentic.dependencies import initialize_dependencies
 # Initialize dependencies
 deps = initialize_dependencies(config)
 
-# Create agent factory
+# Create agent factory with caching
 factory = AgentFactory(config={"enable_caching": True})
 
 # Get agents
@@ -434,10 +677,10 @@ print(result.output.component_list)
 from stdn_agentic.data import USGSClient
 
 # Connect to database
-with USGSClient("./data/usgs.db", top_n=5) as client:
+with USGSClient("./data/world_mineral_commodity_reports_2022-2025_v8.db", top_n=5) as client:
     # Query top lithium producers
     countries = client.query_top_countries("Lithium", 2025, 2024)
-    print(countries['country'].tolist())
+    print(f"Top producers: {countries['country'].tolist()}")
 
     # Get world production totals
     totals = client.query_world_totals("Lithium", 2025, 2024)
@@ -458,13 +701,13 @@ from stdn_agentic.dependencies import initialize_dependencies
 deps = initialize_dependencies(config)
 
 repo = CountryDataRepository(
-    database_path="./data/usgs.db",
+    database_path="./data/world_mineral_commodity_reports_2022-2025_v8.db",
     deps=deps,
     top_n=5,
     use_llm_fallback=True  # Enable LLM fallback
 )
 
-# Get country data (tries USGS first, LLM fallback if no data)
+# Get country data (tries USGS first, falls back to LLM)
 countries = await repo.get_country_data("Lithium", 2025, 2024)
 
 for country in countries:
@@ -769,7 +1012,7 @@ If you use this software in your research, please cite:
 ```bibtex
 @software{stdn_agentic,
   title = {STDN Agentic: Supply Technology Dependency Network Generator},
-  author = {Aaron Schroeder, Mandy Wilson},
+  author = {Aaron Schroeder and Mandy Wilson},
   year = {2025},
   url = {https://github.com/NSSAC/dpi_stdn_agentic}
 }
@@ -777,6 +1020,6 @@ If you use this software in your research, please cite:
 
 ***
 
-**Questions or Issues?** Open an issue on [GitHub](https://github.com/yourusername/dpi_stdn_agentic/issues)
+**Questions or Issues?** Open an issue on [GitHub](https://github.com/NSSAC/dpi_stdn_agentic/issues)
 
-**Need Support?** Check the [documentation](https://github.com/yourusername/dpi_stdn_agentic/wiki) or start a [discussion](https://github.com/yourusername/dpi_stdn_agentic/discussions)
+**Need Support?** Check the [documentation](https://github.com/NSSAC/dpi_stdn_agentic/wiki) or start a [discussion](https://github.com/NSSAC/dpi_stdn_agentic/discussions)
