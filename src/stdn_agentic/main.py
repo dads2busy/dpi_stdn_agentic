@@ -5,27 +5,20 @@ Main execution script for STDN generation using Pydantic AI agents
 This module handles:
 - Configuration file discovery and loading
 - CLI argument parsing
-- Country data generation (optional)
-- Multi-technology orchestration
-- Output file writing and reporting
+- Technology processing orchestration
+- Output file writing
 
-For government/policy work, this ensures:
-- Reproducible runs with saved configuration
-- Trackable technology processing with timing
-- Detailed debate transcripts for policy review
-- Clear audit trail of all decisions
+The enhanced version uses STDNOrchestrator's internal run_pipeline method
+which handles CSV writing automatically.
 """
 
 import argparse
 import asyncio
-import csv
 import os
 from datetime import datetime
 from pathlib import Path
 
-import pandas as pd
 from dotenv import load_dotenv
-from pydantic_ai import RunUsage
 
 from stdn_agentic.models import ConfigModel
 from stdn_agentic.orchestrator import STDNOrchestrator
@@ -49,7 +42,6 @@ def find_config_file(specified_path: str = None) -> str:
     2. Environment variable STDN_CONFIG
     3. Current directory
     4. User home directory
-    5. System config directory
 
     Args:
         specified_path: Optional explicit path from command line
@@ -73,8 +65,9 @@ def find_config_file(specified_path: str = None) -> str:
         print(f"Using config from STDN_CONFIG: {env_config}")
         return env_config
 
-    # Priority 3-5: Search standard locations
+    # Priority 3: Search standard locations
     locations = [
+        "config.json",
         ".config.json",
         ".config/config.json",
     ]
@@ -83,16 +76,10 @@ def find_config_file(specified_path: str = None) -> str:
     home = Path.home()
     locations.extend(
         [
-            home / ".stdn_pydantic_ai" / "config.json",
-            home / "stdn_pydantic_ai" / "config.json",
+            home / ".stdn" / "config.json",
+            home / "stdn" / "config.json",
         ]
     )
-
-    # Add system locations (Unix-like systems)
-    if os.name != "nt":  # Not Windows
-        locations.append("/etc/stdn_pydantic_ai/config.json")
-    else:  # Windows
-        locations.append("C:\\ProgramData\\pydantic_ai\\config.json")
 
     for loc in locations:
         if os.path.exists(loc):
@@ -102,39 +89,36 @@ def find_config_file(specified_path: str = None) -> str:
     # No config found
     raise FileNotFoundError(
         f"No config file found. Searched locations:\n"
-        f"  {chr(10).join(f'  - {loc}' for loc in locations)}\n\n"
+        f"{chr(10).join(f'  - {loc}' for loc in locations)}\n\n"
         f"Specify config file with -i flag or set STDN_CONFIG environment variable."
     )
 
 
 # ============================================================================
-# Processing Functions
+# Main Processing Function
 # ============================================================================
 
 
-async def process_all_technologies(
-    config: ConfigModel,
-) -> list:
+async def process_all_technologies(config: ConfigModel) -> dict:
     """
-    Main function to process all technologies in the tech list.
+    Process all technologies using the enhanced orchestrator.
+
+    The new orchestrator handles CSV writing internally via run_pipeline(),
+    so we don't need separate write_csv_output calls.
 
     Args:
         config: Configuration model with paths and settings
 
     Returns:
-        List of successfully processed technology results
+        Dict with processing statistics
     """
-    print(f"\n{'=' * 80}")
-    print(f"STDN Generation Started: {datetime.now()}")
-    print(f"{'=' * 80}\n")
-
-    # Read debate settings from environment
+    # Read debate settings from environment or config
     enable_debate = os.getenv("ENABLE_DEBATE", "false").lower() == "true"
     max_debate_rounds = int(os.getenv("MAX_DEBATE_ROUNDS", "3"))
     convergence_threshold = float(os.getenv("CONVERGENCE_THRESHOLD", "0.8"))
     save_transcripts = os.getenv("SAVE_TRANSCRIPTS", "true").lower() == "true"
 
-    # Initialize orchestrator WITH debate settings
+    # Initialize enhanced orchestrator
     orchestrator = STDNOrchestrator(
         config,
         enable_debate=enable_debate,
@@ -143,110 +127,29 @@ async def process_all_technologies(
         save_transcripts=save_transcripts,
     )
 
-    if enable_debate:
-        print(f"\n🎤 Multi-agent debate ENABLED:")
-        print(f"   Max rounds: {max_debate_rounds}")
-        print(f"   Convergence threshold: {convergence_threshold}")
-        print(f"   Save transcripts: {save_transcripts}\n")
-
-    # Load technologies from CSV
-    tech_list_path = Path(config.import_tech_list)
+    # Load technologies from config
+    tech_list_path = Path(config.tech_list_path)
     if not tech_list_path.exists():
-        print(f"Error: Technology list not found: {tech_list_path}")
-        return []
+        raise FileNotFoundError(f"Technology list not found: {tech_list_path}")
+
+    # Read tech list
+    import csv
 
     technologies = []
     with open(tech_list_path, "r", encoding="utf-8") as f:
         reader = csv.DictReader(f)
-        technologies = list(reader)
+        for row in reader:
+            if "tech" in row and row["tech"]:
+                technologies.append(row["tech"].strip())
 
-    print(f"Loaded {len(technologies)} technologies from {tech_list_path}\n")
-
-    # Process each technology
-    results = []
-    usage = RunUsage()
-
-    for i, tech_row in enumerate(technologies, 1):
-        tech = tech_row.get("tech", "")
-        role = tech_row.get("role", "analyst")
-        domain = tech_row.get("domain", "technology")
-
-        if not tech:
-            print(f"⚠️  Skipping row {i}: missing 'tech' column")
-            continue
-
-        try:
-            # Process technology through orchestrator
-            result = await orchestrator.process_technology(
-                tech=tech,
-                role=role,
-                domain=domain,
-                usage=usage,
-            )
-
-            if result:
-                results.append(result)
-
-                # Write result immediately to CSV (incremental output)
-                orchestrator.write_csv_output([result], start_new_file=(i == 1))
-
-                print(f"✓ Successfully processed: {tech}")
-            else:
-                print(f"✗ Failed to process: {tech}")
-
-        except Exception as e:
-            print(f"❌ Error processing {tech}: {e}")
-            import traceback
-
-            traceback.print_exc()
-            continue
-
-    # Print summary
-    print(f"\n{'=' * 80}")
-    print(f"STDN Generation Completed: {datetime.now()}")
-    print(f"{'=' * 80}\n")
-
-    print(f"Successfully processed: {len(results)}/{len(technologies)} technologies")
-
-    if results:
-        print(f"\n✓ Output saved to: {orchestrator.output_file}")
-        if enable_debate and save_transcripts:
-            print(f"✓ Debate transcripts saved to: ./src/stdn_agentic/debate_transcripts/results/")
-    else:
-        print("\nWarning: No technologies were successfully processed.")
-
-    print(f"\nUsage: {usage}")
-
-    return results
-
-
-# ============================================================================
-# Country Data Generation
-# ============================================================================
-
-
-async def generate_country_data(
-    config: ConfigModel,
-) -> None:
-    """
-    Generate or update country data repository.
-
-    Args:
-        config: Configuration model with country generation settings
-    """
-    print(f"\nGenerating country data repository in {config.country_data_mode.upper()} mode...")
-
-    # Import here to avoid circular dependency
-    from stdn_agentic.data import CountryDataRepository
-
-    repository = CountryDataRepository(config)
-    await repository.generate_country_data(
-        output_file=config.materials_top_countries_repository,
-        mode=config.country_data_mode,
-        specific_materials=config.materials_to_update,
+    # Run the pipeline (handles everything internally)
+    results = await orchestrator.run_pipeline(
+        technologies=technologies,
+        role="supply chain analyst",
+        domain="technology",
     )
 
-    print("Country data generation complete!")
+    return results
 
 
 # ============================================================================
@@ -261,12 +164,11 @@ def main():
     Handles:
     - Configuration file discovery
     - Command-line argument parsing
-    - Optional country data generation
     - Technology processing orchestration
     """
     # Setup argument parser
     parser = argparse.ArgumentParser(
-        description=("Create STDNs based on a list of technologies using Pydantic AI agents")
+        description="Create STDNs based on a list of technologies using Pydantic AI agents"
     )
 
     parser.add_argument(
@@ -275,26 +177,6 @@ def main():
         type=str,
         required=False,
         help="JSON configuration file with technology list, model, and output settings",
-    )
-
-    parser.add_argument(
-        "--generate-countries",
-        action="store_true",
-        help="Generate country data repository before processing technologies",
-    )
-
-    parser.add_argument(
-        "--country-mode",
-        type=str,
-        choices=["full", "incremental", "update"],
-        help="Country generation mode: full (rebuild), incremental (add new), update (specific materials)",
-    )
-
-    parser.add_argument(
-        "--update-materials",
-        type=str,
-        nargs="+",
-        help="Specific materials to update for --country-mode update",
     )
 
     args = parser.parse_args()
@@ -313,75 +195,38 @@ def main():
         config_data = validate_config(config_data)
     except Exception as e:
         print(f"Error loading configuration: {e}")
+        import traceback
+
+        traceback.print_exc()
         return 1
-
-    # Override config with CLI arguments
-    if args.country_mode:
-        config_data["country_data_mode"] = args.country_mode
-
-    if args.update_materials:
-        config_data["materials_to_update"] = args.update_materials
-
-    if args.generate_countries:
-        config_data["generate_country_data"] = True
 
     # Create config model
     try:
         config = ConfigModel(**config_data)
     except Exception as e:
         print(f"Error validating configuration: {e}")
+        import traceback
+
+        traceback.print_exc()
         return 1
-
-    # Generate country data if requested
-    if config.generate_country_data:
-        try:
-            asyncio.run(generate_country_data(config))
-        except Exception as e:
-            print(f"Error during country data generation: {e}")
-            return 1
-
-        # If only generating countries, exit
-        if not find_config_file(config.import_tech_list).exists():
-            print("No technology list found. Country data generation complete.")
-            return 0
 
     # Process all technologies
     try:
         results = asyncio.run(process_all_technologies(config))
-        if not results:
-            print("Warning: No technologies were successfully processed.")
+
+        if results["successful"] == 0:
+            print("\nWarning: No technologies were successfully processed.")
             return 1
+
+        print(f"\n✓ Successfully processed {results['successful']}/{results['total']} technologies")
+        return 0
+
     except Exception as e:
-        print(f"Error during technology processing: {e}")
+        print(f"\nError during technology processing: {e}")
+        import traceback
+
+        traceback.print_exc()
         return 1
-
-    print(f"✓ Successfully processed {len(results)} technologies")
-    return 0
-
-
-# ============================================================================
-# Utility Functions
-# ============================================================================
-
-
-def tech_list_exists(tech_list_path: str) -> bool:
-    """
-    Check if technology list file exists and is not empty.
-
-    Args:
-        tech_list_path: Path to technology list CSV
-
-    Returns:
-        True if file exists and has content, False otherwise
-    """
-    if not os.path.exists(tech_list_path):
-        return False
-
-    try:
-        df = pd.read_csv(tech_list_path)
-        return len(df) > 0
-    except Exception:
-        return False
 
 
 if __name__ == "__main__":

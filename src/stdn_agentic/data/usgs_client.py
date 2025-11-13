@@ -71,27 +71,74 @@ class USGSClient:
             >>> if countries is not None:
             ...     print(countries['country'].tolist())
         """
+
+        # ========================================================================
+        # DEBUG: Connection and table visibility check
+        # ========================================================================
+        print(f"\n🔍 DEBUG query_top_countries:")
+        print(f"  Material: {material}")
+        print(f"  Years: src_year={src_year}, meas_year={meas_year}")
+        print(f"  Connection object: {self.connection}")
+        print(f"  Database path: {self.database_path}")
+
+        # Verify table is visible through this connection
+        try:
+            tables = self.connection.execute("SHOW TABLES").fetchall()
+            print(f"  Tables visible: {tables}")
+
+            if not tables:
+                print(f"  ❌ WARNING: No tables visible in connection!")
+                # Try to reconnect
+                print(f"  Attempting to reconnect...")
+                self.connection = duckdb.connect(str(self.database_path))
+                tables = self.connection.execute("SHOW TABLES").fetchall()
+                print(f"  After reconnect, tables: {tables}")
+
+        except Exception as e:
+            print(f"  ❌ ERROR: Can't see tables: {e}")
+            print(f"  Attempting to reconnect...")
+            try:
+                self.connection = duckdb.connect(str(self.database_path))
+                tables = self.connection.execute("SHOW TABLES").fetchall()
+                print(f"  After reconnect, tables: {tables}")
+            except Exception as e2:
+                print(f"  ❌ Reconnect failed: {e2}")
+                return None
+
+        # ========================================================================
+        # Main Query
+        # ========================================================================
         query = f"""
-        SELECT w.country
-        FROM world_mineral_commodity_report w
-        WHERE w.meas_yr IS NOT NULL
-            AND w.meas_yr = {meas_year}
-            AND w.src_yr = {src_year}
-            AND UPPER(w.commodity) = '{material.upper()}'
-            AND value_type = 'Number'
-            AND UPPER(meas_type) = 'PRODUCTION'
-            AND UPPER(country) NOT LIKE 'WORLD%'
-            AND UPPER(country) NOT LIKE 'OTHER%'
-            AND UPPER(country) NOT LIKE 'TOTAL%'
-        ORDER BY CAST(w.value AS NUMERIC) DESC
-        LIMIT {self.top_n}
-        """
+            SELECT w.COUNTRY as country
+            FROM world_mineral_commodity_report w
+            WHERE w.MEAS_YR IS NOT NULL
+                AND w.MEAS_YR = {meas_year}
+                AND w.SRC_YR = {src_year}
+                AND UPPER(w.COMMODITY) = '{material.upper()}'
+                AND value_type = 'Number'
+                AND UPPER(MEAS_TYPE) = 'PRODUCTION'
+                AND UPPER(COUNTRY) NOT LIKE 'WORLD%'
+                AND UPPER(COUNTRY) NOT LIKE 'OTHER%'
+                AND UPPER(COUNTRY) NOT LIKE 'TOTAL%'
+            ORDER BY CAST(w.VALUE AS NUMERIC) DESC
+            LIMIT {self.top_n}
+            """
+
+        print(f"\n  SQL Query:")
+        print(f"  {query}")
 
         try:
             result = self.connection.sql(query).df()
+            print(f"  Query result: {len(result)} rows")
+            if len(result) > 0:
+                print(f"  Top countries: {result['country'].tolist()}")
             return result if len(result) > 0 else None
+
         except Exception as e:
-            print(f"USGS query failed for {material}: {e}")
+            print(f"  ❌ USGS query failed for {material}: {e}")
+            import traceback
+
+            traceback.print_exc()
             return None
 
     def query_world_totals(self, material: str, src_year: int, meas_year: int) -> Dict[str, float]:
@@ -148,17 +195,12 @@ class USGSClient:
 
         Returns:
             List of production records with meas_type, meas_unit, value
-
-        Example:
-            >>> details = client.query_country_details("Lithium", "Chile", 2025, 2024)
-            >>> for record in details:
-            ...     print(f"{record['meas_type']}: {record['value']} {record['meas_unit']}")
         """
         query = f"""
         SELECT meas_type, meas_unit, value
         FROM world_mineral_commodity_report
         WHERE meas_yr = {meas_year}
-            AND src_year = {src_year}
+            AND src_yr = {src_year}    # ✅ FIXED - was src_year, should be src_yr
             AND UPPER(commodity) = '{material.upper()}'
             AND UPPER(country) = '{country.upper()}'
             AND value_type = 'Number'
