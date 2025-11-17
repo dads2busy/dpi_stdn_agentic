@@ -1,5 +1,5 @@
 """
-Multi-agent debate system for STDN (Supply Technology Dependency Network)
+Multi-agent debate system for STDN (Supply Technology Dependency Network).
 
 This module implements an enhanced debate functionality for achieving consensus
 between multiple agents analyzing technology components and materials.
@@ -12,22 +12,24 @@ Key enhancements:
 - Confidence-weighted consensus building
 """
 
+from __future__ import annotations
+
 import logging
 from collections import Counter, defaultdict
 from dataclasses import dataclass
-from typing import Any, Dict, List, Optional, Set
+from typing import Any, Dict, List, Optional
 
 logger = logging.getLogger(__name__)
 
 
 # ============================================================================
-# Data Models
+# Data Structures
 # ============================================================================
 
 
 @dataclass
 class AgentProposal:
-    """A component/material proposal from an agent"""
+    """A component/material proposal from an agent."""
 
     agent_id: str
     component_name: str
@@ -38,7 +40,7 @@ class AgentProposal:
 
 @dataclass
 class DebateRound:
-    """Results from one round of debate"""
+    """Results from one round of debate."""
 
     round_number: int
     proposals: List[AgentProposal]
@@ -48,7 +50,7 @@ class DebateRound:
 
 
 # ============================================================================
-# Enhanced Multi-Agent Debater
+# MultiAgentDebater
 # ============================================================================
 
 
@@ -62,17 +64,6 @@ class MultiAgentDebater:
     - Peer support boosts consensus formation
     - Adaptive voting thresholds based on convergence score
     - Confidence-weighted decision making
-
-    The debate system runs iterative rounds where:
-    - Agents propose components/materials with confidence scores
-    - Agents generate critiques that influence subsequent rounds
-    - Convergence is measured with enhanced normalization
-    - Debate stops when convergence threshold is reached or max rounds exhausted
-
-    This is particularly valuable for government/policy work where:
-    - Multiple perspectives improve accuracy
-    - Transparent reasoning is required
-    - Dissenting views must be documented
     """
 
     def __init__(
@@ -81,15 +72,19 @@ class MultiAgentDebater:
         convergence_threshold: float = 0.8,
         confidence_weight: float = 0.3,
         peer_support_boost: float = 0.15,
-    ):
+    ) -> None:
         """
         Initialize the enhanced multi-agent debater.
 
         Args:
-            max_rounds: Maximum number of debate rounds (default: 3)
-            convergence_threshold: Stop debate when convergence >= this value (default: 0.8)
-            confidence_weight: Weight for confidence in voting (default: 0.3)
-            peer_support_boost: Confidence boost per supporting agent (default: 0.15)
+            max_rounds:
+                Maximum number of debate rounds (default: 3).
+            convergence_threshold:
+                Stop debate when convergence >= this value (default: 0.8).
+            confidence_weight:
+                Weight for confidence in voting (0–1, default: 0.3).
+            peer_support_boost:
+                Confidence boost per supporting agent (default: 0.15).
         """
         self.max_rounds = max_rounds
         self.convergence_threshold = convergence_threshold
@@ -97,292 +92,487 @@ class MultiAgentDebater:
         self.peer_support_boost = peer_support_boost
         self.debate_history: List[DebateRound] = []
 
+    # ------------------------------------------------------------------#
+    # Normalization helpers
+    # ------------------------------------------------------------------#
+
     def normalize_component_name(self, name: str) -> str:
-        """
-        Normalize component names for better comparison.
+        """Normalize component name using a rule-based approach."""
+        if not name:
+            return ""
 
-        Removes common variations and trailing qualifiers to detect
-        when agents are proposing the same component with different names.
-
-        Args:
-            name: Component name to normalize
-
-        Returns:
-            Normalized component name
-        """
-        # Remove common variations
         normalized = name.lower().strip()
         normalized = normalized.replace("-", " ").replace("_", " ")
+        normalized = " ".join(normalized.split())
 
-        # Remove trailing qualifiers (system, module, unit, assembly, etc.)
-        stopwords = [
+        qualifiers = [
             "system",
             "module",
             "unit",
             "assembly",
-            "subsystem",
-            "array",
-            "pack",
-            "device",
             "component",
+            "subsystem",
+            "package",
+            "chipset",
         ]
         words = normalized.split()
+        while len(words) > 1 and words[-1] in qualifiers:
+            words.pop()
 
-        if len(words) > 1 and words[-1] in stopwords:
-            normalized = " ".join(words[:-1])
+        return " ".join(words)
 
-        return normalized
-
-    def calculate_peer_support(
-        self, component: str, proposals: List[Dict], exclude_agent: Optional[str] = None
-    ) -> int:
+    async def normalize_components_with_llm(
+        self,
+        component_names: List[str],
+        component_agent: Any,
+        deps: Any,
+    ) -> Dict[str, str]:
         """
-        Calculate how many OTHER agents support this component.
+        Use LLM to normalize component names semantically.
+
+        Falls back to rule-based normalization if the LLM call fails.
+        """
+        from pydantic import BaseModel, Field
+        from pydantic_ai import Agent
+
+        unique_names = list(set(component_names))
+        if len(unique_names) <= 1:
+            return {name: self.normalize_component_name(name) for name in unique_names}
+
+        class ComponentMapping(BaseModel):
+            mappings: Dict[str, str] = Field(description="Component name mappings")
+
+        names_list = "\n".join(f"{i + 1}. {name}" for i, name in enumerate(unique_names))
+        prompt = f"""Map duplicate/similar component names to canonical names.
+
+NAMES:
+{names_list}
+
+RULES:
+- Treat names as the same if they differ only by spacing, prefixes/suffixes,
+  or generic qualifiers like "module", "system", "unit", "assembly".
+- Treat names as different if they represent clearly different functions.
+
+Return JSON with a single field "mappings" mapping each original name
+to its canonical form.
+"""
+
+        try:
+            agent = Agent(
+                model=deps.model,
+                output_type=ComponentMapping,
+                deps_type=type(deps),
+                system_prompt="Normalize component names to canonical forms.",
+            )
+
+            result = await agent.run(prompt, deps=deps)
+            mapping = dict(result.output.mappings)
+
+            # Ensure complete coverage
+            for name in unique_names:
+                mapping.setdefault(name, self.normalize_component_name(name))
+
+            logger.info("✓ LLM normalization produced %d unique names", len(set(mapping.values())))
+            return mapping
+        except Exception as exc:  # noqa: BLE001
+            logger.warning("LLM normalization failed: %s", exc)
+            return {name: self.normalize_component_name(name) for name in unique_names}
+
+    # ------------------------------------------------------------------#
+    # Internal helpers for proposals
+    # ------------------------------------------------------------------#
+
+    @staticmethod
+    def _get_prop_value(prop: Any, key: str, default: Any = None) -> Any:
+        """Safely extract a field from either dict-like or AgentProposal."""
+        if isinstance(prop, AgentProposal):
+            return getattr(prop, key, default)
+        if isinstance(prop, dict):
+            return prop.get(key, default)
+        return default
+
+    # ------------------------------------------------------------------#
+    # Convergence and support
+    # ------------------------------------------------------------------#
+
+    def calculate_peer_support(self, component_name: str, proposals: List[Dict[str, Any]]) -> int:
+        """
+        Calculate how many distinct agents support a (normalized) component.
 
         Args:
-            component: Component name to check
-            proposals: All agent proposals
-            exclude_agent: Optional agent ID to exclude from count
+            component_name:
+                Component name to evaluate (may be unnormalized).
+            proposals:
+                List of proposal dicts or AgentProposal objects.
 
         Returns:
-            Number of supporting agents (excluding specified agent)
+            Count of distinct agents proposing an equivalent normalized name.
         """
-        normalized = self.normalize_component_name(component)
-        support_count = 0
+        target = self.normalize_component_name(component_name)
+        agents: set[str] = set()
 
-        for proposal in proposals:
-            # Skip if this is the excluded agent
-            if exclude_agent and proposal.get("agent_id") == exclude_agent:
+        for prop in proposals:
+            agent_id = self._get_prop_value(prop, "agent_id", "unknown")
+            comp = (
+                self._get_prop_value(prop, "normalized_component")
+                or self._get_prop_value(prop, "component")
+                or self._get_prop_value(prop, "component_name")
+                or ""
+            )
+            if self.normalize_component_name(comp) == target:
+                agents.add(agent_id)
+
+        return len(agents)
+
+    def calculate_convergence(self, proposals: List[Dict[str, Any]]) -> float:
+        """
+        Calculate convergence score using Jaccard similarity on normalized names.
+
+        Convergence is the average Jaccard similarity between all agent pairs.
+        """
+        if not proposals:
+            return 0.0
+
+        agent_sets: Dict[str, set[str]] = {}
+
+        for prop in proposals:
+            agent_id = self._get_prop_value(prop, "agent_id", "unknown")
+            name = (
+                self._get_prop_value(prop, "component")
+                or self._get_prop_value(prop, "component_name")
+                or ""
+            )
+            norm = self.normalize_component_name(name)
+            if not norm:
                 continue
 
-            prop_normalized = self.normalize_component_name(
-                proposal.get("component", proposal.get("component_name", ""))
-            )
+            agent_sets.setdefault(agent_id, set()).add(norm)
 
-            # If normalized names match, count as support
-            if prop_normalized == normalized:
-                support_count += 1
+        if not agent_sets:
+            return 0.0
 
-        return support_count
+        if len(agent_sets) == 1:
+            return 1.0
 
-    def generate_critiques_with_influence(self, proposals: List[Dict], round_num: int) -> List[str]:
+        agents = list(agent_sets.keys())
+        similarities: List[float] = []
+
+        for i in range(len(agents)):
+            for j in range(i + 1, len(agents)):
+                set_i = agent_sets[agents[i]]
+                set_j = agent_sets[agents[j]]
+                union = len(set_i | set_j)
+                if union == 0:
+                    continue
+                intersection = len(set_i & set_j)
+                similarities.append(intersection / union)
+
+        return sum(similarities) / len(similarities) if similarities else 0.0
+
+    def calculate_convergence_semantic(self, proposals: List[Dict[str, Any]]) -> float:
         """
-        Generate critiques that actively influence next round.
+        Calculate convergence score using semantically normalized component names.
 
-        Critiques include:
-        - Consensus signals for highly-supported components
-        - Warnings for isolated proposals
-        - Round-specific guidance for convergence
-
-        Args:
-            proposals: All proposals from current round
-            round_num: Current round number
-
-        Returns:
-            List of critique strings to provide to agents
+        This mirrors `calculate_convergence` but prefers the `normalized_component`
+        field on each proposal, falling back to raw names when needed.
         """
-        critiques = []
-        component_support = defaultdict(list)
+        if not proposals:
+            return 0.0
 
-        # Group proposals by normalized name
+        agent_sets: Dict[str, set[str]] = {}
+
         for prop in proposals:
-            comp_name = prop.get("component", prop.get("component_name", ""))
-            norm_name = self.normalize_component_name(comp_name)
-            component_support[norm_name].append(prop)
-
-        # Generate critiques based on support levels
-        for norm_name, supporting_props in component_support.items():
-            support_count = len(supporting_props)
-            avg_confidence = sum(p.get("confidence", 0.8) for p in supporting_props) / support_count
-
-            if support_count >= 2:
-                # Strong consensus - encourage keeping
-                original_names = [
-                    p.get("component", p.get("component_name", "")) for p in supporting_props
-                ]
-                critiques.append(
-                    f"✓ CONSENSUS: '{original_names[0]}' has {support_count} agent(s) "
-                    f"support (avg confidence: {avg_confidence:.2f}). "
-                    f"RECOMMENDATION: Include in final list."
-                )
-            elif support_count == 1:
-                # Isolated proposal - question it
-                prop = supporting_props[0]
-                agent_id = prop.get("agent_id", "unknown")
-                comp_name = prop.get("component", prop.get("component_name", ""))
-                conf = prop.get("confidence", 0.8)
-
-                critiques.append(
-                    f"⚠️ ISOLATED: '{comp_name}' proposed by {agent_id} "
-                    f"but no other agents support it (confidence: {conf:.2f}). "
-                    f"RECOMMENDATION: Provide stronger justification or consider removing."
-                )
-
-        # Add round-specific guidance
-        if round_num == 1:
-            critiques.append(
-                f"\n🎯 ROUND {round_num + 1} GUIDANCE: "
-                f"Review peer proposals and either support strong candidates or "
-                f"provide specific reasoning why your unique proposals are essential."
+            agent_id = self._get_prop_value(prop, "agent_id", "unknown")
+            name = (
+                self._get_prop_value(prop, "normalized_component")
+                or self._get_prop_value(prop, "component")
+                or self._get_prop_value(prop, "component_name")
+                or ""
             )
-        elif round_num >= 2:
+            norm = self.normalize_component_name(name)
+            if not norm:
+                continue
+
+            agent_sets.setdefault(agent_id, set()).add(norm)
+
+        if not agent_sets:
+            return 0.0
+
+        if len(agent_sets) == 1:
+            return 1.0
+
+        agents = list(agent_sets.keys())
+        similarities: List[float] = []
+
+        for i in range(len(agents)):
+            for j in range(i + 1, len(agents)):
+                set_i = agent_sets[agents[i]]
+                set_j = agent_sets[agents[j]]
+                union = len(set_i | set_j)
+                if union == 0:
+                    continue
+                intersection = len(set_i & set_j)
+                similarities.append(intersection / union)
+
+        return sum(similarities) / len(similarities) if similarities else 0.0
+
+    # ------------------------------------------------------------------#
+    # Critiques and consensus
+    # ------------------------------------------------------------------#
+
+    def generate_critiques_with_influence(
+        self,
+        proposals: List[Dict[str, Any]],
+        roundnum: int,
+    ) -> List[str]:
+        """
+        Generate human-readable critique strings that reflect peer influence.
+
+        The output is a flat list of critique messages that can be fed back
+        into the next round prompts.
+        """
+        critiques: List[str] = []
+
+        # Compute normalized components and support
+        norm_to_props: Dict[str, List[Dict[str, Any]]] = defaultdict(list)
+        for prop in proposals:
+            name = (
+                self._get_prop_value(prop, "normalized_component")
+                or self._get_prop_value(prop, "component")
+                or self._get_prop_value(prop, "component_name")
+                or ""
+            )
+            agent_id = self._get_prop_value(prop, "agent_id", "unknown")
+            confidence = float(self._get_prop_value(prop, "confidence", 0.8))
+            norm = self.normalize_component_name(name)
+            if not norm:
+                continue
+            norm_to_props[norm].append(
+                {
+                    "agent_id": agent_id,
+                    "name": name,
+                    "norm": norm,
+                    "confidence": confidence,
+                },
+            )
+
+        if not norm_to_props:
             critiques.append(
-                f"\n🎯 ROUND {round_num + 1} GUIDANCE: "
-                f"Converge toward consensus. Drop weakly-justified unique proposals. "
-                f"Support components with peer agreement."
+                "No strong proposals emerged; agents should propose a clear, "
+                "well-justified component set in the next round.",
+            )
+            return critiques
+
+        num_agents = len({p["agent_id"] for props in norm_to_props.values() for p in props})
+        majority_threshold = max(2, int(0.67 * max(num_agents, 1))) if num_agents > 1 else 1
+
+        # Consensus components
+        for norm_name, props_for_name in norm_to_props.items():
+            supporters = {p["agent_id"] for p in props_for_name}
+            avg_conf = sum(p["confidence"] for p in props_for_name) / len(props_for_name)
+
+            if len(supporters) >= majority_threshold:
+                critiques.append(
+                    f"Strong consensus on '{norm_name}': {len(supporters)} agents support it "
+                    f"with average confidence {avg_conf:.2f}. This should be preserved.",
+                )
+
+        # Isolated / weak proposals
+        for norm_name, props_for_name in norm_to_props.items():
+            supporters = {p["agent_id"] for p in props_for_name}
+            avg_conf = sum(p["confidence"] for p in props_for_name) / len(props_for_name)
+
+            if len(supporters) == 1:
+                critiques.append(
+                    f"Isolated proposal '{norm_name}' appears only once with "
+                    f"average confidence {avg_conf:.2f}; reconsider unless critically justified.",
+                )
+
+        # General guidance (round-dependent but intentionally not referencing future rounds)
+        if roundnum == 1:
+            critiques.append(
+                "Focus on aligning on obvious shared components while dropping clearly "
+                "idiosyncratic proposals.",
+            )
+        elif roundnum >= 2:
+            critiques.append(
+                "Consolidate around components that have multi-agent support and high confidence, "
+                "and prune uncertain or unsupported components.",
             )
 
         return critiques
 
-    def calculate_convergence(self, proposals: List[Dict]) -> float:
+    def build_adaptive_consensus(
+        self,
+        proposals: List[Dict[str, Any]],
+        convergence_score: float,
+    ) -> List[str]:
         """
-        Calculate convergence score with enhanced normalization.
+        Build consensus components using adaptive thresholds and confidence weighting.
 
-        Uses normalized component names to detect agreement even
-        with minor naming variations.
-
-        Args:
-            proposals: All proposals from current round
-
-        Returns:
-            Convergence score (0.0 to 1.0)
+        This version works on raw component names and rule-based normalization.
         """
-        if len(proposals) == 0:
-            return 0.0
+        if not proposals:
+            return []
 
-        # Normalize all component names
-        normalized_components = [
-            self.normalize_component_name(p.get("component", p.get("component_name", "")))
-            for p in proposals
-        ]
+        norm_to_confidences: Dict[str, List[float]] = defaultdict(list)
+        norm_to_agents: Dict[str, set[str]] = defaultdict(set)
 
-        # Count occurrences of each normalized component
-        component_counts = Counter(normalized_components)
+        for prop in proposals:
+            agent_id = self._get_prop_value(prop, "agent_id", "unknown")
+            name = (
+                self._get_prop_value(prop, "component")
+                or self._get_prop_value(prop, "component_name")
+                or ""
+            )
+            norm = self.normalize_component_name(name)
+            if not norm:
+                continue
 
-        # Calculate weighted convergence
-        # Components with more support contribute more to convergence
-        total_support = sum(component_counts.values())
-        weighted_support = sum(count**2 for count in component_counts.values())
+            confidence = float(self._get_prop_value(prop, "confidence", 0.8))
+            norm_to_confidences[norm].append(confidence)
+            norm_to_agents[norm].add(agent_id)
 
-        # Normalize by theoretical maximum (all agents agree on everything)
-        max_possible = len(proposals) ** 2
+        if not norm_to_confidences:
+            return []
 
-        convergence = weighted_support / max_possible if max_possible > 0 else 0.0
+        num_agents = max(len(agent_set) for agent_set in norm_to_agents.values())
 
-        return convergence
+        # Adaptive support threshold: strict at high convergence, lenient at low.
+        if convergence_score >= 0.7:
+            min_support_frac = 2.0 / 3.0
+        elif convergence_score <= 0.2:
+            min_support_frac = 1.0 / 3.0
+        else:
+            # Linear interpolation between 1/3 and 2/3
+            frac = (convergence_score - 0.2) / (0.7 - 0.2)
+            min_support_frac = (1.0 / 3.0) + frac * (1.0 / 3.0)
 
-    async def run_debate(
-        self, technology: str, initial_proposals: Dict[str, List[Dict]], component_agent, deps
-    ) -> Dict:
+        min_support = max(1, int(round(min_support_frac * max(num_agents, 1))))
+
+        scores: Dict[str, float] = {}
+
+        for norm_name, confs in norm_to_confidences.items():
+            support = len(norm_to_agents[norm_name])
+            avg_conf = sum(confs) / len(confs)
+            support_frac = support / max(num_agents, 1)
+
+            # Combined score with peer support boost
+            score = (
+                (1.0 - self.confidence_weight) * support_frac
+                + self.confidence_weight * avg_conf
+                + self.peer_support_boost * (support - 1)
+            )
+
+            if support >= min_support:
+                scores[norm_name] = score
+
+        # Sort by score descending and return normalized component names
+        consensus = [name for name, _ in sorted(scores.items(), key=lambda kv: kv[1], reverse=True)]
+        return consensus
+
+    def build_adaptive_consensus_semantic(
+        self,
+        proposals: List[Dict[str, Any]],
+        convergence_score: float,
+    ) -> List[str]:
         """
-        Run multi-round debate with critique-driven convergence.
+        Build consensus using semantically normalized component names.
 
-        Args:
-            technology: Technology name
-            initial_proposals: Initial agent proposals {agent_id: [proposals]}
-            component_agent: Agent to use for refinement
-            deps: Dependencies
-
-        Returns:
-            Dict with final consensus components and metadata
+        This is analogous to `build_adaptive_consensus` but uses the
+        `normalized_component` field when available.
         """
-        print(f"\n{'=' * 80}")
-        print(f"DEBATE: {technology}")
-        print(f"{'=' * 80}\n")
+        if not proposals:
+            return []
 
-        current_proposals = initial_proposals
+        norm_to_confidences: Dict[str, List[float]] = defaultdict(list)
+        norm_to_agents: Dict[str, set[str]] = defaultdict(set)
 
-        for round_num in range(self.max_rounds):
-            # Flatten proposals for analysis
-            all_proposals = [
-                {**prop, "agent_id": agent_id}
-                for agent_id, props in current_proposals.items()
-                for prop in props
-            ]
+        for prop in proposals:
+            agent_id = self._get_prop_value(prop, "agent_id", "unknown")
+            name = (
+                self._get_prop_value(prop, "normalized_component")
+                or self._get_prop_value(prop, "component")
+                or self._get_prop_value(prop, "component_name")
+                or ""
+            )
+            norm = self.normalize_component_name(name)
+            if not norm:
+                continue
 
-            # Calculate convergence
-            convergence = self.calculate_convergence(all_proposals)
+            confidence = float(self._get_prop_value(prop, "confidence", 0.8))
+            norm_to_confidences[norm].append(confidence)
+            norm_to_agents[norm].add(agent_id)
 
-            print(f"ROUND {round_num + 1}: ", end="")
+        if not norm_to_confidences:
+            return []
 
-            if convergence >= self.convergence_threshold:
-                print(f"CONVERGENCE REACHED ({convergence * 100:.1f}%)")
-                break
-            else:
-                print(f"Convergence: {convergence * 100:.1f}%")
+        num_agents = max(len(agent_set) for agent_set in norm_to_agents.values())
 
-            # Generate critiques for next round
-            if round_num < self.max_rounds - 1:
-                critiques = self.generate_critiques_with_influence(all_proposals, round_num)
+        if convergence_score >= 0.7:
+            min_support_frac = 2.0 / 3.0
+        elif convergence_score <= 0.2:
+            min_support_frac = 1.0 / 3.0
+        else:
+            frac = (convergence_score - 0.2) / (0.7 - 0.2)
+            min_support_frac = (1.0 / 3.0) + frac * (1.0 / 3.0)
 
-                # Run next round with critiques
-                current_proposals = await self._run_debate_round(
-                    technology=technology,
-                    previous_proposals=all_proposals,
-                    critiques=critiques,
-                    component_agent=component_agent,
-                    deps=deps,
-                    round_num=round_num + 1,
-                )
+        min_support = max(1, int(round(min_support_frac * max(num_agents, 1))))
 
-        # Build final consensus
-        final_proposals = [
-            {**prop, "agent_id": agent_id}
-            for agent_id, props in current_proposals.items()
-            for prop in props
-        ]
+        scores: Dict[str, float] = {}
 
-        consensus = self._build_adaptive_consensus(final_proposals, convergence)
+        for norm_name, confs in norm_to_confidences.items():
+            support = len(norm_to_agents[norm_name])
+            avg_conf = sum(confs) / len(confs)
+            support_frac = support / max(num_agents, 1)
 
-        return {
-            "technology": technology,
-            "components": consensus,
-            "confidence": convergence,
-            "rounds": round_num + 1,
-        }
+            score = (
+                (1.0 - self.confidence_weight) * support_frac
+                + self.confidence_weight * avg_conf
+                + self.peer_support_boost * (support - 1)
+            )
 
-    async def _run_debate_round(
+            if support >= min_support:
+                scores[norm_name] = score
+
+        consensus = [name for name, _ in sorted(scores.items(), key=lambda kv: kv[1], reverse=True)]
+        return consensus
+
+    # ------------------------------------------------------------------#
+    # Round execution and full debate
+    # ------------------------------------------------------------------#
+
+    async def run_debate_round(
         self,
         technology: str,
-        previous_proposals: List[Dict],
+        previous_proposals: List[Dict[str, Any]],
         critiques: List[str],
-        component_agent,
-        deps,
-        round_num: int,
-    ) -> Dict[str, List[Dict]]:
+        component_agent: Any,
+        deps: Any,
+        roundnum: int,
+    ) -> Dict[str, List[Dict[str, Any]]]:
         """
         Run a single debate round with critique feedback.
 
-        Args:
-            technology: Technology name
-            previous_proposals: Proposals from previous round
-            critiques: Generated critiques
-            component_agent: Agent for refinement
-            deps: Dependencies
-            round_num: Current round number
-
         Returns:
-            Dict mapping agent_id to refined proposals
+            Dict mapping agent_id -> list of proposal dicts.
         """
-
-        # Format previous proposals for context
         prev_context = "\n".join(
-            [
-                f"- {p['agent_id']}: {p.get('component', p.get('component_name', ''))} "
-                f"(confidence: {p.get('confidence', 0.8):.2f})"
-                for p in previous_proposals
-            ]
+            f"- {self._get_prop_value(p, 'agent_id', 'unknown')}: "
+            f"{self._get_prop_value(p, 'component') or self._get_prop_value(p, 'component_name', '')} "
+            f"(confidence={self._get_prop_value(p, 'confidence', 0.8):.2f})"
+            for p in previous_proposals
         )
-
         critique_text = "\n".join(critiques)
 
-        new_proposals = {}
+        new_proposals: Dict[str, List[Dict[str, Any]]] = {}
 
-        # Each agent refines based on critiques
-        for agent_num in range(1, 4):  # 3 agents
-            agent_id = f"Agent_{agent_num}"
+        # Use 3 agents with simple persona labels
+        for agent_num in range(1, 4):
+            agent_id = f"Agent{agent_num}"
+            prompt = f"""DEBATE ROUND {roundnum}
 
-            prompt = f"""DEBATE ROUND {round_num}: Refine component extraction for {technology}
+Technology: {technology}
 
 PREVIOUS ROUND PROPOSALS:
 {prev_context}
@@ -391,106 +581,197 @@ PEER CRITIQUES AND GUIDANCE:
 {critique_text}
 
 YOUR TASK:
-1. Review peer proposals and critiques
-2. Support strong consensus candidates
-3. Drop isolated proposals unless critically justified
-4. Propose refined component list
+1. Review peer proposals and critiques.
+2. Support strong consensus candidates.
+3. Drop isolated proposals unless critically justified.
+4. Propose a refined component list.
 
-Extract the primary components (aim for convergence with peers)."""
-
+Return only the updated list of primary components.
+"""
             try:
                 result = await component_agent.run(prompt, deps=deps, model=deps.model)
-
                 if result and result.output:
-                    components = (
-                        result.output.component_list
-                        if hasattr(result.output, "component_list")
-                        else result.output
-                    )
+                    if hasattr(result.output, "component_list"):
+                        components = result.output.component_list
+                    else:
+                        components = result.output
+                else:
+                    components = []
 
-                    new_proposals[agent_id] = [
-                        {
-                            "component": comp,
-                            "confidence": 0.85,  # Could extract from result
-                            "reasoning": "Refined based on debate",
-                        }
-                        for comp in components
-                    ]
-            except Exception as e:
-                logger.error(f"Error in debate round {round_num} for {agent_id}: {e}")
-                # Keep previous proposals if refinement fails
-                prev_agent_proposals = [
-                    p for p in previous_proposals if p.get("agent_id") == agent_id
+                new_proposals[agent_id] = [
+                    {
+                        "agent_id": agent_id,
+                        "component": comp,
+                        "confidence": 0.85,
+                        "reasoning": "Refined based on debate feedback.",
+                        "round": roundnum,
+                    }
+                    for comp in components
                 ]
-                new_proposals[agent_id] = prev_agent_proposals
+            except Exception as exc:  # noqa: BLE001
+                logger.error("Error in debate round %s for %s: %s", roundnum, agent_id, exc)
+                # Fall back to previous proposals for this agent, if any
+                prev_for_agent = [
+                    p for p in previous_proposals if self._get_prop_value(p, "agent_id") == agent_id
+                ]
+                new_proposals[agent_id] = prev_for_agent
 
         return new_proposals
 
-    def _build_adaptive_consensus(
-        self, proposals: List[Dict], convergence_score: float
-    ) -> List[str]:
+    async def run_debate(
+        self,
+        technology: str,
+        initial_proposals: Dict[str, List[Dict[str, Any]]],
+        component_agent: Any,
+        deps: Any,
+    ) -> Dict[str, Any]:
         """
-        Build consensus with adaptive voting threshold.
-
-        Lower convergence = more inclusive threshold to avoid
-        extracting too few components.
+        Run multi-round debate with LLM-based semantic normalization.
 
         Args:
-            proposals: All final proposals
-            convergence_score: Final convergence score
+            technology:
+                Technology name.
+            initial_proposals:
+                Mapping agent_id -> list of proposal dicts.
+            component_agent:
+                Agent to use for refinement and normalization.
+            deps:
+                Shared STDN dependencies (includes model name).
 
         Returns:
-            List of consensus component names
+            Dict with keys:
+                - "technology": technology name
+                - "components": list of consensus component names
+                - "confidence": final convergence score
+                - "rounds": number of rounds completed
+                - "debate_history": list of per-round metadata dicts
         """
-        # Adaptive threshold based on convergence
-        if convergence_score >= 0.7:
-            vote_threshold = 0.67  # Strong consensus required
-        elif convergence_score >= 0.4:
-            vote_threshold = 0.5  # Majority
-        elif convergence_score >= 0.2:
-            vote_threshold = 0.4  # Plurality
-        else:
-            vote_threshold = 0.33  # At least 1 of 3 agents
+        convergence = 0.0
+        rounds_completed = 0
+        debate_rounds: List[Dict[str, Any]] = []
 
-        # Count votes by normalized name
-        component_votes = defaultdict(lambda: {"count": 0, "confidence": [], "original": None})
+        print("=" * 80)
+        print(f"DEBATE: {technology}")
+        print("=" * 80)
 
-        for prop in proposals:
-            comp_name = prop.get("component", prop.get("component_name", ""))
-            norm_name = self.normalize_component_name(comp_name)
+        current_proposals: Dict[str, List[Dict[str, Any]]] = initial_proposals
 
-            component_votes[norm_name]["count"] += 1
-            component_votes[norm_name]["confidence"].append(prop.get("confidence", 0.8))
+        for roundnum in range(self.max_rounds):
+            print(f"ROUND {roundnum + 1}:")
 
-            # Keep first original name seen
-            if component_votes[norm_name]["original"] is None:
-                component_votes[norm_name]["original"] = comp_name
+            # Flatten proposals for analysis
+            all_proposals: List[Dict[str, Any]] = []
+            for agent_id, agent_props in current_proposals.items():
+                for prop in agent_props:
+                    if isinstance(prop, dict):
+                        p = dict(prop)
+                    else:
+                        p = {
+                            "agent_id": getattr(prop, "agent_id", agent_id),
+                            "component": getattr(prop, "component_name", ""),
+                            "confidence": getattr(prop, "confidence", 0.8),
+                            "reasoning": getattr(prop, "reasoning", ""),
+                            "round": getattr(prop, "round", roundnum),
+                        }
+                    p.setdefault("agent_id", agent_id)
+                    all_proposals.append(p)
 
-        # Calculate total agents
-        agent_ids = set(p.get("agent_id", "") for p in proposals)
-        total_agents = len(agent_ids) if agent_ids else 3
+            if not all_proposals:
+                print("  ⚠ No proposals available for this round.")
+                break
 
-        # Select components meeting threshold
-        consensus = []
+            # Collect all component names for normalization
+            all_component_names = [
+                p.get("component") or p.get("component_name", "") for p in all_proposals
+            ]
 
-        for norm_name, data in component_votes.items():
-            vote_ratio = data["count"] / total_agents
-            avg_confidence = sum(data["confidence"]) / len(data["confidence"])
+            # Use LLM normalization in later rounds or when convergence is modest
+            if roundnum == self.max_rounds - 1 or convergence >= 0.3:
+                print("  🔄 Using LLM-based semantic normalization...")
+                normalization_map = await self.normalize_components_with_llm(
+                    all_component_names,
+                    component_agent,
+                    deps,
+                )
+            else:
+                # Fast rule-based normalization for early rounds
+                normalization_map = {
+                    name: self.normalize_component_name(name) for name in all_component_names
+                }
 
-            # Weight vote by confidence
-            weighted_score = (
-                vote_ratio * (1 - self.confidence_weight) + avg_confidence * self.confidence_weight
+            # Apply normalization to all proposals
+            for prop in all_proposals:
+                original = prop.get("component") or prop.get("component_name", "")
+                norm = normalization_map.get(original, original)
+                prop["normalized_component"] = norm
+
+            # Calculate convergence using normalized names
+            convergence = self.calculate_convergence_semantic(all_proposals)
+            print(f"  Convergence: {convergence:.1%}")
+            rounds_completed = roundnum + 1
+
+            # Store round data for transcript
+            debate_rounds.append(
+                {
+                    "round_num": roundnum + 1,
+                    "convergence": convergence,
+                    "proposals": current_proposals.copy(),
+                    "rounds_completed": rounds_completed,
+                },
             )
 
-            if weighted_score >= vote_threshold:
-                consensus.append(data["original"])
+            # Stop if threshold reached
+            if convergence >= self.convergence_threshold:
+                print("  ✅ Convergence threshold reached!")
+                break
 
-        logger.info(
-            f"Consensus built: {len(consensus)} components "
-            f"(threshold: {vote_threshold:.2f}, convergence: {convergence_score:.2f})"
+            # If not last round, generate critiques and refine proposals
+            if roundnum < self.max_rounds - 1:
+                print("  Generating critiques...")
+                critiques = self.generate_critiques_with_influence(all_proposals, roundnum + 1)
+                print("  Refining proposals based on peer feedback...")
+                current_proposals = await self.run_debate_round(
+                    technology=technology,
+                    previous_proposals=all_proposals,
+                    critiques=critiques,
+                    component_agent=component_agent,
+                    deps=deps,
+                    roundnum=roundnum + 1,
+                )
+
+        # Final consensus building
+        all_final_proposals: List[Dict[str, Any]] = []
+        for agent_props in current_proposals.values():
+            all_final_proposals.extend(agent_props)
+
+        final_component_names = [
+            p.get("component") or p.get("component_name", "") for p in all_final_proposals
+        ]
+        if final_component_names:
+            print("  Building final consensus with semantic normalization...")
+            final_norm_map = await self.normalize_components_with_llm(
+                final_component_names,
+                component_agent,
+                deps,
+            )
+            for prop in all_final_proposals:
+                original = prop.get("component") or prop.get("component_name", "")
+                norm = final_norm_map.get(original, original)
+                prop["normalized_component"] = norm
+
+        consensus = self.build_adaptive_consensus_semantic(
+            all_final_proposals,
+            convergence_score=convergence,
         )
+        print(f"  Extracted {len(consensus)} components")
 
-        return sorted(consensus)
+        return {
+            "technology": technology,
+            "components": consensus,
+            "confidence": convergence,
+            "rounds": rounds_completed,
+            "debate_history": debate_rounds,
+        }
 
 
 # ============================================================================

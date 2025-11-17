@@ -11,7 +11,7 @@ producing country.
 """
 
 import os
-from typing import List
+from typing import List, Optional
 
 from pydantic import BaseModel, Field
 from pydantic_ai import Agent
@@ -24,12 +24,11 @@ from ..models import STDNDependencies
 
 
 class CountryPercentage(BaseModel):
-    """Production data for a single country"""
-
-    country: str = Field(description="Country name or code")
-    meas_unit: str = Field(description="Measurement unit (e.g., 'metric tons', 'kg', 'tonnes')")
-    amount: float = Field(description="Amount of material produced")
-    percentage: float = Field(description="Percentage of global supply produced by this country")
+    country: str
+    meas_unit: str
+    amount: float
+    percentage: float = Field(ge=0.0, le=100.0)
+    hs_code: Optional[str] = None  # ADD THIS LINE
 
 
 class CountryList(BaseModel):
@@ -90,7 +89,7 @@ def _get_configured_model() -> str:
     model = os.environ.get("STDN_MODEL")
     if model:
         return model
-    return os.environ.get("OLLAMA_MODEL", "ollama:qwen2:7b")
+    return os.environ.get("OLLAMA_MODEL", "ollama:qwen2.5:7b")
 
 
 # Initialize the country data agent
@@ -107,7 +106,7 @@ country_data_agent = Agent(
 # ============================================================================
 
 
-def get_country_data_agent() -> Agent[STDNDependencies, CountryList]:
+def get_country_data_agent(model_name: Optional[str] = None) -> Agent[STDNDependencies, CountryList]:
     """
     Get the country data extraction agent.
 

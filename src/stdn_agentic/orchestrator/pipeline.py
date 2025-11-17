@@ -87,8 +87,8 @@ class STDNOrchestrator:
         self.write_nulls = config.write_nulls_to_output
 
         # Get agents
-        self.component_agent = get_component_agent()
-        self.materials_agent = get_materials_agent()
+        self.component_agent = get_component_agent(model_name=self.deps.model)
+        self.materials_agent = get_materials_agent(model_name=self.deps.model)
 
         # Initialize checkpointing
         self.checkpoint_manager = CheckpointManager() if enable_checkpoints else None
@@ -228,7 +228,7 @@ class STDNOrchestrator:
 
             # Call materials agent with validated inputs
             result = await self.materials_agent.run(
-                materials_prompt, deps=self.deps, model=self.deps.model
+                materials_prompt, deps=self.deps
             )
 
             # VALIDATION 5: Check result validity
@@ -299,7 +299,7 @@ class STDNOrchestrator:
                     f"Extract the primary components of a {technology}. "
                     f"Perspective #{agent_num}: Focus on identifying essential subsystems and modules.",
                     deps=self.deps,
-                    model=self.deps.model,
+                    
                 )
 
                 if result and result.output:
@@ -396,16 +396,17 @@ class STDNOrchestrator:
             if not self.reporter:
                 return None
 
-            # Extract round count from debate_result
+            # Extract metadata from debate_result
             num_rounds = debate_result.get("rounds", 0)
             confidence = debate_result.get("confidence", 0.0)
+            debate_history = debate_result.get("debate_history", [])  # ← ADD THIS LINE
 
             # Build final consensus dict with proper metadata
             final_consensus = {
                 "technology": technology,
                 "components": debate_result.get("components", []),
                 "confidence": confidence,
-                "rounds": num_rounds,  # ✅ Include rounds count
+                "rounds": num_rounds,
                 "convergence_score": confidence,
             }
 
@@ -413,8 +414,8 @@ class STDNOrchestrator:
             filepath = self.reporter.save_debate_transcript(
                 technology=technology,
                 agent_responses=agent_responses,
-                debate_rounds=[],  # TODO: Could be enhanced with full round history
-                final_consensus=final_consensus,  # ✅ Now includes rounds
+                debate_history=debate_history,  # ← CHANGED: Use actual debate history
+                final_consensus=final_consensus,
                 file_format="txt",
             )
 
@@ -422,8 +423,8 @@ class STDNOrchestrator:
             self.reporter.save_debate_transcript(
                 technology=technology,
                 agent_responses=agent_responses,
-                debate_rounds=[],
-                final_consensus=final_consensus,  # ✅ Now includes rounds
+                debate_history=debate_history,  # ← CHANGED: Use actual debate history
+                final_consensus=final_consensus,
                 file_format="json",
             )
 
@@ -474,7 +475,7 @@ class STDNOrchestrator:
                 result = await self.component_agent.run(
                     f"Extract the primary components of a {tech}",
                     deps=self.deps,
-                    model=self.deps.model,
+                    
                 )
                 components_result = result.output if result else None
 
@@ -533,6 +534,7 @@ class STDNOrchestrator:
                                         "technology": tech,
                                         "component": component,
                                         "material": material,
+                                        "hs_code": country_info.get("hs_code"),
                                         "country": country_info["country"],
                                         "meas_unit": country_info["meas_unit"],
                                         "amount": country_info["amount"],
@@ -546,6 +548,7 @@ class STDNOrchestrator:
                                     "technology": tech,
                                     "component": component,
                                     "material": material,
+                                    "hs_code": None,
                                     "country": None,
                                     "meas_unit": None,
                                     "amount": None,
@@ -614,6 +617,7 @@ class STDNOrchestrator:
                     "technology",
                     "component",
                     "material",
+                    "hs_code",
                     "country",
                     "meas_unit",
                     "amount",
@@ -635,6 +639,7 @@ class STDNOrchestrator:
                             "technology",
                             "component",
                             "material",
+                            "hs_code",
                             "country",
                             "meas_unit",
                             "amount",

@@ -76,7 +76,7 @@ class CountryDataRepository:
         self.country_agent = get_country_data_agent() if use_llm_fallback else None
 
         # Cache for material-country mappings
-        self._cache: Dict[str, List[Dict]] = {}
+        self.cache: Dict[str, List[Dict]] = {}
 
     async def get_country_data(
         self,
@@ -89,52 +89,97 @@ class CountryDataRepository:
         Get country production data for a material.
 
         Tries USGS database first, falls back to LLM if enabled.
-
-        Args:
-            material: Material name (e.g., "Lithium")
-            src_year: Source year of report
-            meas_year: Measurement year
-            usage: Optional RunUsage tracker
-
-        Returns:
-            List of country data dictionaries with keys:
-                - country: Country name
-                - meas_unit: Measurement unit
-                - amount: Production amount
-                - percentage: Percentage of global production
-
-        Example:
-            >>> countries = await repo.get_country_data("lithium", 2025, 2024)
-            >>> for country in countries:
-            ...     print(f"{country['country']}: {country['percentage']}%")
         """
         # Check cache first
         cache_key = f"{material}_{src_year}_{meas_year}"
-        if cache_key in self._cache:
-            print(f"📦 Cache hit for {material}")
-            return self._cache[cache_key]
+        if cache_key in self.cache:
+            print(f"✓ Cache hit for {material}")
+            return self.cache[cache_key]
 
         # Try USGS database
-        print(f"\n🔍 Querying USGS for: {material} (year {src_year}/{meas_year})")
+        print(f"Querying USGS for {material} (year {src_year}/{meas_year})")
         usgs_data = self._query_usgs(material, src_year, meas_year)
 
         if usgs_data:
             print(f"✓ USGS returned {len(usgs_data)} countries")
-            self._cache[cache_key] = usgs_data
+            # ADD HS CODE HERE (NEW)
+            hs_code = self._lookup_hs_code(material)
+            for country in usgs_data:
+                country["hs_code"] = hs_code
+            # END NEW CODE
+            self.cache[cache_key] = usgs_data
             return usgs_data
 
         # Fall back to LLM if enabled
         if self.use_llm_fallback and self.country_agent:
-            print(f"⚠️  No USGS data found, using LLM fallback...")
+            print(f"⚠ No USGS data found, using LLM fallback...")
             llm_data = await self._query_llm(material, meas_year, usage)
-
             if llm_data:
                 print(f"✓ LLM returned {len(llm_data)} countries")
-                self._cache[cache_key] = llm_data
+                # ADD HS CODE HERE (NEW)
+                hs_code = self._lookup_hs_code(material)
+                for country in llm_data:
+                    country["hs_code"] = hs_code
+                # END NEW CODE
+                self.cache[cache_key] = llm_data
                 return llm_data
 
-        print(f"❌ No data found for {material}")
+        print(f"✗ No data found for {material}")
         return []
+
+    def _lookup_hs_code(self, material: str) -> Optional[str]:
+        """
+        Look up HS code for a material from the materials ontology CSV.
+
+        Handles:
+        - Exact case-insensitive matching
+        - Whitespace trimming
+        - Partial matching (e.g., "Gold" matches "Gold, mine")
+        - NaN values in CSV
+        - Integer HS codes (removes .0 decimal)
+
+        Args:
+            material: Material name (e.g., "Gold", "Lithium")
+
+        Returns:
+            HS code as string (e.g., "710812"), or None if not found
+        """
+        try:
+            import pandas as pd
+
+            df = pd.read_csv("./data/hs_codes_and_usgs_names.csv")
+
+            # Verify column exists
+            if "HS_Code" not in df.columns:
+                return None
+
+            # Clean the material name
+            material_clean = material.lower().strip()
+
+            # Try exact match first
+            match = df[df["Elements_Compounds"].str.lower().str.strip() == material_clean]
+
+            if not match.empty:
+                hs_code_value = match.iloc[0]["HS_Code"]
+                # Check if value is not NaN and not empty
+                if pd.notna(hs_code_value) and str(hs_code_value).strip():
+                    return str(int(hs_code_value))  # Convert to int first to remove .0
+
+            # Try partial match if exact failed
+            match = df[
+                df["Elements_Compounds"]
+                .str.lower()
+                .str.contains(material_clean, na=False, regex=False)
+            ]
+            if not match.empty:
+                hs_code_value = match.iloc[0]["HS_Code"]
+                if pd.notna(hs_code_value) and str(hs_code_value).strip():
+                    return str(int(hs_code_value))
+
+        except Exception as e:
+            print(f"HS lookup error for {material}: {e}")
+
+        return None
 
     def _query_usgs(
         self,
@@ -245,13 +290,13 @@ class CountryDataRepository:
 
     def clear_cache(self):
         """Clear the country data cache"""
-        self._cache.clear()
+        self.cache.clear()
 
     def get_cache_stats(self) -> Dict:
         """Get cache statistics"""
         return {
-            "cached_materials": len(self._cache),
-            "materials": list(self._cache.keys()),
+            "cached_materials": len(self.cache),
+            "materials": list(self.cache.keys()),
         }
 
     def close(self):

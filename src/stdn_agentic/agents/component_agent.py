@@ -9,7 +9,7 @@ structural components while excluding raw materials, tools, and consumables.
 """
 
 import os
-from typing import List
+from typing import Optional, List
 
 from pydantic import BaseModel, Field
 from pydantic_ai import Agent, RunContext
@@ -81,7 +81,7 @@ def _get_configured_model() -> str:
     model = os.environ.get("STDN_MODEL")
     if model:
         return model
-    return os.environ.get("OLLAMA_MODEL", "ollama:qwen2:7b")
+    return os.environ.get("OLLAMA_MODEL", "ollama:qwen2.5:7b")
 
 
 # Initialize the component extraction agent
@@ -98,7 +98,7 @@ component_agent = Agent(
 # ============================================================================
 
 
-def get_component_agent() -> Agent[STDNDependencies, ComponentList]:
+def get_component_agent(model_name: Optional[str] = None) -> Agent[STDNDependencies, ComponentList]:
     """
     Get the component extraction agent.
 
@@ -116,4 +116,14 @@ def get_component_agent() -> Agent[STDNDependencies, ComponentList]:
         >>> print(result.data.component_list)
         ["display_module", "processor_unit", "battery_pack", ...]
     """
-    return component_agent
+    # Use provided model or fall back to environment/default
+    if model_name is None:
+        model_name = os.environ.get("STDN_MODEL") or os.environ.get("OLLAMA_MODEL", "ollama:qwen2.5:7b")
+
+    # Create and return the agent with the specified model
+    return Agent(
+        model_name,
+        output_type=ComponentList,
+        deps_type=STDNDependencies,
+        system_prompt=COMPONENT_SYSTEM_PROMPT,
+    )

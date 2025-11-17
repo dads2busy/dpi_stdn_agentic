@@ -21,11 +21,11 @@ from pydantic import BaseModel, Field
 from pydantic_ai import Agent, ModelRetry, RunContext
 
 from ..models import STDNDependencies
-from ..utils import intersect_lists
 
-# Initialize logger
 logger = logging.getLogger(__name__)
 
+# Environment flag to control tool usage (for backends that don't support tools well)
+DISABLE_MATERIAL_TOOLS = os.getenv("STDN_DISABLE_MATERIAL_TOOLS", "0") == "1"
 
 # ============================================================================
 # Data Models
@@ -33,19 +33,20 @@ logger = logging.getLogger(__name__)
 
 
 class ComponentMaterials(BaseModel):
-    """Materials identified for a single component"""
+    """Materials identified for a single component."""
 
     component: str = Field(description="Component name")
     raw_materials: List[str] = Field(
-        alias="materials", description="List of raw materials used in this component"
+        alias="materials",
+        description="List of raw materials used in this component",
     )
 
 
 class ComponentMaterialsList(BaseModel):
-    """Collection of components with their identified materials"""
+    """Collection of components with their identified materials."""
 
     component_list: List[ComponentMaterials] = Field(
-        description="List of components and their materials"
+        description="List of components and their materials",
     )
 
 
@@ -163,11 +164,11 @@ def _exact_match(material_lower: str, ontology: List[str]) -> Optional[str]:
     Check for exact case-insensitive match.
 
     Args:
-        material_lower: Lowercase material name
-        ontology: List of ontology materials
+        material_lower: Lowercase material name.
+        ontology: List of ontology materials.
 
     Returns:
-        Matched ontology material or None
+        Matched ontology material or None.
     """
     for ont_mat in ontology:
         if material_lower == ont_mat.lower():
@@ -180,11 +181,11 @@ def _variant_match(material_lower: str, ontology: List[str]) -> Optional[str]:
     Map common variants to standard names.
 
     Args:
-        material_lower: Lowercase material name
-        ontology: List of ontology materials
+        material_lower: Lowercase material name.
+        ontology: List of ontology materials.
 
     Returns:
-        Matched ontology material or None
+        Matched ontology material or None.
     """
     if material_lower in VARIANT_MAP:
         mapped = VARIANT_MAP[material_lower]
@@ -198,20 +199,21 @@ def _word_match(material_lower: str, ontology: List[str]) -> Optional[str]:
     Match individual significant words in material name.
 
     Args:
-        material_lower: Lowercase material name
-        ontology: List of ontology materials
+        material_lower: Lowercase material name.
+        ontology: List of ontology materials.
 
     Returns:
-        Matched ontology material or None
+        Matched ontology material or None.
     """
     words = material_lower.split()
 
-    # Try significant words (>= 4 chars)
     for word in words:
         if len(word) >= 4:
             for ont_mat in ontology:
                 if word in ont_mat.lower():
-                    logger.debug(f"Word match: '{material_lower}' -> '{ont_mat}' (via '{word}')")
+                    logger.debug(
+                        "Word match: '%s' -> '%s' (via '%s')", material_lower, ont_mat, word
+                    )
                     return ont_mat
 
     return None
@@ -222,28 +224,34 @@ def _chemical_symbol_match(material_lower: str, ontology: List[str]) -> Optional
     Match chemical symbols (short terms 2-3 chars).
 
     Args:
-        material_lower: Lowercase material name
-        ontology: List of ontology materials
+        material_lower: Lowercase material name.
+        ontology: List of ontology materials.
 
     Returns:
-        Matched ontology material or None
+        Matched ontology material or None.
     """
     words = material_lower.split()
     chemical_symbols = [w for w in words if 2 <= len(w) <= 3]
 
     for symbol in chemical_symbols:
         for ont_mat in ontology:
-            # Check if symbol appears at start of ontology term
-            if ont_mat.lower().startswith(symbol):
+            ont_lower = ont_mat.lower()
+
+            if ont_lower.startswith(symbol):
                 logger.debug(
-                    f"Chemical symbol match: '{material_lower}' -> '{ont_mat}' (via '{symbol}')"
+                    "Chemical symbol match: '%s' -> '%s' (via '%s')",
+                    material_lower,
+                    ont_mat,
+                    symbol,
                 )
                 return ont_mat
 
-            # Check if symbol is exact match to ontology word
-            if symbol in ont_mat.lower().split():
+            if symbol in ont_lower.split():
                 logger.debug(
-                    f"Chemical symbol match: '{material_lower}' -> '{ont_mat}' (via '{symbol}')"
+                    "Chemical symbol match: '%s' -> '%s' (via '%s')",
+                    material_lower,
+                    ont_mat,
+                    symbol,
                 )
                 return ont_mat
 
@@ -255,51 +263,52 @@ def _partial_match(material_lower: str, ontology: List[str]) -> Optional[str]:
     Check for partial substring match.
 
     Args:
-        material_lower: Lowercase material name
-        ontology: List of ontology materials
+        material_lower: Lowercase material name.
+        ontology: List of ontology materials.
 
     Returns:
-        Matched ontology material or None
+        Matched ontology material or None.
     """
     for ont_mat in ontology:
         ont_lower = ont_mat.lower()
-        # Avoid matching very short terms to prevent false positives
-        if len(ont_lower) >= 4:
-            if ont_lower in material_lower or material_lower in ont_lower:
-                logger.debug(f"Partial match: '{material_lower}' -> '{ont_mat}'")
-                return ont_mat
+        if len(ont_lower) >= 4 and (ont_lower in material_lower or material_lower in ont_lower):
+            logger.debug("Partial match: '%s' -> '%s'", material_lower, ont_mat)
+            return ont_mat
 
     return None
 
 
 def _fuzzy_similarity_match(
-    material_lower: str, ontology: List[str], min_similarity: float = 0.75
+    material_lower: str,
+    ontology: List[str],
+    min_similarity: float = 0.75,
 ) -> Optional[str]:
     """
     Fuzzy similarity matching using SequenceMatcher.
 
     Args:
-        material_lower: Lowercase material name
-        ontology: List of ontology materials
-        min_similarity: Minimum similarity score (0-1)
+        material_lower: Lowercase material name.
+        ontology: List of ontology materials.
+        min_similarity: Minimum similarity score (0-1).
 
     Returns:
-        Best matching ontology material or None
+        Best matching ontology material or None.
     """
-    best_match = None
+    best_match: Optional[str] = None
     best_score = 0.0
 
     for ont_mat in ontology:
-        # Use SequenceMatcher for similarity
         similarity = SequenceMatcher(None, material_lower, ont_mat.lower()).ratio()
-
         if similarity > best_score and similarity >= min_similarity:
             best_score = similarity
             best_match = ont_mat
 
     if best_match:
         logger.debug(
-            f"Fuzzy matched '{material_lower}' -> '{best_match}' (score: {best_score:.2f})"
+            "Fuzzy matched '%s' -> '%s' (score: %.2f)",
+            material_lower,
+            best_match,
+            best_score,
         )
         return best_match
 
@@ -307,7 +316,9 @@ def _fuzzy_similarity_match(
 
 
 def enhanced_material_match(
-    material: str, ontology: List[str], min_similarity: float = 0.75
+    material: str,
+    ontology: List[str],
+    min_similarity: float = 0.75,
 ) -> str:
     """
     Intelligently map a material name to the best match in the ontology.
@@ -321,16 +332,15 @@ def enhanced_material_match(
     6. Fuzzy similarity match (75%+ similar)
 
     Args:
-        material: Material name to match
-        ontology: List of valid ontology materials
-        min_similarity: Minimum similarity for fuzzy matching
+        material: Material name to match.
+        ontology: List of valid ontology materials.
+        min_similarity: Minimum similarity for fuzzy matching.
 
     Returns:
-        Best matching material from ontology, or original if no match
+        Best matching material from ontology, or original if no match.
     """
     material_lower = material.lower().strip()
 
-    # Try matching strategies in order of specificity
     match = (
         _exact_match(material_lower, ontology)
         or _variant_match(material_lower, ontology)
@@ -342,11 +352,11 @@ def enhanced_material_match(
 
     if match:
         if match != material:
-            logger.info(f"Mapped '{material}' -> '{match}'")
+            logger.info("Mapped '%s' -> '%s'", material, match)
         return match
-    else:
-        logger.warning(f"No match found for material: '{material}'")
-        return material
+
+    logger.warning("No match found for material: '%s'", material)
+    return material
 
 
 # ============================================================================
@@ -358,50 +368,47 @@ async def validate_materials(
     ctx: RunContext[STDNDependencies],
     materials: List[str],
 ) -> List[str]:
-    """Enhanced validation with comprehensive None/empty checks"""
-
-    # CRITICAL: Check for None at the very start
+    """Enhanced validation with comprehensive None/empty checks."""
     if materials is None:
         logger.error("validate_materials received None")
         if ctx.retry < 1:
             raise ModelRetry(
-                "Materials list is None. Please return a valid list of material names as strings."
-            )
-        return []  # Don't retry again, just return empty
-
-    # Check if it's actually a list
-    if not isinstance(materials, list):
-        logger.error(f"validate_materials received {type(materials)} instead of list")
-        if ctx.retry < 1:
-            raise ModelRetry(
-                f"Expected a list of materials, but received {type(materials).__name__}. "
-                "Please return a list of material name strings."
+                "Materials list is None. Please return a valid list of material names as strings.",
             )
         return []
 
-    # Filter out None, empty, or non-string values
-    valid_materials = []
-    for m in materials:
-        if m is None:
+    if not isinstance(materials, list):
+        logger.error("validate_materials received %s instead of list", type(materials))
+        if ctx.retry < 1:
+            raise ModelRetry(
+                "Expected a list of materials, but received "
+                f"{type(materials).__name__}. "
+                "Please return a list of material name strings.",
+            )
+        return []
+
+    valid_materials: List[str] = []
+    for material in materials:
+        if material is None:
             continue
-        if not isinstance(m, str):
+        if not isinstance(material, str):
             continue
-        if not m.strip():
+        stripped = material.strip()
+        if not stripped:
             continue
-        valid_materials.append(m.strip())
+        valid_materials.append(stripped)
 
     if not valid_materials:
         logger.warning("All materials were None/empty after filtering")
         if ctx.retry < 1:
             raise ModelRetry(
                 "All provided materials were empty or invalid. "
-                "Please provide valid material name strings."
+                "Please provide valid material name strings.",
             )
-        return []  # Stop retrying, return empty
+        return []
 
-    # Rest of your existing validation code...
-    validated = []
-    unmapped = []
+    validated: List[str] = []
+    unmapped: List[str] = []
 
     for material in valid_materials:
         mapped = enhanced_material_match(material, ctx.deps.material_ontology_list)
@@ -412,17 +419,19 @@ async def validate_materials(
 
     if validated:
         if unmapped:
-            logger.info(f"Fuzzy-mapped {len(validated)} materials, couldn't map: {unmapped}")
+            logger.info(
+                "Fuzzy-mapped %d materials, couldn't map: %s",
+                len(validated),
+                unmapped,
+            )
         return validated
 
-    # Only retry ONCE if nothing was mapped
     if ctx.retry < 1:
         ontology_sample = ", ".join(ctx.deps.material_ontology_list[:50])
         raise ModelRetry(
-            f"Could not map any materials to ontology. Please use names from: {ontology_sample}..."
+            f"Could not map any materials to ontology. Please use names from: {ontology_sample}...",
         )
 
-    # After 1 retry, just return what we have
     return valid_materials if valid_materials else []
 
 
@@ -438,11 +447,11 @@ def fuzzy_match_material(material: str, ontology: List[str]) -> str:
     Calls the enhanced_material_match function.
 
     Args:
-        material: Material name to match
-        ontology: List of ontology materials
+        material: Material name to match.
+        ontology: List of ontology materials.
 
     Returns:
-        Best matching material from ontology, or original if no match
+        Best matching material from ontology, or original if no match.
     """
     return enhanced_material_match(material, ontology)
 
@@ -453,44 +462,57 @@ def fuzzy_match_material(material: str, ontology: List[str]) -> str:
 
 
 def _get_configured_model() -> str:
-    """Get model from config or environment"""
+    """Get model from config or environment."""
     model = os.environ.get("STDN_MODEL")
     if model:
         return model
-    return os.environ.get("OLLAMA_MODEL", "ollama:qwen2:7b")
+    return os.environ.get("OLLAMA_MODEL", "ollama:qwen2.5:7b")
 
 
-# Global agent instance
-_agent = None
+_agent: Optional[Agent[STDNDependencies, ComponentMaterialsList]] = None
 
 
-def get_materials_agent():
+def get_materials_agent(
+    model_name: Optional[str] = None,
+) -> Agent[STDNDependencies, ComponentMaterialsList]:
     """
     Get materials extraction agent with enhanced validation.
+
+    If model_name is provided, it overrides the default model from configuration
+    or environment variables. The agent is cached and will be recreated if the
+    requested model differs from the currently cached model.
 
     Returns:
         Agent configured for materials extraction with fuzzy matching validation.
         The agent uses the validate_materials function as a tool to map
-        LLM-generated material names to the standard ontology.
-
-    Example:
-        >>> agent = get_materials_agent()
-        >>> result = await agent.run(
-        ...     "Extract materials for battery component",
-        ...     deps=STDNDependencies(...)
-        ... )
-        >>> materials = result.output.component_list
+        LLM-generated material names to the standard ontology when tools are
+        enabled.
     """
     global _agent
-    if _agent is None:
+
+    model_to_use = model_name or _get_configured_model()
+
+    if _agent is None or getattr(_agent, "model", None) != model_to_use:
         _agent = Agent(
-            model=_get_configured_model(),
+            model=model_to_use,
             output_type=ComponentMaterialsList,
             deps_type=STDNDependencies,
             system_prompt=MATERIALS_SYSTEM_PROMPT,
         )
-        # Register validation tool
-        _agent.tool(validate_materials)
+
+        # Register validation tool only if tools are enabled for this environment.
+        # Some OpenAI-compatible backends (e.g., certain Qwen/Ollama servers)
+        # reject tool-calling messages with content=null, which triggers 400
+        # errors like "invalid message content type: <nil>" during materials
+        # extraction.
+        if not DISABLE_MATERIAL_TOOLS:
+            _agent.tool(validate_materials)
+        else:
+            logger.info(
+                "Materials validation tool disabled via STDN_DISABLE_MATERIAL_TOOLS=1; "
+                "skipping tool registration.",
+            )
+
     return _agent
 
 
@@ -503,5 +525,5 @@ __all__ = [
     "ComponentMaterialsList",
     "get_materials_agent",
     "enhanced_material_match",
-    "fuzzy_match_material",  # Legacy
+    "fuzzy_match_material",
 ]

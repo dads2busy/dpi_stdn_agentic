@@ -31,6 +31,7 @@ class STDNDependencies:
     - Country production data
     - Database client connections
     - Model configuration
+    - Configuration settings (NEW)
 
     Attributes:
         material_ontology: Comma-separated string of material names
@@ -40,7 +41,8 @@ class STDNDependencies:
         years_to_query: List of years for historical data queries
         client: Ollama client for LLM inference
         model: Model identifier (e.g., "qwen2.5:7b")
-        topp: Top-p sampling parameter for generation
+        top_p: Top-p sampling parameter for generation
+        config: Configuration model with all settings (NEW)
     """
 
     material_ontology: str
@@ -50,7 +52,7 @@ class STDNDependencies:
     years_to_query: list[int]
     client: ollama.Client
     model: str
-    topp: float
+    top_p: float
 
 
 # ============================================================================

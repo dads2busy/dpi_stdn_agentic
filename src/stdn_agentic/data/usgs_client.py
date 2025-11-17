@@ -11,17 +11,40 @@ from typing import Dict, List, Optional
 import duckdb
 import pandas as pd
 
-# ============================================================================
-# USGS Database Client
-# ============================================================================
+# Country name translations (Chinese to English)
+COUNTRY_TRANSLATIONS = {
+    "智利": "Chile",
+    "美国": "United States",
+    "巴西": "Brazil",
+    "澳大利亚": "Australia",
+    "俄罗斯": "Russia",
+    "加拿大": "Canada",
+    "印度": "India",
+    "日本": "Japan",
+    "韩国": "South Korea",
+    "墨西哥": "Mexico",
+    "秘鲁": "Peru",
+    "刚果民主共和国": "Democratic Republic of the Congo",
+    "赞比亚": "Zambia",
+    "南非": "South Africa",
+    "印度尼西亚": "Indonesia",
+    "土耳其": "Turkey",
+    "波兰": "Poland",
+    "哈萨克斯坦": "Kazakhstan",
+    "乌克兰": "Ukraine",
+    "伊朗": "Iran",
+    "沙特阿拉伯": "Saudi Arabia",
+    "阿根廷": "Argentina",
+    "玻利维亚": "Bolivia",
+}
 
 
 class USGSClient:
     """
     Client for querying USGS Mineral Commodity Reports database.
 
-    Provides methods to query top-producing countries, world totals, and
-    detailed production metrics from the USGS database.
+    Provides methods to query top-producing countries, world totals, and detailed
+    production metrics from the USGS database.
 
     Attributes:
         database_path: Path to DuckDB database file
@@ -51,6 +74,10 @@ class USGSClient:
         tables = self.connection.execute("SHOW TABLES").fetchall()
         print(f"✓ Connected to USGS database: {len(tables)} tables")
 
+    def _translate_country_name(self, country_name: str) -> str:
+        """Translate Chinese country names to English"""
+        return COUNTRY_TRANSLATIONS.get(country_name, country_name)
+
     def query_top_countries(
         self, material: str, src_year: int, meas_year: int
     ) -> Optional[pd.DataFrame]:
@@ -71,87 +98,42 @@ class USGSClient:
             >>> if countries is not None:
             ...     print(countries['country'].tolist())
         """
-
-        # ========================================================================
-        # DEBUG: Connection and table visibility check
-        # ========================================================================
-        print(f"\n🔍 DEBUG query_top_countries:")
-        print(f"  Material: {material}")
-        print(f"  Years: src_year={src_year}, meas_year={meas_year}")
-        print(f"  Connection object: {self.connection}")
-        print(f"  Database path: {self.database_path}")
-
-        # Verify table is visible through this connection
-        try:
-            tables = self.connection.execute("SHOW TABLES").fetchall()
-            print(f"  Tables visible: {tables}")
-
-            if not tables:
-                print(f"  ❌ WARNING: No tables visible in connection!")
-                # Try to reconnect
-                print(f"  Attempting to reconnect...")
-                self.connection = duckdb.connect(str(self.database_path))
-                tables = self.connection.execute("SHOW TABLES").fetchall()
-                print(f"  After reconnect, tables: {tables}")
-
-        except Exception as e:
-            print(f"  ❌ ERROR: Can't see tables: {e}")
-            print(f"  Attempting to reconnect...")
-            try:
-                self.connection = duckdb.connect(str(self.database_path))
-                tables = self.connection.execute("SHOW TABLES").fetchall()
-                print(f"  After reconnect, tables: {tables}")
-            except Exception as e2:
-                print(f"  ❌ Reconnect failed: {e2}")
-                return None
-
-        # ========================================================================
-        # Main Query
-        # ========================================================================
         query = f"""
-            SELECT w.COUNTRY as country
-            FROM world_mineral_commodity_report w
-            WHERE w.MEAS_YR IS NOT NULL
-                AND w.MEAS_YR = {meas_year}
-                AND w.SRC_YR = {src_year}
-                AND UPPER(w.COMMODITY) = '{material.upper()}'
-                AND value_type = 'Number'
-                AND UPPER(MEAS_TYPE) = 'PRODUCTION'
-                AND UPPER(COUNTRY) NOT LIKE 'WORLD%'
-                AND UPPER(COUNTRY) NOT LIKE 'OTHER%'
-                AND UPPER(COUNTRY) NOT LIKE 'TOTAL%'
-            ORDER BY CAST(w.VALUE AS NUMERIC) DESC
-            LIMIT {self.top_n}
-            """
-
-        print(f"\n  SQL Query:")
-        print(f"  {query}")
+        SELECT DISTINCT country
+        FROM world_mineral_commodity_report
+        WHERE meas_yr = {meas_year}
+          AND src_yr = {src_year}
+          AND UPPER(commodity) = '{material.upper()}'
+          AND UPPER(country) != 'WORLD'
+          AND value_type = 'Number'
+          AND UPPER(meas_type) = 'PRODUCTION'
+        ORDER BY value DESC
+        LIMIT {self.top_n}
+        """
 
         try:
             result = self.connection.sql(query).df()
-            print(f"  Query result: {len(result)} rows")
-            if len(result) > 0:
-                print(f"  Top countries: {result['country'].tolist()}")
-            return result if len(result) > 0 else None
+            if result.empty:
+                return None
 
+            # Translate country names
+            result["country"] = result["country"].apply(self._translate_country_name)
+            return result
         except Exception as e:
-            print(f"  ❌ USGS query failed for {material}: {e}")
-            import traceback
-
-            traceback.print_exc()
+            print(f"Top countries query failed for {material}: {e}")
             return None
 
     def query_world_totals(self, material: str, src_year: int, meas_year: int) -> Dict[str, float]:
         """
-        Query world production totals by measure type.
+        Query world total production for a material.
 
         Args:
             material: Material name
-            src_year: Source year of report
+            src_year: Source year
             meas_year: Measurement year
 
         Returns:
-            Dict mapping meas_type -> total production value
+            Dict with meas_type -> value mappings
 
         Example:
             >>> totals = client.query_world_totals("Lithium", 2025, 2024)
@@ -161,17 +143,17 @@ class USGSClient:
         SELECT meas_type, value, meas_unit
         FROM world_mineral_commodity_report
         WHERE meas_yr = {meas_year}
-            AND src_yr = {src_year}
-            AND UPPER(commodity) = '{material.upper()}'
-            AND UPPER(country) = 'WORLD'
-            AND value_type = 'Number'
+          AND src_yr = {src_year}
+          AND UPPER(commodity) = '{material.upper()}'
+          AND UPPER(country) = 'WORLD'
+          AND value_type = 'Number'
         """
 
         try:
             result = self.connection.sql(query).df()
             totals = {}
             for _, row in result.iterrows():
-                meas_type = row["meas_type"].upper()
+                meas_type = str(row["meas_type"]).upper()  # ← Fixed type issue
                 try:
                     totals[meas_type] = float(row["value"])
                 except (ValueError, TypeError):
@@ -200,28 +182,25 @@ class USGSClient:
         SELECT meas_type, meas_unit, value
         FROM world_mineral_commodity_report
         WHERE meas_yr = {meas_year}
-            AND src_yr = {src_year}    # ✅ FIXED - was src_year, should be src_yr
-            AND UPPER(commodity) = '{material.upper()}'
-            AND UPPER(country) = '{country.upper()}'
-            AND value_type = 'Number'
-            AND UPPER(meas_type) IN ('PRODUCTION', 'RESERVES', 'RESERVE BASE')
+          AND src_yr = {src_year}
+          AND UPPER(commodity) = '{material.upper()}'
+          AND UPPER(country) = '{country.upper()}'
+          AND value_type = 'Number'
+          AND UPPER(meas_type) IN ('PRODUCTION', 'RESERVES', 'RESERVE BASE')
         """
 
         try:
             result = self.connection.sql(query).df()
-            records = []
+            details = []
             for _, row in result.iterrows():
-                try:
-                    records.append(
-                        {
-                            "meas_type": row["meas_type"],
-                            "meas_unit": row["meas_unit"],
-                            "value": float(row["value"]),
-                        }
-                    )
-                except (ValueError, TypeError):
-                    continue
-            return records
+                details.append(
+                    {
+                        "meas_type": str(row["meas_type"]),  # ← Fixed type issue
+                        "meas_unit": row["meas_unit"],
+                        "value": float(row["value"]),
+                    }
+                )
+            return details
         except Exception as e:
             print(f"Country details query failed for {material}/{country}: {e}")
             return []
@@ -235,7 +214,7 @@ class USGSClient:
         """Context manager entry"""
         return self
 
-    def __exit__(self, *args):
+    def __exit__(self, exc_type, exc_val, exc_tb):
         """Context manager exit"""
         self.close()
 
