@@ -114,17 +114,21 @@ async def process_all_technologies(config: ConfigModel) -> dict:
     """
     # Read debate settings from environment or config
     enable_debate = os.getenv("ENABLE_DEBATE", "false").lower() == "true"
+    enable_material_debate = os.getenv("ENABLE_MATERIAL_DEBATE", "false").lower() == "true"
     max_debate_rounds = int(os.getenv("MAX_DEBATE_ROUNDS", "3"))
     convergence_threshold = float(os.getenv("CONVERGENCE_THRESHOLD", "0.8"))
     save_transcripts = os.getenv("SAVE_TRANSCRIPTS", "true").lower() == "true"
+    debate_top_p = float(os.getenv("DEBATE_TOP_P", "0.0001"))
 
     # Initialize enhanced orchestrator
     orchestrator = STDNOrchestrator(
         config,
         enable_debate=enable_debate,
+        enable_material_debate=enable_material_debate,
         max_debate_rounds=max_debate_rounds,
         convergence_threshold=convergence_threshold,
         save_transcripts=save_transcripts,
+        debate_top_p=debate_top_p,
     )
 
     # Load technologies from config

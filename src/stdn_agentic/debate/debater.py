@@ -72,6 +72,7 @@ class MultiAgentDebater:
         convergence_threshold: float = 0.8,
         confidence_weight: float = 0.3,
         peer_support_boost: float = 0.15,
+        debate_top_p: float = 0.0001,
     ) -> None:
         """
         Initialize the enhanced multi-agent debater.
@@ -91,6 +92,7 @@ class MultiAgentDebater:
         self.confidence_weight = confidence_weight
         self.peer_support_boost = peer_support_boost
         self.debate_history: List[DebateRound] = []
+        self.debate_top_p = debate_top_p
 
     # ------------------------------------------------------------------#
     # Normalization helpers
@@ -589,7 +591,12 @@ YOUR TASK:
 Return only the updated list of primary components.
 """
             try:
-                result = await component_agent.run(prompt, deps=deps, model=deps.model)
+                # Use very low Top-P for deterministic, focused refinements
+                from dataclasses import replace
+
+                debate_deps = replace(deps, top_p=self.debate_top_p)
+
+                result = await component_agent.run(prompt, deps=debate_deps, model=deps.model)
                 if result and result.output:
                     if hasattr(result.output, "component_list"):
                         components = result.output.component_list

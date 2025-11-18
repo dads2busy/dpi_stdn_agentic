@@ -58,9 +58,11 @@ class STDNOrchestrator:
         config: ConfigModel,
         enable_checkpoints: bool = False,
         enable_debate: bool = False,
+        enable_material_debate: bool = False,
         max_debate_rounds: int = 3,
         convergence_threshold: float = 0.8,
         save_transcripts: bool = True,
+        debate_top_p: float = 0.0001,
     ):
         """
         Initialize orchestrator with enhanced debate and error handling.
@@ -79,9 +81,11 @@ class STDNOrchestrator:
 
         self.enable_checkpoints = enable_checkpoints
         self.use_debate = enable_debate
+        self.use_material_debate = enable_material_debate
         self.max_debate_rounds = max_debate_rounds
         self.convergence_threshold = convergence_threshold
         self.save_transcripts = save_transcripts
+        self.debate_top_p = debate_top_p
 
         # Initialize dependencies
         self.deps = initialize_dependencies(config)
@@ -101,6 +105,7 @@ class STDNOrchestrator:
                 convergence_threshold=convergence_threshold,
                 confidence_weight=0.3,  # Weight for confidence in voting
                 peer_support_boost=0.15,  # Boost per supporting agent
+                debate_top_p=debate_top_p,
             )
 
             # Find project root for transcript output
@@ -360,11 +365,16 @@ class STDNOrchestrator:
             agent_id = f"Agent_{agent_num}"
 
             try:
+                # Create deps with very low Top-P for focused outputs
+                from dataclasses import replace
+
+                agent_deps = replace(self.deps, top_p=self.debate_top_p)
+
                 # Each agent gets a slightly different perspective prompt
                 result = await self.component_agent.run(
                     f"Extract the primary components of a {technology}. "
                     f"Perspective #{agent_num}: Focus on identifying essential subsystems and modules.",
-                    deps=self.deps,
+                    deps=agent_deps,
                 )
 
                 if result and result.output:
@@ -383,7 +393,9 @@ class STDNOrchestrator:
                         for comp in components
                     ]
 
-                    print(f"  ✓ {agent_id}: {len(components)} components proposed")
+                    print(
+                        f"  ✓ {agent_id} (top_p={self.debate_top_p}): {len(components)} components proposed"
+                    )
 
                     # Store for transcript
                     agent_responses_for_transcript.append(
@@ -447,12 +459,13 @@ class STDNOrchestrator:
         self, technology: str, agent_responses: List[Dict], debate_result: Dict
     ) -> Optional[Path]:
         """
-        Save debate transcript in both text and JSON formats.
+        Save comprehensive debate transcript including materials assignment.
 
         Args:
             technology: Technology name
             agent_responses: Agent proposals and reasoning
             debate_result: Final debate consensus with rounds metadata
+            materials_info: Optional materials extraction/debate information
 
         Returns:
             Path to saved transcript (text version)
@@ -464,7 +477,7 @@ class STDNOrchestrator:
             # Extract metadata from debate_result
             num_rounds = debate_result.get("rounds", 0)
             confidence = debate_result.get("confidence", 0.0)
-            debate_history = debate_result.get("debate_history", [])  # ← ADD THIS LINE
+            debate_history = debate_result.get("debate_history", [])
 
             # Build final consensus dict with proper metadata
             final_consensus = {
@@ -479,7 +492,7 @@ class STDNOrchestrator:
             filepath = self.reporter.save_debate_transcript(
                 technology=technology,
                 agent_responses=agent_responses,
-                debate_history=debate_history,  # ← CHANGED: Use actual debate history
+                debate_history=debate_history,
                 final_consensus=final_consensus,
                 file_format="txt",
             )
@@ -488,7 +501,7 @@ class STDNOrchestrator:
             self.reporter.save_debate_transcript(
                 technology=technology,
                 agent_responses=agent_responses,
-                debate_history=debate_history,  # ← CHANGED: Use actual debate history
+                debate_history=debate_history,
                 final_consensus=final_consensus,
                 file_format="json",
             )
@@ -504,14 +517,19 @@ class STDNOrchestrator:
     # ========================================================================
 
     async def process_technology(
-        self, tech: str, role: str, domain: str, usage: RunUsage
+        self,
+        tech: str,
+        role: str,
+        domain: str,
+        usage: RunUsage,
+        use_material_debate: bool = False,  # NEW PARAMETER
     ) -> Optional[Dict[str, Any]]:
         """
         Process a single technology through the complete STDN pipeline.
 
         Pipeline stages:
         1. Component extraction (with debate if enabled)
-        2. Materials extraction (with enhanced matching)
+        2. Materials extraction (with debate if use_material_debate=True)
         3. Country data enrichment (USGS + LLM fallback)
         4. Data aggregation and formatting
 
@@ -520,23 +538,21 @@ class STDNOrchestrator:
             role: Expert role context
             domain: Domain context
             usage: RunUsage tracker
+            use_material_debate: Use multi-agent debate for materials (default False)
 
         Returns:
             Dictionary with components, materials, and enriched country data,
             or None if processing fails
         """
-        print(f"\n{'=' * 80}")
+        print("=" * 80)
         print(f"Processing: {tech}")
-        print(f"{'=' * 80}\n")
+        print("=" * 80)
 
         try:
-            # ================================================================
-            # STAGE 1: Extract Components
-            # ================================================================
+            # Phase 1: Extract components (existing logic - with debate if enabled)
             if self.use_debate:
                 components_result = await self.extract_components_with_debate(tech, role, usage)
             else:
-                # Simple single-agent extraction
                 result = await self.component_agent.run(
                     f"Extract the primary components of a {tech}",
                     deps=self.deps,
@@ -545,49 +561,102 @@ class STDNOrchestrator:
 
             if not components_result:
                 logger.error(f"No components extracted for {tech}")
-                print(f"❌ No components extracted for {tech}")
+                print(f"✗ No components extracted for {tech}")
                 return None
 
-            components = (
-                components_result.component_list
-                if hasattr(components_result, "component_list")
-                else components_result
-            )
+            # Extract component list - ENSURE it's List[str], not ComponentList
+            if hasattr(components_result, "component_list"):
+                components: list[str] = (
+                    components_result.component_list
+                )  # Type annotation ONLY on first assignment
+            elif isinstance(components_result, list):
+                components = components_result  # No type annotation
+            else:
+                components = []  # No type annotation
 
             print(f"✓ Extracted {len(components)} components")
 
-            # ================================================================
-            # STAGE 2: Extract Materials (with safe error handling)
-            # ================================================================
-            materials_result = await self.extract_materials_safe(
-                componentlist=ComponentList(componentlist=components),  # Correct param name
-                technology=tech,
-                usage=usage,
-            )
+            # Phase 2: Extract materials - NEW debate integration
+            if use_material_debate:
+                from ..debate import MaterialDebater
 
-            if not materials_result or not materials_result.component_list:
+                print("Using multi-agent debate for materials...")
+                material_debater = MaterialDebater(
+                    deps=self.deps,
+                    num_agents=3,
+                    max_rounds=self.max_debate_rounds,
+                    convergence_threshold=self.convergence_threshold,
+                    debate_top_p=self.debate_top_p,
+                )
+
+                debate_result = await material_debater.run_full_debate(components, tech, usage)
+
+                # Convert debate consensus to ComponentMaterialsList format
+                from ..agents import ComponentMaterials, ComponentMaterialsList
+
+                consensus = debate_result["consensus"]  # Dict[str, List[str]]
+
+                # Build ComponentMaterialsList using ALIASES in constructor
+                materials_list = ComponentMaterialsList(
+                    componentlist=[  # Use alias (NO underscore) for constructor
+                        ComponentMaterials(
+                            component=comp,
+                            materials=mats,  # Use alias "materials" (NO underscore)
+                        )
+                        for comp, mats in consensus.items()
+                    ]
+                )
+
+                # Save material debate transcript if enabled
+                if self.save_transcripts and self.reporter:
+                    self._save_material_debate_transcript(
+                        tech, components, material_debater.debate_history, consensus
+                    )
+            else:
+                # Existing single-agent extraction
+                from ..agents import ComponentList
+
+                if isinstance(components, ComponentList):
+                    components_list = components.component_list
+                else:
+                    components_list = components
+
+                materials_result = await self.extract_materials_safe(
+                    componentlist=ComponentList(
+                        componentlist=components_list
+                    ),  # Now definitely List[str]
+                    technology=tech,
+                    usage=usage,
+                )
+
+                if (
+                    not materials_result or not materials_result.component_list
+                ):  # Use field name for access
+                    logger.error(f"No materials extracted for {tech}")
+                    print(f"✗ No materials extracted for {tech}")
+                    return None
+
+                materials_list = materials_result
+
+            if not materials_list or not materials_list.component_list:  # Use field name for access
                 logger.error(f"No materials extracted for {tech}")
-                print(f"❌ No materials extracted for {tech}")
+                print(f"✗ No materials extracted for {tech}")
                 return None
 
-            materials_list = materials_result.component_list
+            print(f"✓ Extracted materials for {len(materials_list.component_list)} components")
 
-            # ================================================================
-            # STAGE 3: Enrich with Country Production Data
-            # ================================================================
+            # Phase 3: Enrich with country data (existing logic continues unchanged)
             enriched_data = []
 
-            for comp_mat in materials_list:
+            for comp_mat in materials_list.component_list:  # Use field name for access
                 component = comp_mat.component
-                materials = comp_mat.raw_materials
 
-                for material in materials:
-                    # Query country data from USGS database + LLM fallback
+                for material in comp_mat.raw_materials:  # Use field name for access
                     try:
                         country_data = await self.country_repo.get_country_data(
                             material=material,
-                            src_year=getattr(self.config, "src_year", 2024),  # Safe fallback
-                            meas_year=getattr(self.config, "meas_year", 2025),  # Safe fallback
+                            src_year=getattr(self.config, "src_year", 2024),
+                            meas_year=getattr(self.config, "meas_year", 2025),
                             usage=usage,
                         )
 
@@ -599,29 +668,36 @@ class STDNOrchestrator:
                                         "component": component,
                                         "material": material,
                                         "hs_code": country_info.get("hs_code"),
-                                        "country": country_info["country"],
-                                        "meas_unit": country_info["meas_unit"],
-                                        "amount": country_info["amount"],
-                                        "percentage": country_info["percentage"],
+                                        "country": country_info.get(
+                                            "country", "Unknown"
+                                        ),  # Use .get() for safety
+                                        "meas_unit": country_info.get(
+                                            "meas_unit", ""
+                                        ),  # Use .get() for safety
+                                        "amount": country_info.get(
+                                            "amount", 0.0
+                                        ),  # Use .get() for safety
+                                        "percentage": country_info.get(
+                                            "percentage", 0.0
+                                        ),  # Use .get() for safety
                                     }
                                 )
                         elif self.write_nulls:
-                            # Write row with nulls if no data found
                             enriched_data.append(
                                 {
                                     "technology": tech,
                                     "component": component,
                                     "material": material,
-                                    "hs_code": None,
+                                    "hs_code": None,  # WITH underscore ✓
                                     "country": None,
-                                    "meas_unit": None,
+                                    "meas_unit": None,  # WITH underscore ✓
                                     "amount": None,
                                     "percentage": None,
                                 }
                             )
+
                     except Exception as e:
                         logger.error(f"Error getting country data for {material}: {e}")
-                        # Continue processing other materials
 
             return {
                 "technology": tech,
@@ -632,8 +708,52 @@ class STDNOrchestrator:
 
         except Exception as e:
             logger.error(f"Error processing technology {tech}: {e}", exc_info=True)
-            print(f"❌ Error processing {tech}: {e}")
+            print(f"✗ Error processing {tech}: {e}")
             return None
+
+    def _save_material_debate_transcript(
+        self,
+        technology: str,
+        components: list[str],
+        debate_history: list,
+        consensus: dict[str, list[str]],
+    ) -> None:
+        """Save material debate transcript for audit trail."""
+        if not self.reporter:
+            return
+
+        try:
+            # Format debate data for reporter
+            debate_rounds = []
+
+            for round_data in debate_history:
+                debate_rounds.append(
+                    {
+                        "round_number": round_data.roundnumber,
+                        "convergence_score": round_data.convergencescore,
+                        "consensus_so_far": round_data.consensussofar,
+                        "critiques": round_data.critiques,
+                    }
+                )
+
+            final_consensus = {
+                "components": list(consensus.keys()),
+                "materials_by_component": consensus,
+                "total_materials": sum(len(mats) for mats in consensus.values()),
+            }
+
+            self.reporter.save_debate_transcript(
+                technology=f"{technology}_materials",
+                agent_responses=[],  # Material debate uses different structure
+                debate_history=debate_rounds,
+                final_consensus=final_consensus,
+                file_format="txt",
+            )
+
+            print(f"✓ Saved material debate transcript for {technology}")
+
+        except Exception as e:
+            logger.error(f"Error saving material debate transcript: {e}")
 
     # ========================================================================
     # Pipeline Execution
@@ -692,7 +812,9 @@ class STDNOrchestrator:
 
         # Process each technology
         for tech in technologies:
-            result = await self.process_technology(tech, role, domain, usage)
+            result = await self.process_technology(
+                tech, role, domain, usage, use_material_debate=self.use_material_debate
+            )
 
             if result and result["enriched_data"]:
                 # Write results to CSV
