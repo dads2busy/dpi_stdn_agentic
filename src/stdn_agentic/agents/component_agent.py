@@ -9,10 +9,10 @@ structural components while excluding raw materials, tools, and consumables.
 """
 
 import os
-from typing import Optional, List
+from typing import Iterator, List, Optional
 
-from pydantic import BaseModel, Field
-from pydantic_ai import Agent, RunContext
+from pydantic import BaseModel, ConfigDict, Field
+from pydantic_ai import Agent
 
 from ..models import STDNDependencies
 
@@ -22,12 +22,26 @@ from ..models import STDNDependencies
 
 
 class ComponentList(BaseModel):
-    """Structured output for technology components"""
+    """Structured output for technology components."""
 
     component_list: List[str] = Field(
-        description="Primary technology components (major subassemblies, "
-        "functional modules, structural elements)"
+        alias="componentlist",
+        description="Primary technology components: major subassemblies, functional modules, structural elements",
     )
+
+    model_config = ConfigDict(populate_by_name=True)
+
+    def __len__(self) -> int:
+        """Return the number of components."""
+        return len(self.component_list)
+
+    def __iter__(self) -> Iterator[str]:
+        """Allow iteration over components."""
+        return iter(self.component_list)
+
+    def __getitem__(self, index: int) -> str:
+        """Allow indexing."""
+        return self.component_list[index]
 
 
 # ============================================================================
@@ -87,8 +101,8 @@ def _get_configured_model() -> str:
 # Initialize the component extraction agent
 component_agent = Agent(
     _get_configured_model(),
-    output_type=ComponentList,  # ✓ Changed from result_type
-    deps_type=STDNDependencies,  # ✓ Added deps_type
+    output_type=ComponentList,
+    deps_type=STDNDependencies,
     system_prompt=COMPONENT_SYSTEM_PROMPT,
 )
 
@@ -113,12 +127,14 @@ def get_component_agent(model_name: Optional[str] = None) -> Agent[STDNDependenc
         ...     "smartphone with 5G, high-resolution display, and advanced camera",
         ...     deps=STDNDependencies(...)
         ... )
-        >>> print(result.data.component_list)
+        >>> print(result.output.component_list)
         ["display_module", "processor_unit", "battery_pack", ...]
     """
     # Use provided model or fall back to environment/default
     if model_name is None:
-        model_name = os.environ.get("STDN_MODEL") or os.environ.get("OLLAMA_MODEL", "ollama:qwen2.5:7b")
+        model_name = os.environ.get("STDN_MODEL") or os.environ.get(
+            "OLLAMA_MODEL", "ollama:qwen2.5:7b"
+        )
 
     # Create and return the agent with the specified model
     return Agent(

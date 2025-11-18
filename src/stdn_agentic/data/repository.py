@@ -6,13 +6,18 @@ retrieval from USGS database and LLM fallback for material-country mappings.
 """
 
 import asyncio
+import logging
 from typing import Dict, List, Optional
 
+import pandas as pd
 from pydantic_ai import RunUsage
 
 from ..agents import CountryList, get_country_data_agent
 from ..models import STDNDependencies
 from .usgs_client import USGSClient
+
+# Initialize logger
+logger = logging.getLogger(__name__)
 
 # ============================================================================
 # Country Data Repository
@@ -198,39 +203,75 @@ class CountryDataRepository:
         Returns:
             List of country data dicts
         """
-        # Get top countries
-        countries_df = self.usgs_client.query_top_countries(material, src_year, meas_year)
+        try:
+            # Get top countries
+            countries_df = self.usgs_client.query_top_countries(material, src_year, meas_year)
 
-        if countries_df is None or len(countries_df) == 0:
+            if countries_df is None or len(countries_df) == 0:
+                return []
+
+            # Get world totals (returns DataFrame)
+            world_totals_df = self.usgs_client.query_world_totals(material, src_year, meas_year)
+
+            # FIXED: Handle DataFrame properly
+            if world_totals_df is None or world_totals_df.empty:
+                logger.warning(f"No world totals data for {material}")
+                return []
+
+            # Extract production value from DataFrame
+            # Convert VALUE column to numeric and sum
+            try:
+                world_production = pd.to_numeric(world_totals_df["VALUE"], errors="coerce").sum()
+            except (KeyError, ValueError) as e:
+                logger.warning(f"Could not extract world production for {material}: {e}")
+                return []
+
+            if world_production == 0 or pd.isna(world_production):
+                logger.warning(f"No world production data for {material}")
+                return []
+
+            # Build country data
+            country_data = []
+            for country_name in countries_df["country"]:
+                details_df = self.usgs_client.query_country_details(
+                    material, country_name, src_year, meas_year
+                )
+
+                # FIXED: Handle DataFrame properly
+                if details_df is None or details_df.empty:
+                    continue
+
+                # Iterate through DataFrame rows
+                for _, row in details_df.iterrows():
+                    try:
+                        if str(row.get("MEAS_TYPE", "")).upper() == "PRODUCTION":
+                            amount = pd.to_numeric(row.get("VALUE", 0), errors="coerce")
+
+                            if pd.isna(amount):
+                                continue
+
+                            percentage = (
+                                (amount / world_production * 100) if world_production > 0 else 0
+                            )
+
+                            country_data.append(
+                                {
+                                    "country": country_name,
+                                    "meas_unit": row.get("MEAS_UNIT", ""),
+                                    "amount": float(amount),
+                                    "percentage": float(percentage),
+                                }
+                            )
+                            break  # Only take production data
+                    except (ValueError, TypeError, KeyError) as e:
+                        logger.debug(f"Error processing row for {country_name}: {e}")
+                        continue
+
+            return country_data
+
+        except Exception as e:
+            logger.error(f"Error in _query_usgs for {material}: {e}", exc_info=True)
             return []
-
-        # Get world totals
-        world_totals = self.usgs_client.query_world_totals(material, src_year, meas_year)
-        world_production = world_totals.get("PRODUCTION", 0)
-
-        # Build country data
-        country_data = []
-        for country_name in countries_df["country"]:
-            details = self.usgs_client.query_country_details(
-                material, country_name, src_year, meas_year
-            )
-
-            for detail in details:
-                if detail["meas_type"].upper() == "PRODUCTION":
-                    amount = detail["value"]
-                    percentage = (amount / world_production * 100) if world_production > 0 else 0
-
-                    country_data.append(
-                        {
-                            "country": country_name,
-                            "meas_unit": detail["meas_unit"],
-                            "amount": amount,
-                            "percentage": percentage,
-                        }
-                    )
-                    break  # Only take production data
-
-        return country_data
 
     async def _query_llm(
         self,

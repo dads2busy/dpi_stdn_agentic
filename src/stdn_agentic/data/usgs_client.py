@@ -5,11 +5,15 @@ This module provides a clean interface to the USGS Mineral Commodity Database.
 It handles all database queries and connection management for material production data.
 """
 
+import logging
 from pathlib import Path
 from typing import Dict, List, Optional
 
 import duckdb
 import pandas as pd
+
+# Initialize logger
+logger = logging.getLogger(__name__)
 
 # Country name translations (Chinese to English)
 COUNTRY_TRANSLATIONS = {
@@ -91,119 +95,134 @@ class USGSClient:
 
         Returns:
             DataFrame with top countries, or None if no data found
-
-        Example:
-            >>> client = USGSClient("./data/usgs.db")
-            >>> countries = client.query_top_countries("Lithium", 2025, 2024)
-            >>> if countries is not None:
-            ...     print(countries['country'].tolist())
         """
+        # Fixed: Most columns are UPPERCASE, but value_type is lowercase
         query = f"""
-        SELECT DISTINCT country
+        SELECT COUNTRY, SUM(TRY_CAST(VALUE AS DOUBLE)) as total_production
         FROM world_mineral_commodity_report
-        WHERE meas_yr = {meas_year}
-          AND src_yr = {src_year}
-          AND UPPER(commodity) = '{material.upper()}'
-          AND UPPER(country) NOT LIKE '%WORLD%'
+        WHERE MEAS_YR = {meas_year}
+          AND SRC_YR = {src_year}
+          AND UPPER(COMMODITY) = '{material.upper()}'
+          AND UPPER(COUNTRY) NOT LIKE '%WORLD%'
           AND value_type = 'Number'
-          AND UPPER(meas_type) = 'PRODUCTION'
-        ORDER BY value DESC
+          AND UPPER(MEAS_TYPE) = 'PRODUCTION'
+          AND VALUE IS NOT NULL
+          AND VALUE != ''
+        GROUP BY COUNTRY
+        HAVING SUM(TRY_CAST(VALUE AS DOUBLE)) IS NOT NULL
+        ORDER BY total_production DESC
         LIMIT {self.top_n}
         """
 
         try:
             result = self.connection.sql(query).df()
+
             if result.empty:
+                logger.debug(f"No USGS data found for {material} ({meas_year}/{src_year})")
                 return None
+
+            # Rename COUNTRY to country for consistency
+            result = result.rename(columns={"COUNTRY": "country"})
 
             # Translate country names
             result["country"] = result["country"].apply(self._translate_country_name)
-            return result
+
+            # Keep only country column
+            result_subset = result[["country"]].copy()
+
+            # Type assertion for basedpyright
+            assert isinstance(result_subset, pd.DataFrame)
+
+            return result_subset
+
         except Exception as e:
-            print(f"Top countries query failed for {material}: {e}")
+            logger.error(f"Top countries query failed for {material}: {e}", exc_info=True)
             return None
 
-    def query_world_totals(self, material: str, src_year: int, meas_year: int) -> Dict[str, float]:
+    def query_world_totals(
+        self, material: str, src_year: int, meas_year: int
+    ) -> Optional[pd.DataFrame]:
         """
         Query world total production for a material.
 
         Args:
             material: Material name
-            src_year: Source year
-            meas_year: Measurement year
+            src_year: Source year of report
+            meas_year: Measurement year for production data
 
         Returns:
-            Dict with meas_type -> value mappings
-
-        Example:
-            >>> totals = client.query_world_totals("Lithium", 2025, 2024)
-            >>> print(f"World production: {totals.get('PRODUCTION', 0)}")
+            DataFrame with world totals, or None if no data found
         """
+        # Fixed: Column is MEAS_UNIT not UNIT
         query = f"""
-        SELECT meas_type, value, meas_unit
+        SELECT VALUE, MEAS_UNIT, MEAS_TYPE
         FROM world_mineral_commodity_report
-        WHERE meas_yr = {meas_year}
-          AND src_yr = {src_year}
-          AND UPPER(commodity) = '{material.upper()}'
-          AND UPPER(country) LIKE '%WORLD%'
+        WHERE MEAS_YR = {meas_year}
+          AND SRC_YR = {src_year}
+          AND UPPER(COMMODITY) = '{material.upper()}'
+          AND UPPER(COUNTRY) LIKE '%WORLD%'
           AND value_type = 'Number'
+          AND UPPER(MEAS_TYPE) = 'PRODUCTION'
         """
 
         try:
             result = self.connection.sql(query).df()
-            totals = {}
-            for _, row in result.iterrows():
-                meas_type = str(row["meas_type"]).upper()  # ← Fixed type issue
-                try:
-                    totals[meas_type] = float(row["value"])
-                except (ValueError, TypeError):
-                    continue
-            return totals
+
+            if result.empty:
+                logger.debug(f"No world totals found for {material} ({meas_year}/{src_year})")
+                return None
+
+            return result
+
         except Exception as e:
-            print(f"World totals query failed for {material}: {e}")
-            return {}
+            logger.error(f"World totals query failed for {material}: {e}", exc_info=True)
+            return None
 
     def query_country_details(
         self, material: str, country: str, src_year: int, meas_year: int
-    ) -> List[Dict]:
+    ) -> Optional[pd.DataFrame]:
         """
-        Query production details for a specific country.
+        Query detailed production data for a specific country and material.
 
         Args:
             material: Material name
             country: Country name
-            src_year: Source year
-            meas_year: Measurement year
+            src_year: Source year of report
+            meas_year: Measurement year for production data
 
         Returns:
-            List of production records with meas_type, meas_unit, value
+            DataFrame with country details, or None if no data found
         """
+        # Fixed: Column is MEAS_UNIT not UNIT
         query = f"""
-        SELECT meas_type, meas_unit, value
+        SELECT COUNTRY, VALUE, MEAS_UNIT, MEAS_TYPE, value_type
         FROM world_mineral_commodity_report
-        WHERE meas_yr = {meas_year}
-          AND src_yr = {src_year}
-          AND UPPER(commodity) = '{material.upper()}'
-          AND UPPER(country) = '{country.upper()}'
+        WHERE MEAS_YR = {meas_year}
+          AND SRC_YR = {src_year}
+          AND UPPER(COMMODITY) = '{material.upper()}'
+          AND UPPER(COUNTRY) = '{country.upper()}'
           AND value_type = 'Number'
-          AND UPPER(meas_type) IN ('PRODUCTION', 'RESERVES', 'RESERVE BASE')
+          AND UPPER(MEAS_TYPE) = 'PRODUCTION'
         """
 
         try:
             result = self.connection.sql(query).df()
-            details = []
-            for _, row in result.iterrows():
-                details.append(
-                    {
-                        "meas_type": str(row["meas_type"]),  # ← Fixed type issue
-                        "meas_unit": row["meas_unit"],
-                        "value": float(row["value"]),
-                    }
-                )
-            return details
+
+            if result.empty:
+                logger.debug(f"No details found for {material}/{country} ({meas_year}/{src_year})")
+                return None
+
+            # Rename COUNTRY to country for consistency
+            if "COUNTRY" in result.columns:
+                result = result.rename(columns={"COUNTRY": "country"})
+
+            return result
+
         except Exception as e:
-            print(f"Country details query failed for {material}/{country}: {e}")
-            return []
+            logger.error(
+                f"Country details query failed for {material}/{country}: {e}", exc_info=True
+            )
+            return None
 
     def close(self):
         """Close database connection"""

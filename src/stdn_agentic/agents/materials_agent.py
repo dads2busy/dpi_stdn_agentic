@@ -15,9 +15,9 @@ Key enhancements:
 import logging
 import os
 from difflib import SequenceMatcher
-from typing import List, Optional
+from typing import Iterator, List, Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 from pydantic_ai import Agent, ModelRetry, RunContext
 
 from ..models import STDNDependencies
@@ -25,7 +25,7 @@ from ..models import STDNDependencies
 logger = logging.getLogger(__name__)
 
 # Environment flag to control tool usage (for backends that don't support tools well)
-DISABLE_MATERIAL_TOOLS = os.getenv("STDN_DISABLE_MATERIAL_TOOLS", "0") == "1"
+DISABLE_MATERIAL_TOOLS = os.getenv("STDN_DISABLE_MATERIAL_TOOLS", "1") == "1"
 
 # ============================================================================
 # Data Models
@@ -36,18 +36,31 @@ class ComponentMaterials(BaseModel):
     """Materials identified for a single component."""
 
     component: str = Field(description="Component name")
-    raw_materials: List[str] = Field(
-        alias="materials",
-        description="List of raw materials used in this component",
-    )
+    raw_materials: List[str] = Field(alias="materials", description="List of raw materials")
+
+    model_config = ConfigDict(populate_by_name=True)
 
 
 class ComponentMaterialsList(BaseModel):
-    """Collection of components with their identified materials."""
+    """Collection of components with their materials."""
 
     component_list: List[ComponentMaterials] = Field(
-        description="List of components and their materials",
+        alias="componentlist", description="List of components and their materials"
     )
+
+    model_config = ConfigDict(populate_by_name=True)
+
+    def __len__(self) -> int:
+        """Return the number of component materials."""
+        return len(self.component_list)
+
+    def __iter__(self) -> Iterator[ComponentMaterials]:
+        """Allow iteration over component materials."""
+        return iter(self.component_list)
+
+    def __getitem__(self, index: int) -> ComponentMaterials:
+        """Allow indexing."""
+        return self.component_list[index]
 
 
 # ============================================================================
@@ -162,13 +175,6 @@ VARIANT_MAP = {
 def _exact_match(material_lower: str, ontology: List[str]) -> Optional[str]:
     """
     Check for exact case-insensitive match.
-
-    Args:
-        material_lower: Lowercase material name.
-        ontology: List of ontology materials.
-
-    Returns:
-        Matched ontology material or None.
     """
     for ont_mat in ontology:
         if material_lower == ont_mat.lower():
@@ -179,13 +185,6 @@ def _exact_match(material_lower: str, ontology: List[str]) -> Optional[str]:
 def _variant_match(material_lower: str, ontology: List[str]) -> Optional[str]:
     """
     Map common variants to standard names.
-
-    Args:
-        material_lower: Lowercase material name.
-        ontology: List of ontology materials.
-
-    Returns:
-        Matched ontology material or None.
     """
     if material_lower in VARIANT_MAP:
         mapped = VARIANT_MAP[material_lower]
@@ -197,13 +196,6 @@ def _variant_match(material_lower: str, ontology: List[str]) -> Optional[str]:
 def _word_match(material_lower: str, ontology: List[str]) -> Optional[str]:
     """
     Match individual significant words in material name.
-
-    Args:
-        material_lower: Lowercase material name.
-        ontology: List of ontology materials.
-
-    Returns:
-        Matched ontology material or None.
     """
     words = material_lower.split()
 
@@ -222,13 +214,6 @@ def _word_match(material_lower: str, ontology: List[str]) -> Optional[str]:
 def _chemical_symbol_match(material_lower: str, ontology: List[str]) -> Optional[str]:
     """
     Match chemical symbols (short terms 2-3 chars).
-
-    Args:
-        material_lower: Lowercase material name.
-        ontology: List of ontology materials.
-
-    Returns:
-        Matched ontology material or None.
     """
     words = material_lower.split()
     chemical_symbols = [w for w in words if 2 <= len(w) <= 3]
@@ -261,13 +246,6 @@ def _chemical_symbol_match(material_lower: str, ontology: List[str]) -> Optional
 def _partial_match(material_lower: str, ontology: List[str]) -> Optional[str]:
     """
     Check for partial substring match.
-
-    Args:
-        material_lower: Lowercase material name.
-        ontology: List of ontology materials.
-
-    Returns:
-        Matched ontology material or None.
     """
     for ont_mat in ontology:
         ont_lower = ont_mat.lower()
@@ -285,14 +263,6 @@ def _fuzzy_similarity_match(
 ) -> Optional[str]:
     """
     Fuzzy similarity matching using SequenceMatcher.
-
-    Args:
-        material_lower: Lowercase material name.
-        ontology: List of ontology materials.
-        min_similarity: Minimum similarity score (0-1).
-
-    Returns:
-        Best matching ontology material or None.
     """
     best_match: Optional[str] = None
     best_score = 0.0
@@ -330,14 +300,6 @@ def enhanced_material_match(
     4. Chemical symbol match (Li, Co, Ni, etc.)
     5. Partial substring match
     6. Fuzzy similarity match (75%+ similar)
-
-    Args:
-        material: Material name to match.
-        ontology: List of valid ontology materials.
-        min_similarity: Minimum similarity for fuzzy matching.
-
-    Returns:
-        Best matching material from ontology, or original if no match.
     """
     material_lower = material.lower().strip()
 
@@ -443,15 +405,7 @@ async def validate_materials(
 def fuzzy_match_material(material: str, ontology: List[str]) -> str:
     """
     Legacy fuzzy match function (for backward compatibility).
-
     Calls the enhanced_material_match function.
-
-    Args:
-        material: Material name to match.
-        ontology: List of ontology materials.
-
-    Returns:
-        Best matching material from ontology, or original if no match.
     """
     return enhanced_material_match(material, ontology)
 
@@ -500,17 +454,15 @@ def get_materials_agent(
             system_prompt=MATERIALS_SYSTEM_PROMPT,
         )
 
-        # Register validation tool only if tools are enabled for this environment.
-        # Some OpenAI-compatible backends (e.g., certain Qwen/Ollama servers)
-        # reject tool-calling messages with content=null, which triggers 400
-        # errors like "invalid message content type: <nil>" during materials
-        # extraction.
+        # DISABLED BY DEFAULT - Ollama backends often reject tool calls
+        # Set STDN_DISABLE_MATERIAL_TOOLS=0 to enable if your backend supports it
         if not DISABLE_MATERIAL_TOOLS:
             _agent.tool(validate_materials)
+            logger.info("Materials validation tool enabled")
         else:
             logger.info(
-                "Materials validation tool disabled via STDN_DISABLE_MATERIAL_TOOLS=1; "
-                "skipping tool registration.",
+                "Materials validation tool DISABLED (Ollama compatibility mode). "
+                "Set STDN_DISABLE_MATERIAL_TOOLS=0 to enable."
             )
 
     return _agent

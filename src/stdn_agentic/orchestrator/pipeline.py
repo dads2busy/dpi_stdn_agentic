@@ -145,120 +145,131 @@ class STDNOrchestrator:
     # ========================================================================
 
     async def extract_materials_safe(
-        self, component_list: ComponentList, technology: str, usage: RunUsage
+        self,
+        componentlist: ComponentList,  # Changed from List[str] to ComponentList
+        technology: str,
+        usage: RunUsage,
     ) -> Optional[ComponentMaterialsList]:
         """
         Safely extract materials with comprehensive error handling.
 
-        This method prevents 400 errors by validating inputs at every step:
-        - Validates component list is not null/empty
-        - Filters out invalid components
-        - Checks ontology availability
-        - Validates prompt generation
-        - Handles LLM errors gracefully
-
         Args:
-            component_list: List of components
-            technology: Technology name (for error reporting)
+            componentlist: ComponentList object containing components
+            technology: Technology name
             usage: RunUsage tracker
 
         Returns:
-            ComponentMaterialsList or None if extraction fails
+            ComponentMaterialsList with extracted materials, or empty list on error
         """
         try:
             # VALIDATION 1: Check component list exists
-            if not component_list or not hasattr(component_list, "component_list"):
+            if not componentlist or not hasattr(componentlist, "component_list"):
                 logger.warning(f"No components to extract materials from for {technology}")
-                print(f"  ⚠️  No components to extract materials from")
-                return ComponentMaterialsList(component_list=[])
+                print(f"🔍 No components to extract materials from")
+                return ComponentMaterialsList.model_validate({"componentlist": []})
 
-            components = component_list.component_list
+            components = componentlist.component_list  # Access component_list field
 
-            # VALIDATION 2: Filter valid components (non-null, non-empty strings)
+            # VALIDATION 2: Filter valid components
             valid_components = [c for c in components if c and isinstance(c, str) and c.strip()]
-
             if not valid_components:
                 logger.warning(f"All components were null/empty for {technology}")
-                print(f"  ⚠️  All components were null/empty")
-                return ComponentMaterialsList(component_list=[])
+                print(f"🔍 All components were null/empty")
+                return ComponentMaterialsList.model_validate({"componentlist": []})
 
             # VALIDATION 3: Check ontology availability
             if not self.deps.material_ontology_list or len(self.deps.material_ontology_list) == 0:
                 logger.error(
                     f"Material ontology is empty - cannot extract materials for {technology}"
                 )
-                print(f"  ❌  Material ontology is empty!")
-                return ComponentMaterialsList(component_list=[])
+                print(f"❌ Material ontology is empty!")
+                return ComponentMaterialsList.model_validate({"componentlist": []})
 
             # Build prompt with validated data
-            component_str = "\n".join([f"- {comp}" for comp in valid_components])
-
-            # Limit ontology size to avoid token overflow (keep most common materials)
+            component_str = "\n".join(f"- {comp}" for comp in valid_components)
             ontology_sample = self.deps.material_ontology_list[:100]
             ontology_str = ", ".join(ontology_sample)
 
+            # CRITICAL FIX: Ensure all prompt parts are non-None strings
             materials_prompt = f"""Extract RAW MATERIALS (NOT components or subassemblies) for these components of a {technology}:
 
-            {component_str}
+    {component_str}
 
-            AVAILABLE RAW MATERIALS (use exact names or common variants):
-            {ontology_str}
+    AVAILABLE RAW MATERIALS (use exact names or common variants):
+    {ontology_str}
 
-            CRITICAL INSTRUCTIONS:
-            - For each component, identify 2-8 key RAW MATERIALS (metals, minerals, elements, compounds)
-            - Do NOT return component names, subassemblies, or finished parts
-            - Return only basic materials like: Aluminum, Copper, Silicon, Lithium, Glass, Steel, Rare Earth Elements
-            - Use standard material names or their common variants
+    CRITICAL INSTRUCTIONS:
+    - For each component, identify 2-8 key RAW MATERIALS (metals, minerals, elements, compounds)
+    - Do NOT return component names, subassemblies, or finished parts
+    - Return only basic materials like Aluminum, Copper, Silicon, Lithium, Glass, Steel, Rare Earth Elements
+    - Use standard material names or their common variants
 
-            EXAMPLES:
-            - Battery Pack → Lithium, Cobalt, Nickel, Copper, Aluminum, Graphite
-            - Display Module → Glass, Indium, Rare Earth Elements, Plastic
-            - Processor Unit → Silicon, Copper, Gold, Tantalum, Ceramic"""
+    EXAMPLES:
+    - Battery Pack: Lithium, Cobalt, Nickel, Copper, Aluminum, Graphite
+    - Display Module: Glass, Indium, Rare Earth Elements, Plastic
+    - Processor Unit: Silicon, Copper, Gold, Tantalum, Ceramic
 
-            # VALIDATION 4: Check prompt is valid
-            if not materials_prompt or len(materials_prompt.strip()) < 20:
-                logger.error(f"Generated materials prompt is too short for {technology}")
-                print(f"  ❌  Generated materials prompt is too short")
-                return ComponentMaterialsList(component_list=[])
+    Return a JSON response with componentlist containing component and materials fields."""
+
+            # VALIDATION 4: Check prompt is valid and non-empty
+            if (
+                not materials_prompt
+                or not isinstance(materials_prompt, str)
+                or len(materials_prompt.strip()) < 50
+            ):
+                logger.error(f"Generated materials prompt is invalid for {technology}")
+                print(f"❌ Generated materials prompt is too short or None")
+                print(f"🔍 Prompt length: {len(materials_prompt) if materials_prompt else 0}")
+                return ComponentMaterialsList.model_validate({"componentlist": []})
 
             logger.info(
-                f"Extracting materials for {len(valid_components)} components of {technology}"
+                f"📋 Extracting materials for {len(valid_components)} components of {technology}"
             )
             print(f"  🔍 Extracting materials for {len(valid_components)} components...")
 
+            # VALIDATION 5: Ensure deps and model are valid
+            if not self.deps or not self.deps.model:
+                logger.error(f"Dependencies or model not configured for {technology}")
+                print(f"❌ Dependencies not properly configured")
+                return ComponentMaterialsList.model_validate({"componentlist": []})
+
+            # Debug output
+            print(f"  🔍 Using model: {self.deps.model}")
+            print(f"  🔍 Prompt length: {len(materials_prompt)} chars")
+
             # Call materials agent with validated inputs
             result = await self.materials_agent.run(
-                materials_prompt, deps=self.deps
+                materials_prompt,
+                deps=self.deps,
             )
 
-            # VALIDATION 5: Check result validity
+            # VALIDATION 6: Check result validity
             if not result or not result.output:
                 logger.warning(f"Materials agent returned empty result for {technology}")
-                print(f"  ⚠️  Materials agent returned empty result")
-                return ComponentMaterialsList(component_list=[])
+                print(f"⚠️  Materials agent returned empty result")
+                return ComponentMaterialsList.model_validate({"componentlist": []})
 
             materials_list = result.output
 
-            # VALIDATION 6: Check materials list has content
-            if not materials_list.component_list:
+            # VALIDATION 7: Check materials list has content
+            if not materials_list.component_list:  # Use component_list field
                 logger.warning(f"Materials list is empty for {technology}")
-                print(f"  ⚠️  Materials list is empty")
-                return ComponentMaterialsList(component_list=[])
+                print(f"⚠️  Materials list is empty")
+                return ComponentMaterialsList.model_validate({"componentlist": []})
 
+            # Access raw_materials field (not rawmaterials)
             num_materials = sum(len(cm.raw_materials) for cm in materials_list.component_list)
             logger.info(
-                f"✓ Extracted {num_materials} materials for {len(materials_list.component_list)} components of {technology}"
+                f"✅ Extracted {num_materials} materials for {len(materials_list.component_list)} components of {technology}"
             )
-            print(f"  ✓ Extracted materials for {len(materials_list.component_list)} components")
+            print(f"  ✅ Extracted materials for {len(materials_list.component_list)} components")
 
             return materials_list
 
         except Exception as e:
             logger.error(f"Error extracting materials for {technology}: {e}", exc_info=True)
             print(f"  ❌  Error extracting materials for {technology}: {e}")
-
-            # Return empty list rather than crashing entire pipeline
-            return ComponentMaterialsList(component_list=[])
+            return ComponentMaterialsList.model_validate({"componentlist": []})
 
     # ========================================================================
     # Component Extraction with Enhanced Debate
@@ -299,7 +310,6 @@ class STDNOrchestrator:
                     f"Extract the primary components of a {technology}. "
                     f"Perspective #{agent_num}: Focus on identifying essential subsystems and modules.",
                     deps=self.deps,
-                    
                 )
 
                 if result and result.output:
@@ -373,7 +383,7 @@ class STDNOrchestrator:
         print(f"📊 Final components extracted: {final_components}")
 
         if final_components:
-            return ComponentList(component_list=final_components)
+            return ComponentList(componentlist=final_components)
         else:
             logger.warning(f"Debate produced no consensus components for {technology}")
             return None
@@ -475,7 +485,6 @@ class STDNOrchestrator:
                 result = await self.component_agent.run(
                     f"Extract the primary components of a {tech}",
                     deps=self.deps,
-                    
                 )
                 components_result = result.output if result else None
 
@@ -496,7 +505,7 @@ class STDNOrchestrator:
             # STAGE 2: Extract Materials (with safe error handling)
             # ================================================================
             materials_result = await self.extract_materials_safe(
-                component_list=ComponentList(component_list=components),
+                componentlist=ComponentList(componentlist=components),  # Correct param name
                 technology=tech,
                 usage=usage,
             )

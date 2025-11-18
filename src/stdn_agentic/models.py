@@ -14,7 +14,7 @@ from dataclasses import dataclass
 from typing import Literal, Optional
 
 import ollama
-from pydantic import BaseModel, Field, computed_field
+from pydantic import BaseModel, ConfigDict, Field, computed_field
 
 # ============================================================================
 # Runtime Dependencies
@@ -31,7 +31,6 @@ class STDNDependencies:
     - Country production data
     - Database client connections
     - Model configuration
-    - Configuration settings (NEW)
 
     Attributes:
         material_ontology: Comma-separated string of material names
@@ -42,7 +41,6 @@ class STDNDependencies:
         client: Ollama client for LLM inference
         model: Model identifier (e.g., "qwen2.5:7b")
         top_p: Top-p sampling parameter for generation
-        config: Configuration model with all settings (NEW)
     """
 
     material_ontology: str
@@ -63,32 +61,6 @@ class STDNDependencies:
 class ConfigModel(BaseModel):
     """
     Configuration validation model for STDN generation.
-
-    This Pydantic model validates and provides type safety for configuration
-    loaded from JSON files. It includes sensible defaults and computed properties
-    for backward compatibility.
-
-    Required Fields:
-        import_tech_list: Path to CSV file with technology list
-        model: Model identifier (e.g., "ollama:qwen2.5:7b")
-        output_dir: Directory for output files
-        output_csv_filename: Name for output CSV (without extension)
-
-    Optional Fields:
-        materials_hs_codes_listing: Path to HS codes mapping
-        materials_column_name: Column name in HS codes file
-        materials_top_countries_repository: Path to top countries JSON
-        usgs_database: Path to USGS SQLite database
-        top_n_countries: Number of top producing countries to include
-        generate_country_data: Whether to generate country production data
-        country_data_mode: Mode for country data generation
-        materials_to_update: Specific materials to update
-        years_to_query: Years for historical data queries
-        write_nulls_to_output: Whether to write rows with null country data
-        topp: Top-p sampling parameter
-        materials_use_topp: Whether to use top-p for materials extraction
-        materials_iteration_count: Number of iterations for materials
-        materials_count_threshold: Threshold for material count consensus
     """
 
     # ========================================================================
@@ -183,68 +155,32 @@ class ConfigModel(BaseModel):
     )
 
     # ========================================================================
+    # Pydantic v2 Configuration (FIXED)
+    # ========================================================================
+
+    model_config = ConfigDict(
+        extra="allow",  # Allow extra fields for extensibility
+        validate_assignment=True,  # Validate on attribute assignment
+    )
+
+    # ========================================================================
     # Computed Properties (Backward Compatibility)
     # ========================================================================
 
     @computed_field
     @property
     def tech_list_path(self) -> str:
-        """
-        Alias for import_tech_list (for pipeline compatibility).
-
-        The enhanced pipeline expects 'tech_list_path', but the config
-        file uses 'import_tech_list'. This computed property bridges
-        the naming difference.
-
-        Returns:
-            Path to technology list CSV file
-        """
+        """Alias for import_tech_list (for pipeline compatibility)."""
         return self.import_tech_list
 
     @computed_field
     @property
     def src_year(self) -> int:
-        """
-        Source year for country data queries.
-
-        Returns the first year in years_to_query list as the baseline
-        year for production data retrieval.
-
-        Returns:
-            First year from years_to_query, or 2023 if list is empty
-        """
+        """Source year for country data queries."""
         return self.years_to_query[0] if self.years_to_query else 2023
 
     @computed_field
     @property
     def meas_year(self) -> int:
-        """
-        Measurement year for country data queries.
-
-        Returns the last year in years_to_query list as the target
-        year for production data measurement.
-
-        Returns:
-            Last year from years_to_query, or 2024 if list is empty
-        """
+        """Measurement year for country data queries."""
         return self.years_to_query[-1] if self.years_to_query else 2024
-
-    # ========================================================================
-    # Validation Methods
-    # ========================================================================
-
-    class Config:
-        """Pydantic model configuration"""
-
-        extra = "allow"  # Allow extra fields for extensibility
-        validate_assignment = True  # Validate on attribute assignment
-
-
-# ============================================================================
-# Public API
-# ============================================================================
-
-__all__ = [
-    "STDNDependencies",
-    "ConfigModel",
-]
