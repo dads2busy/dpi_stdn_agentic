@@ -1,898 +1,526 @@
-Based on my thorough review of the README.md file, I've identified several areas for improvement including clarity, completeness, technical accuracy, and consistency. Here's the enhanced version:
+# STDN Agentic
+
+**Shallow Technology Dependency Network** generation using multi-agent debate and Pydantic AI.
+
+A research tool for analyzing technology supply chains by extracting component hierarchies, identifying raw materials, and mapping global production sources using a combination of LLM-based agents, USGS mineral commodity databases, and multi-agent consensus systems.
 
 ---
-
-# STDN Agentic - Supply Technology Dependency Network Generator
-
-A modular, multi-agent system for generating Supply Technology Dependency Networks (STDNs) using Pydantic AI agents with USGS database integration and LLM fallback.
 
 ## Table of Contents
 
 - [Overview](#overview)
 - [Architecture](#architecture)
-  - [Component Overview](#component-overview)
-  - [Agents Layer](#agents-layer)
-  - [Data Layer](#data-layer)
-  - [Debate System](#debate-system)
-  - [Orchestrator](#orchestrator)
-  - [Reporting](#reporting)
-- [Pipeline Flow](#pipeline-flow)
-  - [Key Decision Points](#key-decision-points)
-  - [Cross-Cutting Concerns](#cross-cutting-concerns)
+- [Features](#features)
 - [Installation](#installation)
-  - [Prerequisites](#prerequisites)
-  - [Setup](#setup)
-  - [Environment Configuration](#environment-configuration)
+- [Configuration](#configuration)
+- [Database Setup](#database-setup)
 - [Usage](#usage)
-  - [Basic Usage](#basic-usage)
-  - [Running with Multi-Agent Debate](#running-with-multi-agent-debate)
-    - [Method 1: Configuration via .env File (Simplest)](#method-1-configuration-via-env-file-simplest)
-    - [Method 2: Programmatic Configuration (Single Technology)](#method-2-programmatic-configuration-single-technology)
-    - [Method 3: Programmatic Batch Processing (Advanced)](#method-3-programmatic-batch-processing-advanced)
-  - [Advanced Usage Examples](#advanced-usage-examples)
-  - [How Debate Works for Multiple Technologies](#how-debate-works-for-multiple-technologies)
-- [Multi-Agent Debate System](#multi-agent-debate-system)
-  - [Debate Parameters](#debate-parameters)
-  - [Quick Test](#quick-test)
-- [Development](#development)
-  - [Project Structure](#project-structure)
-  - [Design Patterns](#design-patterns)
-  - [Adding New Features](#adding-new-features)
-  - [Running Tests](#running-tests)
-- [Data Sources](#data-sources)
-  - [USGS Database](#usgs-database)
-  - [LLM Fallback](#llm-fallback)
-- [API Reference](#api-reference)
-  - [Core Classes](#core-classes)
-- [Configuration Reference](#configuration-reference)
+- [Output Format](#output-format)
 - [Troubleshooting](#troubleshooting)
-- [Contributing](#contributing)
-- [License](#license)
+- [Development](#development)
+- [Citation](#citation)
 
-***
+---
 
 ## Overview
 
-STDN Agentic analyzes technologies to extract their component dependencies and material supply chains. It uses a multi-agent debate system to achieve consensus on components and materials, then enriches the data with country-level production information from USGS databases.
+**STDN Agentic** generates **Shallow Technology Dependency Networks** - structured representations of:
+1. **Component hierarchies** within technologies (e.g., smartphone → display, battery, processor)
+2. **Raw material compositions** for each component (e.g., display → glass, indium, rare earth elements)
+3. **Global production sources** for each material (e.g., indium → China 60%, South Korea 15%)
 
-### Key Features
+The system uses **multi-agent debate** to achieve consensus on component extraction, combining multiple LLM perspectives to reduce hallucination and improve accuracy.
 
-- **Multi-Agent Consensus**: Debate-based consensus building with configurable rounds
-- **USGS Integration**: Direct access to USGS mineral commodity production data (2022-2025)
-- **Intelligent Fallback**: LLM-based estimation when database data unavailable
-- **Smart Caching**: Minimize redundant queries with TTL-based caching (24-hour default)
-- **Modular Architecture**: Clean separation of concerns for maintainability
-- **Full Audit Trail**: Detailed debate transcripts and checkpoint support
-- **Comprehensive Testing**: Unit and integration test coverage
+### What is "Shallow"?
 
-### Use Cases
+"Shallow" refers to a **single-level decomposition**: technologies → components → materials. Unlike deep hierarchical networks, STDN focuses on the first critical layer of supply chain dependencies, making it computationally efficient for policy analysis.
 
-- Supply chain vulnerability analysis
-- Critical materials assessment
-- Geopolitical risk evaluation
-- Technology dependency mapping
-- Policy research and analysis
+```
+Technology Level:        Smartphone
+                            |
+Component Level:     [Display] [Battery] [Processor] [Camera]
+                        |         |          |           |
+Material Level:     Glass     Lithium    Silicon     Glass
+                    Indium    Cobalt     Copper      Rare Earths
+                    REE       Nickel     Gold        Aluminum
+```
 
-***
+---
 
 ## Architecture
 
-The project follows a clean, modular architecture organized into specialized packages:
+### System Flow
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    STDN Generation Pipeline                      │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+         ┌────────────────────────────────────────┐
+         │   1. MULTI-AGENT DEBATE SYSTEM         │
+         │   ┌──────────┐  ┌──────────┐           │
+         │   │ Agent 1  │  │ Agent 2  │           │
+         │   │ (qwen)   │  │ (qwen)   │           │
+         │   └────┬─────┘  └─────┬────┘           │
+         │        │              │                 │
+         │   ┌────▼──────────────▼────┐           │
+         │   │  Semantic Normalization│           │
+         │   │  (LLM-based consensus) │           │
+         │   └────────────┬────────────┘           │
+         │                ▼                        │
+         │         ComponentList                   │
+         └────────────────┬───────────────────────┘
+                          │
+                          ▼
+         ┌────────────────────────────────────────┐
+         │   2. MATERIALS EXTRACTION              │
+         │   (with fuzzy ontology matching)       │
+         │                                         │
+         │   Components → Materials Agent          │
+         │   + Retry Logic (exponential backoff)  │
+         │   + Ontology Validation                 │
+         └────────────────┬───────────────────────┘
+                          │
+                          ▼
+         ┌────────────────────────────────────────┐
+         │   3. COUNTRY DATA AGGREGATION          │
+         │                                         │
+         │   ┌─────────────┐    ┌──────────────┐  │
+         │   │ USGS DB     │ or │ LLM Fallback │  │
+         │   │ (DuckDB)    │    │ (Estimated)  │  │
+         │   └─────────────┘    └──────────────┘  │
+         │                                         │
+         │   + Caching Layer                       │
+         └────────────────┬───────────────────────┘
+                          │
+                          ▼
+                  ┌───────────────┐
+                  │  CSV Output   │
+                  │  + Transcripts│
+                  └───────────────┘
+```
+
+### Component Architecture
 
 ```
 src/stdn_agentic/
-├── agents/           # Multi-agent extraction system
-├── data/             # Data access and persistence layer
-├── debate/           # Multi-agent consensus system
-├── orchestrator/     # Pipeline coordination
-├── reporting/        # Output generation
-├── core/             # Base classes and schemas
-├── models.py         # Pydantic data models
-├── dependencies.py   # Dependency injection container
-└── utils.py          # Shared utility functions
+├── agents/
+│   ├── component_agent.py    # Component extraction with debate
+│   ├── materials_agent.py    # Materials extraction + fuzzy matching
+│   ├── country_agent.py      # LLM-based country fallback
+│   └── factory.py            # Agent creation & caching
+├── orchestrator/
+│   ├── pipeline.py           # Main orchestration logic
+│   └── debater.py            # Multi-agent debate system
+├── data/
+│   ├── usgs_client.py        # DuckDB USGS database client
+│   ├── repository.py         # Unified data access layer
+│   └── cache.py              # Material/country data cache
+├── models.py                 # Pydantic models (STDNDependencies, ConfigModel)
+└── main.py                   # CLI entry point
 ```
 
-### Component Overview
+---
 
-#### Agents Layer (`agents/`)
+## Features
 
-Specialized Pydantic AI agents for data extraction:
+### ✨ Core Capabilities
 
-- **ComponentAgent** (`component_agent.py`): Extracts primary technology components (displays, batteries, processors)
-- **MaterialsAgent** (`materials_agent.py`): Identifies raw materials with ontology validation
-- **CountryDataAgent** (`country_agent.py`): Retrieves country production data with LLM fallback
-- **AgentFactory** (`factory.py`): Creates and manages agent instances with caching
+- **Multi-Agent Debate**: 3 independent LLM agents debate and reach consensus on component lists
+- **Semantic Normalization**: LLM-based merging of similar components ("battery pack" ≈ "lithium-ion battery")
+- **Fuzzy Material Matching**: Multi-strategy matching (exact, variant, partial, similarity) against material ontology
+- **USGS Database Integration**: DuckDB-based querying of World Mineral Commodity Reports (2022-2025)
+- **LLM Fallback**: Automatic fallback to LLM estimates when USGS data unavailable
+- **Intelligent Caching**: Reduces redundant queries for repeated materials
+- **Retry Logic**: Exponential backoff for Ollama stability (1s, 2s, 4s delays)
+- **Debate Transcripts**: Full audit trail of agent discussions saved to JSON
 
-#### Data Layer (`data/`)
+### 🔧 Technical Highlights
 
-Robust data access with fallback strategies:
+- **Pydantic AI v0.0.14+** agents with proper type safety
+- **Ollama compatibility mode** (tools disabled by default)
+- **Pandas DataFrame** handling for USGS queries
+- **Pydantic v2** ConfigDict (no deprecation warnings)
+- **Comprehensive validation** (7 checkpoints in materials extraction)
+- **Type-safe models** with basedpyright compatibility
 
-- **USGSClient** (`usgs_client.py`): Queries USGS mineral commodity DuckDB database
-- **CountryDataRepository** (`repository.py`): Coordinates USGS primary + LLM fallback
-- **MaterialCache** (`cache.py`): TTL-based caching to reduce redundant queries
-- **DataLoader** (`loaders.py`): CSV/JSON loading and saving utilities
-
-#### Debate System (`debate/`)
-
-Multi-agent consensus building:
-
-- Configurable debate rounds (1-10 rounds)
-- Jaccard similarity convergence scoring
-- Agent critique generation
-- Majority voting for consensus
-- Full debate history tracking
-
-#### Orchestrator (`orchestrator/`)
-
-Pipeline coordination and management:
-
-- **Pipeline** (`pipeline.py`): End-to-end technology processing workflow
-- **Checkpoint** (`checkpoint.py`): Checkpoint/resume for long-running batch jobs
-- **StateManager** (`state_manager.py`): Pipeline state management with transitions
-- **ErrorHandler** (`error_handler.py`): Error handling with retry logic and exponential backoff
-
-#### Reporting (`reporting/`)
-
-Output generation and audit trails:
-
-- **DebateReporter** (`debate_reporter.py`): Human-readable debate transcripts and machine-readable JSON exports
-- Policy-ready formatted briefs
-- Timestamped audit logs
-
-***
-
-## Pipeline Flow
-
-The STDN generation pipeline processes technologies through multiple stages, with agents interacting at specific points:
-
-```
-┌─────────────────────────────────────────────┐
-│  STAGE 1: COMPONENT EXTRACTION              │
-├─────────────────────────────────────────────┤
-│  Input: Tech List (CSV)                     │
-│  └─► ComponentAgent (x3)                    │
-│       └─► Multi-Agent Debate                │
-│            - Agent 1: display, battery...   │
-│            - Agent 2: screen, battery...    │
-│            - Agent 3: display, battery...   │
-│       └─► MultiAgentDebater                 │
-│            - Run consensus rounds           │
-│            - Convergence scoring            │
-│            - Agent critiques                │
-│  Output: Consensus Components               │
-└─────────────────────────────────────────────┘
-                    ↓
-┌─────────────────────────────────────────────┐
-│  STAGE 2: MATERIALS EXTRACTION              │
-├─────────────────────────────────────────────┤
-│  For each component:                        │
-│  └─► MaterialsAgent                         │
-│       - Extract materials                   │
-│       - Validate against ontology           │
-│       - Filter invalid materials            │
-│       - Retry if no valid materials found   │
-│  Output: Component → Materials mapping      │
-└─────────────────────────────────────────────┘
-                    ↓
-┌─────────────────────────────────────────────┐
-│  STAGE 3: COUNTRY DATA ENRICHMENT           │
-├─────────────────────────────────────────────┤
-│  For each material:                         │
-│  └─► CountryDataRepository                  │
-│       1. Check cache                        │
-│       2. Query USGS database                │
-│       3. LLM fallback if needed             │
-│  Output: Country production data            │
-└─────────────────────────────────────────────┘
-                    ↓
-┌─────────────────────────────────────────────┐
-│  STAGE 4: OUTPUT GENERATION                 │
-├─────────────────────────────────────────────┤
-│  └─► DebateReporter (if enabled)            │
-│       - Text transcripts                    │
-│       - JSON exports                        │
-│  └─► CSV Output                             │
-│       Technology, Component, Material,      │
-│       Country, Amount, Unit, Percentage     │
-│  └─► CheckpointManager (if enabled)         │
-└─────────────────────────────────────────────┘
-```
-
-### Key Decision Points
-
-1. **Component Extraction**: Single agent vs. multi-agent debate (configurable)
-2. **Material Validation**: Strict ontology checking with retry on failure
-3. **Country Data**: USGS primary → Cache check → LLM fallback cascade
-4. **Error Handling**: Automatic retry with exponential backoff
-
-### Cross-Cutting Concerns
-
-- **ErrorHandler**: Retry logic & error recovery at each stage
-- **StateManager**: Track pipeline progress & transitions
-- **MaterialCache**: Reduce redundant queries (24hr TTL)
-
-***
+---
 
 ## Installation
 
 ### Prerequisites
 
-- **Python 3.10 - 3.12** (Python 3.12 recommended)
-- **uv package manager** ([Installation guide](https://github.com/astral-sh/uv))
-- **Ollama** for local LLM OR **OpenAI API key**
-- **USGS Database**: DuckDB file with mineral commodity data (`world_mineral_commodity_reports_2022-2025_v8.db`)
+- **Python 3.12+**
+- **Ollama** (or OpenAI API key)
+- **DuckDB** (installed automatically)
+- **uv** (Astral's package manager)
 
-### Setup
+### Install uv
 
-1. **Clone the repository**:
+```
+# macOS/Linux
+curl -LsSf https://astral.sh/uv/install.sh | sh
 
-```bash
-git clone <repository-url>
+# Windows
+powershell -c "irm https://astral.sh/uv/install.ps1 | iex"
+```
+
+### Install STDN Agentic
+
+```
+# Clone repository
+git clone https://github.com/yourusername/dpi_stdn_agentic.git
 cd dpi_stdn_agentic
-```
 
-2. **Install dependencies with uv**:
+# Create virtual environment and install dependencies
+uv venv
+uv pip install -e .
 
-```bash
-uv sync
-```
+# Install Ollama (if not already installed)
+# macOS
+brew install ollama
 
-3. **Place the USGS database file**:
+# Linux
+curl -fsSL https://ollama.com/install.sh | sh
 
-```bash
-# Ensure the database is in the data directory
-cp /path/to/world_mineral_commodity_reports_2022-2025_v8.db ./data/
-```
-
-4. **Set up Ollama** (if using local LLM):
-
-```bash
-# Install Ollama: https://ollama.ai
-# Pull a model
+# Pull the Qwen 2.5 model
 ollama pull qwen2.5:7b
 ```
 
-### Environment Configuration
+---
 
-Create a `.env` file in the project root:
+## Configuration
 
-```bash
-# LLM Configuration
-# Option 1: Ollama (local)
-OLLAMA_BASE_URL=http://localhost:11434/v1
-OLLAMA_MODEL=qwen2.5:7b
+### Configuration File (`config.json`)
 
-# Option 2: OpenAI
-# OPENAI_API_KEY=sk-your-key-here
-# STDN_MODEL=openai:gpt-4
-
-# Database
-DATABASE_PATH=./data/world_mineral_commodity_reports_2022-2025_v8.db
-
-# Output
-OUTPUT_DIR=./output
-OUTPUT_CSV_FILENAME=stdn_results
-
-# Caching
-CACHE_DIR=./.cache
-CACHE_TTL_HOURS=24
-
-# Multi-Agent Debate Settings
-ENABLE_DEBATE=true
-MAX_DEBATE_ROUNDS=3
-CONVERGENCE_THRESHOLD=0.8
-SAVE_TRANSCRIPTS=true
+```
+{
+  "import_tech_list": "./data/tech_list.csv",
+  "model": "ollama:qwen2.5:7b",
+  "output_dir": "./output",
+  "output_csv_filename": "stdns_output",
+  
+  "materials_hs_codes_listing": "./data/hs_codes_and_usgs_names.csv",
+  "materials_column_name": "Elements_Compounds",
+  
+  "usgs_database": "./data/world_mineral_commodity_reports_2022-2025_v8.db",
+  "top_n_countries": 5,
+  
+  "years_to_query": ,
+  "write_nulls_to_output": true,
+  
+  "topp": 0.000001,
+  "materials_use_topp": true,
+  "materials_iteration_count": 10,
+  "materials_count_threshold": 5
+}
 ```
 
-***
+### Environment Variables (`.env`)
+
+```
+# Disable material validation tools (Ollama compatibility)
+STDN_DISABLE_MATERIAL_TOOLS=1
+
+# Ollama configuration
+OLLAMA_MODEL=qwen2.5:7b
+STDN_MODEL=ollama:qwen2.5:7b
+
+# Optional: OpenAI fallback
+# OPENAI_API_KEY=your-key-here
+```
+
+### Technology List (`data/tech_list.csv`)
+
+```
+tech
+Smartphone
+Electric Vehicle Battery
+Quantum Computer
+Night Vision Goggles
+MRI Machine
+Solar Panel
+```
+
+---
+
+## Database Setup
+
+### USGS World Mineral Commodity Database
+
+The system uses a DuckDB database with USGS production data. **Important**: Column names are UPPERCASE except `value_type`.
+
+#### Database Schema
+
+```
+world_mineral_commodity_report
+├── COMMODITY (VARCHAR)   - Material name (e.g., "LITHIUM")
+├── COUNTRY (VARCHAR)     - Producing country (e.g., "CHINA")
+├── MEAS_YR (INTEGER)     - Measurement year (e.g., 2024)
+├── SRC_YR (INTEGER)      - Source report year (e.g., 2023)
+├── MEAS_TYPE (VARCHAR)   - Type (e.g., "PRODUCTION", "RESERVES")
+├── VALUE (VARCHAR)       - Production amount (stored as text)
+├── MEAS_UNIT (VARCHAR)   - Unit (e.g., "metric tons")
+└── value_type (VARCHAR)  - Value type (e.g., "Number")
+```
+
+#### Verify Database
+
+```
+uv run python -c "
+import duckdb
+conn = duckdb.connect('./data/world_mineral_commodity_reports_2022-2025_v8.db')
+print(conn.execute('SELECT COUNT(*) FROM world_mineral_commodity_report').fetchone())
+print(conn.execute('DESCRIBE world_mineral_commodity_report').fetchall())
+"
+```
+
+---
 
 ## Usage
 
 ### Basic Usage
 
-**Step 1**: Create a technology list CSV (`tech_list.csv`):
-
-```csv
-tech,role,domain
-smartphone,supply chain analyst,consumer electronics
-electric vehicle,policy analyst,automotive
-solar panel,researcher,renewable energy
-wind turbine,analyst,renewable energy
 ```
-
-**Step 2**: Create a configuration JSON (`config.json`):
-
-```json
-{
-  "import_tech_list": "./data/tech_list.csv",
-  "model": "ollama:qwen2.5:7b",
-  "usgs_database": "./data/world_mineral_commodity_reports_2022-2025_v8.db",
-  "output_dir": "./output",
-  "output_csv_filename": "stdn_results",
-  "write_nulls_to_output": false,
-  "years_to_query": [2024, 2025],
-  "top_n_countries": 5
-}
-```
-
-**Step 3**: Run the pipeline:
-
-```bash
-# Process all technologies in the CSV (uses .env settings)
+# Run with default config
 uv run stdn -i config.json
 
-# Or run programmatically
-uv run python -m stdn_agentic.main --config config.json
+# Or using module syntax
+uv run python -m stdn_agentic.main -i config.json
 ```
 
-**Output**: Results saved to `./output/stdn_results.csv`
+### Advanced Options
 
-***
+```
+# Generate country data only (no technology processing)
+uv run stdn -i config.json --generate-country-data
 
-### Running with Multi-Agent Debate
+# Use different model
+STDN_MODEL="ollama:llama3.1:8b" uv run stdn -i config.json
 
-Multi-agent debate automatically runs for **ALL** technologies in your CSV file. The following methods differ only in how you configure the debate parameters.
-
-#### Method 1: Configuration via .env File (Simplest)
-
-Use this when you want the simplest setup and are processing all technologies from a CSV.
-
-1. **Set debate parameters in `.env`**:
-
-```bash
-ENABLE_DEBATE=true
-MAX_DEBATE_ROUNDS=3
-CONVERGENCE_THRESHOLD=0.8
-SAVE_TRANSCRIPTS=true
+# Debug mode with verbose logging
+uv run python -m stdn_agentic.main -i config.json --debug
 ```
 
-2. **Run with standard command**:
+### Example Session
 
-```bash
-uv run stdn -i config.json
 ```
+Loading configuration from: config.json
 
-**When to use**: Simplest method, processes all technologies with debate enabled.
+✓ Connected to USGS database: 1 tables
+
+================================================================================
+STDN Generation Started: 2025-11-18 00:16:52
+================================================================================
+
+🎤 Multi-agent debate ENABLED:
+   Max rounds: 3
+   Convergence threshold: 0.51
+
+Processing: Smartphone
+
+DEBATE: Smartphone
+ROUND 1:
+  Convergence: 10.8%
+  Generating critiques...
+ROUND 2:
+  Convergence: 53.0%
+  ✅ Convergence threshold reached!
+
+✓ Extracted 23 components
+  🔍 Extracting materials for 23 components...
+  ✅ Extracted materials for 23 components
+
+Querying USGS for Glass (year 2024/2023)
+⚠ No USGS data found, using LLM fallback...
+✓ LLM returned 5 countries
+
+Querying USGS for Lithium (year 2024/2023)
+✓ USGS returned 5 countries
+
+✓ Output written to: ./output/stdns_output.csv
+✓ Successfully processed: Smartphone
+```
 
 ---
 
-#### Method 2: Programmatic Configuration (Single Technology)
+## Output Format
 
-Use this when you want to process just one specific technology with full control.
-
-```python
-import asyncio
-from stdn_agentic import STDNOrchestrator
-from stdn_agentic.models import ConfigModel
-from pydantic_ai import RunUsage
-
-async def main():
-    config = ConfigModel(
-        import_tech_list="./data/tech_list.csv",
-        model="ollama:qwen2.5:7b",
-        usgs_database="./data/world_mineral_commodity_reports_2022-2025_v8.db",
-        output_dir="./output",
-        output_csv_filename="stdn_debate_results"
-    )
-
-    orchestrator = STDNOrchestrator(
-        config,
-        enable_debate=True,
-        max_debate_rounds=3,
-        convergence_threshold=0.8,
-        save_transcripts=True
-    )
-
-    # Process ONLY ONE technology
-    usage = RunUsage()
-    result = await orchestrator.process_technology(
-        tech="smartphone",
-        role="supply chain analyst",
-        domain="consumer electronics",
-        usage=usage
-    )
-
-    print(f"Components: {result['components']}")
-    print(f"Debate transcript: ./debate_transcripts/results/")
-
-if __name__ == "__main__":
-    asyncio.run(main())
-```
-
-**Run it**:
-
-```bash
-uv run python run_single_tech.py
-```
-
-**When to use**: Testing or processing one specific technology.
-
-***
-
-#### Method 3: Programmatic Batch Processing (Advanced)
-
-Use this when you want custom logic for processing all technologies (e.g., error handling, progress tracking, custom filtering).
-
-```python
-import asyncio
-import csv
-from stdn_agentic import STDNOrchestrator
-from stdn_agentic.models import ConfigModel
-from pydantic_ai import RunUsage
-
-async def process_batch():
-    config = ConfigModel(
-        import_tech_list="./data/tech_list.csv",
-        model="ollama:qwen2.5:7b",
-        usgs_database="./data/world_mineral_commodity_reports_2022-2025_v8.db",
-        output_dir="./output",
-        output_csv_filename="batch_debate_results"
-    )
-
-    orchestrator = STDNOrchestrator(
-        config,
-        enable_debate=True,
-        max_debate_rounds=3,
-        convergence_threshold=0.8,
-        enable_checkpoints=True,  # Add checkpoint support
-        save_transcripts=True
-    )
-
-    # Read all technologies from CSV
-    with open(config.import_tech_list, 'r') as f:
-        technologies = list(csv.DictReader(f))
-
-    print(f"Processing {len(technologies)} technologies with debate...")
-
-    results = []
-    usage = RunUsage()
-    for i, tech_row in enumerate(technologies, 1):
-        print(f"[{i}/{len(technologies)}] {tech_row['tech']}")
-        try:
-            result = await orchestrator.process_technology(
-                tech=tech_row['tech'],
-                role=tech_row.get('role', 'analyst'),
-                domain=tech_row.get('domain', 'technology'),
-                usage=usage
-            )
-            results.append(result)
-            # Write incrementally
-            orchestrator.write_csv_output(result, start_new_file=(i == 1))
-        except Exception as e:
-            print(f"Error: {e}")
-            continue  # Skip failed tech and continue
-
-    print(f"Processed {len(results)}/{len(technologies)} technologies")
-    print(f"Output: {orchestrator.output_file}")
-
-asyncio.run(process_batch())
-```
-
-**Run it**:
-
-```bash
-uv run python run_batch_custom.py
-```
-
-**When to use**: Custom error handling, filtering, or progress tracking.
-
-***
-
-#### When to Use Each Method
-
-| Method | Use When... | Processes |
-|--------|------------|-----------|
-| **Method 1** (.env) | You want the simplest setup | All technologies in CSV |
-| **Method 2** (Single tech) | Testing or processing one specific technology | One technology only |
-| **Method 3** (Custom batch) | You need custom error handling, filtering, or progress tracking | All technologies in CSV with custom logic |
-
-***
-
-### Advanced Usage Examples
-
-**Use Repository Pattern with Fallback**:
-
-```python
-from stdn_agentic.data import CountryDataRepository
-from stdn_agentic.dependencies import initialize_dependencies
-
-deps = initialize_dependencies(config)
-repo = CountryDataRepository(
-    database_path="./data/world_mineral_commodity_reports_2022-2025_v8.db",
-    deps=deps,
-    top_n=5,
-    use_llm_fallback=True  # Enable LLM fallback
-)
-
-# Get country data (tries USGS first, falls back to LLM)
-countries = await repo.get_country_data("Lithium", 2025, 2024)
-
-for country in countries:
-    print(f"{country['country']}: {country['percentage']:.1f}%")
-
-# Check cache stats
-stats = repo.get_cache_stats()
-print(f"Cached materials: {stats['cached_materials']}")
-```
-
-***
-
-### How Debate Works for Multiple Technologies
-
-When debate is enabled via any method, the system runs **independent debate sessions** for each technology:
+### CSV Output (`stdns_output.csv`)
 
 ```
-Technology 1: smartphone
-  ├─► Agent 1 proposes components
-  ├─► Agent 2 proposes components
-  ├─► Agent 3 proposes components
-  ├─► Debate Round 1, 2, 3...
-  ├─► Consensus
-  └─► Save transcript
-
-Technology 2: electric vehicle
-  ├─► Agent 1 proposes components
-  ├─► Agent 2 proposes components
-  ├─► Agent 3 proposes components
-  ├─► Debate Round 1, 2, 3...
-  ├─► Consensus
-  └─► Save transcript
-
-Technology 3: solar panel
-  ├─► Agent 1 proposes components
-  ├─► Agent 2 proposes components
-  ├─► Agent 3 proposes components
-  ├─► Debate Round 1, 2, 3...
-  ├─► Consensus
-  └─► Save transcript
+technology,component,material,country,meas_unit,amount,percentage
+Smartphone,display,Glass,China,metric tons,12500000,45.2
+Smartphone,display,Indium,China,metric tons,350,60.1
+Smartphone,battery pack,Lithium,Australia,metric tons,55000,45.8
+Smartphone,battery pack,Cobalt,DRC,metric tons,125000,68.3
 ```
 
-**Each technology gets**:
-- Independent 3-agent debate
-- Separate debate transcript
-- Consensus-based components
+### Debate Transcripts
 
-***
+Saved to `debate_transcripts/results/`:
 
-## Multi-Agent Debate System
-
-### Debate Parameters
-
-| Parameter | Type | Default | Description |
-|-----------|------|---------|-------------|
-| `enable_debate` | bool | False | Enable multi-agent consensus |
-| `max_debate_rounds` | int | 3 | Maximum debate rounds (1-10) |
-| `convergence_threshold` | float | 0.8 | Stop when convergence ≥ threshold (0.0-1.0) |
-| `save_transcripts` | bool | True | Save detailed debate logs |
-
-**Convergence Threshold Guide**:
-
-| Threshold | Meaning | Notes |
-|-----------|---------|-------|
-| 0.6 | Low consensus (60% agreement) | Fast but lower quality |
-| 0.8 | Good consensus (80% agreement) | **Recommended** |
-| 0.9 | High consensus (90% agreement) | Slower but higher quality |
-| 1.0 | Perfect consensus | Rarely achieved |
-
-**Rounds Guide**:
-
-| Rounds | Notes |
-|--------|-------|
-| 2 rounds | Fast, moderate quality |
-| 3 rounds | Balanced speed/quality **(Recommended)** |
-| 5+ rounds | High quality, slower |
-
-***
-
-### Quick Test
-
-Test debate functionality:
-
-```bash
-cat > test_debate.py << 'EOF'
-import asyncio
-from stdn_agentic import STDNOrchestrator
-from stdn_agentic.models import ConfigModel
-from pydantic_ai import RunUsage
-
-async def test():
-    config = ConfigModel(
-        import_tech_list="./data/tech_list.csv",
-        model="ollama:qwen2.5:7b",
-        usgs_database="./data/world_mineral_commodity_reports_2022-2025_v8.db",
-        output_dir="./output",
-        output_csv_filename="test"
-    )
-
-    orch = STDNOrchestrator(config, enable_debate=True, max_debate_rounds=2)
-    result = await orch.process_technology("smartphone", "analyst", "tech", RunUsage())
-    print(f"Components: {result['components']}")
-
-asyncio.run(test())
-EOF
-
-uv run python test_debate.py
+```
+{
+  "technology": "Smartphone",
+  "timestamp": "2025-11-18T00:17:49",
+  "rounds": [
+    {
+      "round": 1,
+      "proposals": {
+        "Agent_1": ["display", "battery", "processor", ...],
+        "Agent_2": ["screen", "power module", "CPU", ...],
+        "Agent_3": ["touchscreen", "battery pack", "chip", ...]
+      },
+      "critiques": {
+        "Agent_1→Agent_2": "Consider separating display and touchscreen...",
+        ...
+      }
+    }
+  ],
+  "final_consensus": ["display", "battery pack", "processor", ...]
+}
 ```
 
-***
+---
+
+## Troubleshooting
+
+### Issue: `invalid message content type: <nil>` (400 Error)
+
+**Cause**: Ollama rejecting tool-based prompts
+
+**Solution**:
+```
+export STDN_DISABLE_MATERIAL_TOOLS=1
+uv run stdn -i config.json
+```
+
+### Issue: `'country' column not found`
+
+**Cause**: Database columns are uppercase
+
+**Solution**: Columns fixed in latest version. Update `usgs_client.py` to use:
+- `COUNTRY`, `COMMODITY`, `MEAS_TYPE`, `MEAS_UNIT`, `VALUE`, `MEAS_YR`, `SRC_YR`
+- Exception: `value_type` (lowercase)
+
+### Issue: `pd is not defined`
+
+**Cause**: Missing pandas import
+
+**Solution**: Add to `data/repository.py`:
+```
+import pandas as pd
+```
+
+### Issue: Materials extraction fails randomly
+
+**Cause**: Ollama instability with complex prompts
+
+**Solutions**:
+1. **Reduce ontology sample**: Change `[:100]` to `[:50]` in `extract_materials_safe`
+2. **Switch model**: `export STDN_MODEL="ollama:llama3.1:8b"`
+3. **Retry logic enabled**: Already implemented with exponential backoff
+
+### Issue: No USGS data found for common materials
+
+**Cause**: Commodity name mismatch (e.g., "Iron" vs "IRON ORE")
+
+**Solution**: Check exact commodity names in database:
+```
+uv run python -c "
+import duckdb
+conn = duckdb.connect('./data/world_mineral_commodity_reports_2022-2025_v8.db')
+print(conn.execute('SELECT DISTINCT COMMODITY FROM world_mineral_commodity_report ORDER BY COMMODITY').fetchall())
+"
+```
+
+---
 
 ## Development
 
 ### Project Structure
 
-This project uses modern Python architecture patterns:
-
-- **Separation of Concerns**: Each package has a single responsibility
-- **Dependency Injection**: Dependencies passed explicitly via `STDNDependencies`
-- **Repository Pattern**: Data layer abstraction (`CountryDataRepository`)
-- **Factory Pattern**: Agent creation via `AgentFactory`
-- **Strategy Pattern**: Multiple debate strategies (future enhancement)
-
-### Adding New Features
-
-**Add a new agent**:
-
-1. Create `src/stdn_agentic/agents/new_agent.py`
-2. Define Pydantic models for input/output
-3. Create agent with `Agent(model, output_type, deps_type)`
-4. Add to `agents/__init__.py`
-5. Update `AgentFactory` if needed
-
-**Add a new data source**:
-
-1. Create client in `src/stdn_agentic/data/new_client.py`
-2. Implement repository pattern if needed
-3. Add caching support
-4. Write unit tests
-5. Update `data/__init__.py`
+```
+dpi_stdn_agentic/
+├── src/stdn_agentic/
+│   ├── agents/              # LLM agents
+│   ├── orchestrator/        # Pipeline & debate
+│   ├── data/                # USGS client & caching
+│   ├── models.py            # Pydantic models
+│   └── main.py              # CLI
+├── data/
+│   ├── tech_list.csv        # Input technologies
+│   ├── hs_codes_and_usgs_names.csv  # Material ontology
+│   └── world_mineral_commodity_reports_2022-2025_v8.db  # USGS data
+├── output/                  # Generated STDNs
+├── debate_transcripts/      # Agent debate logs
+├── config.json              # Configuration
+├── pyproject.toml           # Package metadata
+└── README.md
+```
 
 ### Running Tests
 
-```bash
-# Run all tests
-uv run pytest tests/ -v
-
-# Run specific test files
-uv run pytest tests/test_debate.py -v -s
-
-# Run with coverage
-uv run pytest tests/ --cov=src/stdn_agentic --cov-report=html
-
-# Run integration tests only
-uv run pytest tests/test_phase2c_integration.py -v
 ```
+# Unit tests
+uv run pytest tests/
 
-***
-
-## Data Sources
-
-### USGS Database
-
-The system uses a DuckDB database containing USGS Mineral Commodity Summaries (2022-2025):
-
-- **File**: `world_mineral_commodity_reports_2022-2025_v8.db`
-- **Tables**: Structured production data by material, country, and year
-- **Query Interface**: `USGSClient` provides async query methods
-- **Coverage**: 80+ minerals/materials with country-level production data
-
-### LLM Fallback
-
-When USGS data is unavailable, the system falls back to LLM-based estimation:
-
-- Uses Pydantic AI structured outputs
-- Validates response format with Pydantic models
-- Includes confidence scores
-- Caches results to avoid redundant queries
-
----
-
-## API Reference
-
-### Core Classes
-
-#### `STDNOrchestrator`
-
-Main pipeline orchestrator.
-
-```python
-orchestrator = STDNOrchestrator(
-    config: ConfigModel,
-    enable_checkpoints: bool = False,
-    enable_debate: bool = False,
-    max_debate_rounds: int = 3,
-    convergence_threshold: float = 0.8,
-    save_transcripts: bool = True
-)
-
-# Process single technology
-result = await orchestrator.process_technology(
-    tech: str,
-    role: str,
-    domain: str,
-    usage: RunUsage
-) -> Dict[str, Any]
-
-# Run full pipeline
-results = await orchestrator.run_pipeline(
-    technologies: List[str],
-    role: str = "supply chain analyst",
-    domain: str = "technology"
-) -> Dict[str, Any]
-```
-
-#### `CountryDataRepository`
-
-Data repository with USGS + LLM fallback.
-
-```python
-repo = CountryDataRepository(
-    database_path: str,
-    deps: STDNDependencies,
-    top_n: int = 5,
-    use_llm_fallback: bool = True
-)
-
-# Get country production data
-countries = await repo.get_country_data(
-    material: str,
-    src_year: int,
-    meas_year: int,
-    usage: str = ""
-) -> List[Dict[str, Any]]
-
-# Check cache stats
-stats = repo.get_cache_stats()
-```
-
-#### `MultiAgentDebater`
-
-Multi-agent consensus system.
-
-```python
-debater = MultiAgentDebater(
-    max_rounds: int = 3,
-    convergence_threshold: float = 0.8
-)
-
-# Run debate
-result = await debater.run_debate(
-    technology: str,
-    agent_proposals: Dict[str, List[Dict]]
-) -> Dict[str, Any]
-```
-
-***
-
-## Configuration Reference
-
-### ConfigModel Fields
-
-**Required**:
-
-- `import_tech_list` (str): Path to CSV file containing technology list (column: `tech`)
-- `model` (str): Model identifier (e.g., `ollama:qwen2.5:7b`, `openai:gpt-4`)
-- `output_dir` (str): Directory path for output files
-- `output_csv_filename` (str): Output CSV filename (without `.csv` extension)
-
-**Optional**:
-
-- `materials_hs_codes_listing` (str): Path to CSV mapping HS codes to USGS material names (default: `./data/hs_codes_and_usgs_names.csv`)
-- `materials_column_name` (str): Column name in HS codes file containing material names (default: `Elements/Compounds`)
-- `materials_top_countries_repository` (str): Path to JSON with top producing countries per material (default: `./data/material_top_countries_granite3.1-dense.8b.json`)
-- `usgs_database` (str): Path to USGS mineral commodities SQLite database (default: `./data/world_mineral_commodity_reports_2022-2025_v8.db`)
-- `top_n_countries` (int): Number of top producing countries to include per material (default: 5, range: 1-20)
-- `generate_country_data` (bool): Whether to generate country production data (default: False)
-- `country_data_mode` (Literal["full", "incremental", "update"]): Mode for country data generation (default: "full")
-- `materials_to_update` (List[str]): Specific materials to update for incremental/update modes (default: None)
-- `years_to_query` (List[int]): Years to query for historical production data (default: )
-- `write_nulls_to_output` (bool): Whether to write rows with null country data to output CSV (default: True)
-- `top_p` (float): Top-p (nucleus sampling) parameter for generation (default: 0.000001, range: 0.0-1.0)
-- `materials_use_top_p` (bool): Whether to use top-p sampling for materials extraction (default: True)
-- `materials_iteration_count` (int): Number of iterations for materials extraction consensus (default: 10, range: 1-100)
-- `materials_count_threshold` (int): Threshold for material count consensus across iterations (default: 5, range: 1-50)
-
-***
-
-## Troubleshooting
-
-### Common Issues
-
-**1. Database not found**:
-
-```bash
-Error: Database not found in ./data
-```
-
-**Solution**: Ensure the USGS database is in the correct location:
-
-```bash
-cp /path/to/world_mineral_commodity_reports_2022-2025_v8.db ./data/
-```
-
-***
-
-**2. Ollama connection error**:
-
-```bash
-Error: Could not connect to Ollama
-```
-
-**Solution**:
-- Check if Ollama is running: `ollama serve`
-- Verify model is pulled: `ollama pull qwen2.5:7b`
-- Check `.env` has correct `OLLAMA_BASE_URL`
-
-***
-
-**3. No materials extracted**:
-
-```bash
-Warning: No materials extracted for technology X
-```
-
-**Solution**:
-- Check material ontology file exists: `./data/hs_codes_and_usgs_names.csv`
-- Verify `materials_column_name` in config matches CSV column
-- Try increasing `materials_iteration_count` in config
-
-***
-
-**4. Debate not converging**:
-
-```bash
-Warning: Debate did not converge after N rounds
-```
-
-**Solution**:
-- Lower `convergence_threshold` (e.g., from 0.8 to 0.6)
-- Increase `max_debate_rounds` (e.g., from 3 to 5)
-- Check that agents are producing varied proposals
-
-***
-
-## Contributing
-
-Contributions are welcome! Please follow these guidelines:
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-**Development workflow**:
-
-```bash
-# Install dev dependencies
-uv sync --all-extras
-
-# Run tests before committing
-uv run pytest tests/ -v
-
-# Format code
-uv run black src/ tests/
-uv run ruff check src/ tests/ --fix
+# Database connectivity test
+uv run python debug_duckdb.py
 
 # Type checking
 uv run basedpyright src/
 ```
 
-***
+### Code Style
+
+- **Type hints**: Required for all functions
+- **Pydantic models**: For all data structures
+- **Logging**: Use `logger` not `print()` (except user-facing output)
+- **Error handling**: Always wrap external calls in try/except
+- **Docstrings**: Google style for all public functions
+
+---
+
+## Citation
+
+If you use this tool in research, please cite:
+
+```
+@software{stdn_agentic2025,
+  title = {STDN Agentic: Multi-Agent Shallow Technology Dependency Networks},
+  author = {Your Name},
+  year = {2025},
+  url = {https://github.com/yourusername/dpi_stdn_agentic}
+}
+```
+
+---
 
 ## License
 
-MIT License
+MIT License - see LICENSE file for details.
 
-Copyright (c) 2025
+---
 
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+## Acknowledgments
 
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+- **USGS**: World Mineral Commodity Reports data
+- **Pydantic AI**: Agent framework
+- **Ollama**: Local LLM serving
+- **Qwen Team**: Qwen 2.5 model
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+---
 
-***
+## Support
 
-**For questions or support**: Open an issue on GitHub or contact the maintainers.
+For issues and questions:
+- GitHub Issues: https://github.com/yourusername/dpi_stdn_agentic/issues
+- Documentation: https://github.com/yourusername/dpi_stdn_agentic/wiki
 
-[1](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/29503869/e19fe296-4a82-497a-990a-a06967c26612/concatenated_files.txt)
+---
+
+**Version**: 0.1.0  
+**Last Updated**: November 2025
