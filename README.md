@@ -491,7 +491,7 @@ If you use this tool in research, please cite:
 ```
 @software{stdn_agentic2025,
   title = {STDN Agentic: Multi-Agent Shallow Technology Dependency Networks},
-  author = {Your Name},
+  author = {Aaron Schroeder, Mandy Wilson},
   year = {2025},
   url = {https://github.com/yourusername/dpi_stdn_agentic}
 }
