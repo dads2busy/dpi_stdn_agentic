@@ -17,6 +17,7 @@ Enhanced features:
 - Detailed logging and progress reporting
 """
 
+import asyncio
 import csv
 import logging
 import os
@@ -146,52 +147,52 @@ class STDNOrchestrator:
 
     async def extract_materials_safe(
         self,
-        componentlist: ComponentList,  # Changed from List[str] to ComponentList
+        componentlist: ComponentList,
         technology: str,
         usage: RunUsage,
+        max_retries: int = 3,
     ) -> Optional[ComponentMaterialsList]:
         """
-        Safely extract materials with comprehensive error handling.
+        Safely extract materials with comprehensive error handling and retry logic.
 
         Args:
             componentlist: ComponentList object containing components
             technology: Technology name
             usage: RunUsage tracker
+            max_retries: Maximum number of retry attempts on transient errors
 
         Returns:
             ComponentMaterialsList with extracted materials, or empty list on error
         """
-        try:
-            # VALIDATION 1: Check component list exists
-            if not componentlist or not hasattr(componentlist, "component_list"):
-                logger.warning(f"No components to extract materials from for {technology}")
-                print(f"🔍 No components to extract materials from")
-                return ComponentMaterialsList.model_validate({"componentlist": []})
+        # VALIDATION 1: Check component list exists
+        if not componentlist or not hasattr(componentlist, "component_list"):
+            logger.warning(f"No components to extract materials from for {technology}")
+            print(f"🔍 No components to extract materials from")
+            return ComponentMaterialsList.model_validate({"componentlist": []})
 
-            components = componentlist.component_list  # Access component_list field
+        components = componentlist.component_list  # Access component_list field
 
-            # VALIDATION 2: Filter valid components
-            valid_components = [c for c in components if c and isinstance(c, str) and c.strip()]
-            if not valid_components:
-                logger.warning(f"All components were null/empty for {technology}")
-                print(f"🔍 All components were null/empty")
-                return ComponentMaterialsList.model_validate({"componentlist": []})
+        # VALIDATION 2: Filter valid components
+        valid_components = [c for c in components if c and isinstance(c, str) and c.strip()]
+        if not valid_components:
+            logger.warning(f"All components were null/empty for {technology}")
+            print(f"🔍 All components were null/empty")
+            return ComponentMaterialsList.model_validate({"componentlist": []})
 
-            # VALIDATION 3: Check ontology availability
-            if not self.deps.material_ontology_list or len(self.deps.material_ontology_list) == 0:
-                logger.error(
-                    f"Material ontology is empty - cannot extract materials for {technology}"
-                )
-                print(f"❌ Material ontology is empty!")
-                return ComponentMaterialsList.model_validate({"componentlist": []})
+        # VALIDATION 3: Check ontology availability
+        if not self.deps.material_ontology_list or len(self.deps.material_ontology_list) == 0:
+            logger.error(f"Material ontology is empty - cannot extract materials for {technology}")
+            print(f"❌ Material ontology is empty!")
+            return ComponentMaterialsList.model_validate({"componentlist": []})
 
-            # Build prompt with validated data
-            component_str = "\n".join(f"- {comp}" for comp in valid_components)
-            ontology_sample = self.deps.material_ontology_list[:100]
-            ontology_str = ", ".join(ontology_sample)
+        # Build prompt with validated data
+        component_str = "\n".join(f"- {comp}" for comp in valid_components)
+        # Reduced ontology sample size for stability (from 100 to 50)
+        ontology_sample = self.deps.material_ontology_list[:50]
+        ontology_str = ", ".join(ontology_sample)
 
-            # CRITICAL FIX: Ensure all prompt parts are non-None strings
-            materials_prompt = f"""Extract RAW MATERIALS (NOT components or subassemblies) for these components of a {technology}:
+        # CRITICAL FIX: Ensure all prompt parts are non-None strings
+        materials_prompt = f"""Extract RAW MATERIALS (NOT components or subassemblies) for these components of a {technology}:
 
     {component_str}
 
@@ -211,65 +212,119 @@ class STDNOrchestrator:
 
     Return a JSON response with componentlist containing component and materials fields."""
 
-            # VALIDATION 4: Check prompt is valid and non-empty
-            if (
-                not materials_prompt
-                or not isinstance(materials_prompt, str)
-                or len(materials_prompt.strip()) < 50
-            ):
-                logger.error(f"Generated materials prompt is invalid for {technology}")
-                print(f"❌ Generated materials prompt is too short or None")
-                print(f"🔍 Prompt length: {len(materials_prompt) if materials_prompt else 0}")
-                return ComponentMaterialsList.model_validate({"componentlist": []})
-
-            logger.info(
-                f"📋 Extracting materials for {len(valid_components)} components of {technology}"
-            )
-            print(f"  🔍 Extracting materials for {len(valid_components)} components...")
-
-            # VALIDATION 5: Ensure deps and model are valid
-            if not self.deps or not self.deps.model:
-                logger.error(f"Dependencies or model not configured for {technology}")
-                print(f"❌ Dependencies not properly configured")
-                return ComponentMaterialsList.model_validate({"componentlist": []})
-
-            # Debug output
-            print(f"  🔍 Using model: {self.deps.model}")
-            print(f"  🔍 Prompt length: {len(materials_prompt)} chars")
-
-            # Call materials agent with validated inputs
-            result = await self.materials_agent.run(
-                materials_prompt,
-                deps=self.deps,
-            )
-
-            # VALIDATION 6: Check result validity
-            if not result or not result.output:
-                logger.warning(f"Materials agent returned empty result for {technology}")
-                print(f"⚠️  Materials agent returned empty result")
-                return ComponentMaterialsList.model_validate({"componentlist": []})
-
-            materials_list = result.output
-
-            # VALIDATION 7: Check materials list has content
-            if not materials_list.component_list:  # Use component_list field
-                logger.warning(f"Materials list is empty for {technology}")
-                print(f"⚠️  Materials list is empty")
-                return ComponentMaterialsList.model_validate({"componentlist": []})
-
-            # Access raw_materials field (not rawmaterials)
-            num_materials = sum(len(cm.raw_materials) for cm in materials_list.component_list)
-            logger.info(
-                f"✅ Extracted {num_materials} materials for {len(materials_list.component_list)} components of {technology}"
-            )
-            print(f"  ✅ Extracted materials for {len(materials_list.component_list)} components")
-
-            return materials_list
-
-        except Exception as e:
-            logger.error(f"Error extracting materials for {technology}: {e}", exc_info=True)
-            print(f"  ❌  Error extracting materials for {technology}: {e}")
+        # VALIDATION 4: Check prompt is valid and non-empty
+        if (
+            not materials_prompt
+            or not isinstance(materials_prompt, str)
+            or len(materials_prompt.strip()) < 50
+        ):
+            logger.error(f"Generated materials prompt is invalid for {technology}")
+            print(f"❌ Generated materials prompt is too short or None")
+            print(f"🔍 Prompt length: {len(materials_prompt) if materials_prompt else 0}")
             return ComponentMaterialsList.model_validate({"componentlist": []})
+
+        # VALIDATION 5: Ensure deps and model are valid
+        if not self.deps or not self.deps.model:
+            logger.error(f"Dependencies or model not configured for {technology}")
+            print(f"❌ Dependencies not properly configured")
+            return ComponentMaterialsList.model_validate({"componentlist": []})
+
+        logger.info(
+            f"📋 Extracting materials for {len(valid_components)} components of {technology}"
+        )
+        print(f"  🔍 Extracting materials for {len(valid_components)} components...")
+        print(f"  🔍 Using model: {self.deps.model}")
+        print(f"  🔍 Prompt length: {len(materials_prompt)} chars")
+
+        # RETRY LOGIC: Handle transient Ollama/model errors
+        for attempt in range(max_retries):
+            try:
+                # Call materials agent with validated inputs
+                result = await self.materials_agent.run(
+                    materials_prompt,
+                    deps=self.deps,
+                )
+
+                # VALIDATION 6: Check result validity
+                if not result or not result.output:
+                    if attempt < max_retries - 1:
+                        logger.warning(
+                            f"Materials agent returned empty result for {technology} "
+                            f"(attempt {attempt + 1}/{max_retries}), retrying..."
+                        )
+                        await asyncio.sleep(2**attempt)  # Exponential backoff: 1s, 2s, 4s
+                        continue
+                    else:
+                        logger.warning(
+                            f"Materials agent returned empty result for {technology} after all retries"
+                        )
+                        print(
+                            f"⚠️  Materials agent returned empty result after {max_retries} attempts"
+                        )
+                        return ComponentMaterialsList.model_validate({"componentlist": []})
+
+                materials_list = result.output
+
+                # VALIDATION 7: Check materials list has content
+                if not materials_list.component_list:  # Use component_list field
+                    if attempt < max_retries - 1:
+                        logger.warning(
+                            f"Materials list is empty for {technology} "
+                            f"(attempt {attempt + 1}/{max_retries}), retrying..."
+                        )
+                        await asyncio.sleep(2**attempt)
+                        continue
+                    else:
+                        logger.warning(
+                            f"Materials list is empty for {technology} after all retries"
+                        )
+                        print(f"⚠️  Materials list is empty after {max_retries} attempts")
+                        return ComponentMaterialsList.model_validate({"componentlist": []})
+
+                # SUCCESS - Access raw_materials field (not rawmaterials)
+                num_materials = sum(len(cm.raw_materials) for cm in materials_list.component_list)
+                logger.info(
+                    f"✅ Extracted {num_materials} materials for {len(materials_list.component_list)} "
+                    f"components of {technology}"
+                )
+                print(
+                    f"  ✅ Extracted materials for {len(materials_list.component_list)} components"
+                )
+
+                return materials_list
+
+            except Exception as e:
+                # Check if this is a transient error worth retrying
+                error_str = str(e)
+                is_transient = (
+                    "invalid message content type" in error_str
+                    or "400" in error_str
+                    or "BadRequestError" in error_str
+                )
+
+                if is_transient and attempt < max_retries - 1:
+                    wait_time = 2**attempt
+                    logger.warning(
+                        f"Transient error extracting materials for {technology} "
+                        f"(attempt {attempt + 1}/{max_retries}): {e}"
+                    )
+                    logger.info(f"Retrying in {wait_time} seconds...")
+                    print(f"  ⚠️  Attempt {attempt + 1} failed, retrying in {wait_time}s...")
+                    await asyncio.sleep(wait_time)
+                    continue
+                else:
+                    # Final attempt failed or non-transient error
+                    logger.error(
+                        f"Error extracting materials for {technology} after "
+                        f"{attempt + 1} attempt(s): {e}",
+                        exc_info=True,
+                    )
+                    print(f"  ❌  Error extracting materials for {technology}: {e}")
+                    return ComponentMaterialsList.model_validate({"componentlist": []})
+
+        # Should not reach here, but just in case
+        logger.error(f"Exhausted all retries for {technology}")
+        return ComponentMaterialsList.model_validate({"componentlist": []})
 
     # ========================================================================
     # Component Extraction with Enhanced Debate
