@@ -104,7 +104,7 @@ class USGSClient:
         WHERE meas_yr = {meas_year}
           AND src_yr = {src_year}
           AND UPPER(commodity) = '{material.upper()}'
-          AND UPPER(country) != 'WORLD'
+          AND UPPER(country) NOT LIKE '%WORLD%'
           AND value_type = 'Number'
           AND UPPER(meas_type) = 'PRODUCTION'
         ORDER BY value DESC
@@ -145,7 +145,7 @@ class USGSClient:
         WHERE meas_yr = {meas_year}
           AND src_yr = {src_year}
           AND UPPER(commodity) = '{material.upper()}'
-          AND UPPER(country) = 'WORLD'
+          AND UPPER(country) LIKE '%WORLD%'
           AND value_type = 'Number'
         """
 

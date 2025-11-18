@@ -1026,11 +1026,11 @@ from pydantic import BaseModel, Field
 from pydantic_ai import Agent, ModelRetry, RunContext
 
 from ..models import STDNDependencies
-from ..utils import intersect_lists
 
-# Initialize logger
 logger = logging.getLogger(__name__)
 
+# Environment flag to control tool usage (for backends that don't support tools well)
+DISABLE_MATERIAL_TOOLS = os.getenv("STDN_DISABLE_MATERIAL_TOOLS", "0") == "1"
 
 # ============================================================================
 # Data Models
@@ -1038,19 +1038,20 @@ logger = logging.getLogger(__name__)
 
 
 class ComponentMaterials(BaseModel):
-    """Materials identified for a single component"""
+    """Materials identified for a single component."""
 
     component: str = Field(description="Component name")
     raw_materials: List[str] = Field(
-        alias="materials", description="List of raw materials used in this component"
+        alias="materials",
+        description="List of raw materials used in this component",
     )
 
 
 class ComponentMaterialsList(BaseModel):
-    """Collection of components with their identified materials"""
+    """Collection of components with their identified materials."""
 
     component_list: List[ComponentMaterials] = Field(
-        description="List of components and their materials"
+        description="List of components and their materials",
     )
 
 
@@ -1168,11 +1169,11 @@ def _exact_match(material_lower: str, ontology: List[str]) -> Optional[str]:
     Check for exact case-insensitive match.
 
     Args:
-        material_lower: Lowercase material name
-        ontology: List of ontology materials
+        material_lower: Lowercase material name.
+        ontology: List of ontology materials.
 
     Returns:
-        Matched ontology material or None
+        Matched ontology material or None.
     """
     for ont_mat in ontology:
         if material_lower == ont_mat.lower():
@@ -1185,11 +1186,11 @@ def _variant_match(material_lower: str, ontology: List[str]) -> Optional[str]:
     Map common variants to standard names.
 
     Args:
-        material_lower: Lowercase material name
-        ontology: List of ontology materials
+        material_lower: Lowercase material name.
+        ontology: List of ontology materials.
 
     Returns:
-        Matched ontology material or None
+        Matched ontology material or None.
     """
     if material_lower in VARIANT_MAP:
         mapped = VARIANT_MAP[material_lower]
@@ -1203,20 +1204,21 @@ def _word_match(material_lower: str, ontology: List[str]) -> Optional[str]:
     Match individual significant words in material name.
 
     Args:
-        material_lower: Lowercase material name
-        ontology: List of ontology materials
+        material_lower: Lowercase material name.
+        ontology: List of ontology materials.
 
     Returns:
-        Matched ontology material or None
+        Matched ontology material or None.
     """
     words = material_lower.split()
 
-    # Try significant words (>= 4 chars)
     for word in words:
         if len(word) >= 4:
             for ont_mat in ontology:
                 if word in ont_mat.lower():
-                    logger.debug(f"Word match: '{material_lower}' -> '{ont_mat}' (via '{word}')")
+                    logger.debug(
+                        "Word match: '%s' -> '%s' (via '%s')", material_lower, ont_mat, word
+                    )
                     return ont_mat
 
     return None
@@ -1227,28 +1229,34 @@ def _chemical_symbol_match(material_lower: str, ontology: List[str]) -> Optional
     Match chemical symbols (short terms 2-3 chars).
 
     Args:
-        material_lower: Lowercase material name
-        ontology: List of ontology materials
+        material_lower: Lowercase material name.
+        ontology: List of ontology materials.
 
     Returns:
-        Matched ontology material or None
+        Matched ontology material or None.
     """
     words = material_lower.split()
     chemical_symbols = [w for w in words if 2 <= len(w) <= 3]
 
     for symbol in chemical_symbols:
         for ont_mat in ontology:
-            # Check if symbol appears at start of ontology term
-            if ont_mat.lower().startswith(symbol):
+            ont_lower = ont_mat.lower()
+
+            if ont_lower.startswith(symbol):
                 logger.debug(
-                    f"Chemical symbol match: '{material_lower}' -> '{ont_mat}' (via '{symbol}')"
+                    "Chemical symbol match: '%s' -> '%s' (via '%s')",
+                    material_lower,
+                    ont_mat,
+                    symbol,
                 )
                 return ont_mat
 
-            # Check if symbol is exact match to ontology word
-            if symbol in ont_mat.lower().split():
+            if symbol in ont_lower.split():
                 logger.debug(
-                    f"Chemical symbol match: '{material_lower}' -> '{ont_mat}' (via '{symbol}')"
+                    "Chemical symbol match: '%s' -> '%s' (via '%s')",
+                    material_lower,
+                    ont_mat,
+                    symbol,
                 )
                 return ont_mat
 
@@ -1260,51 +1268,52 @@ def _partial_match(material_lower: str, ontology: List[str]) -> Optional[str]:
     Check for partial substring match.
 
     Args:
-        material_lower: Lowercase material name
-        ontology: List of ontology materials
+        material_lower: Lowercase material name.
+        ontology: List of ontology materials.
 
     Returns:
-        Matched ontology material or None
+        Matched ontology material or None.
     """
     for ont_mat in ontology:
         ont_lower = ont_mat.lower()
-        # Avoid matching very short terms to prevent false positives
-        if len(ont_lower) >= 4:
-            if ont_lower in material_lower or material_lower in ont_lower:
-                logger.debug(f"Partial match: '{material_lower}' -> '{ont_mat}'")
-                return ont_mat
+        if len(ont_lower) >= 4 and (ont_lower in material_lower or material_lower in ont_lower):
+            logger.debug("Partial match: '%s' -> '%s'", material_lower, ont_mat)
+            return ont_mat
 
     return None
 
 
 def _fuzzy_similarity_match(
-    material_lower: str, ontology: List[str], min_similarity: float = 0.75
+    material_lower: str,
+    ontology: List[str],
+    min_similarity: float = 0.75,
 ) -> Optional[str]:
     """
     Fuzzy similarity matching using SequenceMatcher.
 
     Args:
-        material_lower: Lowercase material name
-        ontology: List of ontology materials
-        min_similarity: Minimum similarity score (0-1)
+        material_lower: Lowercase material name.
+        ontology: List of ontology materials.
+        min_similarity: Minimum similarity score (0-1).
 
     Returns:
-        Best matching ontology material or None
+        Best matching ontology material or None.
     """
-    best_match = None
+    best_match: Optional[str] = None
     best_score = 0.0
 
     for ont_mat in ontology:
-        # Use SequenceMatcher for similarity
         similarity = SequenceMatcher(None, material_lower, ont_mat.lower()).ratio()
-
         if similarity > best_score and similarity >= min_similarity:
             best_score = similarity
             best_match = ont_mat
 
     if best_match:
         logger.debug(
-            f"Fuzzy matched '{material_lower}' -> '{best_match}' (score: {best_score:.2f})"
+            "Fuzzy matched '%s' -> '%s' (score: %.2f)",
+            material_lower,
+            best_match,
+            best_score,
         )
         return best_match
 
@@ -1312,7 +1321,9 @@ def _fuzzy_similarity_match(
 
 
 def enhanced_material_match(
-    material: str, ontology: List[str], min_similarity: float = 0.75
+    material: str,
+    ontology: List[str],
+    min_similarity: float = 0.75,
 ) -> str:
     """
     Intelligently map a material name to the best match in the ontology.
@@ -1326,16 +1337,15 @@ def enhanced_material_match(
     6. Fuzzy similarity match (75%+ similar)
 
     Args:
-        material: Material name to match
-        ontology: List of valid ontology materials
-        min_similarity: Minimum similarity for fuzzy matching
+        material: Material name to match.
+        ontology: List of valid ontology materials.
+        min_similarity: Minimum similarity for fuzzy matching.
 
     Returns:
-        Best matching material from ontology, or original if no match
+        Best matching material from ontology, or original if no match.
     """
     material_lower = material.lower().strip()
 
-    # Try matching strategies in order of specificity
     match = (
         _exact_match(material_lower, ontology)
         or _variant_match(material_lower, ontology)
@@ -1347,11 +1357,11 @@ def enhanced_material_match(
 
     if match:
         if match != material:
-            logger.info(f"Mapped '{material}' -> '{match}'")
+            logger.info("Mapped '%s' -> '%s'", material, match)
         return match
-    else:
-        logger.warning(f"No match found for material: '{material}'")
-        return material
+
+    logger.warning("No match found for material: '%s'", material)
+    return material
 
 
 # ============================================================================
@@ -1363,50 +1373,47 @@ async def validate_materials(
     ctx: RunContext[STDNDependencies],
     materials: List[str],
 ) -> List[str]:
-    """Enhanced validation with comprehensive None/empty checks"""
-
-    # CRITICAL: Check for None at the very start
+    """Enhanced validation with comprehensive None/empty checks."""
     if materials is None:
         logger.error("validate_materials received None")
         if ctx.retry < 1:
             raise ModelRetry(
-                "Materials list is None. Please return a valid list of material names as strings."
-            )
-        return []  # Don't retry again, just return empty
-
-    # Check if it's actually a list
-    if not isinstance(materials, list):
-        logger.error(f"validate_materials received {type(materials)} instead of list")
-        if ctx.retry < 1:
-            raise ModelRetry(
-                f"Expected a list of materials, but received {type(materials).__name__}. "
-                "Please return a list of material name strings."
+                "Materials list is None. Please return a valid list of material names as strings.",
             )
         return []
 
-    # Filter out None, empty, or non-string values
-    valid_materials = []
-    for m in materials:
-        if m is None:
+    if not isinstance(materials, list):
+        logger.error("validate_materials received %s instead of list", type(materials))
+        if ctx.retry < 1:
+            raise ModelRetry(
+                "Expected a list of materials, but received "
+                f"{type(materials).__name__}. "
+                "Please return a list of material name strings.",
+            )
+        return []
+
+    valid_materials: List[str] = []
+    for material in materials:
+        if material is None:
             continue
-        if not isinstance(m, str):
+        if not isinstance(material, str):
             continue
-        if not m.strip():
+        stripped = material.strip()
+        if not stripped:
             continue
-        valid_materials.append(m.strip())
+        valid_materials.append(stripped)
 
     if not valid_materials:
         logger.warning("All materials were None/empty after filtering")
         if ctx.retry < 1:
             raise ModelRetry(
                 "All provided materials were empty or invalid. "
-                "Please provide valid material name strings."
+                "Please provide valid material name strings.",
             )
-        return []  # Stop retrying, return empty
+        return []
 
-    # Rest of your existing validation code...
-    validated = []
-    unmapped = []
+    validated: List[str] = []
+    unmapped: List[str] = []
 
     for material in valid_materials:
         mapped = enhanced_material_match(material, ctx.deps.material_ontology_list)
@@ -1417,17 +1424,19 @@ async def validate_materials(
 
     if validated:
         if unmapped:
-            logger.info(f"Fuzzy-mapped {len(validated)} materials, couldn't map: {unmapped}")
+            logger.info(
+                "Fuzzy-mapped %d materials, couldn't map: %s",
+                len(validated),
+                unmapped,
+            )
         return validated
 
-    # Only retry ONCE if nothing was mapped
     if ctx.retry < 1:
         ontology_sample = ", ".join(ctx.deps.material_ontology_list[:50])
         raise ModelRetry(
-            f"Could not map any materials to ontology. Please use names from: {ontology_sample}..."
+            f"Could not map any materials to ontology. Please use names from: {ontology_sample}...",
         )
 
-    # After 1 retry, just return what we have
     return valid_materials if valid_materials else []
 
 
@@ -1443,11 +1452,11 @@ def fuzzy_match_material(material: str, ontology: List[str]) -> str:
     Calls the enhanced_material_match function.
 
     Args:
-        material: Material name to match
-        ontology: List of ontology materials
+        material: Material name to match.
+        ontology: List of ontology materials.
 
     Returns:
-        Best matching material from ontology, or original if no match
+        Best matching material from ontology, or original if no match.
     """
     return enhanced_material_match(material, ontology)
 
@@ -1458,44 +1467,57 @@ def fuzzy_match_material(material: str, ontology: List[str]) -> str:
 
 
 def _get_configured_model() -> str:
-    """Get model from config or environment"""
+    """Get model from config or environment."""
     model = os.environ.get("STDN_MODEL")
     if model:
         return model
     return os.environ.get("OLLAMA_MODEL", "ollama:qwen2.5:7b")
 
 
-# Global agent instance
-_agent = None
+_agent: Optional[Agent[STDNDependencies, ComponentMaterialsList]] = None
 
 
-def get_materials_agent():
+def get_materials_agent(
+    model_name: Optional[str] = None,
+) -> Agent[STDNDependencies, ComponentMaterialsList]:
     """
     Get materials extraction agent with enhanced validation.
+
+    If model_name is provided, it overrides the default model from configuration
+    or environment variables. The agent is cached and will be recreated if the
+    requested model differs from the currently cached model.
 
     Returns:
         Agent configured for materials extraction with fuzzy matching validation.
         The agent uses the validate_materials function as a tool to map
-        LLM-generated material names to the standard ontology.
-
-    Example:
-        >>> agent = get_materials_agent()
-        >>> result = await agent.run(
-        ...     "Extract materials for battery component",
-        ...     deps=STDNDependencies(...)
-        ... )
-        >>> materials = result.output.component_list
+        LLM-generated material names to the standard ontology when tools are
+        enabled.
     """
     global _agent
-    if _agent is None:
+
+    model_to_use = model_name or _get_configured_model()
+
+    if _agent is None or getattr(_agent, "model", None) != model_to_use:
         _agent = Agent(
-            model=_get_configured_model(),
+            model=model_to_use,
             output_type=ComponentMaterialsList,
             deps_type=STDNDependencies,
             system_prompt=MATERIALS_SYSTEM_PROMPT,
         )
-        # Register validation tool
-        _agent.tool(validate_materials)
+
+        # Register validation tool only if tools are enabled for this environment.
+        # Some OpenAI-compatible backends (e.g., certain Qwen/Ollama servers)
+        # reject tool-calling messages with content=null, which triggers 400
+        # errors like "invalid message content type: <nil>" during materials
+        # extraction.
+        if not DISABLE_MATERIAL_TOOLS:
+            _agent.tool(validate_materials)
+        else:
+            logger.info(
+                "Materials validation tool disabled via STDN_DISABLE_MATERIAL_TOOLS=1; "
+                "skipping tool registration.",
+            )
+
     return _agent
 
 
@@ -1508,8 +1530,9 @@ __all__ = [
     "ComponentMaterialsList",
     "get_materials_agent",
     "enhanced_material_match",
-    "fuzzy_match_material",  # Legacy
+    "fuzzy_match_material",
 ]
+
 
 ===================================================
 File: dpi_stdn_agentic/src/stdn_agentic/core/__init__.py
@@ -2463,7 +2486,7 @@ class USGSClient:
         WHERE meas_yr = {meas_year}
           AND src_yr = {src_year}
           AND UPPER(commodity) = '{material.upper()}'
-          AND UPPER(country) != 'WORLD'
+          AND UPPER(country) NOT LIKE '%WORLD%'
           AND value_type = 'Number'
           AND UPPER(meas_type) = 'PRODUCTION'
         ORDER BY value DESC
@@ -2504,7 +2527,7 @@ class USGSClient:
         WHERE meas_yr = {meas_year}
           AND src_yr = {src_year}
           AND UPPER(commodity) = '{material.upper()}'
-          AND UPPER(country) = 'WORLD'
+          AND UPPER(country) LIKE '%WORLD%'
           AND value_type = 'Number'
         """
 
@@ -2817,7 +2840,7 @@ __all__ = [
 File: dpi_stdn_agentic/src/stdn_agentic/debate/debater.py
 ===================================================
 """
-Multi-agent debate system for STDN (Supply Technology Dependency Network)
+Multi-agent debate system for STDN (Supply Technology Dependency Network).
 
 This module implements an enhanced debate functionality for achieving consensus
 between multiple agents analyzing technology components and materials.
@@ -2830,6 +2853,8 @@ Key enhancements:
 - Confidence-weighted consensus building
 """
 
+from __future__ import annotations
+
 import logging
 from collections import Counter, defaultdict
 from dataclasses import dataclass
@@ -2838,9 +2863,14 @@ from typing import Any, Dict, List, Optional
 logger = logging.getLogger(__name__)
 
 
+# ============================================================================
+# Data Structures
+# ============================================================================
+
+
 @dataclass
 class AgentProposal:
-    """A component/material proposal from an agent"""
+    """A component/material proposal from an agent."""
 
     agent_id: str
     component_name: str
@@ -2851,13 +2881,18 @@ class AgentProposal:
 
 @dataclass
 class DebateRound:
-    """Results from one round of debate"""
+    """Results from one round of debate."""
 
     round_number: int
     proposals: List[AgentProposal]
     critiques: Dict[str, List[str]]
     convergence_score: float
     consensus_so_far: List[str]
+
+
+# ============================================================================
+# MultiAgentDebater
+# ============================================================================
 
 
 class MultiAgentDebater:
@@ -2878,15 +2913,19 @@ class MultiAgentDebater:
         convergence_threshold: float = 0.8,
         confidence_weight: float = 0.3,
         peer_support_boost: float = 0.15,
-    ):
+    ) -> None:
         """
         Initialize the enhanced multi-agent debater.
 
         Args:
-            max_rounds: Maximum number of debate rounds (default: 3)
-            convergence_threshold: Stop debate when convergence >= this value (default: 0.8)
-            confidence_weight: Weight for confidence in voting (default: 0.3)
-            peer_support_boost: Confidence boost per supporting agent (default: 0.15)
+            max_rounds:
+                Maximum number of debate rounds (default: 3).
+            convergence_threshold:
+                Stop debate when convergence >= this value (default: 0.8).
+            confidence_weight:
+                Weight for confidence in voting (0–1, default: 0.3).
+            peer_support_boost:
+                Confidence boost per supporting agent (default: 0.15).
         """
         self.max_rounds = max_rounds
         self.convergence_threshold = convergence_threshold
@@ -2894,98 +2933,487 @@ class MultiAgentDebater:
         self.peer_support_boost = peer_support_boost
         self.debate_history: List[DebateRound] = []
 
+    # ------------------------------------------------------------------#
+    # Normalization helpers
+    # ------------------------------------------------------------------#
+
     def normalize_component_name(self, name: str) -> str:
-        """Normalize component name using rule-based approach."""
+        """Normalize component name using a rule-based approach."""
         if not name:
             return ""
 
         normalized = name.lower().strip()
-        normalized = normalized.replace('-', ' ').replace('_', ' ')
-        normalized = ' '.join(normalized.split())
+        normalized = normalized.replace("-", " ").replace("_", " ")
+        normalized = " ".join(normalized.split())
 
-        qualifiers = ['system', 'module', 'unit', 'assembly', 'component', 'subsystem', 'package', 'chipset']
+        qualifiers = [
+            "system",
+            "module",
+            "unit",
+            "assembly",
+            "component",
+            "subsystem",
+            "package",
+            "chipset",
+        ]
         words = normalized.split()
         while len(words) > 1 and words[-1] in qualifiers:
             words.pop()
 
-        return ' '.join(words)
-
+        return " ".join(words)
 
     async def normalize_components_with_llm(
-        self, component_names: List[str], component_agent, deps
+        self,
+        component_names: List[str],
+        component_agent: Any,
+        deps: Any,
     ) -> Dict[str, str]:
-        """Use LLM to normalize component names semantically."""
-        from pydantic_ai import Agent
+        """
+        Use LLM to normalize component names semantically.
+
+        Falls back to rule-based normalization if the LLM call fails.
+        """
         from pydantic import BaseModel, Field
+        from pydantic_ai import Agent
 
         unique_names = list(set(component_names))
         if len(unique_names) <= 1:
-            return {name: name for name in unique_names}
+            return {name: self.normalize_component_name(name) for name in unique_names}
 
         class ComponentMapping(BaseModel):
             mappings: Dict[str, str] = Field(description="Component name mappings")
 
-        names_list = "\n".join(f"{i+1}. {name}" for i, name in enumerate(unique_names))
+        names_list = "\n".join(f"{i + 1}. {name}" for i, name in enumerate(unique_names))
         prompt = f"""Map duplicate/similar component names to canonical names.
 
 NAMES:
 {names_list}
 
-RULES: Same if spacing/prefixes/suffixes differ; different if different functions.
-Return JSON with "mappings" dict."""
+RULES:
+- Treat names as the same if they differ only by spacing, prefixes/suffixes,
+  or generic qualifiers like "module", "system", "unit", "assembly".
+- Treat names as different if they represent clearly different functions.
+
+Return JSON with a single field "mappings" mapping each original name
+to its canonical form.
+"""
 
         try:
             agent = Agent(
                 model=deps.model,
                 output_type=ComponentMapping,
                 deps_type=type(deps),
-                system_prompt="Normalize component names to canonical forms."
+                system_prompt="Normalize component names to canonical forms.",
             )
 
             result = await agent.run(prompt, deps=deps)
-            mapping = result.output.mappings
+            mapping = dict(result.output.mappings)
 
+            # Ensure complete coverage
             for name in unique_names:
-                if name not in mapping:
-                    mapping[name] = self.normalize_component_name(name)
+                mapping.setdefault(name, self.normalize_component_name(name))
 
-            logger.info(f"✓ LLM normalization: {len(set(mapping.values()))} unique")
+            logger.info("✓ LLM normalization produced %d unique names", len(set(mapping.values())))
             return mapping
-
-        except Exception as e:
-            logger.warning(f"LLM normalization failed: {e}")
+        except Exception as exc:  # noqa: BLE001
+            logger.warning("LLM normalization failed: %s", exc)
             return {name: self.normalize_component_name(name) for name in unique_names}
 
+    # ------------------------------------------------------------------#
+    # Internal helpers for proposals
+    # ------------------------------------------------------------------#
 
-    async def _run_debate_round(
+    @staticmethod
+    def _get_prop_value(prop: Any, key: str, default: Any = None) -> Any:
+        """Safely extract a field from either dict-like or AgentProposal."""
+        if isinstance(prop, AgentProposal):
+            return getattr(prop, key, default)
+        if isinstance(prop, dict):
+            return prop.get(key, default)
+        return default
+
+    # ------------------------------------------------------------------#
+    # Convergence and support
+    # ------------------------------------------------------------------#
+
+    def calculate_peer_support(self, component_name: str, proposals: List[Dict[str, Any]]) -> int:
+        """
+        Calculate how many distinct agents support a (normalized) component.
+
+        Args:
+            component_name:
+                Component name to evaluate (may be unnormalized).
+            proposals:
+                List of proposal dicts or AgentProposal objects.
+
+        Returns:
+            Count of distinct agents proposing an equivalent normalized name.
+        """
+        target = self.normalize_component_name(component_name)
+        agents: set[str] = set()
+
+        for prop in proposals:
+            agent_id = self._get_prop_value(prop, "agent_id", "unknown")
+            comp = (
+                self._get_prop_value(prop, "normalized_component")
+                or self._get_prop_value(prop, "component")
+                or self._get_prop_value(prop, "component_name")
+                or ""
+            )
+            if self.normalize_component_name(comp) == target:
+                agents.add(agent_id)
+
+        return len(agents)
+
+    def calculate_convergence(self, proposals: List[Dict[str, Any]]) -> float:
+        """
+        Calculate convergence score using Jaccard similarity on normalized names.
+
+        Convergence is the average Jaccard similarity between all agent pairs.
+        """
+        if not proposals:
+            return 0.0
+
+        agent_sets: Dict[str, set[str]] = {}
+
+        for prop in proposals:
+            agent_id = self._get_prop_value(prop, "agent_id", "unknown")
+            name = (
+                self._get_prop_value(prop, "component")
+                or self._get_prop_value(prop, "component_name")
+                or ""
+            )
+            norm = self.normalize_component_name(name)
+            if not norm:
+                continue
+
+            agent_sets.setdefault(agent_id, set()).add(norm)
+
+        if not agent_sets:
+            return 0.0
+
+        if len(agent_sets) == 1:
+            return 1.0
+
+        agents = list(agent_sets.keys())
+        similarities: List[float] = []
+
+        for i in range(len(agents)):
+            for j in range(i + 1, len(agents)):
+                set_i = agent_sets[agents[i]]
+                set_j = agent_sets[agents[j]]
+                union = len(set_i | set_j)
+                if union == 0:
+                    continue
+                intersection = len(set_i & set_j)
+                similarities.append(intersection / union)
+
+        return sum(similarities) / len(similarities) if similarities else 0.0
+
+    def calculate_convergence_semantic(self, proposals: List[Dict[str, Any]]) -> float:
+        """
+        Calculate convergence score using semantically normalized component names.
+
+        This mirrors `calculate_convergence` but prefers the `normalized_component`
+        field on each proposal, falling back to raw names when needed.
+        """
+        if not proposals:
+            return 0.0
+
+        agent_sets: Dict[str, set[str]] = {}
+
+        for prop in proposals:
+            agent_id = self._get_prop_value(prop, "agent_id", "unknown")
+            name = (
+                self._get_prop_value(prop, "normalized_component")
+                or self._get_prop_value(prop, "component")
+                or self._get_prop_value(prop, "component_name")
+                or ""
+            )
+            norm = self.normalize_component_name(name)
+            if not norm:
+                continue
+
+            agent_sets.setdefault(agent_id, set()).add(norm)
+
+        if not agent_sets:
+            return 0.0
+
+        if len(agent_sets) == 1:
+            return 1.0
+
+        agents = list(agent_sets.keys())
+        similarities: List[float] = []
+
+        for i in range(len(agents)):
+            for j in range(i + 1, len(agents)):
+                set_i = agent_sets[agents[i]]
+                set_j = agent_sets[agents[j]]
+                union = len(set_i | set_j)
+                if union == 0:
+                    continue
+                intersection = len(set_i & set_j)
+                similarities.append(intersection / union)
+
+        return sum(similarities) / len(similarities) if similarities else 0.0
+
+    # ------------------------------------------------------------------#
+    # Critiques and consensus
+    # ------------------------------------------------------------------#
+
+    def generate_critiques_with_influence(
+        self,
+        proposals: List[Dict[str, Any]],
+        roundnum: int,
+    ) -> List[str]:
+        """
+        Generate human-readable critique strings that reflect peer influence.
+
+        The output is a flat list of critique messages that can be fed back
+        into the next round prompts.
+        """
+        critiques: List[str] = []
+
+        # Compute normalized components and support
+        norm_to_props: Dict[str, List[Dict[str, Any]]] = defaultdict(list)
+        for prop in proposals:
+            name = (
+                self._get_prop_value(prop, "normalized_component")
+                or self._get_prop_value(prop, "component")
+                or self._get_prop_value(prop, "component_name")
+                or ""
+            )
+            agent_id = self._get_prop_value(prop, "agent_id", "unknown")
+            confidence = float(self._get_prop_value(prop, "confidence", 0.8))
+            norm = self.normalize_component_name(name)
+            if not norm:
+                continue
+            norm_to_props[norm].append(
+                {
+                    "agent_id": agent_id,
+                    "name": name,
+                    "norm": norm,
+                    "confidence": confidence,
+                },
+            )
+
+        if not norm_to_props:
+            critiques.append(
+                "No strong proposals emerged; agents should propose a clear, "
+                "well-justified component set in the next round.",
+            )
+            return critiques
+
+        num_agents = len({p["agent_id"] for props in norm_to_props.values() for p in props})
+        majority_threshold = max(2, int(0.67 * max(num_agents, 1))) if num_agents > 1 else 1
+
+        # Consensus components
+        for norm_name, props_for_name in norm_to_props.items():
+            supporters = {p["agent_id"] for p in props_for_name}
+            avg_conf = sum(p["confidence"] for p in props_for_name) / len(props_for_name)
+
+            if len(supporters) >= majority_threshold:
+                critiques.append(
+                    f"Strong consensus on '{norm_name}': {len(supporters)} agents support it "
+                    f"with average confidence {avg_conf:.2f}. This should be preserved.",
+                )
+
+        # Isolated / weak proposals
+        for norm_name, props_for_name in norm_to_props.items():
+            supporters = {p["agent_id"] for p in props_for_name}
+            avg_conf = sum(p["confidence"] for p in props_for_name) / len(props_for_name)
+
+            if len(supporters) == 1:
+                critiques.append(
+                    f"Isolated proposal '{norm_name}' appears only once with "
+                    f"average confidence {avg_conf:.2f}; reconsider unless critically justified.",
+                )
+
+        # General guidance (round-dependent but intentionally not referencing future rounds)
+        if roundnum == 1:
+            critiques.append(
+                "Focus on aligning on obvious shared components while dropping clearly "
+                "idiosyncratic proposals.",
+            )
+        elif roundnum >= 2:
+            critiques.append(
+                "Consolidate around components that have multi-agent support and high confidence, "
+                "and prune uncertain or unsupported components.",
+            )
+
+        return critiques
+
+    def build_adaptive_consensus(
+        self,
+        proposals: List[Dict[str, Any]],
+        convergence_score: float,
+    ) -> List[str]:
+        """
+        Build consensus components using adaptive thresholds and confidence weighting.
+
+        This version works on raw component names and rule-based normalization.
+        """
+        if not proposals:
+            return []
+
+        norm_to_confidences: Dict[str, List[float]] = defaultdict(list)
+        norm_to_agents: Dict[str, set[str]] = defaultdict(set)
+
+        for prop in proposals:
+            agent_id = self._get_prop_value(prop, "agent_id", "unknown")
+            name = (
+                self._get_prop_value(prop, "component")
+                or self._get_prop_value(prop, "component_name")
+                or ""
+            )
+            norm = self.normalize_component_name(name)
+            if not norm:
+                continue
+
+            confidence = float(self._get_prop_value(prop, "confidence", 0.8))
+            norm_to_confidences[norm].append(confidence)
+            norm_to_agents[norm].add(agent_id)
+
+        if not norm_to_confidences:
+            return []
+
+        num_agents = max(len(agent_set) for agent_set in norm_to_agents.values())
+
+        # Adaptive support threshold: strict at high convergence, lenient at low.
+        if convergence_score >= 0.7:
+            min_support_frac = 2.0 / 3.0
+        elif convergence_score <= 0.2:
+            min_support_frac = 1.0 / 3.0
+        else:
+            # Linear interpolation between 1/3 and 2/3
+            frac = (convergence_score - 0.2) / (0.7 - 0.2)
+            min_support_frac = (1.0 / 3.0) + frac * (1.0 / 3.0)
+
+        min_support = max(1, int(round(min_support_frac * max(num_agents, 1))))
+
+        scores: Dict[str, float] = {}
+
+        for norm_name, confs in norm_to_confidences.items():
+            support = len(norm_to_agents[norm_name])
+            avg_conf = sum(confs) / len(confs)
+            support_frac = support / max(num_agents, 1)
+
+            # Combined score with peer support boost
+            score = (
+                (1.0 - self.confidence_weight) * support_frac
+                + self.confidence_weight * avg_conf
+                + self.peer_support_boost * (support - 1)
+            )
+
+            if support >= min_support:
+                scores[norm_name] = score
+
+        # Sort by score descending and return normalized component names
+        consensus = [name for name, _ in sorted(scores.items(), key=lambda kv: kv[1], reverse=True)]
+        return consensus
+
+    def build_adaptive_consensus_semantic(
+        self,
+        proposals: List[Dict[str, Any]],
+        convergence_score: float,
+    ) -> List[str]:
+        """
+        Build consensus using semantically normalized component names.
+
+        This is analogous to `build_adaptive_consensus` but uses the
+        `normalized_component` field when available.
+        """
+        if not proposals:
+            return []
+
+        norm_to_confidences: Dict[str, List[float]] = defaultdict(list)
+        norm_to_agents: Dict[str, set[str]] = defaultdict(set)
+
+        for prop in proposals:
+            agent_id = self._get_prop_value(prop, "agent_id", "unknown")
+            name = (
+                self._get_prop_value(prop, "normalized_component")
+                or self._get_prop_value(prop, "component")
+                or self._get_prop_value(prop, "component_name")
+                or ""
+            )
+            norm = self.normalize_component_name(name)
+            if not norm:
+                continue
+
+            confidence = float(self._get_prop_value(prop, "confidence", 0.8))
+            norm_to_confidences[norm].append(confidence)
+            norm_to_agents[norm].add(agent_id)
+
+        if not norm_to_confidences:
+            return []
+
+        num_agents = max(len(agent_set) for agent_set in norm_to_agents.values())
+
+        if convergence_score >= 0.7:
+            min_support_frac = 2.0 / 3.0
+        elif convergence_score <= 0.2:
+            min_support_frac = 1.0 / 3.0
+        else:
+            frac = (convergence_score - 0.2) / (0.7 - 0.2)
+            min_support_frac = (1.0 / 3.0) + frac * (1.0 / 3.0)
+
+        min_support = max(1, int(round(min_support_frac * max(num_agents, 1))))
+
+        scores: Dict[str, float] = {}
+
+        for norm_name, confs in norm_to_confidences.items():
+            support = len(norm_to_agents[norm_name])
+            avg_conf = sum(confs) / len(confs)
+            support_frac = support / max(num_agents, 1)
+
+            score = (
+                (1.0 - self.confidence_weight) * support_frac
+                + self.confidence_weight * avg_conf
+                + self.peer_support_boost * (support - 1)
+            )
+
+            if support >= min_support:
+                scores[norm_name] = score
+
+        consensus = [name for name, _ in sorted(scores.items(), key=lambda kv: kv[1], reverse=True)]
+        return consensus
+
+    # ------------------------------------------------------------------#
+    # Round execution and full debate
+    # ------------------------------------------------------------------#
+
+    async def run_debate_round(
         self,
         technology: str,
-        previous_proposals: List[Dict],
+        previous_proposals: List[Dict[str, Any]],
         critiques: List[str],
-        component_agent,
-        deps,
-        round_num: int,
-    ) -> Dict[str, List[Dict]]:
-        """Run a single debate round with critique feedback"""
+        component_agent: Any,
+        deps: Any,
+        roundnum: int,
+    ) -> Dict[str, List[Dict[str, Any]]]:
+        """
+        Run a single debate round with critique feedback.
 
-        # Format previous proposals for context
+        Returns:
+            Dict mapping agent_id -> list of proposal dicts.
+        """
         prev_context = "\n".join(
-            [
-                f"- [{p.get('agent_id', 'unknown')}] {p.get('component', p.get('component_name', ''))} "
-                f"(confidence: {p.get('confidence', 0.8):.2f})"
-                for p in previous_proposals
-            ]
+            f"- {self._get_prop_value(p, 'agent_id', 'unknown')}: "
+            f"{self._get_prop_value(p, 'component') or self._get_prop_value(p, 'component_name', '')} "
+            f"(confidence={self._get_prop_value(p, 'confidence', 0.8):.2f})"
+            for p in previous_proposals
         )
-
         critique_text = "\n".join(critiques)
 
-        new_proposals = {}
+        new_proposals: Dict[str, List[Dict[str, Any]]] = {}
 
-        # Each agent refines based on critiques
-        for agent_num in range(1, 4):  # 3 agents
-            agent_id = f"Agent_{agent_num}"
+        # Use 3 agents with simple persona labels
+        for agent_num in range(1, 4):
+            agent_id = f"Agent{agent_num}"
+            prompt = f"""DEBATE ROUND {roundnum}
 
-            prompt = f"""DEBATE ROUND {round_num}: Refine component extraction for {technology}
+Technology: {technology}
 
 PREVIOUS ROUND PROPOSALS:
 {prev_context}
@@ -2994,166 +3422,189 @@ PEER CRITIQUES AND GUIDANCE:
 {critique_text}
 
 YOUR TASK:
-1. Review peer proposals and critiques
-2. Support strong consensus candidates
-3. Drop isolated proposals unless critically justified
-4. Propose refined component list
+1. Review peer proposals and critiques.
+2. Support strong consensus candidates.
+3. Drop isolated proposals unless critically justified.
+4. Propose a refined component list.
 
-Extract the primary components (aim for convergence with peers)."""
-
+Return only the updated list of primary components.
+"""
             try:
                 result = await component_agent.run(prompt, deps=deps, model=deps.model)
                 if result and result.output:
-                    components = (
-                        result.output.component_list
-                        if hasattr(result.output, "component_list")
-                        else result.output
-                    )
-                    new_proposals[agent_id] = [
-                        {
-                            "component": comp,
-                            "confidence": 0.85,
-                            "reasoning": "Refined based on debate",
-                        }
-                        for comp in components
-                    ]
-            except Exception as e:
-                logger.error(f"Error in debate round {round_num} for {agent_id}: {e}")
-                # Keep previous proposals if refinement fails
-                prev_agent_proposals = [
-                    p for p in previous_proposals if p.get("agent_id") == agent_id
+                    if hasattr(result.output, "component_list"):
+                        components = result.output.component_list
+                    else:
+                        components = result.output
+                else:
+                    components = []
+
+                new_proposals[agent_id] = [
+                    {
+                        "agent_id": agent_id,
+                        "component": comp,
+                        "confidence": 0.85,
+                        "reasoning": "Refined based on debate feedback.",
+                        "round": roundnum,
+                    }
+                    for comp in components
                 ]
-                new_proposals[agent_id] = prev_agent_proposals
+            except Exception as exc:  # noqa: BLE001
+                logger.error("Error in debate round %s for %s: %s", roundnum, agent_id, exc)
+                # Fall back to previous proposals for this agent, if any
+                prev_for_agent = [
+                    p for p in previous_proposals if self._get_prop_value(p, "agent_id") == agent_id
+                ]
+                new_proposals[agent_id] = prev_for_agent
 
         return new_proposals
 
     async def run_debate(
         self,
         technology: str,
-        initial_proposals: Dict[str, List[Dict]],
-        component_agent,
-        deps,
-    ) -> Dict:
+        initial_proposals: Dict[str, List[Dict[str, Any]]],
+        component_agent: Any,
+        deps: Any,
+    ) -> Dict[str, Any]:
         """
         Run multi-round debate with LLM-based semantic normalization.
 
         Args:
-            technology: Technology name
-            initial_proposals: Initial agent proposals (agent_id -> proposals)
-            component_agent: Agent to use for refinement and normalization
-            deps: Dependencies
+            technology:
+                Technology name.
+            initial_proposals:
+                Mapping agent_id -> list of proposal dicts.
+            component_agent:
+                Agent to use for refinement and normalization.
+            deps:
+                Shared STDN dependencies (includes model name).
 
         Returns:
-            Dict with final consensus components and metadata
+            Dict with keys:
+                - "technology": technology name
+                - "components": list of consensus component names
+                - "confidence": final convergence score
+                - "rounds": number of rounds completed
+                - "debate_history": list of per-round metadata dicts
         """
-        # Initialize variables
         convergence = 0.0
         rounds_completed = 0
-        debate_rounds = []
+        debate_rounds: List[Dict[str, Any]] = []
 
         print("=" * 80)
         print(f"DEBATE: {technology}")
         print("=" * 80)
 
-        current_proposals = initial_proposals
+        current_proposals: Dict[str, List[Dict[str, Any]]] = initial_proposals
 
-        for round_num in range(self.max_rounds):
-            print(f"\nROUND {round_num + 1}:")
+        for roundnum in range(self.max_rounds):
+            print(f"ROUND {roundnum + 1}:")
 
-            # Flatten all proposals for analysis
-            all_proposals = []
+            # Flatten proposals for analysis
+            all_proposals: List[Dict[str, Any]] = []
             for agent_id, agent_props in current_proposals.items():
                 for prop in agent_props:
-                    all_proposals.append({**prop, "agent_id": agent_id})
+                    if isinstance(prop, dict):
+                        p = dict(prop)
+                    else:
+                        p = {
+                            "agent_id": getattr(prop, "agent_id", agent_id),
+                            "component": getattr(prop, "component_name", ""),
+                            "confidence": getattr(prop, "confidence", 0.8),
+                            "reasoning": getattr(prop, "reasoning", ""),
+                            "round": getattr(prop, "round", roundnum),
+                        }
+                    p.setdefault("agent_id", agent_id)
+                    all_proposals.append(p)
+
+            if not all_proposals:
+                print("  ⚠ No proposals available for this round.")
+                break
 
             # Collect all component names for normalization
             all_component_names = [
-                p.get("component", p.get("component_name", "")) for p in all_proposals
+                p.get("component") or p.get("component_name", "") for p in all_proposals
             ]
 
-            # Use LLM-based semantic normalization on final round for accuracy
-            # Use rule-based for earlier rounds for speed
-            if round_num == self.max_rounds - 1 or convergence < 0.3:
+            # Use LLM normalization in later rounds or when convergence is modest
+            if roundnum == self.max_rounds - 1 or convergence >= 0.3:
                 print("  🔄 Using LLM-based semantic normalization...")
                 normalization_map = await self.normalize_components_with_llm(
-                    all_component_names, component_agent, deps
+                    all_component_names,
+                    component_agent,
+                    deps,
                 )
             else:
-                # Fast rule-based normalization for intermediate rounds
+                # Fast rule-based normalization for early rounds
                 normalization_map = {
                     name: self.normalize_component_name(name) for name in all_component_names
                 }
 
             # Apply normalization to all proposals
             for prop in all_proposals:
-                original_name = prop.get("component", prop.get("component_name", ""))
-                normalized_name = normalization_map.get(original_name, original_name)
-                prop["normalized_component"] = normalized_name
+                original = prop.get("component") or prop.get("component_name", "")
+                norm = normalization_map.get(original, original)
+                prop["normalized_component"] = norm
 
             # Calculate convergence using normalized names
             convergence = self.calculate_convergence_semantic(all_proposals)
             print(f"  Convergence: {convergence:.1%}")
+            rounds_completed = roundnum + 1
 
             # Store round data for transcript
             debate_rounds.append(
                 {
-                    "round_num": round_num + 1,
+                    "round_num": roundnum + 1,
                     "convergence": convergence,
                     "proposals": current_proposals.copy(),
-                }
+                    "rounds_completed": rounds_completed,
+                },
             )
 
-            rounds_completed = round_num + 1
-
-            # Check if convergence threshold reached
+            # Stop if threshold reached
             if convergence >= self.convergence_threshold:
-                print(f"✓ Convergence threshold reached!")
+                print("  ✅ Convergence threshold reached!")
                 break
 
             # If not last round, generate critiques and refine proposals
-            if round_num < self.max_rounds - 1:
-                print("  💬 Generating critiques...")
-
-                # Generate critiques using normalized names
-                critiques = self._generate_critiques_with_influence(all_proposals, round_num)
-
-                print("  🔄 Refining proposals based on peer feedback...")
-
-                # Refine proposals based on critiques
-                current_proposals = await self._run_debate_round(
+            if roundnum < self.max_rounds - 1:
+                print("  Generating critiques...")
+                critiques = self.generate_critiques_with_influence(all_proposals, roundnum + 1)
+                print("  Refining proposals based on peer feedback...")
+                current_proposals = await self.run_debate_round(
                     technology=technology,
                     previous_proposals=all_proposals,
                     critiques=critiques,
                     component_agent=component_agent,
                     deps=deps,
-                    round_num=round_num + 1,
+                    roundnum=roundnum + 1,
                 )
 
-        # Build final consensus using normalized names
-        all_final_proposals = []
+        # Final consensus building
+        all_final_proposals: List[Dict[str, Any]] = []
         for agent_props in current_proposals.values():
             all_final_proposals.extend(agent_props)
 
-        # Ensure final proposals have normalized names
         final_component_names = [
-            p.get("component", p.get("component_name", "")) for p in all_final_proposals
+            p.get("component") or p.get("component_name", "") for p in all_final_proposals
         ]
+        if final_component_names:
+            print("  Building final consensus with semantic normalization...")
+            final_norm_map = await self.normalize_components_with_llm(
+                final_component_names,
+                component_agent,
+                deps,
+            )
+            for prop in all_final_proposals:
+                original = prop.get("component") or prop.get("component_name", "")
+                norm = final_norm_map.get(original, original)
+                prop["normalized_component"] = norm
 
-        print("  🎯 Building final consensus with semantic normalization...")
-        final_normalization_map = await self.normalize_components_with_llm(
-            final_component_names, component_agent, deps
+        consensus = self.build_adaptive_consensus_semantic(
+            all_final_proposals,
+            convergence_score=convergence,
         )
-
-        # Apply final normalization
-        for prop in all_final_proposals:
-            original_name = prop.get("component", prop.get("component_name", ""))
-            normalized_name = final_normalization_map.get(original_name, original_name)
-            prop["normalized_component"] = normalized_name
-
-        # Build consensus
-        consensus = self._build_adaptive_consensus_semantic(all_final_proposals, convergence)
-
-        print(f"\n✓ Extracted {len(consensus)} components")
+        print(f"  Extracted {len(consensus)} components")
 
         return {
             "technology": technology,
@@ -3173,6 +3624,7 @@ __all__ = [
     "AgentProposal",
     "DebateRound",
 ]
+
 
 ===================================================
 File: dpi_stdn_agentic/src/stdn_agentic/debug_transcript_paths.py
@@ -8105,6 +8557,243 @@ if __name__ == "__main__":
 
 
 ===================================================
+File: dpi_stdn_agentic/src/stdn_agentic/tests/unit/test_usgs_client_queries.py
+===================================================
+"""
+Tests for inspecting SQL queries constructed by USGSClient.
+
+These tests replace the real DuckDB connection with a capturing stub so that
+we can inspect the exact SQL passed to `connection.sql(...)` without needing
+a real database file.
+"""
+
+from typing import List
+
+import pandas as pd
+
+from stdn_agentic.data import USGSClient
+
+
+class _DummyResult:
+    """Minimal stub object returned from connection.sql()."""
+
+    def __init__(self) -> None:
+        self._df = pd.DataFrame()
+
+    def df(self) -> pd.DataFrame:
+        return self._df
+
+
+class CapturingConnection:
+    """Test double that records all SQL queries passed to sql()."""
+
+    def __init__(self) -> None:
+        self.queries: List[str] = []
+
+    def sql(self, query: str) -> _DummyResult:
+        self.queries.append(query)
+        return _DummyResult()
+
+
+def _make_client_with_capturing_conn() -> tuple[USGSClient, CapturingConnection]:
+    """
+    Helper to construct a USGSClient whose connection is a capturing stub.
+
+    The database_path value is irrelevant here because we immediately
+    override `client.connection`.
+    """
+    client = USGSClient(database_path=":memory:", top_n=5)
+    capturing_conn = CapturingConnection()
+    client.connection = capturing_conn  # type: ignore[assignment]
+    return client, capturing_conn
+
+
+def test_query_top_countries_builds_expected_sql(capsys: "pytest.CaptureFixture[str]") -> None:
+    """Capture and print the SQL used for top-countries queries."""
+    client, conn = _make_client_with_capturing_conn()
+
+    material = "Lithium"
+    src_year = 2025
+    meas_year = 2024
+
+    # Exercise: this will call connection.sql(query).df()
+    client.query_top_countries(material, src_year, meas_year)
+
+    assert conn.queries, "Expected at least one SQL query to be recorded."
+    sql = conn.queries[0]
+
+    # Basic sanity checks on the constructed query
+    assert "FROM world_mineral_commodity_report" in sql
+    assert f"meas_yr = {meas_year}" in sql
+    assert f"src_yr = {src_year}" in sql
+    assert "UPPER(commodity)" in sql
+    assert material.upper() in sql
+
+    # Print for manual inspection during debugging
+    print("Top countries SQL:\n", sql)
+
+    captured = capsys.readouterr()
+    assert "Top countries SQL:" in captured.out
+
+
+def test_query_world_totals_builds_expected_sql(capsys: "pytest.CaptureFixture[str]") -> None:
+    """Capture and print the SQL used for world-totals queries."""
+    client, conn = _make_client_with_capturing_conn()
+
+    material = "Copper"
+    src_year = 2023
+    meas_year = 2022
+
+    client.query_world_totals(material, src_year, meas_year)
+
+    assert conn.queries, "Expected at least one SQL query to be recorded."
+    sql = conn.queries[0]
+
+    assert "FROM world_mineral_commodity_report" in sql
+    assert f"meas_yr = {meas_year}" in sql
+    assert f"src_yr = {src_year}" in sql
+    assert "UPPER(commodity)" in sql
+    assert "UPPER(country) = 'WORLD'" in sql
+    assert material.upper() in sql
+
+    print("World totals SQL:\n", sql)
+
+    captured = capsys.readouterr()
+    assert "World totals SQL:" in captured.out
+
+
+def test_query_country_details_builds_expected_sql(capsys: "pytest.CaptureFixture[str]") -> None:
+    """Capture and print the SQL used for per-country detail queries."""
+    client, conn = _make_client_with_capturing_conn()
+
+    material = "Cobalt"
+    country = "Chile"
+    src_year = 2024
+    meas_year = 2023
+
+    client.query_country_details(material, country, src_year, meas_year)
+
+    assert conn.queries, "Expected at least one SQL query to be recorded."
+    sql = conn.queries[0]
+
+    assert "FROM world_mineral_commodity_report" in sql
+    assert f"meas_yr = {meas_year}" in sql
+    assert f"src_yr = {src_year}" in sql
+    assert "UPPER(commodity)" in sql
+    assert f"UPPER(country) = '{country.upper()}'" in sql
+    assert material.upper() in sql
+
+    print("Country details SQL:\n", sql)
+
+    captured = capsys.readouterr()
+    assert "Country details SQL:" in captured.out
+
+
+===================================================
+File: dpi_stdn_agentic/src/stdn_agentic/tests/unit/test_usgs_client_sql_inspect.py
+===================================================
+"""
+Inspect the exact SQL queries constructed by USGSClient.
+
+This uses a capturing stub for the DuckDB connection so we see the SQL
+without needing a real database file. Output is printed directly so
+`pytest -s` will display it.
+"""
+
+from typing import List
+
+import pandas as pd
+import pytest
+
+from stdn_agentic.data.usgs_client import USGSClient
+
+
+class _DummyResult:
+    """Minimal stub object returned from connection.sql()."""
+
+    def __init__(self) -> None:
+        self._df = pd.DataFrame()
+
+    def df(self) -> pd.DataFrame:
+        return self._df
+
+
+class CapturingConnection:
+    """Test double that records all SQL queries passed to sql()."""
+
+    def __init__(self) -> None:
+        self.queries: List[str] = []
+
+    def sql(self, query: str) -> _DummyResult:
+        self.queries.append(query)
+        return _DummyResult()
+
+
+def _make_client_with_capturing_conn() -> tuple[USGSClient, CapturingConnection]:
+    """
+    Helper to construct a USGSClient whose connection is a capturing stub.
+
+    The database_path value is irrelevant here because we immediately
+    override `client.connection`.
+    """
+    client = USGSClient(database_path=":memory:", top_n=5)
+    capturing_conn = CapturingConnection()
+    client.connection = capturing_conn  # type: ignore[assignment]
+    return client, capturing_conn
+
+
+@pytest.mark.parametrize(
+    "material, src_year, meas_year",
+    [
+        ("Gold", 2025, 2024),
+        ("Tin", 2024, 2023),
+    ],
+)
+def test_print_top_countries_sql(material: str, src_year: int, meas_year: int) -> None:
+    """Print the SQL used for top-countries queries for manual inspection."""
+    client, conn = _make_client_with_capturing_conn()
+
+    client.query_top_countries(material, src_year, meas_year)
+
+    assert conn.queries, "Expected at least one SQL query to be recorded."
+    sql = conn.queries[0]
+
+    print("\n=== query_top_countries SQL ===")
+    print(sql)
+
+
+def test_print_world_totals_sql() -> None:
+    """Print the SQL used for world-totals queries."""
+    client, conn = _make_client_with_capturing_conn()
+
+    client.query_world_totals("Aluminum", src_year=2023, meas_year=2024)
+
+    assert conn.queries, "Expected at least one SQL query to be recorded."
+    sql = conn.queries[0]
+
+    print("\n=== query_world_totals SQL ===")
+    print(sql)
+
+
+def test_print_country_details_sql() -> None:
+    """Print the SQL used for per-country detail queries."""
+    client, conn = _make_client_with_capturing_conn()
+
+    client.query_country_details(
+        material="Cobalt",
+        country="Chile",
+        src_year=2024,
+        meas_year=2023,
+    )
+
+    assert conn.queries, "Expected at least one SQL query to be recorded."
+    sql = conn.queries[0]
+
+    print("\n=== query_country_details SQL ===")
+    print(sql)
+
+
+===================================================
 File: dpi_stdn_agentic/src/stdn_agentic/utils.py
 ===================================================
 """
@@ -8182,6 +8871,7 @@ OLLAMA_BASE_URL=http://localhost:11434/v1
 ENABLE_DEBATE=true
 MAX_DEBATE_ROUNDS=3
 CONVERGENCE_THRESHOLD=0.51
+STDN_DISABLE_MATERIAL_TOOLS=1
 
 
 ===================================================
