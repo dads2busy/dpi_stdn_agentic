@@ -149,6 +149,40 @@ class STDNOrchestrator:
     # Safe Materials Extraction with Comprehensive Validation
     # ========================================================================
 
+    def _validate_materials_extraction_inputs(
+        self,
+        componentlist: ComponentList,
+        technology: str,
+    ) -> tuple[bool, Optional[list[str]], Optional[str]]:
+        """
+        Validate inputs for materials extraction.
+
+        Returns:
+            Tuple of (is_valid, valid_components, error_message)
+        """
+        # Check component list exists
+        if not componentlist or not hasattr(componentlist, "component_list"):
+            logger.warning(f"No components to extract materials from for {technology}")
+            print("🔍 No components to extract materials from")
+            return (False, None, "No components")
+
+        components = componentlist.component_list
+
+        # Filter valid components
+        valid_components = [c for c in components if c and isinstance(c, str) and c.strip()]
+        if not valid_components:
+            logger.warning(f"All components were null/empty for {technology}")
+            print("🔍 All components were null/empty")
+            return (False, None, "All components null/empty")
+
+        # Check ontology availability
+        if not self.deps.material_ontology_list or len(self.deps.material_ontology_list) == 0:
+            logger.error(f"Material ontology is empty - cannot extract materials for {technology}")
+            print("❌ Material ontology is empty!")
+            return (False, None, "Ontology empty")
+
+        return (True, valid_components, None)
+
     async def extract_materials_safe(
         self,
         componentlist: ComponentList,
@@ -158,44 +192,23 @@ class STDNOrchestrator:
     ) -> Optional[ComponentMaterialsList]:
         """
         Safely extract materials with comprehensive error handling and retry logic.
-
-        Args:
-            componentlist: ComponentList object containing components
-            technology: Technology name
-            usage: RunUsage tracker
-            max_retries: Maximum number of retry attempts on transient errors
-
-        Returns:
-            ComponentMaterialsList with extracted materials, or empty list on error
         """
-        # VALIDATION 1: Check component list exists
-        if not componentlist or not hasattr(componentlist, "component_list"):
-            logger.warning(f"No components to extract materials from for {technology}")
-            print("🔍 No components to extract materials from")
+        # Validate inputs
+        is_valid, valid_components, error_msg = self._validate_materials_extraction_inputs(
+            componentlist, technology
+        )
+
+        if not is_valid:
             return ComponentMaterialsList.model_validate({"componentlist": []})
 
-        components = componentlist.component_list  # Access component_list field
-
-        # VALIDATION 2: Filter valid components
-        valid_components = [c for c in components if c and isinstance(c, str) and c.strip()]
-        if not valid_components:
-            logger.warning(f"All components were null/empty for {technology}")
-            print("🔍 All components were null/empty")
-            return ComponentMaterialsList.model_validate({"componentlist": []})
-
-        # VALIDATION 3: Check ontology availability
-        if not self.deps.material_ontology_list or len(self.deps.material_ontology_list) == 0:
-            logger.error(f"Material ontology is empty - cannot extract materials for {technology}")
-            print("❌ Material ontology is empty!")
-            return ComponentMaterialsList.model_validate({"componentlist": []})
+        # Type assertion - valid_components is guaranteed to be non-empty here
+        assert valid_components, "valid_components should be non-empty after successful validation"
 
         # Build prompt with validated data
         component_str = "\n".join(f"- {comp}" for comp in valid_components)
-        # Reduced ontology sample size for stability (from 100 to 50)
         ontology_sample = self.deps.material_ontology_list[:50]
         ontology_str = ", ".join(ontology_sample)
 
-        # CRITICAL FIX: Ensure all prompt parts are non-None strings
         materials_prompt = f"""Extract RAW MATERIALS (NOT components or subassemblies) for these components of a {technology}:
 
     {component_str}
@@ -216,80 +229,37 @@ class STDNOrchestrator:
 
     Return a JSON response with componentlist containing component and materials fields."""
 
-        # VALIDATION 4: Check prompt is valid and non-empty
-        if (
-            not materials_prompt
-            or not isinstance(materials_prompt, str)
-            or len(materials_prompt.strip()) < 50
-        ):
-            logger.error(f"Generated materials prompt is invalid for {technology}")
-            print("❌ Generated materials prompt is too short or None")
-            print(f"🔍 Prompt length: {len(materials_prompt) if materials_prompt else 0}")
-            return ComponentMaterialsList.model_validate({"componentlist": []})
-
-        # VALIDATION 5: Ensure deps and model are valid
-        if not self.deps or not self.deps.model:
-            logger.error(f"Dependencies or model not configured for {technology}")
-            print("❌ Dependencies not properly configured")
-            return ComponentMaterialsList.model_validate({"componentlist": []})
+        # Type guard: valid_components is guaranteed to be list[str] here
+        assert valid_components is not None, "valid_components should not be None after validation"
 
         logger.info(
             f"📋 Extracting materials for {len(valid_components)} components of {technology}"
         )
         print(f"  🔍 Extracting materials for {len(valid_components)} components...")
-        print(f"  🔍 Using model: {self.deps.model}")
-        print(f"  🔍 Prompt length: {len(materials_prompt)} chars")
 
         # RETRY LOGIC: Handle transient Ollama/model errors
         for attempt in range(max_retries):
             try:
-                # Call materials agent with validated inputs
-                result = await self.materials_agent.run(
-                    materials_prompt,
-                    deps=self.deps,
-                )
+                result = await self.materials_agent.run(materials_prompt, deps=self.deps)
 
-                # VALIDATION 6: Check result validity
                 if not result or not result.output:
                     if attempt < max_retries - 1:
-                        logger.warning(
-                            f"Materials agent returned empty result for {technology} "
-                            f"(attempt {attempt + 1}/{max_retries}), retrying..."
-                        )
-                        await asyncio.sleep(2**attempt)  # Exponential backoff: 1s, 2s, 4s
+                        await asyncio.sleep(2**attempt)
                         continue
-                    else:
-                        logger.warning(
-                            f"Materials agent returned empty result for {technology} after all retries"
-                        )
-                        print(
-                            f"⚠️  Materials agent returned empty result after {max_retries} attempts"
-                        )
-                        return ComponentMaterialsList.model_validate({"componentlist": []})
+                    return ComponentMaterialsList.model_validate({"componentlist": []})
 
                 materials_list = result.output
 
-                # VALIDATION 7: Check materials list has content
-                if not materials_list.component_list:  # Use component_list field
+                if not materials_list.component_list:
                     if attempt < max_retries - 1:
-                        logger.warning(
-                            f"Materials list is empty for {technology} "
-                            f"(attempt {attempt + 1}/{max_retries}), retrying..."
-                        )
                         await asyncio.sleep(2**attempt)
                         continue
-                    else:
-                        logger.warning(
-                            f"Materials list is empty for {technology} after all retries"
-                        )
-                        print(f"⚠️  Materials list is empty after {max_retries} attempts")
-                        return ComponentMaterialsList.model_validate({"componentlist": []})
+                    return ComponentMaterialsList.model_validate({"componentlist": []})
 
-                # SUCCESS - Access raw_materials field (not rawmaterials)
+                # SUCCESS
                 num_materials = sum(len(cm.raw_materials) for cm in materials_list.component_list)
                 logger.info(
-                    f"✅ Extracted {num_materials} materials for {len(materials_list.component_list)} "
-                    f"components of {technology}"
+                    f"✅ Extracted {num_materials} materials for {len(materials_list.component_list)} components"
                 )
                 print(
                     f"  ✅ Extracted materials for {len(materials_list.component_list)} components"
@@ -298,36 +268,18 @@ class STDNOrchestrator:
                 return materials_list
 
             except Exception as e:
-                # Check if this is a transient error worth retrying
                 error_str = str(e)
-                is_transient = (
-                    "invalid message content type" in error_str
-                    or "400" in error_str
-                    or "BadRequestError" in error_str
-                )
+                is_transient = "invalid message content type" in error_str or "400" in error_str
 
                 if is_transient and attempt < max_retries - 1:
                     wait_time = 2**attempt
-                    logger.warning(
-                        f"Transient error extracting materials for {technology} "
-                        f"(attempt {attempt + 1}/{max_retries}): {e}"
-                    )
-                    logger.info(f"Retrying in {wait_time} seconds...")
-                    print(f"  ⚠️  Attempt {attempt + 1} failed, retrying in {wait_time}s...")
+                    logger.warning(f"Transient error (attempt {attempt + 1}/{max_retries}): {e}")
                     await asyncio.sleep(wait_time)
                     continue
                 else:
-                    # Final attempt failed or non-transient error
-                    logger.error(
-                        f"Error extracting materials for {technology} after "
-                        f"{attempt + 1} attempt(s): {e}",
-                        exc_info=True,
-                    )
-                    print(f"  ❌  Error extracting materials for {technology}: {e}")
+                    logger.error(f"Error extracting materials: {e}", exc_info=True)
                     return ComponentMaterialsList.model_validate({"componentlist": []})
 
-        # Should not reach here, but just in case
-        logger.error(f"Exhausted all retries for {technology}")
         return ComponentMaterialsList.model_validate({"componentlist": []})
 
     # ========================================================================
@@ -520,40 +472,139 @@ class STDNOrchestrator:
     # Main Processing Pipeline
     # ========================================================================
 
+    async def _extract_materials_for_technology(
+        self,
+        components: list[str],
+        technology: str,
+        usage: RunUsage,
+    ) -> Optional[ComponentMaterialsList]:
+        """
+        Extract materials for components using debate or single-agent approach.
+
+        Returns:
+            ComponentMaterialsList or None if extraction fails
+        """
+        if self.use_material_debate:
+            from ..agents import ComponentMaterials, ComponentMaterialsList
+            from ..debate import MaterialDebater
+
+            print("Using multi-agent debate for materials...")
+            material_debater = MaterialDebater(
+                deps=self.deps,
+                num_agents=3,
+                max_rounds=self.max_debate_rounds,
+                convergence_threshold=self.convergence_threshold,
+                debate_top_p=self.debate_top_p,
+            )
+
+            debate_result = await material_debater.run_full_debate(components, technology, usage)
+
+            # Convert debate consensus to ComponentMaterialsList format
+            consensus = debate_result["consensus"]
+
+            materials_list = ComponentMaterialsList(
+                componentlist=[
+                    ComponentMaterials(component=comp, materials=mats)
+                    for comp, mats in consensus.items()
+                ]
+            )
+
+            # Save material debate transcript if enabled
+            if self.save_transcripts and self.reporter:
+                self._save_material_debate_transcript(
+                    technology, components, material_debater.debate_history, consensus
+                )
+        else:
+            # Single-agent extraction
+            from ..agents import ComponentList
+
+            materials_result = await self.extract_materials_safe(
+                componentlist=ComponentList(componentlist=components),
+                technology=technology,
+                usage=usage,
+            )
+
+            if not materials_result or not materials_result.component_list:
+                return None
+
+            materials_list = materials_result
+
+        return materials_list
+
+    async def _enrich_with_country_data(
+        self,
+        materials_list: ComponentMaterialsList,
+        technology: str,
+        usage: RunUsage,
+    ) -> list[dict[str, Any]]:
+        """
+        Enrich materials with country production data.
+
+        Returns:
+            List of enriched data records
+        """
+        enriched_data = []
+
+        for comp_mat in materials_list.component_list:
+            component = comp_mat.component
+
+            for material in comp_mat.raw_materials:
+                try:
+                    country_data = await self.country_repo.get_country_data(
+                        material=material,
+                        src_year=getattr(self.config, "src_year", 2024),
+                        meas_year=getattr(self.config, "meas_year", 2025),
+                        usage=usage,
+                    )
+
+                    if country_data:
+                        for country_info in country_data:
+                            enriched_data.append(
+                                {
+                                    "technology": technology,
+                                    "component": component,
+                                    "material": material,
+                                    "hs_code": country_info.get("hs_code"),
+                                    "country": country_info.get("country", "Unknown"),
+                                    "meas_unit": country_info.get("meas_unit", ""),
+                                    "amount": country_info.get("amount", 0.0),
+                                    "percentage": country_info.get("percentage", 0.0),
+                                }
+                            )
+                    elif self.write_nulls:
+                        enriched_data.append(
+                            {
+                                "technology": technology,
+                                "component": component,
+                                "material": material,
+                                "hs_code": None,
+                                "country": None,
+                                "meas_unit": None,
+                                "amount": None,
+                                "percentage": None,
+                            }
+                        )
+
+                except Exception as e:
+                    logger.error(f"Error getting country data for {material}: {e}")
+
+        return enriched_data
+
     async def process_technology(
         self,
         tech: str,
         role: str,
         domain: str,
         usage: RunUsage,
-        use_material_debate: bool = False,  # NEW PARAMETER
+        use_material_debate: bool = False,
     ) -> Optional[Dict[str, Any]]:
-        """
-        Process a single technology through the complete STDN pipeline.
-
-        Pipeline stages:
-        1. Component extraction (with debate if enabled)
-        2. Materials extraction (with debate if use_material_debate=True)
-        3. Country data enrichment (USGS + LLM fallback)
-        4. Data aggregation and formatting
-
-        Args:
-            tech: Technology name
-            role: Expert role context
-            domain: Domain context
-            usage: RunUsage tracker
-            use_material_debate: Use multi-agent debate for materials (default False)
-
-        Returns:
-            Dictionary with components, materials, and enriched country data,
-            or None if processing fails
-        """
+        """Process a single technology through the complete STDN pipeline."""
         print("=" * 80)
         print(f"Processing: {tech}")
         print("=" * 80)
 
         try:
-            # Phase 1: Extract components (existing logic - with debate if enabled)
+            # Phase 1: Extract components
             if self.use_debate:
                 components_result = await self.extract_components_with_debate(tech, role, usage)
             else:
@@ -568,140 +619,28 @@ class STDNOrchestrator:
                 print(f"✗ No components extracted for {tech}")
                 return None
 
-            # Extract component list - ENSURE it's List[str], not ComponentList
+            # Extract component list
             if hasattr(components_result, "component_list"):
-                components: list[str] = (
-                    components_result.component_list
-                )  # Type annotation ONLY on first assignment
+                components: list[str] = components_result.component_list
             elif isinstance(components_result, list):
-                components = components_result  # No type annotation
+                components = components_result
             else:
-                components = []  # No type annotation
+                components = []
 
             print(f"✓ Extracted {len(components)} components")
 
-            # Phase 2: Extract materials - NEW debate integration
-            if use_material_debate:
-                from ..debate import MaterialDebater
+            # Phase 2: Extract materials
+            materials_list = await self._extract_materials_for_technology(components, tech, usage)
 
-                print("Using multi-agent debate for materials...")
-                material_debater = MaterialDebater(
-                    deps=self.deps,
-                    num_agents=3,
-                    max_rounds=self.max_debate_rounds,
-                    convergence_threshold=self.convergence_threshold,
-                    debate_top_p=self.debate_top_p,
-                )
-
-                debate_result = await material_debater.run_full_debate(components, tech, usage)
-
-                # Convert debate consensus to ComponentMaterialsList format
-                from ..agents import ComponentMaterials, ComponentMaterialsList
-
-                consensus = debate_result["consensus"]  # Dict[str, List[str]]
-
-                # Build ComponentMaterialsList using ALIASES in constructor
-                materials_list = ComponentMaterialsList(
-                    componentlist=[  # Use alias (NO underscore) for constructor
-                        ComponentMaterials(
-                            component=comp,
-                            materials=mats,  # Use alias "materials" (NO underscore)
-                        )
-                        for comp, mats in consensus.items()
-                    ]
-                )
-
-                # Save material debate transcript if enabled
-                if self.save_transcripts and self.reporter:
-                    self._save_material_debate_transcript(
-                        tech, components, material_debater.debate_history, consensus
-                    )
-            else:
-                # Existing single-agent extraction
-                from ..agents import ComponentList
-
-                if isinstance(components, ComponentList):
-                    components_list = components.component_list
-                else:
-                    components_list = components
-
-                materials_result = await self.extract_materials_safe(
-                    componentlist=ComponentList(
-                        componentlist=components_list
-                    ),  # Now definitely List[str]
-                    technology=tech,
-                    usage=usage,
-                )
-
-                if (
-                    not materials_result or not materials_result.component_list
-                ):  # Use field name for access
-                    logger.error(f"No materials extracted for {tech}")
-                    print(f"✗ No materials extracted for {tech}")
-                    return None
-
-                materials_list = materials_result
-
-            if not materials_list or not materials_list.component_list:  # Use field name for access
+            if not materials_list or not materials_list.component_list:
                 logger.error(f"No materials extracted for {tech}")
                 print(f"✗ No materials extracted for {tech}")
                 return None
 
             print(f"✓ Extracted materials for {len(materials_list.component_list)} components")
 
-            # Phase 3: Enrich with country data (existing logic continues unchanged)
-            enriched_data = []
-
-            for comp_mat in materials_list.component_list:  # Use field name for access
-                component = comp_mat.component
-
-                for material in comp_mat.raw_materials:  # Use field name for access
-                    try:
-                        country_data = await self.country_repo.get_country_data(
-                            material=material,
-                            src_year=getattr(self.config, "src_year", 2024),
-                            meas_year=getattr(self.config, "meas_year", 2025),
-                            usage=usage,
-                        )
-
-                        if country_data:
-                            for country_info in country_data:
-                                enriched_data.append(
-                                    {
-                                        "technology": tech,
-                                        "component": component,
-                                        "material": material,
-                                        "hs_code": country_info.get("hs_code"),
-                                        "country": country_info.get(
-                                            "country", "Unknown"
-                                        ),  # Use .get() for safety
-                                        "meas_unit": country_info.get(
-                                            "meas_unit", ""
-                                        ),  # Use .get() for safety
-                                        "amount": country_info.get(
-                                            "amount", 0.0
-                                        ),  # Use .get() for safety
-                                        "percentage": country_info.get(
-                                            "percentage", 0.0
-                                        ),  # Use .get() for safety
-                                    }
-                                )
-                        elif self.write_nulls:
-                            enriched_data.append(
-                                {
-                                    "technology": tech,
-                                    "component": component,
-                                    "material": material,
-                                    "hs_code": None,  # WITH underscore ✓
-                                    "country": None,
-                                    "meas_unit": None,  # WITH underscore ✓
-                                    "amount": None,
-                                    "percentage": None,
-                                }
-                            )
-
-                    except Exception as e:
-                        logger.error(f"Error getting country data for {material}: {e}")
+            # Phase 3: Enrich with country data
+            enriched_data = await self._enrich_with_country_data(materials_list, tech, usage)
 
             return {
                 "technology": tech,
