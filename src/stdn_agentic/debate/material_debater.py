@@ -146,6 +146,41 @@ class MaterialDebater:
 
         return material_variants.get(normalized, normalized)
 
+    async def _check_ollama_health(self) -> bool:
+        """Check if Ollama is responsive before starting debate."""
+        try:
+            logger.info("Checking Ollama health...")
+            print("  Testing Ollama connection...")
+
+            # Simple test using component agent (already available)
+            from ..agents import get_component_agent
+
+            test_agent = get_component_agent(model_name=self.deps.model)
+
+            # Create minimal deps for test
+            from dataclasses import replace
+
+            test_deps = replace(self.deps, top_p=0.9)  # Use default sampling
+
+            result = await test_agent.run(
+                "List one component of a smartphone",
+                deps=test_deps,
+            )
+
+            if result and result.output:
+                logger.info("✓ Ollama health check passed")
+                print("  ✓ Ollama is responsive")
+                return True
+            else:
+                logger.warning("⚠️  Ollama returned empty result")
+                print("  ⚠️  Ollama returned empty result")
+                return False
+
+        except Exception as e:
+            logger.error(f"❌ Ollama health check failed: {e}")
+            print(f"  ❌ Connection failed: {e}")
+            return False
+
     async def phase1_independent_generation(
         self,
         componentlist: list[str],
@@ -180,6 +215,9 @@ class MaterialDebater:
         for agent_num in range(1, self.num_agents + 1):
             agent_id = f"Agent{agent_num}"
 
+            # ADD DELAY BEFORE EACH AGENT (including first one)
+            await asyncio.sleep(2.0)  # Give Ollama time to recover
+
             # Each agent gets slightly different perspective
             perspectives = [
                 "Focus on primary structural and functional materials.",
@@ -204,8 +242,19 @@ class MaterialDebater:
                 f"Return a JSON response with 'component_list' containing 'component' and 'materials' fields."
             )
 
+            # ADD VALIDATION HERE:
+            if not prompt or len(prompt.strip()) < 50:
+                logger.error(f"{agent_id}: Invalid prompt (too short or empty)")
+                print(f"{agent_id}: Skipping due to invalid prompt")
+                continue
+
+            if not self.deps or not self.deps.model:
+                logger.error(f"{agent_id}: Invalid dependencies")
+                print(f"{agent_id}: Skipping due to invalid dependencies")
+                continue
+
             # RETRY LOGIC: Handle transient Ollama errors
-            max_retries = 3
+            max_retries = 5
             for attempt in range(max_retries):
                 try:
                     # Use configured Top-P for deterministic proposals
@@ -261,7 +310,7 @@ class MaterialDebater:
                     )
 
                     if is_transient and attempt < max_retries - 1:
-                        wait_time = 2**attempt  # Exponential backoff: 1s, 2s, 4s
+                        wait_time = (attempt + 1) * 3
                         logger.warning(
                             f"{agent_id} transient error (attempt {attempt + 1}/{max_retries}): {e}"
                         )
@@ -426,6 +475,9 @@ class MaterialDebater:
         for agent_num in range(1, self.num_agents + 1):
             agent_id = f"Agent{agent_num}"
 
+            # ADD DELAY BEFORE EACH AGENT
+            await asyncio.sleep(2.0)  # Give Ollama time to recover
+
             prompt = (
                 f"ROUND {round_num} - Refine material proposals for {technology}\n\n"
                 f"COMPONENTS:\n{component_str}\n\n"
@@ -440,8 +492,17 @@ class MaterialDebater:
                 f"Return a JSON response with 'component_list' containing 'component' and 'materials' fields."
             )
 
+            # ADD VALIDATION HERE:
+            if not prompt or len(prompt.strip()) < 50:
+                logger.error(f"{agent_id}: Invalid prompt for round {round_num}")
+                continue
+
+            if not self.deps or not self.deps.model:
+                logger.error(f"{agent_id}: Invalid dependencies for round {round_num}")
+                continue
+
             # RETRY LOGIC: Handle transient Ollama errors
-            max_retries = 3
+            max_retries = 5
             success = False
 
             for attempt in range(max_retries):
@@ -501,7 +562,7 @@ class MaterialDebater:
                     )
 
                     if is_transient and attempt < max_retries - 1:
-                        wait_time = 2**attempt
+                        wait_time = (attempt + 1) * 3
                         logger.warning(
                             f"{agent_id} round {round_num} transient error "
                             f"(attempt {attempt + 1}/{max_retries}): {e}"
@@ -600,6 +661,20 @@ class MaterialDebater:
         print(f"Components: {len(componentlist)}")
         print(f"{'=' * 60}")
 
+        # # ADD HEALTH CHECK HERE:
+        # print("Checking Ollama availability...")
+        # if not await self._check_ollama_health():
+        #     logger.error("Ollama is not responsive. Aborting material debate.")
+        #     print("❌ Ollama health check failed - cannot proceed with material debate")
+        #     # Return empty consensus
+        #     return {
+        #         "consensus": {},
+        #         "debate_history": [],
+        #         "convergence_scores": [],
+        #     }
+
+        # print("✓ Ollama is ready\n")
+
         # Phase 1: Independent generation
         initial_proposals = await self.phase1_independent_generation(
             componentlist, technology, usage
@@ -661,6 +736,17 @@ class MaterialDebater:
         print(f"{'=' * 60}")
 
         consensus = self.build_adaptive_consensus(all_proposals, convergence)
+
+        # ADD DEDUPLICATION HERE:
+        for component in consensus:
+            seen = set()
+            unique_materials = []
+            for mat in consensus[component]:
+                mat_norm = self.normalize_material_name(mat)
+                if mat_norm not in seen:
+                    unique_materials.append(mat)
+                    seen.add(mat_norm)
+            consensus[component] = unique_materials
 
         total_materials = sum(len(mats) for mats in consensus.values())
         print(f"Consensus: {len(consensus)} components, {total_materials} materials")

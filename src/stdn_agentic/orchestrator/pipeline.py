@@ -188,7 +188,7 @@ class STDNOrchestrator:
         componentlist: ComponentList,
         technology: str,
         usage: RunUsage,
-        max_retries: int = 3,
+        max_retries: int = 5,
     ) -> Optional[ComponentMaterialsList]:
         """
         Safely extract materials with comprehensive error handling and retry logic.
@@ -272,7 +272,7 @@ class STDNOrchestrator:
                 is_transient = "invalid message content type" in error_str or "400" in error_str
 
                 if is_transient and attempt < max_retries - 1:
-                    wait_time = 2**attempt
+                    wait_time = (attempt + 1) * 2  # 2s, 4s, 6s instead of 1s, 2s, 4s
                     logger.warning(f"Transient error (attempt {attempt + 1}/{max_retries}): {e}")
                     await asyncio.sleep(wait_time)
                     continue
