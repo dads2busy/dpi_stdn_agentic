@@ -58,6 +58,7 @@ class STDNOrchestrator:
         enable_checkpoints: bool = False,
         enable_debate: bool = False,
         enable_material_debate: bool = False,
+        enable_country_debate: bool = False,
         max_debate_rounds: int = 3,
         convergence_threshold: float = 0.8,
         save_transcripts: bool = True,
@@ -81,6 +82,7 @@ class STDNOrchestrator:
         self.enable_checkpoints = enable_checkpoints
         self.use_debate = enable_debate
         self.use_material_debate = enable_material_debate
+        self.use_country_debate = enable_country_debate
         self.max_debate_rounds = max_debate_rounds
         self.convergence_threshold = convergence_threshold
         self.save_transcripts = save_transcripts
@@ -555,6 +557,7 @@ class STDNOrchestrator:
                         src_year=getattr(self.config, "src_year", 2024),
                         meas_year=getattr(self.config, "meas_year", 2025),
                         usage=usage,
+                        use_debate=self.use_country_debate,
                     )
 
                     if country_data:

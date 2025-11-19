@@ -5,14 +5,13 @@ This module provides the CountryDataRepository class that coordinates data
 retrieval from USGS database and LLM fallback for material-country mappings.
 """
 
-import asyncio
 import logging
 from typing import Dict, List, Optional
 
 import pandas as pd
 from pydantic_ai import RunUsage
 
-from ..agents import CountryList, get_country_data_agent
+from ..agents import get_country_data_agent
 from ..models import STDNDependencies
 from .usgs_client import USGSClient
 
@@ -31,7 +30,8 @@ class CountryDataRepository:
     This class coordinates data retrieval:
     1. First tries USGS database (primary source)
     2. Falls back to LLM agent if USGS has no data
-    3. Caches results to avoid redundant queries
+    3. Optionally uses multi-agent debate for LLM fallback
+    4. Caches results to avoid redundant queries
 
     Attributes:
         database_path: Path to USGS database
@@ -49,7 +49,8 @@ class CountryDataRepository:
         >>> countries = await repo.get_country_data(
         ...     material="lithium",
         ...     src_year=2025,
-        ...     meas_year=2024
+        ...     meas_year=2024,
+        ...     use_debate=True
         ... )
     """
 
@@ -89,11 +90,28 @@ class CountryDataRepository:
         src_year: int,
         meas_year: int,
         usage: Optional[RunUsage] = None,
+        use_debate: bool = False,
     ) -> List[Dict]:
         """
         Get country production data for a material.
 
         Tries USGS database first, falls back to LLM if enabled.
+        Can use multi-agent debate for LLM fallback.
+
+        Args:
+            material: Material name
+            src_year: Source year of report
+            meas_year: Measurement year for production data
+            usage: Optional usage tracker
+            use_debate: Use multi-agent debate for LLM fallback
+
+        Returns:
+            List of country data dicts with keys:
+                - country: Country name
+                - meas_unit: Measurement unit
+                - amount: Production amount
+                - percentage: Percentage of global production
+                - hs_code: HS code (if available)
         """
         # Check cache first
         cache_key = f"{material}_{src_year}_{meas_year}"
@@ -107,25 +125,29 @@ class CountryDataRepository:
 
         if usgs_data:
             print(f"✓ USGS returned {len(usgs_data)} countries")
-            # ADD HS CODE HERE (NEW)
+            # Add HS code
             hs_code = self._lookup_hs_code(material)
             for country in usgs_data:
                 country["hs_code"] = hs_code
-            # END NEW CODE
             self.cache[cache_key] = usgs_data
             return usgs_data
 
         # Fall back to LLM if enabled
         if self.use_llm_fallback and self.country_agent:
-            print(f"⚠ No USGS data found, using LLM fallback...")
-            llm_data = await self._query_llm(material, meas_year, usage)
+            print("⚠ No USGS data found, using LLM fallback...")
+
+            # Use debate or single-agent LLM
+            if use_debate:
+                llm_data = await self._query_llm_with_debate(material, meas_year, usage)
+            else:
+                llm_data = await self._query_llm(material, meas_year, usage)
+
             if llm_data:
                 print(f"✓ LLM returned {len(llm_data)} countries")
-                # ADD HS CODE HERE (NEW)
+                # Add HS code
                 hs_code = self._lookup_hs_code(material)
                 for country in llm_data:
                     country["hs_code"] = hs_code
-                # END NEW CODE
                 self.cache[cache_key] = llm_data
                 return llm_data
 
@@ -150,8 +172,6 @@ class CountryDataRepository:
             HS code as string (e.g., "710812"), or None if not found
         """
         try:
-            import pandas as pd
-
             df = pd.read_csv("./data/hs_codes_and_usgs_names.csv")
 
             # Verify column exists
@@ -213,20 +233,23 @@ class CountryDataRepository:
             # Get world totals (returns DataFrame)
             world_totals_df = self.usgs_client.query_world_totals(material, src_year, meas_year)
 
-            # FIXED: Handle DataFrame properly
             if world_totals_df is None or world_totals_df.empty:
                 logger.warning(f"No world totals data for {material}")
                 return []
 
             # Extract production value from DataFrame
-            # Convert VALUE column to numeric and sum
             try:
-                world_production = pd.to_numeric(world_totals_df["VALUE"], errors="coerce").sum()
+                value_col: pd.Series = world_totals_df["VALUE"]  # type: ignore[assignment]
+                numeric_series: pd.Series = pd.to_numeric(value_col, errors="coerce")  # type: ignore[assignment]
+                world_production_sum = numeric_series.sum()
+                world_production = (
+                    float(world_production_sum) if pd.notna(world_production_sum) else 0.0
+                )
             except (KeyError, ValueError) as e:
                 logger.warning(f"Could not extract world production for {material}: {e}")
                 return []
 
-            if world_production == 0 or pd.isna(world_production):
+            if world_production == 0:
                 logger.warning(f"No world production data for {material}")
                 return []
 
@@ -237,29 +260,32 @@ class CountryDataRepository:
                     material, country_name, src_year, meas_year
                 )
 
-                # FIXED: Handle DataFrame properly
                 if details_df is None or details_df.empty:
                     continue
+
+                import math
 
                 # Iterate through DataFrame rows
                 for _, row in details_df.iterrows():
                     try:
                         if str(row.get("MEAS_TYPE", "")).upper() == "PRODUCTION":
-                            amount = pd.to_numeric(row.get("VALUE", 0), errors="coerce")
+                            value_raw = row.get("VALUE", 0)
+                            amount_numeric = pd.to_numeric(value_raw, errors="coerce")
+                            amount = float(amount_numeric)  # type: ignore[arg-type]
 
-                            if pd.isna(amount):
+                            if math.isnan(amount):
                                 continue
 
                             percentage = (
-                                (amount / world_production * 100) if world_production > 0 else 0
+                                (amount / world_production * 100) if world_production > 0 else 0.0
                             )
 
                             country_data.append(
                                 {
                                     "country": country_name,
                                     "meas_unit": row.get("MEAS_UNIT", ""),
-                                    "amount": float(amount),
-                                    "percentage": float(percentage),
+                                    "amount": amount,
+                                    "percentage": percentage,
                                 }
                             )
                             break  # Only take production data
@@ -280,7 +306,7 @@ class CountryDataRepository:
         usage: Optional[RunUsage] = None,
     ) -> List[Dict]:
         """
-        Query LLM agent for country data (fallback).
+        Query LLM agent for country data (single-agent fallback).
 
         Args:
             material: Material name
@@ -328,6 +354,36 @@ class CountryDataRepository:
             return []
 
         return []
+
+    async def _query_llm_with_debate(
+        self,
+        material: str,
+        year: int,
+        usage: Optional[RunUsage] = None,
+    ) -> List[Dict]:
+        """
+        Query LLM with multi-agent debate for country data.
+
+        Args:
+            material: Material name
+            year: Year for production data
+            usage: Optional RunUsage tracker
+
+        Returns:
+            List of country data dicts from debate consensus
+        """
+        from ..debate import MaterialCountryDebater
+
+        debater = MaterialCountryDebater(
+            deps=self.deps,
+            num_agents=3,
+            top_n_proposed=10,  # ← NEW: Each expert proposes top 10
+            top_n_consensus=self.top_n,  # ← NEW: Final consensus is top 5 (or whatever self.top_n is)
+            debate_top_p=0.0001,
+        )
+
+        consensus = await debater.run_debate(material, year, usage)
+        return consensus
 
     def clear_cache(self):
         """Clear the country data cache"""

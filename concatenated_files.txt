@@ -2946,6 +2946,7 @@ class MultiAgentDebater:
         convergence_threshold: float = 0.8,
         confidence_weight: float = 0.3,
         peer_support_boost: float = 0.15,
+        debate_top_p: float = 0.0001,
     ) -> None:
         """
         Initialize the enhanced multi-agent debater.
@@ -2965,6 +2966,7 @@ class MultiAgentDebater:
         self.confidence_weight = confidence_weight
         self.peer_support_boost = peer_support_boost
         self.debate_history: List[DebateRound] = []
+        self.debate_top_p = debate_top_p
 
     # ------------------------------------------------------------------#
     # Normalization helpers
@@ -3463,7 +3465,12 @@ YOUR TASK:
 Return only the updated list of primary components.
 """
             try:
-                result = await component_agent.run(prompt, deps=deps, model=deps.model)
+                # Use very low Top-P for deterministic, focused refinements
+                from dataclasses import replace
+
+                debate_deps = replace(deps, top_p=self.debate_top_p)
+
+                result = await component_agent.run(prompt, deps=debate_deps, model=deps.model)
                 if result and result.output:
                     if hasattr(result.output, "component_list"):
                         components = result.output.component_list
@@ -3672,6 +3679,7 @@ other's proposals, and converge on consensus through iterative refinement.
 
 from __future__ import annotations
 
+import asyncio
 import logging
 from collections import defaultdict
 from dataclasses import dataclass
@@ -3730,6 +3738,7 @@ class MaterialDebater:
         convergence_threshold: float = 0.75,
         confidence_weight: float = 0.3,
         peer_support_boost: float = 0.15,
+        debate_top_p: float = 0.0001,
     ) -> None:
         """
         Initialize material debater.
@@ -3749,6 +3758,7 @@ class MaterialDebater:
         self.confidence_weight = confidence_weight
         self.peer_support_boost = peer_support_boost
         self.debate_history: list[MaterialDebateRound] = []
+        self.debate_top_p = debate_top_p
 
     def normalize_component_name(self, name: str) -> str:
         """
@@ -3807,6 +3817,41 @@ class MaterialDebater:
 
         return material_variants.get(normalized, normalized)
 
+    async def _check_ollama_health(self) -> bool:
+        """Check if Ollama is responsive before starting debate."""
+        try:
+            logger.info("Checking Ollama health...")
+            print("  Testing Ollama connection...")
+
+            # Simple test using component agent (already available)
+            from ..agents import get_component_agent
+
+            test_agent = get_component_agent(model_name=self.deps.model)
+
+            # Create minimal deps for test
+            from dataclasses import replace
+
+            test_deps = replace(self.deps, top_p=0.9)  # Use default sampling
+
+            result = await test_agent.run(
+                "List one component of a smartphone",
+                deps=test_deps,
+            )
+
+            if result and result.output:
+                logger.info("✓ Ollama health check passed")
+                print("  ✓ Ollama is responsive")
+                return True
+            else:
+                logger.warning("⚠️  Ollama returned empty result")
+                print("  ⚠️  Ollama returned empty result")
+                return False
+
+        except Exception as e:
+            logger.error(f"❌ Ollama health check failed: {e}")
+            print(f"  ❌ Connection failed: {e}")
+            return False
+
     async def phase1_independent_generation(
         self,
         componentlist: list[str],
@@ -3824,18 +3869,25 @@ class MaterialDebater:
         Returns:
             Dict mapping agent_id to list of MaterialProposal objects
         """
-        print(f"\n{'=' * 60}")
+        print("=" * 60)
         print(f"PHASE 1: INDEPENDENT MATERIAL PROPOSALS - {technology}")
-        print(f"{'=' * 60}")
+        print("=" * 60)
 
-        agent = get_materials_agent()
         agent_proposals: dict[str, list[MaterialProposal]] = {}
 
-        # Build ontology string
-        ontology_str = ", ".join(self.deps.material_ontology_list[:100])
+        # Prepare ontology string
+        ontology_sample = self.deps.material_ontology_list[:50]
+        ontology_str = ", ".join(ontology_sample)
 
+        # Get materials agent
+        agent = get_materials_agent(model_name=self.deps.model)
+
+        # Each agent generates independent proposals
         for agent_num in range(1, self.num_agents + 1):
             agent_id = f"Agent{agent_num}"
+
+            # ADD DELAY BEFORE EACH AGENT (including first one)
+            await asyncio.sleep(2.0)  # Give Ollama time to recover
 
             # Each agent gets slightly different perspective
             perspectives = [
@@ -3861,46 +3913,89 @@ class MaterialDebater:
                 f"Return a JSON response with 'component_list' containing 'component' and 'materials' fields."
             )
 
-            try:
-                result = await agent.run(prompt, deps=self.deps)
+            # ADD VALIDATION HERE:
+            if not prompt or len(prompt.strip()) < 50:
+                logger.error(f"{agent_id}: Invalid prompt (too short or empty)")
+                print(f"{agent_id}: Skipping due to invalid prompt")
+                continue
 
-                # Access with correct field names
-                if result and result.output and result.output.component_list:
-                    proposals = []
+            if not self.deps or not self.deps.model:
+                logger.error(f"{agent_id}: Invalid dependencies")
+                print(f"{agent_id}: Skipping due to invalid dependencies")
+                continue
 
-                    for cm in result.output.component_list:
-                        comp_norm = self.normalize_component_name(cm.component)
+            # RETRY LOGIC: Handle transient Ollama errors
+            max_retries = 5
+            for attempt in range(max_retries):
+                try:
+                    # Use configured Top-P for deterministic proposals
+                    from dataclasses import replace
 
-                        # CORRECTED: use raw_materials (WITH underscore)
-                        for material in cm.raw_materials:
-                            mat_norm = self.normalize_material_name(material)
+                    debate_deps = replace(self.deps, top_p=self.debate_top_p)
 
-                            proposal = MaterialProposal(
-                                agentid=agent_id,
-                                component=cm.component,
-                                material=material,
-                                confidence=0.8,  # Base confidence
-                                reasoning=f"Proposed by {agent_id} as key material for {cm.component}",
-                                normalizedcomponent=comp_norm,
-                                normalizedmaterial=mat_norm,
-                                round=1,
+                    result = await agent.run(prompt, deps=debate_deps)
+
+                    # CORRECTED ACCESS - field is 'component_list' (WITH underscore)
+                    if result and result.output and result.output.component_list:
+                        proposals = []
+
+                        for cm in result.output.component_list:
+                            comp_norm = self.normalize_component_name(cm.component)
+
+                            # CORRECTED ACCESS - field is 'raw_materials' (WITH underscore)
+                            for material in cm.raw_materials:
+                                mat_norm = self.normalize_material_name(material)
+
+                                proposal = MaterialProposal(
+                                    agentid=agent_id,
+                                    component=cm.component,
+                                    material=material,
+                                    confidence=0.8,  # Base confidence
+                                    reasoning=f"Proposed by {agent_id} as key material for {cm.component}",
+                                    normalizedcomponent=comp_norm,
+                                    normalizedmaterial=mat_norm,
+                                    round=1,
+                                )
+                                proposals.append(proposal)
+
+                        agent_proposals[agent_id] = proposals
+
+                        # Count materials per component
+                        comp_mat_counts = defaultdict(int)
+                        for p in proposals:
+                            comp_mat_counts[p.normalizedcomponent] += 1
+
+                        print(
+                            print(
+                                f"{agent_id} (top_p={self.debate_top_p}): {len(proposals)} material proposals across {len(comp_mat_counts)} components"
                             )
-                            proposals.append(proposal)
+                        )
+                        break  # Success - exit retry loop
 
-                    agent_proposals[agent_id] = proposals
-
-                    # Count materials per component
-                    comp_mat_counts = defaultdict(int)
-                    for p in proposals:
-                        comp_mat_counts[p.normalizedcomponent] += 1
-
-                    print(
-                        f"{agent_id}: {len(proposals)} material proposals across {len(comp_mat_counts)} components"
+                except Exception as e:
+                    error_str = str(e)
+                    is_transient = (
+                        "invalid message content type" in error_str
+                        or "400" in error_str
+                        or "BadRequestError" in error_str
                     )
 
-            except Exception as e:
-                logger.error(f"Error in {agent_id} proposal for {technology}: {e}")
-                print(f"{agent_id}: Failed to generate proposal")
+                    if is_transient and attempt < max_retries - 1:
+                        wait_time = (attempt + 1) * 3
+                        logger.warning(
+                            f"{agent_id} transient error (attempt {attempt + 1}/{max_retries}): {e}"
+                        )
+                        print(f"{agent_id}: Retry in {wait_time}s...")
+                        await asyncio.sleep(wait_time)
+                        continue
+                    else:
+                        logger.error(f"Error in {agent_id} proposal for {technology}: {e}")
+                        print(f"{agent_id}: Failed to generate proposal")
+                        break
+
+        if not agent_proposals:
+            logger.error(f"No agent proposals generated for {technology}")
+            print("❌ No agent proposals generated")
 
         return agent_proposals
 
@@ -4014,90 +4109,146 @@ class MaterialDebater:
         componentlist: list[str],
         technology: str,
         previous_proposals: list[MaterialProposal],
-        critiques: dict[str, dict[str, list[str]]],
+        critiques: list[str],
         round_num: int,
         usage: RunUsage | None = None,
     ) -> dict[str, list[MaterialProposal]]:
         """
-        Run one debate round with critique-informed refinement.
+        Run a single debate round with critique-driven refinement.
 
         Args:
             componentlist: List of component names
             technology: Technology name
             previous_proposals: Proposals from previous round
-            critiques: Nested critiques by component and material
+            critiques: Generated critiques for this round
             round_num: Current round number
             usage: Optional RunUsage tracker
 
         Returns:
-            Dict mapping agent_id to refined MaterialProposal objects
+            Dict mapping agent_id to refined proposals
         """
-        agent = get_materials_agent()
+        print(f"\nROUND {round_num}:")
+
         refined_proposals: dict[str, list[MaterialProposal]] = {}
 
-        # Format critiques for prompt
-        critique_text = ""
-        for comp, mat_crits in critiques.items():
-            critique_text += f"\n{comp.upper()}:\n"
-            for mat, crits in mat_crits.items():
-                critique_text += f"  - {mat}: {'; '.join(crits)}\n"
-
+        # Prepare context strings
         component_str = "\n".join(f"- {comp}" for comp in componentlist)
-        ontology_str = ", ".join(self.deps.material_ontology_list[:100])
+        ontology_sample = self.deps.material_ontology_list[:50]
+        ontology_str = ", ".join(ontology_sample)
 
+        # Format critiques
+        critique_text = "\n".join(f"- {c}" for c in critiques)
+
+        # Get materials agent
+        agent = get_materials_agent(model_name=self.deps.model)
+
+        # Each agent refines proposals based on critiques
         for agent_num in range(1, self.num_agents + 1):
             agent_id = f"Agent{agent_num}"
 
+            # ADD DELAY BEFORE EACH AGENT
+            await asyncio.sleep(2.0)  # Give Ollama time to recover
+
             prompt = (
-                f"Extract RAW MATERIALS for these components of a {technology}:\n{component_str}\n\n"
+                f"ROUND {round_num} - Refine material proposals for {technology}\n\n"
+                f"COMPONENTS:\n{component_str}\n\n"
                 f"AVAILABLE RAW MATERIALS:\n{ontology_str}\n\n"
-                f"ROUND {round_num} - Consider peer feedback:\n{critique_text}\n\n"
-                f"Refine your material proposals based on areas of agreement and disagreement.\n"
-                f"Focus on materials with CONSENSUS support and reconsider ISOLATED proposals.\n"
+                f"PEER FEEDBACK FROM ROUND {round_num - 1}:\n{critique_text}\n\n"
+                f"INSTRUCTIONS:\n"
+                f"- Review the peer feedback carefully\n"
+                f"- Support materials with CONSENSUS (multiple agents agree)\n"
+                f"- Reconsider ISOLATED proposals (only one agent suggested)\n"
+                f"- Focus on materials that are both technically sound AND have peer support\n"
+                f"- Return refined material assignments for each component\n\n"
                 f"Return a JSON response with 'component_list' containing 'component' and 'materials' fields."
             )
 
-            try:
-                result = await agent.run(prompt, deps=self.deps)
+            # ADD VALIDATION HERE:
+            if not prompt or len(prompt.strip()) < 50:
+                logger.error(f"{agent_id}: Invalid prompt for round {round_num}")
+                continue
 
-                # Access with correct field names
-                if result and result.output and result.output.component_list:
-                    proposals = []
+            if not self.deps or not self.deps.model:
+                logger.error(f"{agent_id}: Invalid dependencies for round {round_num}")
+                continue
 
-                    for cm in result.output.component_list:
-                        comp_norm = self.normalize_component_name(cm.component)
+            # RETRY LOGIC: Handle transient Ollama errors
+            max_retries = 5
+            success = False
 
-                        # CORRECTED: use raw_materials (WITH underscore)
-                        for material in cm.raw_materials:
-                            mat_norm = self.normalize_material_name(material)
+            for attempt in range(max_retries):
+                try:
+                    # Use configured Top-P for deterministic refinements
+                    from dataclasses import replace
 
-                            # Boost confidence for consensus materials
-                            peer_support = sum(
-                                1
-                                for p in previous_proposals
-                                if p.normalizedcomponent == comp_norm
-                                and p.normalizedmaterial == mat_norm
-                                and p.agentid != agent_id
-                            )
-                            confidence = min(0.95, 0.7 + peer_support * self.peer_support_boost)
+                    debate_deps = replace(self.deps, top_p=self.debate_top_p)
 
-                            proposal = MaterialProposal(
-                                agentid=agent_id,
-                                component=cm.component,
-                                material=material,
-                                confidence=confidence,
-                                reasoning=f"Round {round_num} refinement with peer support: {peer_support}",
-                                normalizedcomponent=comp_norm,
-                                normalizedmaterial=mat_norm,
-                                round=round_num,
-                            )
-                            proposals.append(proposal)
+                    print(f"  🔍 {agent_id} using top_p={self.debate_top_p}")
 
-                    refined_proposals[agent_id] = proposals
+                    result = await agent.run(prompt, deps=debate_deps)
 
-            except Exception as e:
-                logger.error(f"Error in {agent_id} round {round_num} for {technology}: {e}")
-                # Fall back to previous proposals
+                    # CORRECTED ACCESS - use component_list (WITH underscore)
+                    if result and result.output and result.output.component_list:
+                        proposals = []
+
+                        for cm in result.output.component_list:
+                            comp_norm = self.normalize_component_name(cm.component)
+
+                            # CORRECTED ACCESS - raw_materials (WITH underscore)
+                            for material in cm.raw_materials:
+                                mat_norm = self.normalize_material_name(material)
+
+                                # Boost confidence for consensus materials
+                                peer_support = sum(
+                                    1
+                                    for p in previous_proposals
+                                    if p.normalizedcomponent == comp_norm
+                                    and p.normalizedmaterial == mat_norm
+                                    and p.agentid != agent_id
+                                )
+                                confidence = min(0.95, 0.7 + peer_support * self.peer_support_boost)
+
+                                proposal = MaterialProposal(
+                                    agentid=agent_id,
+                                    component=cm.component,
+                                    material=material,
+                                    confidence=confidence,
+                                    reasoning=f"Round {round_num} refinement with peer support: {peer_support}",
+                                    normalizedcomponent=comp_norm,
+                                    normalizedmaterial=mat_norm,
+                                    round=round_num,
+                                )
+                                proposals.append(proposal)
+
+                        refined_proposals[agent_id] = proposals
+                        success = True
+                        break  # Success - exit retry loop
+
+                except Exception as e:
+                    error_str = str(e)
+                    is_transient = (
+                        "invalid message content type" in error_str
+                        or "400" in error_str
+                        or "BadRequestError" in error_str
+                    )
+
+                    if is_transient and attempt < max_retries - 1:
+                        wait_time = (attempt + 1) * 3
+                        logger.warning(
+                            f"{agent_id} round {round_num} transient error "
+                            f"(attempt {attempt + 1}/{max_retries}): {e}"
+                        )
+                        print(f"{agent_id}: Retry in {wait_time}s...")
+                        await asyncio.sleep(wait_time)
+                        continue
+                    else:
+                        # Final attempt failed
+                        logger.error(f"Error in {agent_id} round {round_num} for {technology}: {e}")
+                        print(f"{agent_id}: Failed to generate proposal")
+                        break
+
+            # If all retries failed, fall back to previous proposals
+            if not success:
                 refined_proposals[agent_id] = [
                     p for p in previous_proposals if p.agentid == agent_id
                 ]
@@ -4181,6 +4332,20 @@ class MaterialDebater:
         print(f"Components: {len(componentlist)}")
         print(f"{'=' * 60}")
 
+        # # ADD HEALTH CHECK HERE:
+        # print("Checking Ollama availability...")
+        # if not await self._check_ollama_health():
+        #     logger.error("Ollama is not responsive. Aborting material debate.")
+        #     print("❌ Ollama health check failed - cannot proceed with material debate")
+        #     # Return empty consensus
+        #     return {
+        #         "consensus": {},
+        #         "debate_history": [],
+        #         "convergence_scores": [],
+        #     }
+
+        # print("✓ Ollama is ready\n")
+
         # Phase 1: Independent generation
         initial_proposals = await self.phase1_independent_generation(
             componentlist, technology, usage
@@ -4242,6 +4407,17 @@ class MaterialDebater:
         print(f"{'=' * 60}")
 
         consensus = self.build_adaptive_consensus(all_proposals, convergence)
+
+        # ADD DEDUPLICATION HERE:
+        for component in consensus:
+            seen = set()
+            unique_materials = []
+            for mat in consensus[component]:
+                mat_norm = self.normalize_material_name(mat)
+                if mat_norm not in seen:
+                    unique_materials.append(mat)
+                    seen.add(mat_norm)
+            consensus[component] = unique_materials
 
         total_materials = sum(len(mats) for mats in consensus.values())
         print(f"Consensus: {len(consensus)} components, {total_materials} materials")
@@ -4523,17 +4699,21 @@ async def process_all_technologies(config: ConfigModel) -> dict:
     """
     # Read debate settings from environment or config
     enable_debate = os.getenv("ENABLE_DEBATE", "false").lower() == "true"
+    enable_material_debate = os.getenv("ENABLE_MATERIAL_DEBATE", "false").lower() == "true"
     max_debate_rounds = int(os.getenv("MAX_DEBATE_ROUNDS", "3"))
     convergence_threshold = float(os.getenv("CONVERGENCE_THRESHOLD", "0.8"))
     save_transcripts = os.getenv("SAVE_TRANSCRIPTS", "true").lower() == "true"
+    debate_top_p = float(os.getenv("DEBATE_TOP_P", "0.0001"))
 
     # Initialize enhanced orchestrator
     orchestrator = STDNOrchestrator(
         config,
         enable_debate=enable_debate,
+        enable_material_debate=enable_material_debate,
         max_debate_rounds=max_debate_rounds,
         convergence_threshold=convergence_threshold,
         save_transcripts=save_transcripts,
+        debate_top_p=debate_top_p,
     )
 
     # Load technologies from config
@@ -6191,9 +6371,8 @@ from ..agents import (
 from ..data import CountryDataRepository
 from ..debate import MultiAgentDebater
 from ..dependencies import initialize_dependencies
-from ..models import ConfigModel, STDNDependencies
+from ..models import ConfigModel
 from ..reporting import DebateReporter
-from ..utils import embed_comma_delimited_str
 from .checkpoint import CheckpointManager
 
 # Initialize logger
@@ -6213,9 +6392,11 @@ class STDNOrchestrator:
         config: ConfigModel,
         enable_checkpoints: bool = False,
         enable_debate: bool = False,
+        enable_material_debate: bool = False,
         max_debate_rounds: int = 3,
         convergence_threshold: float = 0.8,
         save_transcripts: bool = True,
+        debate_top_p: float = 0.0001,
     ):
         """
         Initialize orchestrator with enhanced debate and error handling.
@@ -6234,9 +6415,11 @@ class STDNOrchestrator:
 
         self.enable_checkpoints = enable_checkpoints
         self.use_debate = enable_debate
+        self.use_material_debate = enable_material_debate
         self.max_debate_rounds = max_debate_rounds
         self.convergence_threshold = convergence_threshold
         self.save_transcripts = save_transcripts
+        self.debate_top_p = debate_top_p
 
         # Initialize dependencies
         self.deps = initialize_dependencies(config)
@@ -6256,6 +6439,7 @@ class STDNOrchestrator:
                 convergence_threshold=convergence_threshold,
                 confidence_weight=0.3,  # Weight for confidence in voting
                 peer_support_boost=0.15,  # Boost per supporting agent
+                debate_top_p=debate_top_p,
             )
 
             # Find project root for transcript output
@@ -6270,7 +6454,7 @@ class STDNOrchestrator:
                 project_root / "src" / "stdn_agentic" / "debate_transcripts" / "results"
             )
 
-            print(f"\n[STDNOrchestrator] Debate transcripts will be saved to:")
+            print("\n[STDNOrchestrator] Debate transcripts will be saved to:")
             print(f"  {transcript_dir.resolve()}")
 
             self.reporter = DebateReporter(output_dir=str(transcript_dir))
@@ -6300,53 +6484,66 @@ class STDNOrchestrator:
     # Safe Materials Extraction with Comprehensive Validation
     # ========================================================================
 
+    def _validate_materials_extraction_inputs(
+        self,
+        componentlist: ComponentList,
+        technology: str,
+    ) -> tuple[bool, Optional[list[str]], Optional[str]]:
+        """
+        Validate inputs for materials extraction.
+
+        Returns:
+            Tuple of (is_valid, valid_components, error_message)
+        """
+        # Check component list exists
+        if not componentlist or not hasattr(componentlist, "component_list"):
+            logger.warning(f"No components to extract materials from for {technology}")
+            print("🔍 No components to extract materials from")
+            return (False, None, "No components")
+
+        components = componentlist.component_list
+
+        # Filter valid components
+        valid_components = [c for c in components if c and isinstance(c, str) and c.strip()]
+        if not valid_components:
+            logger.warning(f"All components were null/empty for {technology}")
+            print("🔍 All components were null/empty")
+            return (False, None, "All components null/empty")
+
+        # Check ontology availability
+        if not self.deps.material_ontology_list or len(self.deps.material_ontology_list) == 0:
+            logger.error(f"Material ontology is empty - cannot extract materials for {technology}")
+            print("❌ Material ontology is empty!")
+            return (False, None, "Ontology empty")
+
+        return (True, valid_components, None)
+
     async def extract_materials_safe(
         self,
         componentlist: ComponentList,
         technology: str,
         usage: RunUsage,
-        max_retries: int = 3,
+        max_retries: int = 5,
     ) -> Optional[ComponentMaterialsList]:
         """
         Safely extract materials with comprehensive error handling and retry logic.
-
-        Args:
-            componentlist: ComponentList object containing components
-            technology: Technology name
-            usage: RunUsage tracker
-            max_retries: Maximum number of retry attempts on transient errors
-
-        Returns:
-            ComponentMaterialsList with extracted materials, or empty list on error
         """
-        # VALIDATION 1: Check component list exists
-        if not componentlist or not hasattr(componentlist, "component_list"):
-            logger.warning(f"No components to extract materials from for {technology}")
-            print(f"🔍 No components to extract materials from")
+        # Validate inputs
+        is_valid, valid_components, error_msg = self._validate_materials_extraction_inputs(
+            componentlist, technology
+        )
+
+        if not is_valid:
             return ComponentMaterialsList.model_validate({"componentlist": []})
 
-        components = componentlist.component_list  # Access component_list field
-
-        # VALIDATION 2: Filter valid components
-        valid_components = [c for c in components if c and isinstance(c, str) and c.strip()]
-        if not valid_components:
-            logger.warning(f"All components were null/empty for {technology}")
-            print(f"🔍 All components were null/empty")
-            return ComponentMaterialsList.model_validate({"componentlist": []})
-
-        # VALIDATION 3: Check ontology availability
-        if not self.deps.material_ontology_list or len(self.deps.material_ontology_list) == 0:
-            logger.error(f"Material ontology is empty - cannot extract materials for {technology}")
-            print(f"❌ Material ontology is empty!")
-            return ComponentMaterialsList.model_validate({"componentlist": []})
+        # Type assertion - valid_components is guaranteed to be non-empty here
+        assert valid_components, "valid_components should be non-empty after successful validation"
 
         # Build prompt with validated data
         component_str = "\n".join(f"- {comp}" for comp in valid_components)
-        # Reduced ontology sample size for stability (from 100 to 50)
         ontology_sample = self.deps.material_ontology_list[:50]
         ontology_str = ", ".join(ontology_sample)
 
-        # CRITICAL FIX: Ensure all prompt parts are non-None strings
         materials_prompt = f"""Extract RAW MATERIALS (NOT components or subassemblies) for these components of a {technology}:
 
     {component_str}
@@ -6367,80 +6564,37 @@ class STDNOrchestrator:
 
     Return a JSON response with componentlist containing component and materials fields."""
 
-        # VALIDATION 4: Check prompt is valid and non-empty
-        if (
-            not materials_prompt
-            or not isinstance(materials_prompt, str)
-            or len(materials_prompt.strip()) < 50
-        ):
-            logger.error(f"Generated materials prompt is invalid for {technology}")
-            print(f"❌ Generated materials prompt is too short or None")
-            print(f"🔍 Prompt length: {len(materials_prompt) if materials_prompt else 0}")
-            return ComponentMaterialsList.model_validate({"componentlist": []})
-
-        # VALIDATION 5: Ensure deps and model are valid
-        if not self.deps or not self.deps.model:
-            logger.error(f"Dependencies or model not configured for {technology}")
-            print(f"❌ Dependencies not properly configured")
-            return ComponentMaterialsList.model_validate({"componentlist": []})
+        # Type guard: valid_components is guaranteed to be list[str] here
+        assert valid_components is not None, "valid_components should not be None after validation"
 
         logger.info(
             f"📋 Extracting materials for {len(valid_components)} components of {technology}"
         )
         print(f"  🔍 Extracting materials for {len(valid_components)} components...")
-        print(f"  🔍 Using model: {self.deps.model}")
-        print(f"  🔍 Prompt length: {len(materials_prompt)} chars")
 
         # RETRY LOGIC: Handle transient Ollama/model errors
         for attempt in range(max_retries):
             try:
-                # Call materials agent with validated inputs
-                result = await self.materials_agent.run(
-                    materials_prompt,
-                    deps=self.deps,
-                )
+                result = await self.materials_agent.run(materials_prompt, deps=self.deps)
 
-                # VALIDATION 6: Check result validity
                 if not result or not result.output:
                     if attempt < max_retries - 1:
-                        logger.warning(
-                            f"Materials agent returned empty result for {technology} "
-                            f"(attempt {attempt + 1}/{max_retries}), retrying..."
-                        )
-                        await asyncio.sleep(2**attempt)  # Exponential backoff: 1s, 2s, 4s
+                        await asyncio.sleep(2**attempt)
                         continue
-                    else:
-                        logger.warning(
-                            f"Materials agent returned empty result for {technology} after all retries"
-                        )
-                        print(
-                            f"⚠️  Materials agent returned empty result after {max_retries} attempts"
-                        )
-                        return ComponentMaterialsList.model_validate({"componentlist": []})
+                    return ComponentMaterialsList.model_validate({"componentlist": []})
 
                 materials_list = result.output
 
-                # VALIDATION 7: Check materials list has content
-                if not materials_list.component_list:  # Use component_list field
+                if not materials_list.component_list:
                     if attempt < max_retries - 1:
-                        logger.warning(
-                            f"Materials list is empty for {technology} "
-                            f"(attempt {attempt + 1}/{max_retries}), retrying..."
-                        )
                         await asyncio.sleep(2**attempt)
                         continue
-                    else:
-                        logger.warning(
-                            f"Materials list is empty for {technology} after all retries"
-                        )
-                        print(f"⚠️  Materials list is empty after {max_retries} attempts")
-                        return ComponentMaterialsList.model_validate({"componentlist": []})
+                    return ComponentMaterialsList.model_validate({"componentlist": []})
 
-                # SUCCESS - Access raw_materials field (not rawmaterials)
+                # SUCCESS
                 num_materials = sum(len(cm.raw_materials) for cm in materials_list.component_list)
                 logger.info(
-                    f"✅ Extracted {num_materials} materials for {len(materials_list.component_list)} "
-                    f"components of {technology}"
+                    f"✅ Extracted {num_materials} materials for {len(materials_list.component_list)} components"
                 )
                 print(
                     f"  ✅ Extracted materials for {len(materials_list.component_list)} components"
@@ -6449,36 +6603,18 @@ class STDNOrchestrator:
                 return materials_list
 
             except Exception as e:
-                # Check if this is a transient error worth retrying
                 error_str = str(e)
-                is_transient = (
-                    "invalid message content type" in error_str
-                    or "400" in error_str
-                    or "BadRequestError" in error_str
-                )
+                is_transient = "invalid message content type" in error_str or "400" in error_str
 
                 if is_transient and attempt < max_retries - 1:
-                    wait_time = 2**attempt
-                    logger.warning(
-                        f"Transient error extracting materials for {technology} "
-                        f"(attempt {attempt + 1}/{max_retries}): {e}"
-                    )
-                    logger.info(f"Retrying in {wait_time} seconds...")
-                    print(f"  ⚠️  Attempt {attempt + 1} failed, retrying in {wait_time}s...")
+                    wait_time = (attempt + 1) * 2  # 2s, 4s, 6s instead of 1s, 2s, 4s
+                    logger.warning(f"Transient error (attempt {attempt + 1}/{max_retries}): {e}")
                     await asyncio.sleep(wait_time)
                     continue
                 else:
-                    # Final attempt failed or non-transient error
-                    logger.error(
-                        f"Error extracting materials for {technology} after "
-                        f"{attempt + 1} attempt(s): {e}",
-                        exc_info=True,
-                    )
-                    print(f"  ❌  Error extracting materials for {technology}: {e}")
+                    logger.error(f"Error extracting materials: {e}", exc_info=True)
                     return ComponentMaterialsList.model_validate({"componentlist": []})
 
-        # Should not reach here, but just in case
-        logger.error(f"Exhausted all retries for {technology}")
         return ComponentMaterialsList.model_validate({"componentlist": []})
 
     # ========================================================================
@@ -6515,11 +6651,16 @@ class STDNOrchestrator:
             agent_id = f"Agent_{agent_num}"
 
             try:
+                # Create deps with very low Top-P for focused outputs
+                from dataclasses import replace
+
+                agent_deps = replace(self.deps, top_p=self.debate_top_p)
+
                 # Each agent gets a slightly different perspective prompt
                 result = await self.component_agent.run(
                     f"Extract the primary components of a {technology}. "
                     f"Perspective #{agent_num}: Focus on identifying essential subsystems and modules.",
-                    deps=self.deps,
+                    deps=agent_deps,
                 )
 
                 if result and result.output:
@@ -6538,7 +6679,9 @@ class STDNOrchestrator:
                         for comp in components
                     ]
 
-                    print(f"  ✓ {agent_id}: {len(components)} components proposed")
+                    print(
+                        f"  ✓ {agent_id} (top_p={self.debate_top_p}): {len(components)} components proposed"
+                    )
 
                     # Store for transcript
                     agent_responses_for_transcript.append(
@@ -6558,9 +6701,14 @@ class STDNOrchestrator:
             print("❌ No agent proposals received")
             return None
 
-        print(f"\n🎤 Running debate...\n")
+        print("\n🎤 Running debate...\n")
 
         # Run enhanced debate with critique-driven convergence
+        if not self.debater:
+            logger.error(f"Debater not initialized for {technology}")
+            print("❌ Debater not initialized")
+            return None
+
         try:
             debate_result = await self.debater.run_debate(
                 technology=technology,
@@ -6602,12 +6750,13 @@ class STDNOrchestrator:
         self, technology: str, agent_responses: List[Dict], debate_result: Dict
     ) -> Optional[Path]:
         """
-        Save debate transcript in both text and JSON formats.
+        Save comprehensive debate transcript including materials assignment.
 
         Args:
             technology: Technology name
             agent_responses: Agent proposals and reasoning
             debate_result: Final debate consensus with rounds metadata
+            materials_info: Optional materials extraction/debate information
 
         Returns:
             Path to saved transcript (text version)
@@ -6619,7 +6768,7 @@ class STDNOrchestrator:
             # Extract metadata from debate_result
             num_rounds = debate_result.get("rounds", 0)
             confidence = debate_result.get("confidence", 0.0)
-            debate_history = debate_result.get("debate_history", [])  # ← ADD THIS LINE
+            debate_history = debate_result.get("debate_history", [])
 
             # Build final consensus dict with proper metadata
             final_consensus = {
@@ -6634,7 +6783,7 @@ class STDNOrchestrator:
             filepath = self.reporter.save_debate_transcript(
                 technology=technology,
                 agent_responses=agent_responses,
-                debate_history=debate_history,  # ← CHANGED: Use actual debate history
+                debate_history=debate_history,
                 final_consensus=final_consensus,
                 file_format="txt",
             )
@@ -6643,7 +6792,7 @@ class STDNOrchestrator:
             self.reporter.save_debate_transcript(
                 technology=technology,
                 agent_responses=agent_responses,
-                debate_history=debate_history,  # ← CHANGED: Use actual debate history
+                debate_history=debate_history,
                 final_consensus=final_consensus,
                 file_format="json",
             )
@@ -6658,40 +6807,139 @@ class STDNOrchestrator:
     # Main Processing Pipeline
     # ========================================================================
 
+    async def _extract_materials_for_technology(
+        self,
+        components: list[str],
+        technology: str,
+        usage: RunUsage,
+    ) -> Optional[ComponentMaterialsList]:
+        """
+        Extract materials for components using debate or single-agent approach.
+
+        Returns:
+            ComponentMaterialsList or None if extraction fails
+        """
+        if self.use_material_debate:
+            from ..agents import ComponentMaterials, ComponentMaterialsList
+            from ..debate import MaterialDebater
+
+            print("Using multi-agent debate for materials...")
+            material_debater = MaterialDebater(
+                deps=self.deps,
+                num_agents=3,
+                max_rounds=self.max_debate_rounds,
+                convergence_threshold=self.convergence_threshold,
+                debate_top_p=self.debate_top_p,
+            )
+
+            debate_result = await material_debater.run_full_debate(components, technology, usage)
+
+            # Convert debate consensus to ComponentMaterialsList format
+            consensus = debate_result["consensus"]
+
+            materials_list = ComponentMaterialsList(
+                componentlist=[
+                    ComponentMaterials(component=comp, materials=mats)
+                    for comp, mats in consensus.items()
+                ]
+            )
+
+            # Save material debate transcript if enabled
+            if self.save_transcripts and self.reporter:
+                self._save_material_debate_transcript(
+                    technology, components, material_debater.debate_history, consensus
+                )
+        else:
+            # Single-agent extraction
+            from ..agents import ComponentList
+
+            materials_result = await self.extract_materials_safe(
+                componentlist=ComponentList(componentlist=components),
+                technology=technology,
+                usage=usage,
+            )
+
+            if not materials_result or not materials_result.component_list:
+                return None
+
+            materials_list = materials_result
+
+        return materials_list
+
+    async def _enrich_with_country_data(
+        self,
+        materials_list: ComponentMaterialsList,
+        technology: str,
+        usage: RunUsage,
+    ) -> list[dict[str, Any]]:
+        """
+        Enrich materials with country production data.
+
+        Returns:
+            List of enriched data records
+        """
+        enriched_data = []
+
+        for comp_mat in materials_list.component_list:
+            component = comp_mat.component
+
+            for material in comp_mat.raw_materials:
+                try:
+                    country_data = await self.country_repo.get_country_data(
+                        material=material,
+                        src_year=getattr(self.config, "src_year", 2024),
+                        meas_year=getattr(self.config, "meas_year", 2025),
+                        usage=usage,
+                    )
+
+                    if country_data:
+                        for country_info in country_data:
+                            enriched_data.append(
+                                {
+                                    "technology": technology,
+                                    "component": component,
+                                    "material": material,
+                                    "hs_code": country_info.get("hs_code"),
+                                    "country": country_info.get("country", "Unknown"),
+                                    "meas_unit": country_info.get("meas_unit", ""),
+                                    "amount": country_info.get("amount", 0.0),
+                                    "percentage": country_info.get("percentage", 0.0),
+                                }
+                            )
+                    elif self.write_nulls:
+                        enriched_data.append(
+                            {
+                                "technology": technology,
+                                "component": component,
+                                "material": material,
+                                "hs_code": None,
+                                "country": None,
+                                "meas_unit": None,
+                                "amount": None,
+                                "percentage": None,
+                            }
+                        )
+
+                except Exception as e:
+                    logger.error(f"Error getting country data for {material}: {e}")
+
+        return enriched_data
+
     async def process_technology(
         self,
         tech: str,
         role: str,
         domain: str,
         usage: RunUsage,
-        use_material_debate: bool = False,  # NEW PARAMETER
+        use_material_debate: bool = False,
     ) -> Optional[Dict[str, Any]]:
-        """
-        Process a single technology through the complete STDN pipeline.
-
-        Pipeline stages:
-        1. Component extraction (with debate if enabled)
-        2. Materials extraction (with debate if use_material_debate=True)
-        3. Country data enrichment (USGS + LLM fallback)
-        4. Data aggregation and formatting
-
-        Args:
-            tech: Technology name
-            role: Expert role context
-            domain: Domain context
-            usage: RunUsage tracker
-            use_material_debate: Use multi-agent debate for materials (default False)
-
-        Returns:
-            Dictionary with components, materials, and enriched country data,
-            or None if processing fails
-        """
+        """Process a single technology through the complete STDN pipeline."""
         print("=" * 80)
         print(f"Processing: {tech}")
         print("=" * 80)
 
         try:
-            # Phase 1: Extract components (existing logic - with debate if enabled)
+            # Phase 1: Extract components
             if self.use_debate:
                 components_result = await self.extract_components_with_debate(tech, role, usage)
             else:
@@ -6706,131 +6954,28 @@ class STDNOrchestrator:
                 print(f"✗ No components extracted for {tech}")
                 return None
 
-            # Extract component list - ENSURE it's List[str], not ComponentList
+            # Extract component list
             if hasattr(components_result, "component_list"):
-                components: list[str] = (
-                    components_result.component_list
-                )  # Type annotation ONLY on first assignment
+                components: list[str] = components_result.component_list
             elif isinstance(components_result, list):
-                components = components_result  # No type annotation
+                components = components_result
             else:
-                components = []  # No type annotation
+                components = []
 
             print(f"✓ Extracted {len(components)} components")
 
-            # Phase 2: Extract materials - NEW debate integration
-            if use_material_debate:
-                from ..debate import MaterialDebater
+            # Phase 2: Extract materials
+            materials_list = await self._extract_materials_for_technology(components, tech, usage)
 
-                print("Using multi-agent debate for materials...")
-                material_debater = MaterialDebater(
-                    deps=self.deps,
-                    num_agents=3,
-                    max_rounds=self.max_debate_rounds,
-                    convergence_threshold=self.convergence_threshold,
-                )
-
-                debate_result = await material_debater.run_full_debate(components, tech, usage)
-
-                # Convert debate consensus to ComponentMaterialsList format
-                from ..agents import ComponentMaterials, ComponentMaterialsList
-
-                consensus = debate_result["consensus"]  # Dict[str, List[str]]
-
-                # Build ComponentMaterialsList using ALIASES in constructor
-                materials_list = ComponentMaterialsList(
-                    componentlist=[  # Use alias (NO underscore) for constructor
-                        ComponentMaterials(
-                            component=comp,
-                            materials=mats,  # Use alias "materials" (NO underscore)
-                        )
-                        for comp, mats in consensus.items()
-                    ]
-                )
-
-                # Save material debate transcript if enabled
-                if self.save_transcripts and self.reporter:
-                    self._save_material_debate_transcript(
-                        tech, components, material_debater.debate_history, consensus
-                    )
-            else:
-                # Existing single-agent extraction
-                from ..agents import ComponentList
-
-                if isinstance(components, ComponentList):
-                    components_list = components.component_list
-                else:
-                    components_list = components
-
-                materials_result = await self.extract_materials_safe(
-                    componentlist=ComponentList(
-                        componentlist=components_list
-                    ),  # Now definitely List[str]
-                    technology=tech,
-                    usage=usage,
-                )
-
-                if (
-                    not materials_result or not materials_result.component_list
-                ):  # Use field name for access
-                    logger.error(f"No materials extracted for {tech}")
-                    print(f"✗ No materials extracted for {tech}")
-                    return None
-
-                materials_list = materials_result
-
-            if not materials_list or not materials_list.component_list:  # Use field name for access
+            if not materials_list or not materials_list.component_list:
                 logger.error(f"No materials extracted for {tech}")
                 print(f"✗ No materials extracted for {tech}")
                 return None
 
             print(f"✓ Extracted materials for {len(materials_list.component_list)} components")
 
-            # Phase 3: Enrich with country data (existing logic continues unchanged)
-            enriched_data = []
-
-            for comp_mat in materials_list.component_list:  # Use field name for access
-                component = comp_mat.component
-
-                for material in comp_mat.raw_materials:  # Use field name for access
-                    try:
-                        country_data = await self.country_repo.get_country_data(
-                            material=material,
-                            src_year=getattr(self.config, "src_year", 2024),
-                            meas_year=getattr(self.config, "meas_year", 2025),
-                            usage=usage,
-                        )
-
-                        if country_data:
-                            for country_info in country_data:
-                                enriched_data.append(
-                                    {
-                                        "technology": tech,
-                                        "component": component,
-                                        "material": material,
-                                        "hscode": country_info.get("hscode"),
-                                        "country": country_info["country"],
-                                        "measunit": country_info["measunit"],
-                                        "amount": country_info["amount"],
-                                        "percentage": country_info["percentage"],
-                                    }
-                                )
-                        elif self.write_nulls:
-                            enriched_data.append(
-                                {
-                                    "technology": tech,
-                                    "component": component,
-                                    "material": material,
-                                    "hscode": None,
-                                    "country": None,
-                                    "measunit": None,
-                                    "amount": None,
-                                    "percentage": None,
-                                }
-                            )
-
-                    except Exception as e:
-                        logger.error(f"Error getting country data for {material}: {e}")
+            # Phase 3: Enrich with country data
+            enriched_data = await self._enrich_with_country_data(materials_list, tech, usage)
 
             return {
                 "technology": tech,
@@ -6844,6 +6989,81 @@ class STDNOrchestrator:
             print(f"✗ Error processing {tech}: {e}")
             return None
 
+    def _build_material_transcript_content(
+        self,
+        components: list[str],
+        debate_history: list,
+        consensus: dict[str, list[str]],
+    ) -> str:
+        """Build the materials debate transcript content."""
+        content = []
+
+        content.append("\n\n")
+        content.append("=" * 80 + "\n")
+        content.append("MATERIALS EXTRACTION DEBATE\n")
+        content.append("=" * 80 + "\n\n")
+
+        # Phase 1: Components
+        content.append("COMPONENTS PROCESSED:\n")
+        content.append("-" * 80 + "\n")
+        content.append(f"Total Components: {len(components)}\n")
+        for comp in components:
+            content.append(f"  - {comp}\n")
+        content.append("\n")
+
+        # Phase 2: Debate Rounds
+        content.append("=" * 80 + "\n")
+        content.append("MATERIAL DEBATE ROUNDS\n")
+        content.append("=" * 80 + "\n\n")
+
+        for round_data in debate_history:
+            content.append(f"ROUND {round_data.roundnumber}:\n")
+            content.append(f"  Convergence: {round_data.convergencescore:.1%}\n")
+
+            if round_data.critiques:
+                content.append(f"  Critiques ({len(round_data.critiques)} total):\n")
+                # critiques is a dict, so iterate over values
+                critique_list = (
+                    list(round_data.critiques.values())
+                    if isinstance(round_data.critiques, dict)
+                    else round_data.critiques
+                )
+                # Show first 3 critiques
+                for critique in critique_list[:3]:
+                    content.append(f"    - {critique}\n")
+                if len(critique_list) > 3:
+                    content.append(f"    ... and {len(critique_list) - 3} more\n")
+
+            if round_data.consensussofar:
+                content.append(f"  Consensus materials: {len(round_data.consensussofar)}\n")
+
+            content.append("\n")
+
+        # Phase 3: Final Consensus
+        content.append("=" * 80 + "\n")
+        content.append("FINAL MATERIAL ASSIGNMENTS\n")
+        content.append("=" * 80 + "\n\n")
+
+        total_materials = sum(len(mats) for mats in consensus.values())
+        unique_materials = len({mat for mats in consensus.values() for mat in mats})
+
+        content.append(f"Components: {len(consensus)}\n")
+        content.append(f"Unique Materials: {unique_materials}\n")
+        content.append(f"Total Assignments: {total_materials}\n\n")
+
+        content.append("Materials by Component:\n")
+        content.append("-" * 80 + "\n")
+
+        for component, materials in sorted(consensus.items()):
+            mat_list = ", ".join(sorted(materials))
+            content.append(f"  ✓ {component}: {mat_list}\n")
+
+        content.append("\n" + "=" * 80 + "\n")
+        content.append("END OF COMBINED TRANSCRIPT\n")
+        content.append("=" * 80 + "\n")
+
+        return "".join(content)
+
     def _save_material_debate_transcript(
         self,
         technology: str,
@@ -6851,42 +7071,85 @@ class STDNOrchestrator:
         debate_history: list,
         consensus: dict[str, list[str]],
     ) -> None:
-        """Save material debate transcript for audit trail."""
+        """Append material debate results to existing component transcript."""
+        print(f"🔍 DEBUG: Attempting to save material transcript for {technology}")
+        print(f"🔍 DEBUG: Components: {len(components)}, Consensus: {len(consensus)}")
+
         if not self.reporter:
+            print("❌ Reporter is None, cannot save transcript")
             return
 
         try:
-            # Format debate data for reporter
-            debate_rounds = []
+            output_dir = Path(self.reporter.output_dir)
 
-            for round_data in debate_history:
-                debate_rounds.append(
-                    {
-                        "round_number": round_data.roundnumber,
-                        "convergence_score": round_data.convergencescore,
-                        "consensus_so_far": round_data.consensussofar,
-                        "critiques": round_data.critiques,
-                    }
-                )
+            # Find most recent component transcript
+            component_transcripts = list(output_dir.glob(f"{technology}_*.txt"))
+            component_transcripts = [f for f in component_transcripts if "_materials" not in f.name]
 
-            final_consensus = {
-                "components": list(consensus.keys()),
-                "materials_by_component": consensus,
-                "total_materials": sum(len(mats) for mats in consensus.values()),
-            }
+            if not component_transcripts:
+                logger.warning(f"No component transcript found for {technology}")
+                return
 
-            self.reporter.save_debate_transcript(
-                technology=f"{technology}_materials",
-                agent_responses=[],  # Material debate uses different structure
-                debate_history=debate_rounds,
-                final_consensus=final_consensus,
-                file_format="txt",
+            filepath = max(component_transcripts, key=lambda p: p.stat().st_mtime)
+
+            # Build and write content
+            materials_content = self._build_material_transcript_content(
+                components, debate_history, consensus
             )
 
-            print(f"✓ Saved material debate transcript for {technology}")
+            with open(filepath, "a", encoding="utf-8") as f:
+                f.write(materials_content)
+                f.flush()
+
+            # Update JSON
+            json_path = filepath.with_suffix(".json")
+            if json_path.exists():
+                self._update_material_json(json_path, debate_history, consensus)
+
+            print(f"✓ Appended material debate to: {filepath.name}")
 
         except Exception as e:
-            logger.error(f"Error saving material debate transcript: {e}")
+            logger.error(f"Error appending material debate transcript: {e}", exc_info=True)
+            print(f"❌ EXCEPTION appending materials transcript: {type(e).__name__}: {e}")
+            import traceback
+
+            traceback.print_exc()  # Print full stack trace
+
+    def _update_material_json(
+        self,
+        json_path: Path,
+        debate_history: list,
+        consensus: dict[str, list[str]],
+    ) -> None:
+        """Update JSON transcript with materials data."""
+        import json
+
+        with open(json_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+
+        total_materials = sum(len(mats) for mats in consensus.values())
+        unique_materials = len({mat for mats in consensus.values() for mat in mats})
+
+        data["materials_debate"] = {
+            "debate_rounds": [
+                {
+                    "round_number": r.roundnumber,
+                    "convergence_score": r.convergencescore,
+                    "num_critiques": len(r.critiques),
+                }
+                for r in debate_history
+            ],
+            "final_consensus": {
+                "components": len(consensus),
+                "unique_materials": unique_materials,
+                "total_assignments": total_materials,
+                "materials_by_component": consensus,
+            },
+        }
+
+        with open(json_path, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2)
+            f.flush()
 
     # ========================================================================
     # Pipeline Execution
@@ -6916,7 +7179,7 @@ class STDNOrchestrator:
         print(f"{'=' * 80}\n")
 
         if self.use_debate:
-            print(f"🎤 Multi-agent debate ENABLED:")
+            print("🎤 Multi-agent debate ENABLED:")
             print(f"   Max rounds: {self.max_debate_rounds}")
             print(f"   Convergence threshold: {self.convergence_threshold}")
             print(f"   Save transcripts: {self.save_transcripts}")
@@ -6945,7 +7208,9 @@ class STDNOrchestrator:
 
         # Process each technology
         for tech in technologies:
-            result = await self.process_technology(tech, role, domain, usage)
+            result = await self.process_technology(
+                tech, role, domain, usage, use_material_debate=self.use_material_debate
+            )
 
             if result and result["enriched_data"]:
                 # Write results to CSV
@@ -9876,6 +10141,7 @@ File: dpi_stdn_agentic/.env
 ===================================================
 OLLAMA_BASE_URL=http://localhost:11434/v1
 ENABLE_DEBATE=true
+ENABLE_MATERIAL_DEBATE=true
 MAX_DEBATE_ROUNDS=3
 CONVERGENCE_THRESHOLD=0.51
 STDN_DISABLE_MATERIAL_TOOLS=1

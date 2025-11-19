@@ -2,15 +2,20 @@
 Multi-agent debate system for consensus-building
 """
 
-# Import from new debater.py
 from .debater import AgentProposal, DebateRound, MultiAgentDebater
+from .material_country_debater import CountryProposal, MaterialCountryDebater
 from .material_debater import MaterialDebater, MaterialDebateRound, MaterialProposal
 
 __all__ = [
+    # Base debate
     "MultiAgentDebater",
     "AgentProposal",
     "DebateRound",
+    # Material debate
     "MaterialDebater",
     "MaterialProposal",
     "MaterialDebateRound",
+    # Country debate
+    "MaterialCountryDebater",
+    "CountryProposal",
 ]

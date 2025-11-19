@@ -452,6 +452,7 @@ def get_materials_agent(
             output_type=ComponentMaterialsList,
             deps_type=STDNDependencies,
             system_prompt=MATERIALS_SYSTEM_PROMPT,
+            retries=5,
         )
 
         # DISABLED BY DEFAULT - Ollama backends often reject tool calls
