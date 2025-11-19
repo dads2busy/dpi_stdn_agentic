@@ -36,9 +36,8 @@ from ..agents import (
 from ..data import CountryDataRepository
 from ..debate import MultiAgentDebater
 from ..dependencies import initialize_dependencies
-from ..models import ConfigModel, STDNDependencies
+from ..models import ConfigModel
 from ..reporting import DebateReporter
-from ..utils import embed_comma_delimited_str
 from .checkpoint import CheckpointManager
 
 # Initialize logger
@@ -120,7 +119,7 @@ class STDNOrchestrator:
                 project_root / "src" / "stdn_agentic" / "debate_transcripts" / "results"
             )
 
-            print(f"\n[STDNOrchestrator] Debate transcripts will be saved to:")
+            print("\n[STDNOrchestrator] Debate transcripts will be saved to:")
             print(f"  {transcript_dir.resolve()}")
 
             self.reporter = DebateReporter(output_dir=str(transcript_dir))
@@ -172,7 +171,7 @@ class STDNOrchestrator:
         # VALIDATION 1: Check component list exists
         if not componentlist or not hasattr(componentlist, "component_list"):
             logger.warning(f"No components to extract materials from for {technology}")
-            print(f"🔍 No components to extract materials from")
+            print("🔍 No components to extract materials from")
             return ComponentMaterialsList.model_validate({"componentlist": []})
 
         components = componentlist.component_list  # Access component_list field
@@ -181,13 +180,13 @@ class STDNOrchestrator:
         valid_components = [c for c in components if c and isinstance(c, str) and c.strip()]
         if not valid_components:
             logger.warning(f"All components were null/empty for {technology}")
-            print(f"🔍 All components were null/empty")
+            print("🔍 All components were null/empty")
             return ComponentMaterialsList.model_validate({"componentlist": []})
 
         # VALIDATION 3: Check ontology availability
         if not self.deps.material_ontology_list or len(self.deps.material_ontology_list) == 0:
             logger.error(f"Material ontology is empty - cannot extract materials for {technology}")
-            print(f"❌ Material ontology is empty!")
+            print("❌ Material ontology is empty!")
             return ComponentMaterialsList.model_validate({"componentlist": []})
 
         # Build prompt with validated data
@@ -224,14 +223,14 @@ class STDNOrchestrator:
             or len(materials_prompt.strip()) < 50
         ):
             logger.error(f"Generated materials prompt is invalid for {technology}")
-            print(f"❌ Generated materials prompt is too short or None")
+            print("❌ Generated materials prompt is too short or None")
             print(f"🔍 Prompt length: {len(materials_prompt) if materials_prompt else 0}")
             return ComponentMaterialsList.model_validate({"componentlist": []})
 
         # VALIDATION 5: Ensure deps and model are valid
         if not self.deps or not self.deps.model:
             logger.error(f"Dependencies or model not configured for {technology}")
-            print(f"❌ Dependencies not properly configured")
+            print("❌ Dependencies not properly configured")
             return ComponentMaterialsList.model_validate({"componentlist": []})
 
         logger.info(
@@ -415,9 +414,14 @@ class STDNOrchestrator:
             print("❌ No agent proposals received")
             return None
 
-        print(f"\n🎤 Running debate...\n")
+        print("\n🎤 Running debate...\n")
 
         # Run enhanced debate with critique-driven convergence
+        if not self.debater:
+            logger.error(f"Debater not initialized for {technology}")
+            print("❌ Debater not initialized")
+            return None
+
         try:
             debate_result = await self.debater.run_debate(
                 technology=technology,
@@ -711,6 +715,81 @@ class STDNOrchestrator:
             print(f"✗ Error processing {tech}: {e}")
             return None
 
+    def _build_material_transcript_content(
+        self,
+        components: list[str],
+        debate_history: list,
+        consensus: dict[str, list[str]],
+    ) -> str:
+        """Build the materials debate transcript content."""
+        content = []
+
+        content.append("\n\n")
+        content.append("=" * 80 + "\n")
+        content.append("MATERIALS EXTRACTION DEBATE\n")
+        content.append("=" * 80 + "\n\n")
+
+        # Phase 1: Components
+        content.append("COMPONENTS PROCESSED:\n")
+        content.append("-" * 80 + "\n")
+        content.append(f"Total Components: {len(components)}\n")
+        for comp in components:
+            content.append(f"  - {comp}\n")
+        content.append("\n")
+
+        # Phase 2: Debate Rounds
+        content.append("=" * 80 + "\n")
+        content.append("MATERIAL DEBATE ROUNDS\n")
+        content.append("=" * 80 + "\n\n")
+
+        for round_data in debate_history:
+            content.append(f"ROUND {round_data.roundnumber}:\n")
+            content.append(f"  Convergence: {round_data.convergencescore:.1%}\n")
+
+            if round_data.critiques:
+                content.append(f"  Critiques ({len(round_data.critiques)} total):\n")
+                # critiques is a dict, so iterate over values
+                critique_list = (
+                    list(round_data.critiques.values())
+                    if isinstance(round_data.critiques, dict)
+                    else round_data.critiques
+                )
+                # Show first 3 critiques
+                for critique in critique_list[:3]:
+                    content.append(f"    - {critique}\n")
+                if len(critique_list) > 3:
+                    content.append(f"    ... and {len(critique_list) - 3} more\n")
+
+            if round_data.consensussofar:
+                content.append(f"  Consensus materials: {len(round_data.consensussofar)}\n")
+
+            content.append("\n")
+
+        # Phase 3: Final Consensus
+        content.append("=" * 80 + "\n")
+        content.append("FINAL MATERIAL ASSIGNMENTS\n")
+        content.append("=" * 80 + "\n\n")
+
+        total_materials = sum(len(mats) for mats in consensus.values())
+        unique_materials = len({mat for mats in consensus.values() for mat in mats})
+
+        content.append(f"Components: {len(consensus)}\n")
+        content.append(f"Unique Materials: {unique_materials}\n")
+        content.append(f"Total Assignments: {total_materials}\n\n")
+
+        content.append("Materials by Component:\n")
+        content.append("-" * 80 + "\n")
+
+        for component, materials in sorted(consensus.items()):
+            mat_list = ", ".join(sorted(materials))
+            content.append(f"  ✓ {component}: {mat_list}\n")
+
+        content.append("\n" + "=" * 80 + "\n")
+        content.append("END OF COMBINED TRANSCRIPT\n")
+        content.append("=" * 80 + "\n")
+
+        return "".join(content)
+
     def _save_material_debate_transcript(
         self,
         technology: str,
@@ -718,42 +797,85 @@ class STDNOrchestrator:
         debate_history: list,
         consensus: dict[str, list[str]],
     ) -> None:
-        """Save material debate transcript for audit trail."""
+        """Append material debate results to existing component transcript."""
+        print(f"🔍 DEBUG: Attempting to save material transcript for {technology}")
+        print(f"🔍 DEBUG: Components: {len(components)}, Consensus: {len(consensus)}")
+
         if not self.reporter:
+            print("❌ Reporter is None, cannot save transcript")
             return
 
         try:
-            # Format debate data for reporter
-            debate_rounds = []
+            output_dir = Path(self.reporter.output_dir)
 
-            for round_data in debate_history:
-                debate_rounds.append(
-                    {
-                        "round_number": round_data.roundnumber,
-                        "convergence_score": round_data.convergencescore,
-                        "consensus_so_far": round_data.consensussofar,
-                        "critiques": round_data.critiques,
-                    }
-                )
+            # Find most recent component transcript
+            component_transcripts = list(output_dir.glob(f"{technology}_*.txt"))
+            component_transcripts = [f for f in component_transcripts if "_materials" not in f.name]
 
-            final_consensus = {
-                "components": list(consensus.keys()),
-                "materials_by_component": consensus,
-                "total_materials": sum(len(mats) for mats in consensus.values()),
-            }
+            if not component_transcripts:
+                logger.warning(f"No component transcript found for {technology}")
+                return
 
-            self.reporter.save_debate_transcript(
-                technology=f"{technology}_materials",
-                agent_responses=[],  # Material debate uses different structure
-                debate_history=debate_rounds,
-                final_consensus=final_consensus,
-                file_format="txt",
+            filepath = max(component_transcripts, key=lambda p: p.stat().st_mtime)
+
+            # Build and write content
+            materials_content = self._build_material_transcript_content(
+                components, debate_history, consensus
             )
 
-            print(f"✓ Saved material debate transcript for {technology}")
+            with open(filepath, "a", encoding="utf-8") as f:
+                f.write(materials_content)
+                f.flush()
+
+            # Update JSON
+            json_path = filepath.with_suffix(".json")
+            if json_path.exists():
+                self._update_material_json(json_path, debate_history, consensus)
+
+            print(f"✓ Appended material debate to: {filepath.name}")
 
         except Exception as e:
-            logger.error(f"Error saving material debate transcript: {e}")
+            logger.error(f"Error appending material debate transcript: {e}", exc_info=True)
+            print(f"❌ EXCEPTION appending materials transcript: {type(e).__name__}: {e}")
+            import traceback
+
+            traceback.print_exc()  # Print full stack trace
+
+    def _update_material_json(
+        self,
+        json_path: Path,
+        debate_history: list,
+        consensus: dict[str, list[str]],
+    ) -> None:
+        """Update JSON transcript with materials data."""
+        import json
+
+        with open(json_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+
+        total_materials = sum(len(mats) for mats in consensus.values())
+        unique_materials = len({mat for mats in consensus.values() for mat in mats})
+
+        data["materials_debate"] = {
+            "debate_rounds": [
+                {
+                    "round_number": r.roundnumber,
+                    "convergence_score": r.convergencescore,
+                    "num_critiques": len(r.critiques),
+                }
+                for r in debate_history
+            ],
+            "final_consensus": {
+                "components": len(consensus),
+                "unique_materials": unique_materials,
+                "total_assignments": total_materials,
+                "materials_by_component": consensus,
+            },
+        }
+
+        with open(json_path, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2)
+            f.flush()
 
     # ========================================================================
     # Pipeline Execution
@@ -783,7 +905,7 @@ class STDNOrchestrator:
         print(f"{'=' * 80}\n")
 
         if self.use_debate:
-            print(f"🎤 Multi-agent debate ENABLED:")
+            print("🎤 Multi-agent debate ENABLED:")
             print(f"   Max rounds: {self.max_debate_rounds}")
             print(f"   Convergence threshold: {self.convergence_threshold}")
             print(f"   Save transcripts: {self.save_transcripts}")
