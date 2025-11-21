@@ -1,5 +1,5 @@
 """
-STDN Agentic - Supply Technology Dependency Network generation using Pydantic AI
+STDN Agentic - Shallow Technology Dependency Network generation using Pydantic AI
 
 This package provides tools for analyzing technology dependencies and materials:
 - Component extraction from technologies
