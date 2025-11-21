@@ -1474,6 +1474,7 @@ def get_materials_agent(
             output_type=ComponentMaterialsList,
             deps_type=STDNDependencies,
             system_prompt=MATERIALS_SYSTEM_PROMPT,
+            retries=5,
         )
 
         # DISABLED BY DEFAULT - Ollama backends often reject tool calls
@@ -2037,14 +2038,13 @@ This module provides the CountryDataRepository class that coordinates data
 retrieval from USGS database and LLM fallback for material-country mappings.
 """
 
-import asyncio
 import logging
 from typing import Dict, List, Optional
 
 import pandas as pd
 from pydantic_ai import RunUsage
 
-from ..agents import CountryList, get_country_data_agent
+from ..agents import get_country_data_agent
 from ..models import STDNDependencies
 from .usgs_client import USGSClient
 
@@ -2063,7 +2063,8 @@ class CountryDataRepository:
     This class coordinates data retrieval:
     1. First tries USGS database (primary source)
     2. Falls back to LLM agent if USGS has no data
-    3. Caches results to avoid redundant queries
+    3. Optionally uses multi-agent debate for LLM fallback
+    4. Caches results to avoid redundant queries
 
     Attributes:
         database_path: Path to USGS database
@@ -2081,7 +2082,8 @@ class CountryDataRepository:
         >>> countries = await repo.get_country_data(
         ...     material="lithium",
         ...     src_year=2025,
-        ...     meas_year=2024
+        ...     meas_year=2024,
+        ...     use_debate=True
         ... )
     """
 
@@ -2121,11 +2123,28 @@ class CountryDataRepository:
         src_year: int,
         meas_year: int,
         usage: Optional[RunUsage] = None,
+        use_debate: bool = False,
     ) -> List[Dict]:
         """
         Get country production data for a material.
 
         Tries USGS database first, falls back to LLM if enabled.
+        Can use multi-agent debate for LLM fallback.
+
+        Args:
+            material: Material name
+            src_year: Source year of report
+            meas_year: Measurement year for production data
+            usage: Optional usage tracker
+            use_debate: Use multi-agent debate for LLM fallback
+
+        Returns:
+            List of country data dicts with keys:
+                - country: Country name
+                - meas_unit: Measurement unit
+                - amount: Production amount
+                - percentage: Percentage of global production
+                - hs_code: HS code (if available)
         """
         # Check cache first
         cache_key = f"{material}_{src_year}_{meas_year}"
@@ -2139,25 +2158,29 @@ class CountryDataRepository:
 
         if usgs_data:
             print(f"✓ USGS returned {len(usgs_data)} countries")
-            # ADD HS CODE HERE (NEW)
+            # Add HS code
             hs_code = self._lookup_hs_code(material)
             for country in usgs_data:
                 country["hs_code"] = hs_code
-            # END NEW CODE
             self.cache[cache_key] = usgs_data
             return usgs_data
 
         # Fall back to LLM if enabled
         if self.use_llm_fallback and self.country_agent:
-            print(f"⚠ No USGS data found, using LLM fallback...")
-            llm_data = await self._query_llm(material, meas_year, usage)
+            print("⚠ No USGS data found, using LLM fallback...")
+
+            # Use debate or single-agent LLM
+            if use_debate:
+                llm_data = await self._query_llm_with_debate(material, meas_year, usage)
+            else:
+                llm_data = await self._query_llm(material, meas_year, usage)
+
             if llm_data:
                 print(f"✓ LLM returned {len(llm_data)} countries")
-                # ADD HS CODE HERE (NEW)
+                # Add HS code
                 hs_code = self._lookup_hs_code(material)
                 for country in llm_data:
                     country["hs_code"] = hs_code
-                # END NEW CODE
                 self.cache[cache_key] = llm_data
                 return llm_data
 
@@ -2182,8 +2205,6 @@ class CountryDataRepository:
             HS code as string (e.g., "710812"), or None if not found
         """
         try:
-            import pandas as pd
-
             df = pd.read_csv("./data/hs_codes_and_usgs_names.csv")
 
             # Verify column exists
@@ -2245,20 +2266,23 @@ class CountryDataRepository:
             # Get world totals (returns DataFrame)
             world_totals_df = self.usgs_client.query_world_totals(material, src_year, meas_year)
 
-            # FIXED: Handle DataFrame properly
             if world_totals_df is None or world_totals_df.empty:
                 logger.warning(f"No world totals data for {material}")
                 return []
 
             # Extract production value from DataFrame
-            # Convert VALUE column to numeric and sum
             try:
-                world_production = pd.to_numeric(world_totals_df["VALUE"], errors="coerce").sum()
+                value_col: pd.Series = world_totals_df["VALUE"]  # type: ignore[assignment]
+                numeric_series: pd.Series = pd.to_numeric(value_col, errors="coerce")  # type: ignore[assignment]
+                world_production_sum = numeric_series.sum()
+                world_production = (
+                    float(world_production_sum) if pd.notna(world_production_sum) else 0.0
+                )
             except (KeyError, ValueError) as e:
                 logger.warning(f"Could not extract world production for {material}: {e}")
                 return []
 
-            if world_production == 0 or pd.isna(world_production):
+            if world_production == 0:
                 logger.warning(f"No world production data for {material}")
                 return []
 
@@ -2269,29 +2293,32 @@ class CountryDataRepository:
                     material, country_name, src_year, meas_year
                 )
 
-                # FIXED: Handle DataFrame properly
                 if details_df is None or details_df.empty:
                     continue
+
+                import math
 
                 # Iterate through DataFrame rows
                 for _, row in details_df.iterrows():
                     try:
                         if str(row.get("MEAS_TYPE", "")).upper() == "PRODUCTION":
-                            amount = pd.to_numeric(row.get("VALUE", 0), errors="coerce")
+                            value_raw = row.get("VALUE", 0)
+                            amount_numeric = pd.to_numeric(value_raw, errors="coerce")
+                            amount = float(amount_numeric)  # type: ignore[arg-type]
 
-                            if pd.isna(amount):
+                            if math.isnan(amount):
                                 continue
 
                             percentage = (
-                                (amount / world_production * 100) if world_production > 0 else 0
+                                (amount / world_production * 100) if world_production > 0 else 0.0
                             )
 
                             country_data.append(
                                 {
                                     "country": country_name,
                                     "meas_unit": row.get("MEAS_UNIT", ""),
-                                    "amount": float(amount),
-                                    "percentage": float(percentage),
+                                    "amount": amount,
+                                    "percentage": percentage,
                                 }
                             )
                             break  # Only take production data
@@ -2312,7 +2339,7 @@ class CountryDataRepository:
         usage: Optional[RunUsage] = None,
     ) -> List[Dict]:
         """
-        Query LLM agent for country data (fallback).
+        Query LLM agent for country data (single-agent fallback).
 
         Args:
             material: Material name
@@ -2360,6 +2387,36 @@ class CountryDataRepository:
             return []
 
         return []
+
+    async def _query_llm_with_debate(
+        self,
+        material: str,
+        year: int,
+        usage: Optional[RunUsage] = None,
+    ) -> List[Dict]:
+        """
+        Query LLM with multi-agent debate for country data.
+
+        Args:
+            material: Material name
+            year: Year for production data
+            usage: Optional RunUsage tracker
+
+        Returns:
+            List of country data dicts from debate consensus
+        """
+        from ..debate import MaterialCountryDebater
+
+        debater = MaterialCountryDebater(
+            deps=self.deps,
+            num_agents=3,
+            top_n_proposed=10,  # ← NEW: Each expert proposes top 10
+            top_n_consensus=self.top_n,  # ← NEW: Final consensus is top 5 (or whatever self.top_n is)
+            debate_top_p=0.0001,
+        )
+
+        consensus = await debater.run_debate(material, year, usage)
+        return consensus
 
     def clear_cache(self):
         """Clear the country data cache"""
@@ -2855,17 +2912,22 @@ File: dpi_stdn_agentic/src/stdn_agentic/debate/__init__.py
 Multi-agent debate system for consensus-building
 """
 
-# Import from new debater.py
 from .debater import AgentProposal, DebateRound, MultiAgentDebater
+from .material_country_debater import CountryProposal, MaterialCountryDebater
 from .material_debater import MaterialDebater, MaterialDebateRound, MaterialProposal
 
 __all__ = [
+    # Base debate
     "MultiAgentDebater",
     "AgentProposal",
     "DebateRound",
+    # Material debate
     "MaterialDebater",
     "MaterialProposal",
     "MaterialDebateRound",
+    # Country debate
+    "MaterialCountryDebater",
+    "CountryProposal",
 ]
 
 
@@ -3663,6 +3725,285 @@ __all__ = [
     "MultiAgentDebater",
     "AgentProposal",
     "DebateRound",
+]
+
+
+===================================================
+File: dpi_stdn_agentic/src/stdn_agentic/debate/material_country_debater.py
+===================================================
+"""
+Material-Country mapping debate system for STDN
+
+This module implements multi-agent debate for country production data when USGS
+database lookups fail. Multiple mining experts propose and vote on top-producing
+countries to reach consensus through simple voting.
+
+Integration point: CountryDataRepository._query_llm_with_debate()
+"""
+
+from __future__ import annotations
+
+import logging
+from collections import Counter
+from dataclasses import dataclass, replace
+from typing import Any, Dict, List, Optional
+
+from pydantic_ai import RunUsage
+
+from ..agents import get_country_data_agent
+from ..models import STDNDependencies
+
+logger = logging.getLogger(__name__)
+
+
+# ============================================================================
+# Data Structures
+# ============================================================================
+
+
+@dataclass
+class CountryProposal:
+    """A country production proposal from an agent."""
+
+    agent_id: str
+    country: str
+    meas_unit: str
+    amount: float
+    percentage: float
+    rank: int  # Cardinal rank (1-10)
+    round_num: int
+
+
+# ============================================================================
+# MaterialCountryDebater
+# ============================================================================
+
+
+class MaterialCountryDebater:
+    """
+    Multi-agent consensus for country production data.
+
+    Uses 3 materials mining experts to independently identify top 10 producing
+    countries in cardinal order, then selects top 5 through simple voting.
+
+    Key features:
+    - All agents are "materials mining and production experts"
+    - Each proposes top 10 countries in ranked order
+    - Simple voting to select consensus top 5
+    - No iterative refinement needed for factual data
+    """
+
+    def __init__(
+        self,
+        deps: STDNDependencies,
+        num_agents: int = 3,
+        top_n_proposed: int = 10,
+        top_n_consensus: int = 5,
+        debate_top_p: float = 0.0001,
+    ) -> None:
+        """
+        Initialize material-country debater.
+
+        Args:
+            deps: STDN dependencies (for LLM access)
+            num_agents: Number of expert agents (default: 3)
+            top_n_proposed: Number of countries each agent proposes (default: 10)
+            top_n_consensus: Number of countries in final consensus (default: 5)
+            debate_top_p: Top-p for debate (low for deterministic)
+        """
+        self.deps = deps
+        self.num_agents = num_agents
+        self.top_n_proposed = top_n_proposed
+        self.top_n_consensus = top_n_consensus
+        self.debate_top_p = debate_top_p
+        self.proposals: List[CountryProposal] = []
+
+    async def run_debate(
+        self,
+        material: str,
+        year: int,
+        usage: Optional[RunUsage] = None,
+    ) -> List[Dict[str, Any]]:
+        """
+        Run multi-agent voting for country production data.
+
+        Args:
+            material: Material name
+            year: Target year for production data
+            usage: Optional usage tracker
+
+        Returns:
+            List of country data dicts with consensus top 5
+        """
+        print(f"\n{'=' * 60}")
+        print(f"COUNTRY CONSENSUS: {material} ({year})")
+        print(f"{'=' * 60}\n")
+
+        # Phase 1: Independent proposals from experts
+        all_proposals = await self._collect_expert_proposals(material, year, usage)
+
+        if not all_proposals:
+            print("✗ No proposals generated")
+            return []
+
+        # Phase 2: Simple voting to select top 5
+        consensus = self._build_voting_consensus(all_proposals)
+
+        print(f"\n✓ Final consensus: {len(consensus)} countries")
+        for i, country_data in enumerate(consensus, 1):
+            print(f"  {i}. {country_data['country']}: {country_data['percentage']:.1f}%")
+
+        return consensus
+
+    async def _collect_expert_proposals(
+        self,
+        material: str,
+        year: int,
+        usage: Optional[RunUsage] = None,
+    ) -> List[CountryProposal]:
+        """Collect top 10 proposals from each mining expert."""
+        print("PHASE 1: Expert Proposals")
+        print("-" * 60)
+
+        all_proposals: List[CountryProposal] = []
+
+        # Create debate deps with low top_p for deterministic proposals
+        debate_deps = replace(self.deps, top_p=self.debate_top_p)
+
+        # All agents are mining experts
+        expert_type = "materials mining and production expert"
+
+        for agent_idx in range(self.num_agents):
+            agent_id = f"Expert_{agent_idx + 1}"
+
+            print(f"  {agent_id} ({expert_type})...")
+
+            try:
+                agent = get_country_data_agent()
+
+                prompt = self._create_expert_prompt(material, year)
+
+                # Use debate_deps with low top_p
+                result = await agent.run(prompt, deps=debate_deps)
+
+                if result and result.output:
+                    country_list = result.output.country_list
+
+                    # Store proposals with rank
+                    for rank, cp in enumerate(country_list[: self.top_n_proposed], start=1):
+                        proposal = CountryProposal(
+                            agent_id=agent_id,
+                            country=cp.country,
+                            meas_unit=cp.meas_unit,
+                            amount=cp.amount,
+                            percentage=cp.percentage,
+                            rank=rank,
+                            round_num=1,
+                        )
+                        all_proposals.append(proposal)
+
+                    print(f"    ✓ Proposed {len(country_list[: self.top_n_proposed])} countries")
+
+            except Exception as e:
+                logger.error(f"Agent {agent_id} failed: {e}")
+                print(f"    ✗ Failed: {e}")
+
+        return all_proposals
+
+    def _create_expert_prompt(self, material: str, year: int) -> str:
+        """Create prompt for mining expert to rank top 10 countries."""
+        return f"""You are a materials mining and production expert.
+
+Provide the top {self.top_n_proposed} countries that produced {material} in {year},
+ranked in descending order by production volume.
+
+Requirements:
+- List countries in cardinal order (1st, 2nd, 3rd, etc.)
+- Use the most recent data available (preferably {year} or within 2-3 years)
+- Provide specific numeric production amounts with units
+- Include percentage of global production for each country
+- Use standard country names (not abbreviations)
+- Focus on major producers with significant global market share
+
+Return exactly {self.top_n_proposed} countries in order of production volume."""
+
+    def _build_voting_consensus(
+        self,
+        all_proposals: List[CountryProposal],
+    ) -> List[Dict[str, Any]]:
+        """Build consensus using ranked voting to select top 5."""
+        print(f"\n{'=' * 60}")
+        print("PHASE 2: VOTING CONSENSUS")
+        print(f"{'=' * 60}")
+
+        # Score countries using Borda count (weighted by rank)
+        # Rank 1 gets highest score, rank 10 gets lowest
+        country_scores: Dict[str, float] = {}
+        country_data: Dict[str, List[CountryProposal]] = {}
+
+        for proposal in all_proposals:
+            country_lower = proposal.country.lower()
+
+            # Borda score: 11 - rank (so rank 1 = 10 points, rank 10 = 1 point)
+            score = self.top_n_proposed + 1 - proposal.rank
+
+            if country_lower not in country_scores:
+                country_scores[country_lower] = 0.0
+                country_data[country_lower] = []
+
+            country_scores[country_lower] += score
+            country_data[country_lower].append(proposal)
+
+        # Sort by score and select top N
+        sorted_countries = sorted(country_scores.items(), key=lambda x: x[1], reverse=True)[
+            : self.top_n_consensus
+        ]
+
+        print(f"\nVoting results (Borda count):")
+        for country_lower, score in sorted_countries:
+            proposals = country_data[country_lower]
+            num_votes = len(proposals)
+            avg_rank = sum(p.rank for p in proposals) / num_votes
+            print(
+                f"  - {proposals[0].country}: score={score:.1f}, votes={num_votes}, avg_rank={avg_rank:.1f}"
+            )
+
+        # Build final consensus with averaged values
+        consensus = []
+
+        for country_lower, _ in sorted_countries:
+            proposals = country_data[country_lower]
+
+            # Average the production values across agents who proposed this country
+            avg_amount = sum(p.amount for p in proposals) / len(proposals)
+            avg_percentage = sum(p.percentage for p in proposals) / len(proposals)
+
+            # Use most common unit
+            units = [p.meas_unit for p in proposals]
+            common_unit = Counter(units).most_common(1)[0][0]
+
+            # Use original country name (not lowercased)
+            country_name = proposals[0].country
+
+            consensus.append(
+                {
+                    "country": country_name,
+                    "meas_unit": common_unit,
+                    "amount": avg_amount,
+                    "percentage": avg_percentage,
+                }
+            )
+
+        return consensus
+
+
+# ============================================================================
+# Public API
+# ============================================================================
+
+__all__ = [
+    "MaterialCountryDebater",
+    "CountryProposal",
 ]
 
 
@@ -4700,6 +5041,7 @@ async def process_all_technologies(config: ConfigModel) -> dict:
     # Read debate settings from environment or config
     enable_debate = os.getenv("ENABLE_DEBATE", "false").lower() == "true"
     enable_material_debate = os.getenv("ENABLE_MATERIAL_DEBATE", "false").lower() == "true"
+    enable_country_debate = os.getenv("ENABLE_COUNTRY_DEBATE", "false").lower() == "true"
     max_debate_rounds = int(os.getenv("MAX_DEBATE_ROUNDS", "3"))
     convergence_threshold = float(os.getenv("CONVERGENCE_THRESHOLD", "0.8"))
     save_transcripts = os.getenv("SAVE_TRANSCRIPTS", "true").lower() == "true"
@@ -4710,6 +5052,7 @@ async def process_all_technologies(config: ConfigModel) -> dict:
         config,
         enable_debate=enable_debate,
         enable_material_debate=enable_material_debate,
+        enable_country_debate=enable_country_debate,
         max_debate_rounds=max_debate_rounds,
         convergence_threshold=convergence_threshold,
         save_transcripts=save_transcripts,
@@ -6393,6 +6736,7 @@ class STDNOrchestrator:
         enable_checkpoints: bool = False,
         enable_debate: bool = False,
         enable_material_debate: bool = False,
+        enable_country_debate: bool = False,
         max_debate_rounds: int = 3,
         convergence_threshold: float = 0.8,
         save_transcripts: bool = True,
@@ -6416,6 +6760,7 @@ class STDNOrchestrator:
         self.enable_checkpoints = enable_checkpoints
         self.use_debate = enable_debate
         self.use_material_debate = enable_material_debate
+        self.use_country_debate = enable_country_debate
         self.max_debate_rounds = max_debate_rounds
         self.convergence_threshold = convergence_threshold
         self.save_transcripts = save_transcripts
@@ -6890,6 +7235,7 @@ class STDNOrchestrator:
                         src_year=getattr(self.config, "src_year", 2024),
                         meas_year=getattr(self.config, "meas_year", 2025),
                         usage=usage,
+                        use_debate=self.use_country_debate,
                     )
 
                     if country_data:
@@ -7155,6 +7501,31 @@ class STDNOrchestrator:
     # Pipeline Execution
     # ========================================================================
 
+    def _save_json_output(self) -> str:
+        """
+        Convert CSV output to JSON file.
+
+        Returns:
+            Path to saved JSON file
+        """
+        import csv
+        import json
+
+        # Read the CSV file
+        with open(self.output_file, "r", encoding="utf-8") as f:
+            reader = csv.DictReader(f)
+            data = list(reader)
+
+        # Create JSON filename from CSV filename
+        json_filename = f"{self.config.output_csv_filename}.json"
+        json_filepath = os.path.join(self.config.output_dir, json_filename)
+
+        # Save as formatted JSON
+        with open(json_filepath, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2, ensure_ascii=False)
+
+        return json_filepath
+
     async def run_pipeline(
         self,
         technologies: List[str],
@@ -7252,6 +7623,10 @@ class STDNOrchestrator:
 
         if successful > 0:
             print(f"✓ Successfully processed {successful} technologies")
+
+        # Convert CSV to JSON
+        json_path = self._save_json_output()
+        print(f"✓ JSON output written to {json_path}")
 
         return {
             "successful": successful,
@@ -10142,6 +10517,7 @@ File: dpi_stdn_agentic/.env
 OLLAMA_BASE_URL=http://localhost:11434/v1
 ENABLE_DEBATE=true
 ENABLE_MATERIAL_DEBATE=true
+ENABLE_COUNTRY_DEBATE=true
 MAX_DEBATE_ROUNDS=3
 CONVERGENCE_THRESHOLD=0.51
 STDN_DISABLE_MATERIAL_TOOLS=1

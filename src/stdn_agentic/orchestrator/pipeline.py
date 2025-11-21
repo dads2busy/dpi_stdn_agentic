@@ -823,6 +823,31 @@ class STDNOrchestrator:
     # Pipeline Execution
     # ========================================================================
 
+    def _save_json_output(self) -> str:
+        """
+        Convert CSV output to JSON file.
+
+        Returns:
+            Path to saved JSON file
+        """
+        import csv
+        import json
+
+        # Read the CSV file
+        with open(self.output_file, "r", encoding="utf-8") as f:
+            reader = csv.DictReader(f)
+            data = list(reader)
+
+        # Create JSON filename from CSV filename
+        json_filename = f"{self.config.output_csv_filename}.json"
+        json_filepath = os.path.join(self.config.output_dir, json_filename)
+
+        # Save as formatted JSON
+        with open(json_filepath, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2, ensure_ascii=False)
+
+        return json_filepath
+
     async def run_pipeline(
         self,
         technologies: List[str],
@@ -920,6 +945,10 @@ class STDNOrchestrator:
 
         if successful > 0:
             print(f"✓ Successfully processed {successful} technologies")
+
+        # Convert CSV to JSON
+        json_path = self._save_json_output()
+        print(f"✓ JSON output written to {json_path}")
 
         return {
             "successful": successful,
