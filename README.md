@@ -245,6 +245,173 @@ uv run python debug_duckdb.py
 
 ***
 
+## STDN Calculations Reference
+
+This document describes all mathematical calculations used in the STDN (Supply Technology Dependency Network) agentic system.
+
+### 1. Convergence Calculation
+
+Convergence measures agreement between agents using **Jaccard similarity**, averaged across all agent pairs.
+
+#### Formula
+
+For $n$ agents:
+
+$$
+\text{Convergence} = \frac{2}{n(n-1)} \sum_{i=1}^{n-1} \sum_{j=i+1}^{n} \frac{|A_i \cap A_j|}{|A_i \cup A_j|}
+$$
+
+Where:
+- $A_i$ = set of components/materials proposed by agent $i$
+- $|A_i \cap A_j|$ = intersection (shared proposals between agents)
+- $|A_i \cup A_j|$ = union (all unique proposals from both agents)
+
+#### Example
+
+With 3 agents and pairwise similarities of 0.50, 0.50, and 0.20:
+
+$$
+\text{Convergence} = \frac{0.50 + 0.50 + 0.20}{3} = 0.40 = 40\%
+$$
+
+#### Interpretation
+
+| Range | Meaning |
+|-------|---------|
+| 0% - 30% | Low agreement, agents have very different proposals |
+| 30% - 60% | Moderate agreement, some common components |
+| 60% - 80% | High agreement, strong consensus forming |
+| 80% - 100% | Very high agreement, agents mostly aligned |
+
+---
+
+### 2. Confidence Scoring
+
+#### Vote-Weighted Confidence
+
+Combines vote rate and average agent confidence:
+
+$$
+\text{Final Confidence} = (\text{Vote Rate} \times 0.6) + (\text{Avg Confidence} \times 0.4)
+$$
+
+Where:
+
+$$
+\text{Vote Rate} = \frac{\text{Supporting Agents}}{\text{Total Agents}}
+$$
+
+$$
+\text{Avg Confidence} = \frac{\sum \text{Agent Confidences}}{\text{Supporting Agents}}
+$$
+
+#### Example
+
+If 2 out of 3 agents support a material with average confidence 0.85:
+
+$$
+\text{Final} = (0.667 \times 0.6) + (0.85 \times 0.4) = 0.40 + 0.34 = 0.74
+$$
+
+---
+
+### 3. Consensus Building Score
+
+#### Adaptive Scoring with Peer Support
+
+$$
+\text{Score} = (1 - w_c) \times \text{Support Fraction} + w_c \times \text{Avg Confidence} + b \times (\text{Support} - 1)
+$$
+
+**Parameters:**
+- $w_c$ = confidence weight (default: 0.3)
+- $b$ = peer support boost (default: 0.15)
+- Support Fraction = proportion of agents supporting the proposal
+
+#### Example
+
+If 3 agents support a component with average confidence 0.80:
+
+$$
+\text{Score} = (0.7 \times 1.0) + (0.3 \times 0.80) + (0.15 \times 2) = 0.7 + 0.24 + 0.30 = 1.24
+$$
+
+---
+
+### 4. Adaptive Voting Threshold
+
+The voting threshold adjusts based on convergence level to balance strictness and inclusiveness.
+
+#### Formula
+
+$$
+\text{Threshold} = \begin{cases}
+\frac{2}{3} & \text{if convergence} \geq 0.7 \text{ (strict)} \\[10pt]
+\frac{1}{3} & \text{if convergence} \leq 0.2 \text{ (lenient)} \\[10pt]
+\frac{1}{3} + \left(\frac{\text{convergence} - 0.2}{0.5}\right) \times \frac{1}{3} & \text{otherwise (interpolated)}
+\end{cases}
+$$
+
+#### Example
+
+At 45% convergence:
+
+$$
+\text{Threshold} = \frac{1}{3} + \left(\frac{0.45 - 0.2}{0.5}\right) \times \frac{1}{3} = 0.333 + (0.5 \times 0.333) = 0.50
+$$
+
+---
+
+### 5. Country Production Normalization
+
+When country production percentages don't sum to 100%, they are normalized:
+
+$$
+\text{Normalized}_i = \frac{\text{Percentage}_i}{\sum_{j=1}^{n} \text{Percentage}_j} \times 100
+$$
+
+---
+
+### 6. Peer Support Calculation
+
+Counts the number of unique agents proposing an equivalent normalized concept:
+
+$$
+\text{Support}(x) = |\{i : \text{Agent}_i \text{ proposes normalized}(x)\}|
+$$
+
+---
+
+### Summary Table
+
+| Calculation | Formula | Default Values | Purpose |
+|-------------|---------|----------------|---------|
+| **Convergence** | Jaccard similarity average | threshold = 0.51-0.8 | Measure agent agreement |
+| **Final Confidence** | $0.6 \times \text{vote} + 0.4 \times \text{confidence}$ | — | Combine voting & confidence |
+| **Consensus Score** | Support + confidence + boost | $w_c=0.3$, $b=0.15$ | Rank proposals |
+| **Adaptive Threshold** | Linear interpolation | strict=0.67, lenient=0.33 | Adjust by convergence |
+| **Normalization** | Percentage rescaling | sum to 100% | Ensure valid percentages |
+
+---
+
+### Confidence Scale Reference
+
+All confidence scores in the system use a 0.0 to 1.0 scale:
+
+- **0.9-1.0**: Absolutely certain, universal standard
+- **0.8-0.9**: Very confident, industry standard
+- **0.6-0.7**: Moderately confident, common but may vary
+- **0.4-0.5**: Uncertain, depends on implementation
+- **0.0-0.3**: Low confidence, rarely separate
+
+---
+
+### Typical Debate Convergence Pattern
+
+A healthy multi-agent debate typically shows this pattern:
+
+***
+
 ## FAQ
 
 **Q: How is "shallow" different from a full BOM?**  
