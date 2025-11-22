@@ -275,7 +275,7 @@ if __name__ == "__main__":
 File: dpi_stdn_agentic/src/stdn_agentic/__init__.py
 ===================================================
 """
-STDN Agentic - Supply Technology Dependency Network generation using Pydantic AI
+STDN Agentic - Shallow Technology Dependency Network generation using Pydantic AI
 
 This package provides tools for analyzing technology dependencies and materials:
 - Component extraction from technologies
@@ -346,36 +346,43 @@ __all__ = [
 File: dpi_stdn_agentic/src/stdn_agentic/agents/__init__.py
 ===================================================
 """
-Multi-agent component and materials extractors for STDN
+STDN Agents Module
 
-This module exports all agent-related functionality for supply chain analysis:
-- Component extraction agents
-- Materials extraction agents with validation
-- Country data agents (LLM fallback)
-- Agent factory for centralized creation
+Provides agent factories and models for STDN pipeline.
 """
 
-from .component_agent import ComponentList, get_component_agent
-from .country_agent import CountryList, CountryPercentage, get_country_data_agent
+from .component_agent import (
+    ComponentList,
+    ComponentWithConfidence,  # ADD THIS
+    get_component_agent,
+)
+from .country_agent import (
+    CountryList,
+    CountryPercentage,
+    get_country_data_agent,
+)
 from .factory import AgentFactory
 from .materials_agent import (
     ComponentMaterials,
     ComponentMaterialsList,
+    MaterialWithConfidence,  # ADD THIS if not already there
     get_materials_agent,
 )
 
 __all__ = [
     # Component agent
-    "get_component_agent",
     "ComponentList",
+    "ComponentWithConfidence",  # ADD THIS
+    "get_component_agent",
     # Materials agent
-    "get_materials_agent",
     "ComponentMaterials",
     "ComponentMaterialsList",
+    "MaterialWithConfidence",  # ADD THIS if not already there
+    "get_materials_agent",
     # Country agent
-    "get_country_data_agent",
-    "CountryPercentage",
     "CountryList",
+    "CountryPercentage",
+    "get_country_data_agent",
     # Factory
     "AgentFactory",
 ]
@@ -385,17 +392,14 @@ __all__ = [
 File: dpi_stdn_agentic/src/stdn_agentic/agents/component_agent.py
 ===================================================
 """
-Component extraction agent for STDN (Supply Technology Dependency Network)
+Component extraction agent for STDN (Shallow Technology Dependency Network)
 
 This module provides the agent responsible for extracting primary manufacturing
-components from technologies using LLM analysis.
-
-The component agent identifies major subassemblies, functional modules, and
-structural components while excluding raw materials, tools, and consumables.
+components from technology descriptions with confidence scoring.
 """
 
 import os
-from typing import Iterator, List, Optional
+from typing import List, Optional
 
 from pydantic import BaseModel, ConfigDict, Field
 from pydantic_ai import Agent
@@ -403,132 +407,154 @@ from pydantic_ai import Agent
 from ..models import STDNDependencies
 
 # ============================================================================
-# Data Models
+# Pydantic Models for Components with Confidence
 # ============================================================================
 
 
-class ComponentList(BaseModel):
-    """Structured output for technology components."""
+class ComponentWithConfidence(BaseModel):
+    """A single component proposal with confidence and reasoning."""
 
-    component_list: List[str] = Field(
-        alias="componentlist",
-        description="Primary technology components: major subassemblies, functional modules, structural elements",
+    name: str = Field(description="Component name")
+    confidence: float = Field(
+        description="Confidence score (0.0 to 1.0) that this is a primary component", ge=0.0, le=1.0
+    )
+    reasoning: str = Field(description="Brief justification for this component")
+
+
+class ComponentList(BaseModel):
+    """Structured output for technology components with confidence scores."""
+
+    component_list: List[ComponentWithConfidence] = Field(
+        alias="componentlist", description="Primary technology components with confidence scores"
     )
 
     model_config = ConfigDict(populate_by_name=True)
 
-    def __len__(self) -> int:
-        """Return the number of components."""
-        return len(self.component_list)
-
-    def __iter__(self) -> Iterator[str]:
-        """Allow iteration over components."""
-        return iter(self.component_list)
-
-    def __getitem__(self, index: int) -> str:
-        """Allow indexing."""
-        return self.component_list[index]
-
 
 # ============================================================================
-# Component Extraction Agent
+# System Prompt
 # ============================================================================
 
-COMPONENT_SYSTEM_PROMPT = """You are an expert supply chain analyst specializing in component identification and technology decomposition.
 
-Your task is to identify PRIMARY MANUFACTURING COMPONENTS for a given technology product.
+COMPONENT_SYSTEM_PROMPT = """You are an expert in technology manufacturing and supply chain analysis.
 
-**BE COMPREHENSIVE**: Identify ALL major components that would need to be procured or manufactured separately. For complex technologies, this could be 8-15+ components.
+Your task is to identify PRIMARY MANUFACTURING COMPONENTS for a technology product.
 
-INCLUDE in your component list:
-- Major subassemblies (e.g., display module, power module, processing unit)
-- Functional modules with distinct supply chains
-- Structural components that form the product architecture
-- Procurable, separately-manufactured parts
-- Critical subsystems (cooling, control, sensing, actuation)
-- Interface components (connectors, ports, communication modules)
-- Power delivery systems (batteries, power supplies, voltage regulators)
-- Enclosures and housing (chassis, cases, protective elements)
+PRIMARY COMPONENTS are major subassemblies or modules that:
+- Are procured or manufactured separately
+- Have distinct supply chains
+- Form the core functional or structural architecture
+- Are typically purchased as complete units
 
-EXCLUDE from your component list:
-- Raw materials (metals, plastics, chemicals, elements)
+INCLUDE:
+- Major functional modules (e.g., display, battery, processor)
+- Structural assemblies (e.g., chassis, enclosure)
+- Key subassemblies with separate suppliers
+- Electronic boards and subsystems
+
+EXCLUDE:
+- Raw materials (metals, plastics, chemicals) - these are inputs TO components
 - Manufacturing tools and equipment
 - Consumables (adhesives, fasteners, solvents, lubricants)
-- Generic supplies or utilities
-- Manufacturing processes or services
+- Generic supplies and packaging materials
 
-When identifying components:
-1. Think about how the product is designed and manufactured
-2. Consider which parts have separate supply chains
-3. Identify parts that could be sourced from different suppliers
-4. Look at the assembly hierarchy from subassemblies down to major parts
-5. Consider the product's functional subsystems (power, processing, sensing, actuation, communication, etc.)
+CRITICAL: For each component you identify, you MUST provide:
 
-Examples for different technologies:
-- **Smartphone**: display, battery, processor, memory, camera, antenna, speaker, microphone, charging port, chassis, circuit board, sensors
-- **Quantum Computer**: cryogenic system, vacuum chamber, qubit array, control electronics, dilution refrigerator, signal amplifiers, shielding, wiring harness, power system, readout electronics, classical computer interface
-- **MRI Machine**: magnet assembly, gradient coils, RF coils, patient table, cooling system, power supply, control console, computer system, shielding enclosure
+1. **Component Name**: The specific name of the component
 
-Return a JSON response with a list of component names.
+2. **Confidence Score (0.0 to 1.0)**: Your confidence that this is truly a PRIMARY component
+   - **0.9-1.0**: Absolutely certain - universal standard, always present
+   - **0.8-0.89**: Very confident - industry standard, nearly universal
+   - **0.7-0.79**: Confident - common in most designs
+   - **0.6-0.69**: Moderately confident - common but may vary by design
+   - **0.5-0.59**: Uncertain - depends on specific implementation
+   - **0.3-0.49**: Low confidence - sometimes integrated differently
+   - **0.0-0.29**: Very low confidence - rarely a separate component
 
-Be specific: "lithium-ion battery pack" not "battery"
-Be clear: "aluminum chassis" not just "frame"
-Be thorough: Include ALL major components, not just the most obvious ones"""
+3. **Reasoning**: Brief explanation justifying why this is a primary component and your confidence level
 
+Consider these factors when assigning confidence:
+- How universally is this component present in the technology?
+- Is it typically procured as a separate unit?
+- How standardized is this component across manufacturers?
+- Are there alternative designs that omit or integrate this component?
 
-def _get_configured_model() -> str:
-    """Get model from config or environment"""
-    model = os.environ.get("STDN_MODEL")
-    if model:
-        return model
-    return os.environ.get("OLLAMA_MODEL", "ollama:qwen2.5:7b")
+Your response will be used for supply chain risk analysis and policy decisions, so accuracy and justified confidence are critical.
 
+EXAMPLES:
 
-# Initialize the component extraction agent
-component_agent = Agent(
-    _get_configured_model(),
-    output_type=ComponentList,
-    deps_type=STDNDependencies,
-    system_prompt=COMPONENT_SYSTEM_PROMPT,
-)
+For a Smartphone:
+- Display Module | 0.95 | Essential for user interface, universally present as a separate procured unit in all smartphones
+- Battery Pack | 0.95 | Critical for portable power, always a distinct replaceable component with separate supply chain
+- Main Circuit Board | 0.90 | Core electronics platform, standard across all designs though specific implementation varies
+- Camera Module | 0.90 | Standard feature in all modern smartphones, procured as complete assembly
+- Chassis/Frame | 0.85 | Structural component, typically aluminum or steel frame as separate part
+- Speakers | 0.80 | Audio output component, standard but sometimes integrated differently
+- Vibration Motor | 0.70 | Common but small component, occasionally omitted in some designs
+
+For an Electric Vehicle:
+- Battery Pack | 0.98 | Absolutely essential, largest and most critical component with complex supply chain
+- Electric Motor | 0.98 | Core propulsion system, always present as major subassembly
+- Power Electronics | 0.95 | Inverter and control systems, critical and universally present
+- Battery Management System | 0.92 | Essential for battery safety and performance, separate electronic module
+- Thermal Management System | 0.88 | Cooling system for battery and motor, standard in all EVs
+- Onboard Charger | 0.85 | Converts AC to DC for charging, present in most designs
+- Body Structure | 0.80 | Chassis and frame, varies significantly by manufacturer
+
+Return your response as a structured list with name, confidence, and reasoning for each component.
+"""
 
 
 # ============================================================================
-# Public API
+# Agent Creation
 # ============================================================================
 
 
 def get_component_agent(model_name: Optional[str] = None) -> Agent[STDNDependencies, ComponentList]:
     """
-    Get the component extraction agent.
+    Get the component extraction agent with confidence scoring.
+
+    This agent identifies primary manufacturing components for technologies
+    with confidence-weighted assessments and reasoning.
+
+    Args:
+        model_name: Optional model name override. If not provided, uses
+                   STDN_MODEL or OLLAMA_MODEL environment variable.
 
     Returns:
-        Agent configured for component extraction from technologies.
-        The agent takes technology descriptions and returns a ComponentList
-        of primary manufacturing components.
+        Configured Agent for component extraction with ComponentList output.
 
     Example:
         >>> agent = get_component_agent()
         >>> result = await agent.run(
-        ...     "smartphone with 5G, high-resolution display, and advanced camera",
+        ...     "Extract components for: Smartphone",
         ...     deps=STDNDependencies(...)
         ... )
-        >>> print(result.output.component_list)
-        ["display_module", "processor_unit", "battery_pack", ...]
+        >>> for comp in result.output.component_list:
+        ...     print(f"{comp.name}: {comp.confidence:.2f}")
     """
-    # Use provided model or fall back to environment/default
     if model_name is None:
         model_name = os.environ.get("STDN_MODEL") or os.environ.get(
-            "OLLAMA_MODEL", "ollama:qwen2.5:7b"
+            "OLLAMA_MODEL", "ollama:qwen2.5-7b"
         )
 
-    # Create and return the agent with the specified model
     return Agent(
         model_name,
         output_type=ComponentList,
         deps_type=STDNDependencies,
         system_prompt=COMPONENT_SYSTEM_PROMPT,
     )
+
+
+# ============================================================================
+# Public API
+# ============================================================================
+
+__all__ = [
+    "ComponentWithConfidence",
+    "ComponentList",
+    "get_component_agent",
+]
 
 
 ===================================================
@@ -549,7 +575,7 @@ producing country.
 import os
 from typing import List, Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 from pydantic_ai import Agent
 
 from ..models import STDNDependencies
@@ -560,11 +586,22 @@ from ..models import STDNDependencies
 
 
 class CountryPercentage(BaseModel):
-    country: str
-    meas_unit: str
-    amount: float
-    percentage: float = Field(ge=0.0, le=100.0)
-    hs_code: Optional[str] = None  # ADD THIS LINE
+    """Country production data with confidence scoring."""
+
+    country: str = Field(description="Country name")
+    percentage: float = Field(description="Percentage of global production", ge=0.0, le=100.0)
+    confidence: float = Field(
+        description="Confidence score (0.0 to 1.0) in this estimate",
+        ge=0.0,
+        le=1.0,
+        default=0.8,  # Fallback for backward compatibility
+    )
+    reasoning: str = Field(description="Explanation of data source and confidence", default="")
+    measurement_unit: Optional[str] = Field(
+        description="Unit of measurement (e.g., metric tons)", default=None, alias="meas_unit"
+    )
+
+    model_config = ConfigDict(populate_by_name=True)
 
 
 class CountryList(BaseModel):
@@ -579,45 +616,68 @@ class CountryList(BaseModel):
 # Country Data Agent
 # ============================================================================
 
-COUNTRY_DATA_SYSTEM_PROMPT = """You are an expert supply chain analyst specializing in global mineral and material production statistics.
+COUNTRY_DATA_SYSTEM_PROMPT = """You are an expert in global mineral production, mining operations, and commodity trade.
 
-Your task is to provide the top-producing countries for a given raw material, along with production statistics.
+Your task is to identify the PRIMARY PRODUCING COUNTRIES for a given raw material and estimate their share of global production.
 
-PROVIDE for each country:
-1. Country name or internationally recognized code
-2. Approximate amount produced (specific number with units)
-3. Unit of measure (metric tons, kilograms, tonnes, etc.)
-4. Percentage of global supply that this country produces
+CRITICAL: For each country you identify, you MUST provide:
 
-FOCUS on:
-- Major producing nations (responsible for 80%+ of global supply)
-- Strategic producers in geopolitically important regions
-- Countries with documented supply chain vulnerabilities
-- Producers with export restrictions or sanctions considerations
+1. **Country Name**: Use standard country names (e.g., "China", "United States", "Australia")
 
-DATA QUALITY:
-- Use most recent publicly available data (within 2-3 years when possible)
-- Be specific about measurement units (metric tons ≠ kg ≠ ounces)
-- Ensure percentages sum to reasonable total (may be >100% if counting all producers)
-- Flag any known supply chain disruptions or constraints
+2. **Production Percentage**: Estimated percentage of global production (0-100)
+   - Must sum to approximately 100% across all countries
+   - Focus on top 3-5 producers
+   - Be realistic about market concentration
 
-EXCLUDE:
-- Informal or unverified producers
-- Countries with minimal production (<0.5% global supply)
-- Speculative or theoretical production potential
+3. **Confidence Score (0.0 to 1.0)**: Your confidence in this country/percentage estimate
+   - **0.9-1.0**: Based on recent authoritative data (USGS, World Bank, national surveys)
+   - **0.8-0.89**: Very confident - well-documented major producer with reliable stats
+   - **0.7-0.79**: Confident - known producer with reasonable estimates
+   - **0.6-0.69**: Moderately confident - known producer, percentage approximate
+   - **0.5-0.59**: Uncertain - limited recent data, extrapolated estimates
+   - **0.3-0.49**: Low confidence - outdated data or significant uncertainty
+   - **0.0-0.29**: Very low confidence - speculative estimate
 
-Return a JSON response with a list of countries and their production data.
-Be accurate in percentages and amounts - policy decisions depend on this data.
-Include confidence indicators if any data points are estimates vs. verified.
+4. **Reasoning**: Brief explanation (1-2 sentences) covering:
+   - Data source or basis for estimate (USGS 2024, industry report, etc.)
+   - Why you assigned this confidence level
+   - Any caveats or uncertainties
 
-For example response format:
-{
-  "country_list": [
-    {"country": "China", "meas_unit": "metric tons", "amount": 10000000, "percentage": 75.5},
-    {"country": "Vietnam", "meas_unit": "metric tons", "amount": 1500000, "percentage": 12.3},
-    ...
-  ]
-}"""
+5. **Measurement Unit** (optional): Typical unit (metric tons, tonnes, kg, etc.)
+
+Consider these factors when assigning confidence:
+- **Data recency**: How recent and up-to-date is your source?
+- **Source authority**: USGS, national geological surveys, and industry associations are most reliable
+- **Production stability**: Has this country's production been consistent over time?
+- **Data completeness**: Are there known gaps or reporting issues?
+- **Market dynamics**: Are there recent changes (new mines, closures, policy shifts)?
+
+EXAMPLES:
+
+For Lithium:
+- China | 62 | 0.92 | Dominates production and refining based on USGS 2024 data; very reliable statistics | metric tons
+- Australia | 18 | 0.90 | Second largest producer with well-documented mining operations; USGS verified | metric tons
+- Chile | 12 | 0.85 | Major brine producer; data from Chilean mining ministry; slight reporting lag | metric tons
+- Argentina | 5 | 0.75 | Growing producer; recent expansion but data less comprehensive | metric tons
+
+For Rare Earth Elements:
+- China | 70 | 0.95 | Overwhelmingly dominant producer with comprehensive government statistics | metric tons
+- United States | 15 | 0.80 | Single major mine (Mountain Pass); well-documented but limited sources | metric tons
+- Myanmar | 10 | 0.50 | Significant but informal production; data quality poor and estimates vary widely | metric tons
+- Australia | 5 | 0.75 | Growing production; reliable Australian data but relatively new operations | metric tons
+
+FOCUS ON:
+- Mining and primary production (not just refining or processing)
+- Recent data (prefer last 3-5 years)
+- Commercially significant production levels (typically top 3-5 countries)
+- Verifiable sources (government surveys, industry associations, academic research)
+
+If data is unavailable, outdated, or highly uncertain:
+- State this explicitly in reasoning
+- Use LOW confidence scores (0.3-0.5)
+- Provide best estimate with clear caveats
+- Mention the uncertainty and data limitations
+"""
 
 
 def _get_configured_model() -> str:
@@ -642,40 +702,33 @@ country_data_agent = Agent(
 # ============================================================================
 
 
-def get_country_data_agent(model_name: Optional[str] = None) -> Agent[STDNDependencies, CountryList]:
+def get_country_data_agent(
+    model_name: Optional[str] = None,
+) -> Agent[STDNDependencies, CountryList]:
     """
-    Get the country data extraction agent.
+    Get the country data agent with confidence scoring.
 
-    This agent is used as a fallback when USGS database queries don't return
-    results. It uses LLM reasoning to estimate top-producing countries and
-    their production statistics for a given material.
+    This agent identifies primary producing countries for raw materials
+    with confidence-weighted estimates and reasoning.
+
+    Args:
+        model_name: Optional model name override
 
     Returns:
-        Agent configured for extracting country production data.
-        The agent takes a material name and year, and returns CountryList
-        with top-producing countries and their production statistics.
-
-    Example:
-        >>> agent = get_country_data_agent()
-        >>> result = await agent.run(
-        ...     "Return the top 5 countries that produced lithium in 2024, "
-        ...     "with production amounts and percentage of global supply.",
-        ...     deps=STDNDependencies(...)
-        ... )
-        >>> print(result.data.country_list)
-        [
-            CountryPercentage(country="China", meas_unit="metric tons", amount=100000, percentage=65.5),
-            CountryPercentage(country="Australia", meas_unit="metric tons", amount=42000, percentage=27.3),
-            ...
-        ]
-
-    Notes:
-        - This agent is typically called by CountryDataGenerator in data/repository.py
-        - It serves as a fallback when USGS database queries are empty
-        - Results are cached to avoid redundant LLM calls
-        - For policy work, USGS data is preferred over LLM estimates
+        Configured Agent for country data extraction with CountryList output
     """
-    return country_data_agent
+    if model_name is None:
+        model_name = os.environ.get("STDN_MODEL") or os.environ.get(
+            "OLLAMA_MODEL", "ollama:qwen2.5-7b"
+        )
+
+    return Agent(
+        model_name,
+        output_type=CountryList,
+        deps_type=STDNDependencies,
+        system_prompt=COUNTRY_DATA_SYSTEM_PROMPT,
+    )
+
 
 ===================================================
 File: dpi_stdn_agentic/src/stdn_agentic/agents/factory.py
@@ -1049,71 +1102,107 @@ logger = logging.getLogger(__name__)
 # Environment flag to control tool usage (for backends that don't support tools well)
 DISABLE_MATERIAL_TOOLS = os.getenv("STDN_DISABLE_MATERIAL_TOOLS", "1") == "1"
 
+
 # ============================================================================
 # Data Models
 # ============================================================================
 
 
+class MaterialWithConfidence(BaseModel):
+    """A single material with confidence and reasoning."""
+
+    name: str = Field(description="Material name (use standard terminology)")
+    confidence: float = Field(
+        description="Confidence score (0.0 to 1.0) that this material is essential", ge=0.0, le=1.0
+    )
+    reasoning: str = Field(description="Brief explanation of the material's role and confidence")
+
+
 class ComponentMaterials(BaseModel):
-    """Materials identified for a single component."""
+    """Materials for a specific component with confidence scores."""
 
     component: str = Field(description="Component name")
-    raw_materials: List[str] = Field(alias="materials", description="List of raw materials")
+    raw_materials: List[MaterialWithConfidence] = Field(
+        alias="materials", description="Raw materials with confidence scores"
+    )
 
     model_config = ConfigDict(populate_by_name=True)
 
 
 class ComponentMaterialsList(BaseModel):
-    """Collection of components with their materials."""
+    """List of components with their materials."""
 
     component_list: List[ComponentMaterials] = Field(
-        alias="componentlist", description="List of components and their materials"
+        alias="componentlist", description="Components with their raw materials"
     )
 
     model_config = ConfigDict(populate_by_name=True)
-
-    def __len__(self) -> int:
-        """Return the number of component materials."""
-        return len(self.component_list)
-
-    def __iter__(self) -> Iterator[ComponentMaterials]:
-        """Allow iteration over component materials."""
-        return iter(self.component_list)
-
-    def __getitem__(self, index: int) -> ComponentMaterials:
-        """Allow indexing."""
-        return self.component_list[index]
 
 
 # ============================================================================
 # Enhanced System Prompt
 # ============================================================================
 
-MATERIALS_SYSTEM_PROMPT = """You are an expert materials scientist and supply chain analyst specializing in manufacturing material identification.
+MATERIALS_SYSTEM_PROMPT = """You are an expert in materials science and manufacturing processes.
 
-Your task is to identify the RAW MATERIALS (NOT COMPONENTS OR SUBASSEMBLIES) used to manufacture each component of a technology product.
+Your task is to identify the RAW MATERIALS required to manufacture each component of a technology product.
 
-**CRITICAL**: Do NOT return component names, subassemblies, or finished parts. Return only RAW MATERIALS like metals, minerals, elements, and basic compounds.
+RAW MATERIALS are the fundamental inputs used in component manufacturing:
+- Metals and alloys (copper, aluminum, steel, rare earth elements)
+- Semiconductors and electronic materials (silicon, gallium, germanium)
+- Ceramics and glass materials
+- Polymers and plastics
+- Chemical compounds
+- Natural materials (rubber, graphite)
 
-EXAMPLES OF CORRECT MATERIALS:
-✓ Lithium, Cobalt, Nickel, Copper, Aluminum, Steel, Silicon, Glass, Rare Earth Elements
-✓ Gold, Silver, Tantalum, Tin, Tungsten, Platinum
-✓ Graphite, Carbon fiber, Ceramic, Polymer, Rubber
+INCLUDE:
+- Primary materials that make up the component's structure
+- Critical materials for functionality (e.g., lithium in batteries)
+- Coatings and surface treatments
+- Essential chemical inputs
 
-EXAMPLES OF INCORRECT (these are components, NOT materials):
-✗ Display module, Battery pack, Processor, Camera, Memory chip
-✗ PCB, Antenna, Connector, Speaker, Touchscreen
+EXCLUDE:
+- Finished components or subassemblies
+- Manufacturing tools and equipment
+- Process consumables (solvents, cleaning agents)
+- Generic fasteners and connectors
 
-**GUIDANCE**: The user prompt contains a list of standard material names. Use these names when possible, or use common variants or chemical names.
+CRITICAL: For each material you identify, you MUST provide:
 
-SELECTION GUIDELINES:
-- Select 2-8 RAW MATERIALS per component (most critical materials)
-- Prioritize strategic and critical materials (rare earths, lithium, cobalt, etc.)
-- Include structural materials (aluminum, steel, copper, glass)
-- Include semiconductor materials if applicable (silicon, gallium, germanium)
-- Use standard material names or their common variants
+1. **Material Name**: Use standard industry terminology (e.g., "Lithium" not "Li-ion battery material")
+2. **Confidence Score (0.0 to 1.0)**: Your confidence this material is essential for the component
+   - **0.9-1.0**: Absolutely essential - cannot manufacture without it
+   - **0.8-0.89**: Very confident - standard material, rarely substituted
+   - **0.7-0.79**: Confident - commonly used, few alternatives
+   - **0.6-0.69**: Moderately confident - commonly used but alternatives exist
+   - **0.5-0.59**: Uncertain - one of several possible materials
+   - **0.3-0.49**: Low confidence - optional or easily substituted
+   - **0.0-0.29**: Very low confidence - rarely used alternative
 
-For each component provided, return a JSON response with the component name and a list of RAW MATERIALS (not subcomponents).
+3. **Reasoning**: Brief explanation of the material's role and your confidence assessment
+
+Consider these factors when assigning confidence:
+- Is this material universally used for this component type?
+- Are there common substitutes or alternatives?
+- How critical is this material to the component's function?
+- What is the industry standard for this component?
+
+Use precise material names that match industry ontologies and USGS commodity classifications.
+
+EXAMPLES:
+Battery Pack:
+- Lithium | 0.95 | Primary energy storage material, essential for lithium-ion batteries
+- Cobalt | 0.85 | Cathode material, industry standard but alternatives emerging
+- Nickel | 0.80 | Cathode material, commonly used in high-energy batteries
+- Copper | 0.90 | Current collector and wiring, essential conductor
+- Aluminum | 0.85 | Casing and current collector, industry standard
+- Graphite | 0.90 | Anode material, critical for lithium-ion technology
+
+Display Module:
+- Glass | 0.95 | Substrate material, universal in displays
+- Indium | 0.90 | Transparent conductor (ITO), industry standard
+- Rare Earth Elements | 0.75 | Phosphors for color, alternatives exist
+- Plastic | 0.70 | Housing and backing, various polymer options available
 """
 
 
@@ -2035,11 +2124,14 @@ File: dpi_stdn_agentic/src/stdn_agentic/data/repository.py
 Country Data Repository for STDN
 
 This module provides the CountryDataRepository class that coordinates data
-retrieval from USGS database and LLM fallback for material-country mappings.
+retrieval from USGS database and LLM fallback for material-country mappings
+with confidence scoring.
 """
 
 import logging
-from typing import Dict, List, Optional
+import math
+from pathlib import Path
+from typing import Any, Dict, List, Optional
 
 import pandas as pd
 from pydantic_ai import RunUsage
@@ -2048,23 +2140,20 @@ from ..agents import get_country_data_agent
 from ..models import STDNDependencies
 from .usgs_client import USGSClient
 
-# Initialize logger
 logger = logging.getLogger(__name__)
-
-# ============================================================================
-# Country Data Repository
-# ============================================================================
 
 
 class CountryDataRepository:
     """
     Manages country production data retrieval with USGS + LLM fallback.
 
-    This class coordinates data retrieval:
-    1. First tries USGS database (primary source)
-    2. Falls back to LLM agent if USGS has no data
+    This class coordinates data retrieval with confidence scoring:
+    1. First tries USGS database (primary source, high confidence)
+    2. Falls back to LLM agent if USGS has no data (variable confidence)
     3. Optionally uses multi-agent debate for LLM fallback
     4. Caches results to avoid redundant queries
+
+    All returned data includes confidence scores and reasoning.
 
     Attributes:
         database_path: Path to USGS database
@@ -2099,7 +2188,7 @@ class CountryDataRepository:
 
         Args:
             database_path: Path to USGS DuckDB database
-            deps: STDN dependencies (for LLM access)
+            deps: STDN dependencies for LLM access
             top_n: Number of top countries to return
             use_llm_fallback: Use LLM when USGS has no data
         """
@@ -2124,9 +2213,10 @@ class CountryDataRepository:
         meas_year: int,
         usage: Optional[RunUsage] = None,
         use_debate: bool = False,
+        transcript_path: Optional[Path] = None,
     ) -> List[Dict]:
         """
-        Get country production data for a material.
+        Get country production data for a material with confidence scoring.
 
         Tries USGS database first, falls back to LLM if enabled.
         Can use multi-agent debate for LLM fallback.
@@ -2137,6 +2227,7 @@ class CountryDataRepository:
             meas_year: Measurement year for production data
             usage: Optional usage tracker
             use_debate: Use multi-agent debate for LLM fallback
+            transcript_path: Optional path to append results
 
         Returns:
             List of country data dicts with keys:
@@ -2144,7 +2235,9 @@ class CountryDataRepository:
                 - meas_unit: Measurement unit
                 - amount: Production amount
                 - percentage: Percentage of global production
-                - hs_code: HS code (if available)
+                - hs_code: HS code if available
+                - confidence: Confidence score (0.0-1.0)
+                - reasoning: Explanation of data source and confidence
         """
         # Check cache first
         cache_key = f"{material}_{src_year}_{meas_year}"
@@ -2154,40 +2247,64 @@ class CountryDataRepository:
 
         # Try USGS database
         print(f"Querying USGS for {material} (year {src_year}/{meas_year})")
-        usgs_data = self._query_usgs(material, src_year, meas_year)
+        usgs_data = self.query_usgs(material, src_year, meas_year)
 
         if usgs_data:
             print(f"✓ USGS returned {len(usgs_data)} countries")
-            # Add HS code
-            hs_code = self._lookup_hs_code(material)
+
+            # Add HS code and confidence to USGS data
+            hs_code = self.lookup_hs_code(material)
             for country in usgs_data:
                 country["hs_code"] = hs_code
+                # USGS data gets high confidence (authoritative source)
+                country["confidence"] = 0.95
+                country["reasoning"] = (
+                    f"USGS database {src_year}/{meas_year} - authoritative government data"
+                )
+
             self.cache[cache_key] = usgs_data
+
+            # Save to transcript if provided
+            if transcript_path:
+                self.append_country_data_to_transcript(
+                    transcript_path, material, usgs_data, source="USGS Database"
+                )
+
             return usgs_data
 
         # Fall back to LLM if enabled
         if self.use_llm_fallback and self.country_agent:
-            print("⚠ No USGS data found, using LLM fallback...")
+            print("No USGS data found, using LLM fallback...")
 
             # Use debate or single-agent LLM
             if use_debate:
-                llm_data = await self._query_llm_with_debate(material, meas_year, usage)
+                llm_data = await self.query_llm_with_debate(material, meas_year, usage)
             else:
-                llm_data = await self._query_llm(material, meas_year, usage)
+                llm_data = await self.query_llm(material, meas_year, usage)
 
             if llm_data:
                 print(f"✓ LLM returned {len(llm_data)} countries")
-                # Add HS code
-                hs_code = self._lookup_hs_code(material)
+
+                # Add HS code (LLM data already has confidence from agent)
+                hs_code = self.lookup_hs_code(material)
                 for country in llm_data:
                     country["hs_code"] = hs_code
+
                 self.cache[cache_key] = llm_data
+
+                # Save to transcript if provided
+                source = "Multi-Agent Debate" if use_debate else "LLM Fallback"
+                if transcript_path:
+                    self.append_country_data_to_transcript(
+                        transcript_path, material, llm_data, source=source
+                    )
+
                 return llm_data
 
         print(f"✗ No data found for {material}")
         return []
 
-    def _lookup_hs_code(self, material: str) -> Optional[str]:
+    def lookup_hs_code(self, material: str) -> Optional[str]:
         """
         Look up HS code for a material from the materials ontology CSV.
 
@@ -2208,45 +2325,45 @@ class CountryDataRepository:
             df = pd.read_csv("./data/hs_codes_and_usgs_names.csv")
 
             # Verify column exists
-            if "HS_Code" not in df.columns:
+            if "HS Code" not in df.columns:
                 return None
 
             # Clean the material name
             material_clean = material.lower().strip()
 
             # Try exact match first
-            match = df[df["Elements_Compounds"].str.lower().str.strip() == material_clean]
-
+            match = df[df["Elements/Compounds"].str.lower().str.strip() == material_clean]
             if not match.empty:
-                hs_code_value = match.iloc[0]["HS_Code"]
+                hs_code_value = match.iloc[0]["HS Code"]
                 # Check if value is not NaN and not empty
                 if pd.notna(hs_code_value) and str(hs_code_value).strip():
                     return str(int(hs_code_value))  # Convert to int first to remove .0
 
             # Try partial match if exact failed
             match = df[
-                df["Elements_Compounds"]
+                df["Elements/Compounds"]
                 .str.lower()
                 .str.contains(material_clean, na=False, regex=False)
             ]
             if not match.empty:
-                hs_code_value = match.iloc[0]["HS_Code"]
+                hs_code_value = match.iloc[0]["HS Code"]
                 if pd.notna(hs_code_value) and str(hs_code_value).strip():
                     return str(int(hs_code_value))
 
         except Exception as e:
             print(f"HS lookup error for {material}: {e}")
+            return None
 
         return None
 
-    def _query_usgs(
+    def query_usgs(
         self,
         material: str,
         src_year: int,
         meas_year: int,
     ) -> List[Dict]:
         """
-        Query USGS database for country data.
+        Query USGS database for country data with confidence scoring.
 
         Args:
             material: Material name
@@ -2254,26 +2371,24 @@ class CountryDataRepository:
             meas_year: Measurement year
 
         Returns:
-            List of country data dicts
+            List of country data dicts with confidence and reasoning
         """
         try:
             # Get top countries
             countries_df = self.usgs_client.query_top_countries(material, src_year, meas_year)
-
             if countries_df is None or len(countries_df) == 0:
                 return []
 
             # Get world totals (returns DataFrame)
             world_totals_df = self.usgs_client.query_world_totals(material, src_year, meas_year)
-
             if world_totals_df is None or world_totals_df.empty:
                 logger.warning(f"No world totals data for {material}")
                 return []
 
             # Extract production value from DataFrame
             try:
-                value_col: pd.Series = world_totals_df["VALUE"]  # type: ignore[assignment]
-                numeric_series: pd.Series = pd.to_numeric(value_col, errors="coerce")  # type: ignore[assignment]
+                value_col = pd.Series(world_totals_df["VALUE"])  # type: ignore[assignment]
+                numeric_series = pd.Series(pd.to_numeric(value_col, errors="coerce"))  # type: ignore[assignment]
                 world_production_sum = numeric_series.sum()
                 world_production = (
                     float(world_production_sum) if pd.notna(world_production_sum) else 0.0
@@ -2286,19 +2401,15 @@ class CountryDataRepository:
                 logger.warning(f"No world production data for {material}")
                 return []
 
-            # Build country data
+            # Build country data with confidence
             country_data = []
             for country_name in countries_df["country"]:
                 details_df = self.usgs_client.query_country_details(
                     material, country_name, src_year, meas_year
                 )
-
                 if details_df is None or details_df.empty:
                     continue
 
-                import math
-
-                # Iterate through DataFrame rows
                 for _, row in details_df.iterrows():
                     try:
                         if str(row.get("MEAS_TYPE", "")).upper() == "PRODUCTION":
@@ -2319,6 +2430,7 @@ class CountryDataRepository:
                                     "meas_unit": row.get("MEAS_UNIT", ""),
                                     "amount": amount,
                                     "percentage": percentage,
+                                    # USGS confidence added by caller
                                 }
                             )
                             break  # Only take production data
@@ -2329,17 +2441,17 @@ class CountryDataRepository:
             return country_data
 
         except Exception as e:
-            logger.error(f"Error in _query_usgs for {material}: {e}", exc_info=True)
+            logger.error(f"Error in query_usgs for {material}: {e}", exc_info=True)
             return []
 
-    async def _query_llm(
+    async def query_llm(
         self,
         material: str,
         year: int,
         usage: Optional[RunUsage] = None,
     ) -> List[Dict]:
         """
-        Query LLM agent for country data (single-agent fallback).
+        Query LLM agent for country data (single-agent fallback) with confidence.
 
         Args:
             material: Material name
@@ -2347,7 +2459,7 @@ class CountryDataRepository:
             usage: Optional RunUsage tracker
 
         Returns:
-            List of country data dicts
+            List of country data dicts with LLM-provided confidence and reasoning
         """
         if not self.country_agent:
             return []
@@ -2356,7 +2468,8 @@ class CountryDataRepository:
             f"Return the top {self.top_n} countries that produced {material} in {year}, "
             f"with production amounts (numeric values with units) and percentage of global supply. "
             f"Use the most recent data available (preferably {year} or within 2-3 years). "
-            f"Ensure percentages sum to a reasonable total and amounts are specific numbers, not estimates."
+            f"Ensure percentages sum to a reasonable total and amounts are specific numbers, not estimates. "
+            f"IMPORTANT: Provide confidence score (0.0-1.0) and reasoning for each country estimate."
         )
 
         try:
@@ -2369,13 +2482,15 @@ class CountryDataRepository:
             if result and result.output:
                 country_list = result.output
 
-                # Convert to standard format
+                # Extract data with confidence from CountryPercentage objects
                 country_data = [
                     {
                         "country": cp.country,
-                        "meas_unit": cp.meas_unit,
-                        "amount": cp.amount,
+                        "meas_unit": cp.measurement_unit or "metric tons",
+                        "amount": 0.0,  # LLM may not always provide amount
                         "percentage": cp.percentage,
+                        "confidence": cp.confidence,  # LLM-provided confidence
+                        "reasoning": cp.reasoning or "LLM estimate",
                     }
                     for cp in country_list.country_list
                 ]
@@ -2388,14 +2503,14 @@ class CountryDataRepository:
 
         return []
 
-    async def _query_llm_with_debate(
+    async def query_llm_with_debate(
         self,
         material: str,
         year: int,
         usage: Optional[RunUsage] = None,
-    ) -> List[Dict]:
+    ) -> List[Dict[str, Any]]:
         """
-        Query LLM with multi-agent debate for country data.
+        Query LLM with multi-agent debate for country data with confidence.
 
         Args:
             material: Material name
@@ -2403,45 +2518,112 @@ class CountryDataRepository:
             usage: Optional RunUsage tracker
 
         Returns:
-            List of country data dicts from debate consensus
+            List of country data dicts with debate-weighted confidence
         """
         from ..debate import MaterialCountryDebater
 
         debater = MaterialCountryDebater(
             deps=self.deps,
             num_agents=3,
-            top_n_proposed=10,  # ← NEW: Each expert proposes top 10
-            top_n_consensus=self.top_n,  # ← NEW: Final consensus is top 5 (or whatever self.top_n is)
+            top_n_proposed=10,
+            top_n_consensus=self.top_n,
             debate_top_p=0.0001,
         )
 
-        consensus = await debater.run_debate(material, year, usage)
-        return consensus
+        debate_result = await debater.run_debate(material, year, usage)
+
+        # Store debate info for transcript
+        self.last_debate_result = debate_result
+        self.last_debater = debater
+
+        # Convert to standard format with confidence
+        return debate_result.get("consensus", [])
+
+    def append_country_data_to_transcript(
+        self,
+        transcript_path: Path,
+        material: str,
+        country_data: List[Dict[str, Any]],
+        source: str = "Database",
+    ) -> None:
+        """
+        Append country production data to existing transcript with confidence.
+
+        Args:
+            transcript_path: Path to transcript file
+            material: Material name
+            country_data: List of country data dicts with confidence
+            source: Data source description
+        """
+        try:
+            # If we have debate info, use detailed format
+            if source == "Multi-Agent Debate" and hasattr(self, "last_debater"):
+                debate_result = getattr(self, "last_debate_result", None)
+                debater = getattr(self, "last_debater", None)
+
+                if debater and debate_result:
+                    formatted = debater.format_debate_for_transcript(material, debate_result)
+                    with open(transcript_path, "a", encoding="utf-8") as f:
+                        f.write(formatted)
+                        f.flush()
+                    logger.info(f"Appended full debate for {material} to transcript")
+                    return
+
+            # Otherwise use simple format (USGS or simple LLM)
+            lines = []
+            lines.append("\n\n")
+            lines.append("=" * 60 + "\n")
+            lines.append(f"TOP PRODUCING COUNTRIES: {material}\n")
+            lines.append(f"Data Source: {source}\n")
+            lines.append("=" * 60 + "\n")
+
+            if not country_data:
+                lines.append("  No country data available\n")
+            else:
+                for idx, country_info in enumerate(country_data, 1):
+                    country = country_info.get("country", "Unknown")
+                    percentage = country_info.get("percentage", 0.0)
+                    amount = country_info.get("amount", 0.0)
+                    unit = country_info.get("meas_unit", "")
+                    confidence = country_info.get("confidence", 0.0)
+                    reasoning = country_info.get("reasoning", "")
+
+                    lines.append(f"{idx}. {country}\n")
+                    lines.append(f"   Production: {amount:,.2f} {unit}\n")
+                    lines.append(f"   Global Share: {percentage:.1f}%\n")
+                    lines.append(f"   Confidence: {confidence:.2f}\n")
+                    if reasoning:
+                        lines.append(f"   Reasoning: {reasoning}\n")
+
+            lines.append("=" * 60 + "\n")
+
+            with open(transcript_path, "a", encoding="utf-8") as f:
+                f.write("".join(lines))
+                f.flush()
+
+            logger.info(f"Appended country data for {material} to transcript")
+
+        except Exception as e:
+            logger.error(f"Error appending country data to transcript: {e}")
 
     def clear_cache(self):
-        """Clear the country data cache"""
+        """Clear the country data cache."""
         self.cache.clear()
 
     def get_cache_stats(self) -> Dict:
-        """Get cache statistics"""
+        """Get cache statistics."""
         return {
             "cached_materials": len(self.cache),
             "materials": list(self.cache.keys()),
         }
 
     def close(self):
-        """Close database connections"""
+        """Close database connections."""
         if self.usgs_client:
             self.usgs_client.close()
 
 
-# ============================================================================
-# Public API
-# ============================================================================
-
-__all__ = [
-    "CountryDataRepository",
-]
+__all__ = ["CountryDataRepository"]
 
 
 ===================================================
@@ -2946,6 +3128,7 @@ Key enhancements:
 - Peer support calculation to boost consensus
 - Adaptive voting thresholds based on convergence
 - Confidence-weighted consensus building
+- Dynamic agent-specific confidence scoring
 """
 
 from __future__ import annotations
@@ -2954,6 +3137,8 @@ import logging
 from collections import Counter, defaultdict
 from dataclasses import dataclass
 from typing import Any, Dict, List, Optional
+
+from pydantic import BaseModel, Field
 
 logger = logging.getLogger(__name__)
 
@@ -2969,7 +3154,7 @@ class AgentProposal:
 
     agent_id: str
     component_name: str
-    confidence: float
+    confidence: float  # Now dynamically set by LLM
     reasoning: str
     round: int
 
@@ -2983,6 +3168,29 @@ class DebateRound:
     critiques: Dict[str, List[str]]
     convergence_score: float
     consensus_so_far: List[str]
+
+
+# ============================================================================
+# Pydantic Models for Structured Output
+# ============================================================================
+
+
+class ComponentWithConfidence(BaseModel):
+    """A single component proposal with confidence and reasoning."""
+
+    name: str = Field(description="Component name")
+    confidence: float = Field(
+        description="Confidence score (0.0 to 1.0) that this is a primary component", ge=0.0, le=1.0
+    )
+    reasoning: str = Field(description="Brief justification for this component")
+
+
+class DebateResponse(BaseModel):
+    """Structured response from an agent in a debate round."""
+
+    components: List[ComponentWithConfidence] = Field(
+        description="List of proposed components with confidence scores"
+    )
 
 
 # ============================================================================
@@ -3000,6 +3208,7 @@ class MultiAgentDebater:
     - Peer support boosts consensus formation
     - Adaptive voting thresholds based on convergence score
     - Confidence-weighted decision making
+    - Dynamic agent-specific confidence scores
     """
 
     def __init__(
@@ -3022,6 +3231,8 @@ class MultiAgentDebater:
                 Weight for confidence in voting (0–1, default: 0.3).
             peer_support_boost:
                 Confidence boost per supporting agent (default: 0.15).
+            debate_top_p:
+                Top-p sampling for debate rounds (default: 0.0001 for determinism).
         """
         self.max_rounds = max_rounds
         self.convergence_threshold = convergence_threshold
@@ -3070,7 +3281,6 @@ class MultiAgentDebater:
 
         Falls back to rule-based normalization if the LLM call fails.
         """
-        from pydantic import BaseModel, Field
         from pydantic_ai import Agent
 
         unique_names = list(set(component_names))
@@ -3490,11 +3700,15 @@ to its canonical form.
         roundnum: int,
     ) -> Dict[str, List[Dict[str, Any]]]:
         """
-        Run a single debate round with critique feedback.
+        Run a single debate round with critique feedback and dynamic confidence scoring.
 
         Returns:
-            Dict mapping agent_id -> list of proposal dicts.
+            Dict mapping agent_id -> list of proposal dicts with confidence scores.
         """
+        from dataclasses import replace
+
+        from pydantic_ai import Agent
+
         prev_context = "\n".join(
             f"- {self._get_prop_value(p, 'agent_id', 'unknown')}: "
             f"{self._get_prop_value(p, 'component') or self._get_prop_value(p, 'component_name', '')} "
@@ -3503,11 +3717,41 @@ to its canonical form.
         )
         critique_text = "\n".join(critiques)
 
+        # Enhanced system prompt that emphasizes confidence scoring
+        system_prompt = """You are an expert in technology component analysis participating in a multi-agent debate.
+
+Your task is to identify PRIMARY MANUFACTURING COMPONENTS for technologies.
+
+CRITICAL: For each component, you MUST provide:
+1. Component name
+2. Your confidence (0.0 to 1.0) that this is truly a primary component:
+   - 1.0 = Absolutely certain, universal standard
+   - 0.8-0.9 = Very confident, industry standard
+   - 0.6-0.7 = Moderately confident, common but may vary
+   - 0.4-0.5 = Uncertain, depends on implementation
+   - 0.0-0.3 = Low confidence, rarely separate
+3. Brief reasoning justifying your confidence
+
+Consider peer proposals and critiques carefully. Adjust your confidence based on:
+- Consensus among peers (higher confidence if many agree)
+- Strength of reasoning in critiques
+- Your own expertise and certainty
+"""
+
         new_proposals: Dict[str, List[Dict[str, Any]]] = {}
+
+        # Create a specialized agent for structured debate responses
+        debate_agent = Agent(
+            model=deps.model,
+            output_type=DebateResponse,
+            deps_type=type(deps),
+            system_prompt=system_prompt,
+        )
 
         # Use 3 agents with simple persona labels
         for agent_num in range(1, 4):
             agent_id = f"Agent{agent_num}"
+
             prompt = f"""DEBATE ROUND {roundnum}
 
 Technology: {technology}
@@ -3519,38 +3763,48 @@ PEER CRITIQUES AND GUIDANCE:
 {critique_text}
 
 YOUR TASK:
-1. Review peer proposals and critiques.
-2. Support strong consensus candidates.
-3. Drop isolated proposals unless critically justified.
-4. Propose a refined component list.
+1. Review all peer proposals and critiques carefully
+2. For EACH component you propose, assign a confidence score (0.0-1.0) based on:
+   - How certain you are it's a primary component
+   - Degree of peer support or opposition
+   - Strength of evidence and reasoning
+3. Support strong consensus candidates with high confidence
+4. Lower confidence for isolated proposals unless critically justified
+5. Provide clear reasoning for each confidence assessment
 
-Return only the updated list of primary components.
+Return your refined component list with confidence scores and reasoning.
 """
+
             try:
                 # Use very low Top-P for deterministic, focused refinements
-                from dataclasses import replace
-
                 debate_deps = replace(deps, top_p=self.debate_top_p)
 
-                result = await component_agent.run(prompt, deps=debate_deps, model=deps.model)
-                if result and result.output:
-                    if hasattr(result.output, "component_list"):
-                        components = result.output.component_list
-                    else:
-                        components = result.output
-                else:
-                    components = []
+                result = await debate_agent.run(prompt, deps=debate_deps, model=deps.model)
 
-                new_proposals[agent_id] = [
-                    {
-                        "agent_id": agent_id,
-                        "component": comp,
-                        "confidence": 0.85,
-                        "reasoning": "Refined based on debate feedback.",
-                        "round": roundnum,
-                    }
-                    for comp in components
-                ]
+                if result and result.output and result.output.components:
+                    proposals_list = []
+                    for comp in result.output.components:
+                        proposals_list.append(
+                            {
+                                "agent_id": agent_id,
+                                "component": comp.name,
+                                "confidence": comp.confidence,  # LLM-provided confidence
+                                "reasoning": comp.reasoning,
+                                "round": roundnum,
+                            }
+                        )
+                    new_proposals[agent_id] = proposals_list
+
+                    # Log confidence distribution for monitoring
+                    avg_conf = sum(p["confidence"] for p in proposals_list) / len(proposals_list)
+                    logger.info(
+                        f"Round {roundnum} - {agent_id}: {len(proposals_list)} components, "
+                        f"avg confidence={avg_conf:.2f}"
+                    )
+                else:
+                    logger.warning(f"No components returned from {agent_id} in round {roundnum}")
+                    new_proposals[agent_id] = []
+
             except Exception as exc:  # noqa: BLE001
                 logger.error("Error in debate round %s for %s: %s", roundnum, agent_id, exc)
                 # Fall back to previous proposals for this agent, if any
@@ -3569,7 +3823,7 @@ Return only the updated list of primary components.
         deps: Any,
     ) -> Dict[str, Any]:
         """
-        Run multi-round debate with LLM-based semantic normalization.
+        Run multi-round debate with LLM-based semantic normalization and dynamic confidence.
 
         Args:
             technology:
@@ -3622,6 +3876,13 @@ Return only the updated list of primary components.
             if not all_proposals:
                 print("  ⚠ No proposals available for this round.")
                 break
+
+            # Log confidence statistics
+            confidences = [p.get("confidence", 0.8) for p in all_proposals]
+            avg_conf = sum(confidences) / len(confidences)
+            min_conf = min(confidences)
+            max_conf = max(confidences)
+            print(f"  Confidence: avg={avg_conf:.2f}, min={min_conf:.2f}, max={max_conf:.2f}")
 
             # Collect all component names for normalization
             all_component_names = [
@@ -3679,7 +3940,7 @@ Return only the updated list of primary components.
                     critiques=critiques,
                     component_agent=component_agent,
                     deps=deps,
-                    roundnum=roundnum + 1,
+                    roundnum=roundnum + 2,  # Next round number
                 )
 
         # Final consensus building
@@ -3706,7 +3967,7 @@ Return only the updated list of primary components.
             all_final_proposals,
             convergence_score=convergence,
         )
-        print(f"  Extracted {len(consensus)} components")
+        print(f"  Extracted {len(consensus)} components with dynamic confidence weighting")
 
         return {
             "technology": technology,
@@ -3725,6 +3986,8 @@ __all__ = [
     "MultiAgentDebater",
     "AgentProposal",
     "DebateRound",
+    "ComponentWithConfidence",
+    "DebateResponse",
 ]
 
 
@@ -3823,7 +4086,7 @@ class MaterialCountryDebater:
         material: str,
         year: int,
         usage: Optional[RunUsage] = None,
-    ) -> List[Dict[str, Any]]:
+    ) -> Dict[str, Any]:  # ← Changed from List[Dict[str, Any]]
         """
         Run multi-agent voting for country production data.
 
@@ -3853,7 +4116,12 @@ class MaterialCountryDebater:
         for i, country_data in enumerate(consensus, 1):
             print(f"  {i}. {country_data['country']}: {country_data['percentage']:.1f}%")
 
-        return consensus
+        return {
+            "consensus": consensus,
+            "proposals": self.proposals,
+            "num_agents": self.num_agents,
+            "top_n_proposed": self.top_n_proposed,
+        }
 
     async def _collect_expert_proposals(
         self,
@@ -3995,6 +4263,96 @@ Return exactly {self.top_n_proposed} countries in order of production volume."""
             )
 
         return consensus
+
+    def format_debate_for_transcript(
+        self,
+        material: str,
+        debate_result: Dict[str, Any],
+    ) -> str:
+        """
+        Format full debate process for transcript.
+
+        Args:
+            material: Material name
+            debate_result: Result dict from run_debate
+
+        Returns:
+            Formatted debate transcript string
+        """
+        lines = []
+        lines.append(f"\n{'=' * 80}")
+        lines.append(f"COUNTRY PRODUCTION DEBATE: {material}")
+        lines.append(f"{'=' * 80}\n")
+
+        # Phase 1: Agent Proposals
+        lines.append("PHASE 1: EXPERT PROPOSALS")
+        lines.append("-" * 80)
+
+        proposals_by_agent: Dict[str, List[CountryProposal]] = {}
+        for prop in debate_result.get("proposals", []):
+            if prop.agent_id not in proposals_by_agent:
+                proposals_by_agent[prop.agent_id] = []
+            proposals_by_agent[prop.agent_id].append(prop)
+
+        for agent_id in sorted(proposals_by_agent.keys()):
+            props = sorted(proposals_by_agent[agent_id], key=lambda p: p.rank)
+            lines.append(f"\n{agent_id} (Mining Expert):")
+            lines.append(f"  Proposed {len(props)} countries:")
+            for prop in props:
+                lines.append(
+                    f"    {prop.rank}. {prop.country} - "
+                    f"{prop.amount:,.2f} {prop.meas_unit} ({prop.percentage:.1f}%)"
+                )
+
+        # Phase 2: Voting Results
+        lines.append(f"\n{'=' * 80}")
+        lines.append("PHASE 2: BORDA COUNT VOTING")
+        lines.append("-" * 80)
+
+        # Calculate voting details
+        from collections import defaultdict
+
+        country_scores: Dict[str, float] = defaultdict(float)
+        country_votes: Dict[str, int] = defaultdict(int)
+        country_ranks: Dict[str, List[int]] = defaultdict(list)
+
+        for prop in debate_result.get("proposals", []):
+            country_lower = prop.country.lower()
+            score = debate_result["top_n_proposed"] + 1 - prop.rank
+            country_scores[country_lower] += score
+            country_votes[country_lower] += 1
+            country_ranks[country_lower].append(prop.rank)
+
+        sorted_countries = sorted(country_scores.items(), key=lambda x: x[1], reverse=True)
+
+        lines.append("\nVoting Results (Rank × Agents):")
+        for country_lower, score in sorted_countries[:10]:  # Show top 10
+            votes = country_votes[country_lower]
+            ranks = country_ranks[country_lower]
+            avg_rank = sum(ranks) / len(ranks)
+            lines.append(
+                f"  {country_lower.title()}: "
+                f"score={score:.1f}, votes={votes}/{self.num_agents}, avg_rank={avg_rank:.1f}"
+            )
+
+        # Phase 3: Final Consensus
+        lines.append(f"\n{'=' * 80}")
+        lines.append("PHASE 3: FINAL CONSENSUS (Top 5)")
+        lines.append("-" * 80)
+
+        consensus = debate_result.get("consensus", [])
+        if not consensus:
+            lines.append("  (No consensus reached)")
+        else:
+            for idx, country_data in enumerate(consensus, 1):
+                lines.append(f"\n{idx}. {country_data['country']}")
+                lines.append(
+                    f"   Production: {country_data['amount']:,.2f} {country_data['meas_unit']}"
+                )
+                lines.append(f"   Global Share: {country_data['percentage']:.1f}%")
+
+        lines.append(f"\n{'=' * 80}\n")
+        return "\n".join(lines)
 
 
 # ============================================================================
@@ -5357,846 +5715,6 @@ class ConfigModel(BaseModel):
 
 
 ===================================================
-File: dpi_stdn_agentic/src/stdn_agentic/multi_agent_debate.py
-===================================================
-# multi_agent_debate.py
-
-import asyncio
-from collections import Counter
-from dataclasses import dataclass
-from typing import List, Literal, Optional
-
-from pydantic import BaseModel, Field
-from pydantic_ai import Agent, ModelRetry, RunContext
-
-from stdn_agentic.agents import ComponentList  # ComponentList is in agents.py
-
-# Import from your existing code
-from stdn_agentic.models import ConfigModel, STDNDependencies
-
-
-class ComponentProposal(BaseModel):
-    """Single agent's component proposal"""
-
-    name: str
-    reasoning: str = Field(description="Why this is a primary component")
-    confidence: float = Field(ge=0.0, le=1.0, description="Confidence score")
-    is_valid: bool = Field(default=True, description="Is this truly a component?")
-
-
-class AgentResponse(BaseModel):
-    """Agent's complete response with critiques"""
-
-    agent_id: str
-    components: List[ComponentProposal]
-    critique_of_others: Optional[str] = Field(
-        default=None, description="Critique of other agents' proposals"
-    )
-
-
-class DebateRoundResult(BaseModel):
-    """Result from one debate round"""
-
-    round_num: int
-    agent_responses: List[AgentResponse]
-    convergence_score: float = Field(
-        ge=0.0, le=1.0, description="How much agents agree (1.0 = full consensus)"
-    )
-
-
-class FinalConsensus(BaseModel):
-    """Final agreed-upon component list"""
-
-    components: List[ComponentProposal]
-    debate_summary: str
-    num_rounds: int
-    confidence: float = Field(ge=0.0, le=1.0)
-
-
-@dataclass
-class DebateConfig:
-    """Configuration for debate process"""
-
-    num_agents: int = 3
-    max_rounds: int = 3
-    consensus_threshold: float = 0.8
-    min_confidence: float = 0.6
-    agent_personas: List[str] = None
-
-    def __post_init__(self):
-        if self.agent_personas is None:
-            self.agent_personas = [
-                "Manufacturing Engineer - Focus on physical assemblies and subcomponents",
-                "Supply Chain Analyst - Focus on procurable, shippable components",
-                "Materials Scientist - Focus on distinguishing components from raw materials",
-            ]
-
-
-class MultiAgentComponentDebate:
-    """
-    Multi-agent debate system for component extraction
-    """
-
-    def __init__(self, model: str, deps: STDNDependencies, config: DebateConfig = None):
-        self.model = model
-        self.deps = deps
-        self.config = config or DebateConfig()
-
-        # Create multiple agents with different personas
-        self.agents = self._create_debate_agents()
-
-    def _create_debate_agents(self) -> List[Agent]:
-        """Create multiple agents with diverse personas"""
-        agents = []
-
-        for idx, persona in enumerate(
-            self.config.agent_personas[: self.config.num_agents]
-        ):
-            agent = Agent[STDNDependencies, AgentResponse](
-                model=self.model,
-                deps_type=STDNDependencies,
-                output_type=AgentResponse,
-                system_prompt=self._get_agent_system_prompt(persona, idx),
-            )
-            agents.append(agent)
-
-        return agents
-
-    def _get_agent_system_prompt(self, persona: str, agent_id: int) -> str:
-        """Generate system prompt for each agent with specific persona"""
-        return f"""You are Agent {agent_id + 1}, a {persona}.
-
-Your task is to identify PRIMARY MANUFACTURING COMPONENTS for a technology product.
-
-INCLUDE:
-- Major subassemblies that are procured or manufactured separately
-- Functional modules with distinct supply chains
-- Structural components that form the product architecture
-
-EXCLUDE:
-- Raw materials (metals, plastics, chemicals) - these are inputs TO components
-- Manufacturing tools and equipment
-- Consumables (adhesives, fasteners, solvents)
-- Generic supplies
-
-For each component you identify:
-1. Provide the specific name
-2. Explain your reasoning
-3. Rate your confidence (0.0-1.0)
-4. Mark whether it's truly a component vs. a material/tool
-
-When reviewing other agents' proposals:
-- Think critically and independently
-- Challenge classifications you disagree with
-- Provide specific reasoning for your critiques
-- Don't just agree to reach consensus - accuracy matters more
-
-Remember: You are {persona}. Bring this perspective to your analysis."""
-
-    async def phase_1_independent_generation(
-        self, technology: str
-    ) -> List[AgentResponse]:
-        """
-        Phase 1: Each agent independently generates component list
-        """
-        print(f"\n{'=' * 60}")
-        print("PHASE 1: Independent Component Generation")
-        print(f"{'=' * 60}")
-
-        tasks = []
-        for idx, agent in enumerate(self.agents):
-            task = self._agent_initial_response(agent, idx, technology)
-            tasks.append(task)
-
-        # Run all agents in parallel
-        responses = await asyncio.gather(*tasks)
-
-        # Print initial proposals
-        for response in responses:
-            print(f"\n{response.agent_id}:")
-            print(f"  Proposed {len(response.components)} components")
-
-        return responses
-
-    async def _agent_initial_response(
-        self, agent: Agent, agent_id: int, technology: str
-    ) -> AgentResponse:
-        """Single agent generates initial response"""
-
-        prompt = f"""Technology: {technology}
-
-Generate a list of primary manufacturing components for this technology.
-
-For each component provide:
-- Name
-- Reasoning
-- Confidence score
-- Whether it's a valid component (not a raw material or tool)
-
-Think independently and be thorough."""
-
-        result = await agent.run(prompt, deps=self.deps)
-
-        # Add agent ID
-        response = result.data
-        response.agent_id = f"Agent {agent_id + 1}"
-
-        return response
-
-    async def phase_2_debate(
-        self, technology: str, initial_responses: List[AgentResponse]
-    ) -> List[DebateRoundResult]:
-        """
-        Phase 2: Multi-round debate where agents critique and revise
-        """
-        print(f"\n{'=' * 60}")
-        print("PHASE 2: Multi-Agent Debate")
-        print(f"{'=' * 60}")
-
-        debate_history = []
-        current_responses = initial_responses
-
-        for round_num in range(1, self.config.max_rounds + 1):
-            print(f"\n--- Debate Round {round_num} ---")
-
-            # Calculate convergence
-            convergence = self._calculate_convergence(current_responses)
-            print(f"Current convergence: {convergence:.1%}")
-
-            # Create debate round result
-            round_result = DebateRoundResult(
-                round_num=round_num,
-                agent_responses=current_responses,
-                convergence_score=convergence,
-            )
-            debate_history.append(round_result)
-
-            # Check if we've reached consensus
-            if convergence >= self.config.consensus_threshold:
-                print(f"Consensus reached at {convergence:.1%}!")
-                break
-
-            # Run debate round
-            current_responses = await self._debate_round(
-                technology, current_responses, round_num
-            )
-
-        return debate_history
-
-    async def _debate_round(
-        self, technology: str, previous_responses: List[AgentResponse], round_num: int
-    ) -> List[AgentResponse]:
-        """Execute one round of debate"""
-
-        # Format other agents' proposals for review
-        other_proposals = self._format_proposals_for_review(previous_responses)
-
-        tasks = []
-        for idx, agent in enumerate(self.agents):
-            # Get this agent's previous response
-            prev_response = previous_responses[idx]
-
-            task = self._agent_debate_round(
-                agent=agent,
-                agent_id=idx,
-                technology=technology,
-                own_previous_response=prev_response,
-                other_proposals=other_proposals,
-                round_num=round_num,
-            )
-            tasks.append(task)
-
-        # Run all agents in parallel
-        new_responses = await asyncio.gather(*tasks)
-
-        return new_responses
-
-    def _format_proposals_for_review(self, responses: List[AgentResponse]) -> str:
-        """Format all agent proposals for peer review"""
-        formatted = []
-
-        for response in responses:
-            formatted.append(f"\n{response.agent_id} proposed:")
-            for comp in response.components:
-                formatted.append(
-                    f"  - {comp.name} "
-                    f"(confidence: {comp.confidence:.2f}, "
-                    f"valid: {comp.is_valid})"
-                )
-                formatted.append(f"    Reasoning: {comp.reasoning}")
-
-        return "\n".join(formatted)
-
-    async def _agent_debate_round(
-        self,
-        agent: Agent,
-        agent_id: int,
-        technology: str,
-        own_previous_response: AgentResponse,
-        other_proposals: str,
-        round_num: int,
-    ) -> AgentResponse:
-        """Single agent participates in one debate round"""
-
-        prompt = f"""Technology: {technology}
-
-=== YOUR PREVIOUS PROPOSAL (Round {round_num - 1}) ===
-{self._format_single_response(own_previous_response)}
-
-=== OTHER AGENTS' PROPOSALS ===
-{other_proposals}
-
-=== YOUR TASK ===
-Review the other agents' proposals and your own.
-
-1. Critique others' proposals:
-   - Which components do you agree/disagree with?
-   - Are any of their "components" actually raw materials or tools?
-   - Did they miss any critical components?
-
-2. Revise your own proposal:
-   - Keep components you're confident about
-   - Add components others found that you missed
-   - Remove items others convinced you are invalid
-   - Adjust confidence scores based on debate
-
-Think critically and independently. Don't just agree with the majority.
-
-Provide:
-- Updated component list with confidence scores
-- Your critique of other agents' proposals
-"""
-
-        result = await agent.run(prompt, deps=self.deps)
-        response = result.data
-        response.agent_id = f"Agent {agent_id + 1}"
-
-        return response
-
-    def _format_single_response(self, response: AgentResponse) -> str:
-        """Format single agent's response"""
-        lines = []
-        for comp in response.components:
-            lines.append(
-                f"- {comp.name} (confidence: {comp.confidence:.2f}, "
-                f"valid: {comp.is_valid})"
-            )
-        return "\n".join(lines)
-
-    def _calculate_convergence(self, responses: List[AgentResponse]) -> float:
-        """
-        Calculate how much agents agree
-        Returns 0.0 (no agreement) to 1.0 (perfect consensus)
-        """
-        # Extract all proposed component names
-        all_components = []
-        for response in responses:
-            valid_comps = [
-                c.name.lower().strip() for c in response.components if c.is_valid
-            ]
-            all_components.append(set(valid_comps))
-
-        if not all_components:
-            return 0.0
-
-        # Calculate Jaccard similarity across all agent pairs
-        num_agents = len(all_components)
-        if num_agents < 2:
-            return 1.0
-
-        total_similarity = 0.0
-        num_pairs = 0
-
-        for i in range(num_agents):
-            for j in range(i + 1, num_agents):
-                intersection = len(all_components[i] & all_components[j])
-                union = len(all_components[i] | all_components[j])
-
-                if union > 0:
-                    similarity = intersection / union
-                    total_similarity += similarity
-                    num_pairs += 1
-
-        return total_similarity / num_pairs if num_pairs > 0 else 0.0
-
-    def phase_3_build_consensus(
-        self, debate_history: List[DebateRoundResult]
-    ) -> FinalConsensus:
-        """
-        Phase 3: Build final consensus using weighted voting
-        """
-        print(f"\n{'=' * 60}")
-        print("PHASE 3: Building Consensus")
-        print(f"{'=' * 60}")
-
-        # Get final round responses
-        final_round = debate_history[-1]
-        final_responses = final_round.agent_responses
-
-        # Collect all proposed components with votes
-        component_votes = {}  # component_name -> list of proposals
-
-        for response in final_responses:
-            for comp in response.components:
-                if not comp.is_valid or comp.confidence < self.config.min_confidence:
-                    continue
-
-                # Normalize name
-                name_key = comp.name.lower().strip()
-
-                if name_key not in component_votes:
-                    component_votes[name_key] = []
-
-                component_votes[name_key].append(
-                    {
-                        "proposal": comp,
-                        "agent": response.agent_id,
-                        "confidence": comp.confidence,
-                    }
-                )
-
-        # Build consensus components
-        consensus_components = []
-
-        for name_key, votes in component_votes.items():
-            num_votes = len(votes)
-            vote_rate = num_votes / len(self.agents)
-
-            # Calculate weighted confidence
-            avg_confidence = sum(v["confidence"] for v in votes) / num_votes
-
-            # Weighted by vote rate and confidence
-            final_confidence = (vote_rate * 0.6) + (avg_confidence * 0.4)
-
-            print(f"\nComponent: {votes[0]['proposal'].name}")
-            print(f"  Votes: {num_votes}/{len(self.agents)} agents")
-            print(f"  Avg confidence: {avg_confidence:.2f}")
-            print(f"  Final confidence: {final_confidence:.2f}")
-
-            # Include if at least 2 agents agree OR 1 agent with very high confidence
-            if num_votes >= 2 or (num_votes == 1 and avg_confidence >= 0.9):
-                # Use the highest quality reasoning
-                best_proposal = max(votes, key=lambda v: v["confidence"])["proposal"]
-
-                consensus_components.append(
-                    ComponentProposal(
-                        name=best_proposal.name,
-                        reasoning=best_proposal.reasoning,
-                        confidence=final_confidence,
-                        is_valid=True,
-                    )
-                )
-
-        # Sort by confidence
-        consensus_components.sort(key=lambda c: c.confidence, reverse=True)
-
-        # Generate summary
-        summary = self._generate_debate_summary(debate_history, consensus_components)
-
-        consensus = FinalConsensus(
-            components=consensus_components,
-            debate_summary=summary,
-            num_rounds=len(debate_history),
-            confidence=sum(c.confidence for c in consensus_components)
-            / len(consensus_components)
-            if consensus_components
-            else 0.0,
-        )
-
-        print(f"\nFinal consensus: {len(consensus_components)} components")
-        print(f"Overall confidence: {consensus.confidence:.2f}")
-
-        return consensus
-
-    def _generate_debate_summary(
-        self,
-        debate_history: List[DebateRoundResult],
-        final_components: List[ComponentProposal],
-    ) -> str:
-        """Generate summary of debate process"""
-        lines = [
-            f"Debate completed in {len(debate_history)} rounds",
-            f"Initial convergence: {debate_history[0].convergence_score:.1%}",
-            f"Final convergence: {debate_history[-1].convergence_score:.1%}",
-            f"Consensus components: {len(final_components)}",
-        ]
-        return "\n".join(lines)
-
-    async def run_full_debate(self, technology: str) -> FinalConsensus:
-        """
-        Execute complete multi-agent debate process
-        """
-        print(f"\n{'#' * 60}")
-        print(f"MULTI-AGENT DEBATE: {technology}")
-        print(f"{'#' * 60}")
-
-        # Phase 1: Independent generation
-        initial_responses = await self.phase_1_independent_generation(technology)
-
-        # Phase 2: Debate
-        debate_history = await self.phase_2_debate(technology, initial_responses)
-
-        # Phase 3: Consensus
-        final_consensus = self.phase_3_build_consensus(debate_history)
-
-        return final_consensus
-
-
-# Integration with existing orchestrator
-
-
-async def extract_components_with_debate(
-    technology: str,
-    model: str,
-    deps: STDNDependencies,
-    num_agents: int = 3,
-    max_rounds: int = 3,
-) -> ComponentList:
-    """
-    Extract components using multi-agent debate
-    Returns ComponentList compatible with your existing code
-    """
-    debate_config = DebateConfig(
-        num_agents=num_agents,
-        max_rounds=max_rounds,
-        consensus_threshold=0.8,
-        min_confidence=0.6,
-    )
-
-    debate = MultiAgentComponentDebate(model=model, deps=deps, config=debate_config)
-
-    consensus = await debate.run_full_debate(technology)
-
-    # Convert to your existing ComponentList format
-    component_list = ComponentList(
-        component_list=[comp.name for comp in consensus.components]
-    )
-
-    return component_list
-
-
-===================================================
-File: dpi_stdn_agentic/src/stdn_agentic/multi_agent_debater.py
-===================================================
-"""
-Multi-agent debate system for component consensus
-
-Implements iterative debate where agents:
-1. Make independent proposals
-2. Critique each other's proposals
-3. Refine proposals based on feedback
-4. Reach convergence through multiple rounds
-"""
-
-from collections import Counter
-from dataclasses import dataclass
-from typing import Any, Dict, List
-
-
-@dataclass
-class AgentProposal:
-    """A component proposal from an agent"""
-
-    agent_id: str
-    component_name: str
-    confidence: float
-    reasoning: str
-    round: int
-
-
-@dataclass
-class DebateRound:
-    """Results from one round of debate"""
-
-    round_number: int
-    proposals: List[AgentProposal]
-    critiques: Dict[str, List[str]]
-    convergence_score: float
-    consensus_so_far: List[str]
-
-
-class MultiAgentDebater:
-    """Implements multi-round debate between agents"""
-
-    def __init__(self, max_rounds: int = 3, convergence_threshold: float = 0.8):
-        """
-        Initialize debater
-
-        Args:
-            max_rounds: Maximum debate rounds
-            convergence_threshold: Stop if convergence >= threshold
-        """
-        self.max_rounds = max_rounds
-        self.convergence_threshold = convergence_threshold
-        self.debate_history: List[DebateRound] = []
-
-    def run_debate(
-        self, technology: str, agent_proposals: Dict[str, List[Dict[str, Any]]]
-    ) -> Dict[str, Any]:
-        """
-        Run multi-round debate
-
-        Args:
-            technology: Technology being debated
-            agent_proposals: Dict of agent_id -> list of proposals
-                Each proposal: {"component": str, "confidence": float, "reasoning": str}
-
-        Returns:
-            Dict with final_consensus, debate_rounds, num_rounds, final_convergence
-        """
-        self.debate_history = []
-
-        print(f"\n{'=' * 80}")
-        print(f"DEBATE: {technology}")
-        print(f"{'=' * 80}\n")
-
-        for round_num in range(1, self.max_rounds + 1):
-            print(f"ROUND {round_num}: ", end="")
-
-            round_data = self._run_debate_round(
-                round_number=round_num, technology=technology, agent_proposals=agent_proposals
-            )
-
-            self.debate_history.append(round_data)
-
-            # Check convergence
-            if round_data.convergence_score >= self.convergence_threshold:
-                print(f"CONVERGENCE REACHED ({round_data.convergence_score:.1%})")
-                break
-            else:
-                print(f"Convergence: {round_data.convergence_score:.1%}")
-
-        # Build final consensus
-        final_consensus = self._build_final_consensus(technology, agent_proposals)
-
-        return {
-            "technology": technology,
-            "final_consensus": final_consensus,
-            "debate_rounds": self.debate_history,
-            "num_rounds": len(self.debate_history),
-            "final_convergence": self.debate_history[-1].convergence_score
-            if self.debate_history
-            else 0.0,
-        }
-
-    def _run_debate_round(
-        self, round_number: int, technology: str, agent_proposals: Dict[str, List[Dict[str, Any]]]
-    ) -> DebateRound:
-        """Run one round of debate"""
-
-        # Collect all proposals
-        all_proposals: List[AgentProposal] = []
-        for agent_id, components in agent_proposals.items():
-            for comp_data in components:
-                proposal = AgentProposal(
-                    agent_id=agent_id,
-                    component_name=comp_data.get("component", comp_data.get("name", "")),
-                    confidence=comp_data.get("confidence", 0.8),
-                    reasoning=comp_data.get("reasoning", ""),
-                    round=round_number,
-                )
-                all_proposals.append(proposal)
-
-        # Generate critiques
-        critiques = self._generate_critiques(round_number, all_proposals, agent_proposals)
-
-        # Calculate convergence
-        convergence = self._calculate_convergence(all_proposals)
-
-        # Extract consensus
-        consensus = self._extract_consensus(all_proposals)
-
-        return DebateRound(
-            round_number=round_number,
-            proposals=all_proposals,
-            critiques=critiques,
-            convergence_score=convergence,
-            consensus_so_far=consensus,
-        )
-
-    def _generate_critiques(
-        self,
-        round_number: int,
-        all_proposals: List[AgentProposal],
-        agent_proposals: Dict[str, List[Dict[str, Any]]],
-    ) -> Dict[str, List[str]]:
-        """Generate critiques from agents about each other's proposals"""
-        critiques = {}
-
-        for agent_id in agent_proposals.keys():
-            agent_critiques = []
-            my_components = {
-                p.component_name.lower() for p in all_proposals if p.agent_id == agent_id
-            }
-
-            # Find components proposed by others
-            other_components = {
-                p.component_name: (p.agent_id, p.confidence)
-                for p in all_proposals
-                if p.agent_id != agent_id
-            }
-
-            # Generate critique logic
-            for comp_name, (other_agent, confidence) in other_components.items():
-                if comp_name.lower() not in my_components:
-                    # I didn't propose this - should I reconsider?
-                    if confidence > 0.85:
-                        agent_critiques.append(
-                            f"🤔 {other_agent} proposed '{comp_name}' (confidence: {confidence:.2f}). "
-                            f"Worth considering."
-                        )
-                    else:
-                        agent_critiques.append(
-                            f"❌ {other_agent} proposed '{comp_name}' but confidence is only {confidence:.2f}. "
-                            f"May be weak proposal."
-                        )
-
-            # Self-reflection on subsequent rounds
-            if round_number > 1:
-                agent_critiques.append(
-                    f"🔄 {agent_id} reviewing own proposals in light of peer feedback..."
-                )
-
-            critiques[agent_id] = agent_critiques
-
-        return critiques
-
-    def _calculate_convergence(self, proposals: List[AgentProposal]) -> float:
-        """
-        Calculate convergence score using Jaccard similarity
-
-        Convergence = average Jaccard similarity between all agent pairs
-        """
-        if not proposals:
-            return 0.0
-
-        # Group components by agent
-        agent_sets = {}
-        for proposal in proposals:
-            if proposal.agent_id not in agent_sets:
-                agent_sets[proposal.agent_id] = set()
-            agent_sets[proposal.agent_id].add(proposal.component_name.lower())
-
-        # If only one agent, trivial convergence
-        if len(agent_sets) < 2:
-            return 1.0
-
-        # Calculate Jaccard similarity between all pairs
-        similarities = []
-        agents = list(agent_sets.keys())
-
-        for i in range(len(agents)):
-            for j in range(i + 1, len(agents)):
-                set_i = agent_sets[agents[i]]
-                set_j = agent_sets[agents[j]]
-
-                intersection = len(set_i & set_j)
-                union = len(set_i | set_j)
-
-                if union > 0:
-                    jaccard = intersection / union
-                    similarities.append(jaccard)
-
-        return sum(similarities) / len(similarities) if similarities else 0.0
-
-    def _extract_consensus(self, proposals: List[AgentProposal]) -> List[str]:
-        """
-        Extract consensus components using majority voting
-
-        A component is in consensus if proposed by >= 50% of agents
-        """
-        # Count votes per component
-        component_votes = Counter()
-        agent_ids = set()
-
-        for proposal in proposals:
-            component_votes[proposal.component_name.lower()] += 1
-            agent_ids.add(proposal.agent_id)
-
-        # Determine minimum votes needed (50% + 1)
-        min_votes = (len(agent_ids) + 1) // 2
-
-        # Extract consensus components
-        consensus = [comp for comp, votes in component_votes.items() if votes >= min_votes]
-
-        return sorted(consensus)
-
-    def _build_final_consensus(
-        self, technology: str, agent_proposals: Dict[str, List[Dict[str, Any]]]
-    ) -> Dict[str, Any]:
-        """Build final consensus from all debate rounds"""
-
-        if not self.debate_history:
-            return {"components": [], "confidence": 0.0}
-
-        final_round = self.debate_history[-1]
-
-        # Calculate average confidence for each consensus component
-        component_confidences = {}
-        for proposal in final_round.proposals:
-            comp = proposal.component_name.lower()
-            if comp in final_round.consensus_so_far:
-                if comp not in component_confidences:
-                    component_confidences[comp] = []
-                component_confidences[comp].append(proposal.confidence)
-
-        # Average confidences and build output
-        consensus_with_confidence = []
-        for comp in final_round.consensus_so_far:
-            avg_confidence = sum(component_confidences[comp]) / len(component_confidences[comp])
-            consensus_with_confidence.append(
-                {
-                    "component": comp.title(),
-                    "confidence": avg_confidence,
-                    "num_agents_agreed": len(component_confidences[comp]),
-                }
-            )
-
-        # Sort by confidence
-        consensus_with_confidence.sort(key=lambda x: x["confidence"], reverse=True)
-
-        return {
-            "technology": technology,
-            "components": consensus_with_confidence,
-            "confidence": final_round.convergence_score,
-            "rounds": len(self.debate_history),
-        }
-
-    def export_debate_transcript(self) -> Dict[str, Any]:
-        """Export debate transcript for reporting"""
-
-        transcript = {"rounds": []}
-
-        for round_data in self.debate_history:
-            round_transcript = {
-                "round_number": round_data.round_number,
-                "convergence_score": round_data.convergence_score,
-                "consensus_so_far": round_data.consensus_so_far,
-                "agent_proposals": {},
-            }
-
-            # Group proposals by agent
-            for proposal in round_data.proposals:
-                if proposal.agent_id not in round_transcript["agent_proposals"]:
-                    round_transcript["agent_proposals"][proposal.agent_id] = []
-
-                round_transcript["agent_proposals"][proposal.agent_id].append(
-                    {
-                        "component": proposal.component_name,
-                        "confidence": proposal.confidence,
-                        "reasoning": proposal.reasoning,
-                    }
-                )
-
-            # Add critiques
-            round_transcript["critiques"] = round_data.critiques
-
-            transcript["rounds"].append(round_transcript)
-
-        return transcript
-
-
-===================================================
 File: dpi_stdn_agentic/src/stdn_agentic/orchestrator/__init__.py
 ===================================================
 """
@@ -6692,11 +6210,13 @@ Enhanced features:
 - Robust materials extraction with comprehensive error handling
 - Enhanced multi-agent debate with critique-driven convergence
 - Adaptive consensus building based on convergence scores
+- Dynamic confidence scoring for all components
 - Detailed logging and progress reporting
 """
 
 import asyncio
 import csv
+import json
 import logging
 import os
 from datetime import datetime
@@ -6749,9 +6269,12 @@ class STDNOrchestrator:
             config: ConfigModel instance
             enable_checkpoints: Enable checkpoint saving
             enable_debate: Use multi-agent debate (True) or simple voting (False)
+            enable_material_debate: Use debate for materials extraction
+            enable_country_debate: Use debate for country data
             max_debate_rounds: Max debate rounds
             convergence_threshold: Convergence threshold
             save_transcripts: Save debate transcripts
+            debate_top_p: Top-p sampling parameter for debate
         """
         self.config = config
 
@@ -6838,7 +6361,7 @@ class STDNOrchestrator:
         Validate inputs for materials extraction.
 
         Returns:
-            Tuple of (is_valid, valid_components, error_message)
+            Tuple of (is_valid, valid_component_names, error_message)
         """
         # Check component list exists
         if not componentlist or not hasattr(componentlist, "component_list"):
@@ -6848,9 +6371,13 @@ class STDNOrchestrator:
 
         components = componentlist.component_list
 
-        # Filter valid components
-        valid_components = [c for c in components if c and isinstance(c, str) and c.strip()]
-        if not valid_components:
+        # Filter valid components and extract names
+        # Components are now ComponentWithConfidence objects
+        valid_component_names = [
+            c.name for c in components if c and hasattr(c, "name") and c.name.strip()
+        ]
+
+        if not valid_component_names:
             logger.warning(f"All components were null/empty for {technology}")
             print("🔍 All components were null/empty")
             return (False, None, "All components null/empty")
@@ -6861,7 +6388,7 @@ class STDNOrchestrator:
             print("❌ Material ontology is empty!")
             return (False, None, "Ontology empty")
 
-        return (True, valid_components, None)
+        return (True, valid_component_names, None)
 
     async def extract_materials_safe(
         self,
@@ -6874,18 +6401,20 @@ class STDNOrchestrator:
         Safely extract materials with comprehensive error handling and retry logic.
         """
         # Validate inputs
-        is_valid, valid_components, error_msg = self._validate_materials_extraction_inputs(
+        is_valid, valid_component_names, error_msg = self._validate_materials_extraction_inputs(
             componentlist, technology
         )
 
         if not is_valid:
             return ComponentMaterialsList.model_validate({"componentlist": []})
 
-        # Type assertion - valid_components is guaranteed to be non-empty here
-        assert valid_components, "valid_components should be non-empty after successful validation"
+        # Type assertion - valid_component_names is guaranteed to be non-empty here
+        assert valid_component_names, (
+            "valid_component_names should be non-empty after successful validation"
+        )
 
-        # Build prompt with validated data
-        component_str = "\n".join(f"- {comp}" for comp in valid_components)
+        # Build prompt with validated data (names are now strings)
+        component_str = "\n".join(f"- {comp}" for comp in valid_component_names)
         ontology_sample = self.deps.material_ontology_list[:50]
         ontology_str = ", ".join(ontology_sample)
 
@@ -6909,13 +6438,10 @@ class STDNOrchestrator:
 
     Return a JSON response with componentlist containing component and materials fields."""
 
-        # Type guard: valid_components is guaranteed to be list[str] here
-        assert valid_components is not None, "valid_components should not be None after validation"
-
         logger.info(
-            f"📋 Extracting materials for {len(valid_components)} components of {technology}"
+            f"📋 Extracting materials for {len(valid_component_names)} components of {technology}"
         )
-        print(f"  🔍 Extracting materials for {len(valid_components)} components...")
+        print(f"  🔍 Extracting materials for {len(valid_component_names)} components...")
 
         # RETRY LOGIC: Handle transient Ollama/model errors
         for attempt in range(max_retries):
@@ -7015,17 +6541,23 @@ class STDNOrchestrator:
                         else result.output
                     )
 
+                    # Extract dynamic confidence from ComponentWithConfidence objects
                     agent_proposals[agent_id] = [
                         {
-                            "component": comp,
-                            "confidence": 0.85,
-                            "reasoning": "Identified as key component",
+                            "component": comp.name,
+                            "confidence": comp.confidence,  # Dynamic from LLM
+                            "reasoning": comp.reasoning,
                         }
                         for comp in components
                     ]
 
+                    # Calculate average confidence for reporting
+                    avg_conf = sum(p["confidence"] for p in agent_proposals[agent_id]) / len(
+                        agent_proposals[agent_id]
+                    )
+
                     print(
-                        f"  ✓ {agent_id} (top_p={self.debate_top_p}): {len(components)} components proposed"
+                        f"  ✓ {agent_id} (top_p={self.debate_top_p}): {len(components)} components proposed (avg confidence: {avg_conf:.2f})"
                     )
 
                     # Store for transcript
@@ -7078,18 +6610,75 @@ class STDNOrchestrator:
                 print(f"⚠️  Failed to save transcript: {e}")
 
         # Extract final components from debate result
-        final_components = debate_result.get("components", [])
+        final_component_names = debate_result.get("components", [])
+        debate_history = debate_result.get("debate_history", [])
 
         # Debug output
         print(f"\n🔍 Debug - Consensus type: {type(debate_result)}")
         print(f"🔍 Debug - Consensus keys: {list(debate_result.keys())}")
-        print(f"📊 Final components extracted: {final_components}")
+        print(f"📊 Final consensus components: {final_component_names}")
 
-        if final_components:
-            return ComponentList(componentlist=final_components)
-        else:
+        if not final_component_names:
             logger.warning(f"Debate produced no consensus components for {technology}")
             return None
+
+        # Reconstruct ComponentWithConfidence objects from final proposals
+        # Get the last round's proposals to extract confidence and reasoning
+        final_round_proposals = []
+        if debate_history:
+            last_round = debate_history[-1]
+            if isinstance(last_round, dict) and "proposals" in last_round:
+                for agent_id, proposals in last_round["proposals"].items():
+                    final_round_proposals.extend(proposals)
+
+        # Build a map of component name -> (confidence, reasoning)
+        component_confidence_map = {}
+        for prop in final_round_proposals:
+            comp_name = prop.get("component", "")
+            normalized_name = (
+                self.debater.normalize_component_name(comp_name)
+                if self.debater
+                else comp_name.lower().strip()
+            )
+
+            if normalized_name not in component_confidence_map:
+                component_confidence_map[normalized_name] = {
+                    "confidence": prop.get("confidence", 0.75),
+                    "reasoning": prop.get("reasoning", "Consensus component from debate"),
+                    "original_name": comp_name,  # Keep original for display
+                }
+            else:
+                # Average confidence if multiple proposals for same component
+                existing = component_confidence_map[normalized_name]
+                existing["confidence"] = (existing["confidence"] + prop.get("confidence", 0.75)) / 2
+
+        # Create ComponentWithConfidence objects for consensus components
+        from ..agents import ComponentWithConfidence
+
+        final_components_with_confidence = []
+        for norm_name in final_component_names:
+            if norm_name in component_confidence_map:
+                comp_info = component_confidence_map[norm_name]
+                final_components_with_confidence.append(
+                    ComponentWithConfidence(
+                        name=comp_info["original_name"],
+                        confidence=comp_info["confidence"],
+                        reasoning=comp_info["reasoning"],
+                    )
+                )
+            else:
+                # Fallback if not found in proposals (shouldn't happen)
+                final_components_with_confidence.append(
+                    ComponentWithConfidence(
+                        name=norm_name,
+                        confidence=0.75,
+                        reasoning="Consensus component from multi-agent debate",
+                    )
+                )
+
+        print(f"✓ Created {len(final_components_with_confidence)} ComponentWithConfidence objects")
+
+        return ComponentList(componentlist=final_components_with_confidence)
 
     def _save_debate_transcript(
         self, technology: str, agent_responses: List[Dict], debate_result: Dict
@@ -7101,7 +6690,6 @@ class STDNOrchestrator:
             technology: Technology name
             agent_responses: Agent proposals and reasoning
             debate_result: Final debate consensus with rounds metadata
-            materials_info: Optional materials extraction/debate information
 
         Returns:
             Path to saved transcript (text version)
@@ -7216,58 +6804,141 @@ class STDNOrchestrator:
         materials_list: ComponentMaterialsList,
         technology: str,
         usage: RunUsage,
+        transcript_path: Optional[Path] = None,
+        component_confidence_map: Optional[dict] = None,
     ) -> list[dict[str, Any]]:
         """
-        Enrich materials with country production data.
+        Enrich materials with country production data including confidence scores.
+
+        Args:
+            materials_list: Materials for each component
+            technology: Technology name
+            usage: Usage tracker
+            transcript_path: Optional transcript path
+            component_confidence_map: Dict mapping component names to confidence scores
 
         Returns:
-            List of enriched data records
+            List of enriched data records with confidence columns
         """
         enriched_data = []
+
+        # Default to empty dict if not provided
+        if component_confidence_map is None:
+            component_confidence_map = {}
 
         for comp_mat in materials_list.component_list:
             component = comp_mat.component
 
-            for material in comp_mat.raw_materials:
+            # Get component confidence from the map
+            component_confidence = component_confidence_map.get(component, 0.0)
+
+            # Access raw_materials - should be a list of MaterialWithConfidence objects
+            raw_materials = comp_mat.raw_materials
+
+            # Ensure it's a list (not an iterator or generator)
+            if not isinstance(raw_materials, list):
+                raw_materials = list(raw_materials)
+
+            for material in raw_materials:
+                # Extract material name and confidence based on type
+                if hasattr(material, "name") and hasattr(material, "confidence"):
+                    # It's a MaterialWithConfidence object
+                    material_name = material.name
+                    material_confidence = material.confidence
+                elif isinstance(material, dict):
+                    # It's a dictionary (shouldn't happen but handle it)
+                    material_name = material.get("name", str(material))
+                    material_confidence = material.get("confidence", 0.0)
+                elif isinstance(material, str):
+                    # It's a plain string (legacy format)
+                    material_name = material
+                    material_confidence = 0.0
+                else:
+                    # Unknown type - convert to string and log warning
+                    material_name = str(material)
+                    material_confidence = 0.0
+                    logger.warning(f"Unexpected material type for {component}: {type(material)}")
+
+                # Skip empty material names
+                if not material_name or not material_name.strip():
+                    continue
+
                 try:
+                    # Query country data repository
                     country_data = await self.country_repo.get_country_data(
-                        material=material,
+                        material=material_name,
                         src_year=getattr(self.config, "src_year", 2024),
                         meas_year=getattr(self.config, "meas_year", 2025),
                         usage=usage,
                         use_debate=self.use_country_debate,
+                        transcript_path=transcript_path,
                     )
 
                     if country_data:
+                        # We have country data - create records with confidence
                         for country_info in country_data:
                             enriched_data.append(
                                 {
                                     "technology": technology,
                                     "component": component,
-                                    "material": material,
+                                    "component_confidence": round(component_confidence, 3),
+                                    "material": material_name,
+                                    "material_confidence": round(material_confidence, 3),
                                     "hs_code": country_info.get("hs_code"),
                                     "country": country_info.get("country", "Unknown"),
                                     "meas_unit": country_info.get("meas_unit", ""),
                                     "amount": country_info.get("amount", 0.0),
-                                    "percentage": country_info.get("percentage", 0.0),
+                                    "percentage": round(country_info.get("percentage", 0.0), 2),
+                                    "country_confidence": round(
+                                        country_info.get("confidence", 0.0), 3
+                                    ),
                                 }
                             )
                     elif self.write_nulls:
+                        # No country data found - write null record if enabled
                         enriched_data.append(
                             {
                                 "technology": technology,
                                 "component": component,
-                                "material": material,
+                                "component_confidence": round(component_confidence, 3),
+                                "material": material_name,
+                                "material_confidence": round(material_confidence, 3),
                                 "hs_code": None,
                                 "country": None,
                                 "meas_unit": None,
                                 "amount": None,
                                 "percentage": None,
+                                "country_confidence": None,
                             }
+                        )
+                    else:
+                        # No data and not writing nulls - log it
+                        logger.info(
+                            f"No country data for {material_name}, skipping (write_nulls=False)"
                         )
 
                 except Exception as e:
-                    logger.error(f"Error getting country data for {material}: {e}")
+                    logger.error(
+                        f"Error getting country data for {material_name} in {component}: {e}",
+                        exc_info=True,
+                    )
+                    # Optionally write error record if write_nulls enabled
+                    if self.write_nulls:
+                        enriched_data.append(
+                            {
+                                "technology": technology,
+                                "component": component,
+                                "component_confidence": round(component_confidence, 3),
+                                "material": material_name,
+                                "material_confidence": round(material_confidence, 3),
+                                "hs_code": None,
+                                "country": None,
+                                "meas_unit": None,
+                                "amount": None,
+                                "percentage": None,
+                                "country_confidence": None,
+                            }
+                        )
 
         return enriched_data
 
@@ -7300,15 +6971,35 @@ class STDNOrchestrator:
                 print(f"✗ No components extracted for {tech}")
                 return None
 
-            # Extract component list
+            # Extract component names and preserve full objects for potential transcript use
             if hasattr(components_result, "component_list"):
-                components: list[str] = components_result.component_list
+                # components_result.component_list now contains ComponentWithConfidence objects
+                component_objects = components_result.component_list
+                components: list[str] = [comp.name for comp in component_objects]
+
+                # Calculate and log average confidence
+                if component_objects:
+                    avg_confidence = sum(comp.confidence for comp in component_objects) / len(
+                        component_objects
+                    )
+                    print(
+                        f"✓ Extracted {len(components)} components (avg confidence: {avg_confidence:.2f})"
+                    )
+                else:
+                    print(f"✓ Extracted {len(components)} components")
             elif isinstance(components_result, list):
-                components = components_result
+                # Handle case where result is already a list
+                if components_result and hasattr(components_result[0], "name"):
+                    component_objects = components_result
+                    components = [comp.name for comp in components_result]
+                else:
+                    component_objects = []
+                    components = components_result
+                print(f"✓ Extracted {len(components)} components")
             else:
                 components = []
-
-            print(f"✓ Extracted {len(components)} components")
+                component_objects = []
+                print(f"✓ Extracted {len(components)} components")
 
             # Phase 2: Extract materials
             materials_list = await self._extract_materials_for_technology(components, tech, usage)
@@ -7320,12 +7011,25 @@ class STDNOrchestrator:
 
             print(f"✓ Extracted materials for {len(materials_list.component_list)} components")
 
+            # Get transcript path AFTER materials are extracted (so transcript exists)
+            transcript_path = None
+            if self.save_transcripts and self.reporter:
+                transcripts = list(self.reporter.output_dir.glob(f"{tech}_*.txt"))
+                if transcripts:
+                    transcript_path = max(transcripts, key=lambda p: p.stat().st_mtime)
+
             # Phase 3: Enrich with country data
-            enriched_data = await self._enrich_with_country_data(materials_list, tech, usage)
+            enriched_data = await self._enrich_with_country_data(
+                materials_list,
+                tech,
+                usage,
+                transcript_path=transcript_path,
+            )
 
             return {
                 "technology": tech,
                 "components": components,
+                "component_objects": component_objects,  # Preserve for transcript
                 "materials": materials_list,
                 "enriched_data": enriched_data,
             }
@@ -7337,7 +7041,7 @@ class STDNOrchestrator:
 
     def _build_material_transcript_content(
         self,
-        components: list[str],
+        components: list,  # Can accept ComponentWithConfidence or str
         debate_history: list,
         consensus: dict[str, list[str]],
     ) -> str:
@@ -7354,7 +7058,12 @@ class STDNOrchestrator:
         content.append("-" * 80 + "\n")
         content.append(f"Total Components: {len(components)}\n")
         for comp in components:
-            content.append(f"  - {comp}\n")
+            # Handle both ComponentWithConfidence objects and strings
+            if hasattr(comp, "name"):
+                content.append(f"  - {comp.name} (confidence: {comp.confidence:.2f})\n")
+            else:
+                content.append(f"  - {comp}\n")
+
         content.append("\n")
 
         # Phase 2: Debate Rounds
@@ -7413,7 +7122,7 @@ class STDNOrchestrator:
     def _save_material_debate_transcript(
         self,
         technology: str,
-        components: list[str],
+        components: list,  # Can be strings or ComponentWithConfidence
         debate_history: list,
         consensus: dict[str, list[str]],
     ) -> None:
@@ -7459,7 +7168,7 @@ class STDNOrchestrator:
             print(f"❌ EXCEPTION appending materials transcript: {type(e).__name__}: {e}")
             import traceback
 
-            traceback.print_exc()  # Print full stack trace
+            traceback.print_exc()
 
     def _update_material_json(
         self,
@@ -7468,8 +7177,6 @@ class STDNOrchestrator:
         consensus: dict[str, list[str]],
     ) -> None:
         """Update JSON transcript with materials data."""
-        import json
-
         with open(json_path, "r", encoding="utf-8") as f:
             data = json.load(f)
 
@@ -7508,9 +7215,6 @@ class STDNOrchestrator:
         Returns:
             Path to saved JSON file
         """
-        import csv
-        import json
-
         # Read the CSV file
         with open(self.output_file, "r", encoding="utf-8") as f:
             reader = csv.DictReader(f)
@@ -8215,6 +7919,183 @@ agents = factory.create_all_agents()
 print(f"✓ Factory created {len(agents)} agents: {list(agents.keys())}")
 
 print("\n✓ All agents initialized successfully!")
+
+
+===================================================
+File: dpi_stdn_agentic/src/stdn_agentic/tests/test_country_transcript.py
+===================================================
+"""
+Test for country debate transcript integration
+"""
+
+import asyncio
+import shutil
+import tempfile
+from pathlib import Path
+
+import duckdb
+
+
+async def test_country_debate_transcript():
+    """Test that country debates are appended to transcript."""
+
+    print("=" * 80)
+    print("TESTING COUNTRY DEBATE TRANSCRIPT INTEGRATION")
+    print("=" * 80)
+
+    # Setup
+    from pydantic_ai import RunUsage
+
+    from stdn_agentic.data.repository import CountryDataRepository
+    from stdn_agentic.debate import MaterialCountryDebater
+    from stdn_agentic.models import ConfigModel, STDNDependencies
+
+    # Create temp directory for test
+    temp_dir = Path(tempfile.mkdtemp())
+    transcript_file = temp_dir / "test_smartphone_20251121.txt"
+
+    try:
+        # Step 1: Create initial transcript (simulating component/material debate)
+        print("\n1. Creating initial transcript...")
+        with open(transcript_file, "w") as f:
+            f.write("=" * 80 + "\n")
+            f.write("TEST TRANSCRIPT\n")
+            f.write("=" * 80 + "\n\n")
+            f.write("PHASE 1: COMPONENTS\n")
+            f.write("  - display\n")
+            f.write("  - battery\n\n")
+            f.write("PHASE 2: MATERIALS\n")
+            f.write("  - Glass\n")
+            f.write("  - Lithium\n\n")
+
+        initial_size = transcript_file.stat().st_size
+        print(f"   ✓ Initial transcript size: {initial_size} bytes")
+
+        # Step 2: Setup dependencies
+        print("\n2. Setting up dependencies...")
+
+        from ollama import Client  # ← CHANGE TO OLLAMA CLIENT
+
+        from stdn_agentic.data.loaders import DataLoader
+
+        # Load material ontology list from CSV
+        material_ontology_list = DataLoader.load_csv(
+            "./data/hs_codes_and_usgs_names.csv", column="Elements_Compounds"
+        )
+
+        # Create material ontology dict
+        material_ontology_dict = {mat.lower(): mat for mat in material_ontology_list}
+
+        # Load materials to countries mapping (can be empty dict for test)
+        materials_top_countries_dict = {}
+
+        # Create Ollama client
+        ollama_client = Client()  # ← CREATE OLLAMA CLIENT
+
+        # Create deps with all required parameters
+        deps = STDNDependencies(
+            model="ollama:qwen2.5:7b",
+            material_ontology="./data/hs_codes_and_usgs_names.csv",
+            material_ontology_list=material_ontology_list,
+            material_ontology_dict=material_ontology_dict,
+            materials_top_countries_dict=materials_top_countries_dict,
+            years_to_query=[2024],
+            top_p=0.0001,
+            client=ollama_client,  # ← PASS OLLAMA CLIENT
+        )
+        print("   ✓ Dependencies created")
+
+        # Step 3: Create repository
+        print("\n3. Creating country data repository...")
+        repo = CountryDataRepository(
+            database_path="./data/world_mineral_commodity_reports_2022-2025_v8.db",
+            deps=deps,
+            top_n=5,
+            use_llm_fallback=True,
+        )
+        print("   ✓ Repository created")
+
+        # Step 4: Test country debate with transcript appending
+        print("\n4. Running country debate for Lithium...")
+        usage = RunUsage()
+
+        country_data = await repo.get_country_data(
+            material="Lithium",
+            src_year=2024,
+            meas_year=2024,
+            usage=usage,
+            use_debate=True,
+            transcript_path=transcript_file,  # ← Key parameter
+        )
+
+        print(f"   ✓ Got {len(country_data)} countries")
+
+        # Step 5: Verify transcript was appended
+        print("\n5. Verifying transcript was updated...")
+        final_size = transcript_file.stat().st_size
+        print(f"   Initial size: {initial_size} bytes")
+        print(f"   Final size: {final_size} bytes")
+        print(f"   Added: {final_size - initial_size} bytes")
+
+        if final_size <= initial_size:
+            print("   ✗ FAIL: Transcript was not updated!")
+            return False
+
+        # Step 6: Check transcript content
+        print("\n6. Checking transcript content...")
+        with open(transcript_file, "r") as f:
+            content = f.read()
+
+        required_sections = [
+            "COUNTRY PRODUCTION DEBATE: Lithium",
+            "PHASE 1: EXPERT PROPOSALS",
+            "PHASE 2: BORDA COUNT VOTING",
+            "PHASE 3: FINAL CONSENSUS",
+        ]
+
+        missing = []
+        for section in required_sections:
+            if section in content:
+                print(f"   ✓ Found: {section}")
+            else:
+                print(f"   ✗ Missing: {section}")
+                missing.append(section)
+
+        # Step 7: Show sample of appended content
+        print("\n7. Sample of appended content:")
+        print("-" * 80)
+        lines = content.split("\n")
+        # Show last 30 lines
+        for line in lines[-30:]:
+            print(line)
+        print("-" * 80)
+
+        # Final verdict
+        print("\n" + "=" * 80)
+        if missing:
+            print("TEST FAILED - Missing sections:", missing)
+            return False
+        else:
+            print("TEST PASSED - All sections found in transcript!")
+            print(f"Transcript saved to: {transcript_file}")
+            return True
+
+    except Exception as e:
+        print(f"\n✗ TEST ERROR: {e}")
+        import traceback
+
+        traceback.print_exc()
+        return False
+
+    finally:
+        # Cleanup (comment out to keep transcript for inspection)
+        # shutil.rmtree(temp_dir)
+        print(f"\nTest transcript kept at: {transcript_file}")
+
+
+if __name__ == "__main__":
+    result = asyncio.run(test_country_debate_transcript())
+    exit(0 if result else 1)
 
 
 ===================================================
@@ -10670,531 +10551,265 @@ See [the docs](https://docs.pytest.org/en/stable/how-to/cache.html) for more inf
 ===================================================
 File: dpi_stdn_agentic/README.md
 ===================================================
-# STDN Agentic
+# dpi_stdn_agentic
 
-**Shallow Technology Dependency Network** generation using multi-agent debate and Pydantic AI.
+**Shallow Technology Dependency Network (STDN) Generation & Analysis**  
+Multi-agent, LLM-driven, fully auditable, and reproducible supply network modeling.
 
-A research tool for analyzing technology supply chains by extracting component hierarchies, identifying raw materials, and mapping global production sources using a combination of LLM-based agents, USGS mineral commodity databases, and multi-agent consensus systems.
-
----
+***
 
 ## Table of Contents
 
 - [Overview](#overview)
-- [Architecture](#architecture)
-- [Features](#features)
-- [Installation](#installation)
-- [Configuration](#configuration)
-- [Database Setup](#database-setup)
+- [What Is a Shallow Technology Dependency Network?](#what-is-a-shallow-technology-dependency-network)
+- [Key Features](#key-features)
+- [Architecture & Debate Pipeline](#architecture--debate-pipeline)
+- [Data Model](#data-model)
+- [Pipeline Inputs & Outputs](#pipeline-inputs--outputs)
+- [Configuration & Environment](#configuration--environment)
 - [Usage](#usage)
-- [Output Format](#output-format)
-- [Troubleshooting](#troubleshooting)
-- [Development](#development)
-- [Citation](#citation)
+- [Extensibility & Integration](#extensibility--integration)
+- [Development Standards & Testing](#development-standards--testing)
+- [FAQ](#faq)
+- [Citations & Policy Use](#citations--policy-use)
 
----
+***
 
 ## Overview
 
-**STDN Agentic** generates **Shallow Technology Dependency Networks** - structured representations of:
-1. **Component hierarchies** within technologies (e.g., smartphone → display, battery, processor)
-2. **Raw material compositions** for each component (e.g., display → glass, indium, rare earth elements)
-3. **Global production sources** for each material (e.g., indium → China 60%, South Korea 15%)
+`dpi_stdn_agentic` generates highly explainable, single-layer ("shallow") technology dependency networks. It automates the extraction of:
+- Key technology components,
+- Their constituent raw materials,
+- And the country-level distribution of those materials’ production or supply.
 
-The system uses **multi-agent debate** to achieve consensus on component extraction, combining multiple LLM perspectives to reduce hallucination and improve accuracy.
+This is performed through orchestrated debate and consensus among multiple LLM agents—making all reasoning steps transparent and reproducible.
 
-### What is "Shallow"?
+***
 
-"Shallow" refers to a **single-level decomposition**: technologies → components → materials. Unlike deep hierarchical networks, STDN focuses on the first critical layer of supply chain dependencies, making it computationally efficient for policy analysis.
+## What Is a Shallow Technology Dependency Network?
 
-```
-Technology Level:        Smartphone
-                            |
-Component Level:     [Display] [Battery] [Processor] [Camera]
-                        |         |          |           |
-Material Level:     Glass     Lithium    Silicon     Glass
-                    Indium    Cobalt     Copper      Rare Earths
-                    REE       Nickel     Gold        Aluminum
-```
+A **Shallow Technology Dependency Network (STDN)** encodes, for a target technology:
+- **Primary components** (the most significant modules/assemblies needed for function or manufacture),
+- **Raw materials** for each component (metals, minerals, chemicals, etc.),
+- **The principal countries** producing or supplying those materials (quantified as percentage market share, tonnage, or HS code association).
 
----
+Unlike fully recursive "deep" BOMs, STDNs focus on a single level of decomposition—ideal for policy intervention, FTA supply planning, and rapid supply risk assessment.
 
-## Architecture
+***
 
-### System Flow
+## Key Features
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                    STDN Generation Pipeline                      │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-         ┌────────────────────────────────────────┐
-         │   1. MULTI-AGENT DEBATE SYSTEM         │
-         │   ┌──────────┐  ┌──────────┐           │
-         │   │ Agent 1  │  │ Agent 2  │           │
-         │   │ (qwen)   │  │ (qwen)   │           │
-         │   └────┬─────┘  └─────┬────┘           │
-         │        │              │                 │
-         │   ┌────▼──────────────▼────┐           │
-         │   │  Semantic Normalization│           │
-         │   │  (LLM-based consensus) │           │
-         │   └────────────┬────────────┘           │
-         │                ▼                        │
-         │         ComponentList                   │
-         └────────────────┬───────────────────────┘
-                          │
-                          ▼
-         ┌────────────────────────────────────────┐
-         │   2. MATERIALS EXTRACTION              │
-         │   (with fuzzy ontology matching)       │
-         │                                         │
-         │   Components → Materials Agent          │
-         │   + Retry Logic (exponential backoff)  │
-         │   + Ontology Validation                 │
-         └────────────────┬───────────────────────┘
-                          │
-                          ▼
-         ┌────────────────────────────────────────┐
-         │   3. COUNTRY DATA AGGREGATION          │
-         │                                         │
-         │   ┌─────────────┐    ┌──────────────┐  │
-         │   │ USGS DB     │ or │ LLM Fallback │  │
-         │   │ (DuckDB)    │    │ (Estimated)  │  │
-         │   └─────────────┘    └──────────────┘  │
-         │                                         │
-         │   + Caching Layer                       │
-         └────────────────┬───────────────────────┘
-                          │
-                          ▼
-                  ┌───────────────┐
-                  │  CSV Output   │
-                  │  + Transcripts│
-                  └───────────────┘
-```
+- **Multi-Agent LLM Debate:** Leverages independent LLM "personas" to propose, defend, and critique technology decompositions and material lists.
+- **Consistent Ontology Enforcement:** Raw materials are cross-validated against industry/material ontologies; ambiguous matches spark additional debate rounds.
+- **Country-Level Data Sourcing:** Uses USGS global mineral production stats as ground truth, with LLM fallback if ambiguities or gaps arise.
+- **Transparent Audit Trail:** Every stage (component, material, country) produces a transcript—enabling forensic reconstruction of every decision.
+- **Configurable & Reproducible:** Full decoupling of parameters (`config.json`), secrets (`.env`), and inputs/outputs; pipeline runs are precisely reproducible.
 
-### Component Architecture
+***
+
+## Architecture & Debate Pipeline
+
+Debate and consensus mechanisms are used at each key pipeline stage:
 
 ```
-src/stdn_agentic/
-├── agents/
-│   ├── component_agent.py    # Component extraction with debate
-│   ├── materials_agent.py    # Materials extraction + fuzzy matching
-│   ├── country_agent.py      # LLM-based country fallback
-│   └── factory.py            # Agent creation & caching
-├── orchestrator/
-│   ├── pipeline.py           # Main orchestration logic
-│   └── debater.py            # Multi-agent debate system
-├── data/
-│   ├── usgs_client.py        # DuckDB USGS database client
-│   ├── repository.py         # Unified data access layer
-│   └── cache.py              # Material/country data cache
-├── models.py                 # Pydantic models (STDNDependencies, ConfigModel)
-└── main.py                   # CLI entry point
++--------------------+
+| 1. Component Debate |
+|  (Component Agents) |
++--------------------+
+           |
+           v
++---------------------+
+| 2. Material Debate  |
+|  (Materials Agents) |
++---------------------+
+           |
+           v
++---------------------+
+| 3. Country Debate   |
+|  (Country Agents)   |
++---------------------+
 ```
 
----
+### Debate Process by Stage
 
-## Features
-
-### ✨ Core Capabilities
-
-- **Multi-Agent Debate**: 3 independent LLM agents debate and reach consensus on component lists
-- **Semantic Normalization**: LLM-based merging of similar components ("battery pack" ≈ "lithium-ion battery")
-- **Fuzzy Material Matching**: Multi-strategy matching (exact, variant, partial, similarity) against material ontology
-- **USGS Database Integration**: DuckDB-based querying of World Mineral Commodity Reports (2022-2025)
-- **LLM Fallback**: Automatic fallback to LLM estimates when USGS data unavailable
-- **Intelligent Caching**: Reduces redundant queries for repeated materials
-- **Retry Logic**: Exponential backoff for Ollama stability (1s, 2s, 4s delays)
-- **Debate Transcripts**: Full audit trail of agent discussions saved to JSON
-
-### 🔧 Technical Highlights
-
-- **Pydantic AI v0.0.14+** agents with proper type safety
-- **Ollama compatibility mode** (tools disabled by default)
-- **Pandas DataFrame** handling for USGS queries
-- **Pydantic v2** ConfigDict (no deprecation warnings)
-- **Comprehensive validation** (7 checkpoints in materials extraction)
-- **Type-safe models** with basedpyright compatibility
-
----
-
-## Installation
-
-### Prerequisites
-
-- **Python 3.12+**
-- **Ollama** (or OpenAI API key)
-- **DuckDB** (installed automatically)
-- **uv** (Astral's package manager)
-
-### Install uv
+#### 1. Component Selection Debate
 
 ```
-# macOS/Linux
-curl -LsSf https://astral.sh/uv/install.sh | sh
-
-# Windows
-powershell -c "irm https://astral.sh/uv/install.ps1 | iex"
+[ Component Agents ]
+      |         |          |
+   +--+---------+----------+--+
+   | Independent proposal rounds  |
+   +-------------+---------------+
+                 |
+                 v
+       +-----------------------+
+       |   Component Debate    |
+       | (LLM Agent Personas)  |
+       +-----------------------+
+                 |
+        Consensus Components
 ```
+- **Agents:** Multiple LLM-powered *Component Agents* with varied personas (specialist, generalist, risk analyst, etc.)
+- **Inputs:** Technology CSV or database records (see `tech_list.csv`)
+- **Outputs:** Consensus list of primary physical components
 
-### Install STDN Agentic
-
-```
-# Clone repository
-git clone https://github.com/yourusername/dpi_stdn_agentic.git
-cd dpi_stdn_agentic
-
-# Create virtual environment and install dependencies
-uv venv
-uv pip install -e .
-
-# Install Ollama (if not already installed)
-# macOS
-brew install ollama
-
-# Linux
-curl -fsSL https://ollama.com/install.sh | sh
-
-# Pull the Qwen 2.5 model
-ollama pull qwen2.5:7b
-```
-
----
-
-## Configuration
-
-### Configuration File (`config.json`)
+#### 2. Material Selection Debate
 
 ```
-{
-  "import_tech_list": "./data/tech_list.csv",
-  "model": "ollama:qwen2.5:7b",
-  "output_dir": "./output",
-  "output_csv_filename": "stdns_output",
-  
-  "materials_hs_codes_listing": "./data/hs_codes_and_usgs_names.csv",
-  "materials_column_name": "Elements_Compounds",
-  
-  "usgs_database": "./data/world_mineral_commodity_reports_2022-2025_v8.db",
-  "top_n_countries": 5,
-  
-  "years_to_query": ,
-  "write_nulls_to_output": true,
-  
-  "topp": 0.000001,
-  "materials_use_topp": true,
-  "materials_iteration_count": 10,
-  "materials_count_threshold": 5
-}
+     [ Materials Agents ]
+      |         |          |
+   +--+---------+----------+--+
+   | Independent material proposals |
+   +-------------+---------------+
+                 |
+                 v
+    +-----------------------------+
+    |   Material Debate Process   |
+    | (LLM Material Agents)       |
+    +-----------------------------+
+                 |
+        Consensus Materials Set
 ```
+- **Agents:** Multiple LLM-powered *Materials Agents* (ontology specialist, substitution analyst, etc.)
+- **Inputs:** Consensus component set from above  
+- **Outputs:** List of raw materials for each component with ontology/HS code validation
 
-### Environment Variables (`.env`)
+#### 3. Country Data Enrichment Debate
 
 ```
-# Disable material validation tools (Ollama compatibility)
-STDN_DISABLE_MATERIAL_TOOLS=1
-
-# Ollama configuration
-OLLAMA_MODEL=qwen2.5:7b
-STDN_MODEL=ollama:qwen2.5:7b
-
-# Optional: OpenAI fallback
-# OPENAI_API_KEY=your-key-here
+      [ Country Agents ]
+       |        |        |
+     +-+--------+--------+-+
+     | USGS Query/LLM Estimate      |
+     +--------------+--------------+
+                    |
+                    v
+        +---------------------------+
+        | Country Data Debate/Consensus|
+        | (LLM Country Agents + DB validation) |
+        +---------------------------+
+                    |
+                Final Country Data
 ```
+- **Agents:** LLM-powered *Country Agents* (statistical analyst, policy reviewer, foreign trade specialist, etc.)
+- **Inputs:** Material list per component  
+- **Outputs:** For each material, country-wise stats (production, % global, HS code); USGS DB is queried first, LLM fallback used for unlisted materials.
 
-### Technology List (`data/tech_list.csv`)
+***
 
-```
-tech
-Smartphone
-Electric Vehicle Battery
-Quantum Computer
-Night Vision Goggles
-MRI Machine
-Solar Panel
-```
+## Data Model
 
----
+This project ensures complete data integrity using [Pydantic](https://docs.pydantic.dev/) and standard Python dataclasses.  
+*(See `src/stdn_agentic/models.py` for canonical definitions.)*
 
-## Database Setup
+**Core model highlights:**
+- `ComponentList` – list of extracted components per technology
+- `ComponentMaterialsList` – mapping from each component to a set of materials
+- `CountryList` – mapping from each material to country split (% and tonnage, optionally with HS code)
+- `ConfigModel` – all pipeline configuration, paths, and operational controls
+- `Debate*` structures – encapsulate agent IDs, proposals, critiques, and consensus history
 
-### USGS World Mineral Commodity Database
+***
 
-The system uses a DuckDB database with USGS production data. **Important**: Column names are UPPERCASE except `value_type`.
+## Pipeline Inputs & Outputs
 
-#### Database Schema
+### Inputs
 
-```
-world_mineral_commodity_report
-├── COMMODITY (VARCHAR)   - Material name (e.g., "LITHIUM")
-├── COUNTRY (VARCHAR)     - Producing country (e.g., "CHINA")
-├── MEAS_YR (INTEGER)     - Measurement year (e.g., 2024)
-├── SRC_YR (INTEGER)      - Source report year (e.g., 2023)
-├── MEAS_TYPE (VARCHAR)   - Type (e.g., "PRODUCTION", "RESERVES")
-├── VALUE (VARCHAR)       - Production amount (stored as text)
-├── MEAS_UNIT (VARCHAR)   - Unit (e.g., "metric tons")
-└── value_type (VARCHAR)  - Value type (e.g., "Number")
-```
+- `config.json` – default pipeline settings, file paths, main model selection, static parameters
+- `.env` – environment-specific tokens, keys, and override flags
+- `data/tech_list.csv` – list of target technologies
+- `data/hs_codes_and_usgs_names.csv` – mapping from ontology names ↔ HS codes/USGS records
+- `data/world_mineral_commodity_reports_2022-2025_v8.db` – USGS DuckDB database of global mineral statistics
 
-#### Verify Database
+### Outputs
 
-```
-uv run python -c "
-import duckdb
-conn = duckdb.connect('./data/world_mineral_commodity_reports_2022-2025_v8.db')
-print(conn.execute('SELECT COUNT(*) FROM world_mineral_commodity_report').fetchone())
-print(conn.execute('DESCRIBE world_mineral_commodity_report').fetchall())
-"
-```
+- `output/stdns_output.csv` / `output/stdns_output.json` – normalized STDN for all targets
+- `src/stdn_agentic/debate_transcripts/results/` – per-run-full agent debate transcripts at every stage
+- Log files, pipeline performance metrics
 
----
+#### Example Output (CSV row)
+
+| Technology | Component | Material | Country | Production | % Global | HS Code  |
+|------------|-----------|----------|---------|------------|----------|----------|
+| Smartphone | Battery   | Lithium  | China   | 78,000t    | 75.5     | 85076000 |
+
+***
+
+## Configuration & Environment
+
+**Best Practice:**  
+- **Static, version-controlled config:** `config.json` (model names, file paths, non-secret toggles)
+- **Secrets and deployment specifics:**  `.env` (API keys, database URLs, fast-override flags only as needed)
+
+| Type                        | File        | Example                        |
+|-----------------------------|-------------|--------------------------------|
+| Model/paths/static params   | config.json | model, top_n_countries, years  |
+| API keys/endpoints          | .env        | OPENAI_API_KEY, OLLAMA_URL     |
+| Per-deployment feature flag | .env        | ENABLE_DEBATE [optional]       |
+
+Precedence: `.env` overrides only if explicitly checked for, and always document this logic.
+
+***
 
 ## Usage
 
-### Basic Usage
+### 1. Prepare Data and Config  
+- Fill out `data/tech_list.csv` with technologies to analyze.
+- Customize `config.json` for your project (model name, years, paths, etc.)
+- Copy `.env.example` to `.env` and set API keys if needed.
 
-```
-# Run with default config
-uv run stdn -i config.json
+### 2. Run the Full Pipeline
 
-# Or using module syntax
-uv run python -m stdn_agentic.main -i config.json
-```
-
-### Advanced Options
-
-```
-# Generate country data only (no technology processing)
-uv run stdn -i config.json --generate-country-data
-
-# Use different model
-STDN_MODEL="ollama:llama3.1:8b" uv run stdn -i config.json
-
-# Debug mode with verbose logging
-uv run python -m stdn_agentic.main -i config.json --debug
+```bash
+uv run python src/stdn_agentic/main.py
 ```
 
-### Example Session
+### 3. Inspect Outputs
 
-```
-Loading configuration from: config.json
+- See results in `output/`, and all debate transcripts in `src/stdn_agentic/debate_transcripts/results/`.
 
-✓ Connected to USGS database: 1 tables
+### 4. [Optional] Debug USGS DB
 
-================================================================================
-STDN Generation Started: 2025-11-18 00:16:52
-================================================================================
-
-🎤 Multi-agent debate ENABLED:
-   Max rounds: 3
-   Convergence threshold: 0.51
-
-Processing: Smartphone
-
-DEBATE: Smartphone
-ROUND 1:
-  Convergence: 10.8%
-  Generating critiques...
-ROUND 2:
-  Convergence: 53.0%
-  ✅ Convergence threshold reached!
-
-✓ Extracted 23 components
-  🔍 Extracting materials for 23 components...
-  ✅ Extracted materials for 23 components
-
-Querying USGS for Glass (year 2024/2023)
-⚠ No USGS data found, using LLM fallback...
-✓ LLM returned 5 countries
-
-Querying USGS for Lithium (year 2024/2023)
-✓ USGS returned 5 countries
-
-✓ Output written to: ./output/stdns_output.csv
-✓ Successfully processed: Smartphone
-```
-
----
-
-## Output Format
-
-### CSV Output (`stdns_output.csv`)
-
-```
-technology,component,material,country,meas_unit,amount,percentage
-Smartphone,display,Glass,China,metric tons,12500000,45.2
-Smartphone,display,Indium,China,metric tons,350,60.1
-Smartphone,battery pack,Lithium,Australia,metric tons,55000,45.8
-Smartphone,battery pack,Cobalt,DRC,metric tons,125000,68.3
-```
-
-### Debate Transcripts
-
-Saved to `debate_transcripts/results/`:
-
-```
-{
-  "technology": "Smartphone",
-  "timestamp": "2025-11-18T00:17:49",
-  "rounds": [
-    {
-      "round": 1,
-      "proposals": {
-        "Agent_1": ["display", "battery", "processor", ...],
-        "Agent_2": ["screen", "power module", "CPU", ...],
-        "Agent_3": ["touchscreen", "battery pack", "chip", ...]
-      },
-      "critiques": {
-        "Agent_1→Agent_2": "Consider separating display and touchscreen...",
-        ...
-      }
-    }
-  ],
-  "final_consensus": ["display", "battery pack", "processor", ...]
-}
-```
-
----
-
-## Troubleshooting
-
-### Issue: `invalid message content type: <nil>` (400 Error)
-
-**Cause**: Ollama rejecting tool-based prompts
-
-**Solution**:
-```
-export STDN_DISABLE_MATERIAL_TOOLS=1
-uv run stdn -i config.json
-```
-
-### Issue: `'country' column not found`
-
-**Cause**: Database columns are uppercase
-
-**Solution**: Columns fixed in latest version. Update `usgs_client.py` to use:
-- `COUNTRY`, `COMMODITY`, `MEAS_TYPE`, `MEAS_UNIT`, `VALUE`, `MEAS_YR`, `SRC_YR`
-- Exception: `value_type` (lowercase)
-
-### Issue: `pd is not defined`
-
-**Cause**: Missing pandas import
-
-**Solution**: Add to `data/repository.py`:
-```
-import pandas as pd
-```
-
-### Issue: Materials extraction fails randomly
-
-**Cause**: Ollama instability with complex prompts
-
-**Solutions**:
-1. **Reduce ontology sample**: Change `[:100]` to `[:50]` in `extract_materials_safe`
-2. **Switch model**: `export STDN_MODEL="ollama:llama3.1:8b"`
-3. **Retry logic enabled**: Already implemented with exponential backoff
-
-### Issue: No USGS data found for common materials
-
-**Cause**: Commodity name mismatch (e.g., "Iron" vs "IRON ORE")
-
-**Solution**: Check exact commodity names in database:
-```
-uv run python -c "
-import duckdb
-conn = duckdb.connect('./data/world_mineral_commodity_reports_2022-2025_v8.db')
-print(conn.execute('SELECT DISTINCT COMMODITY FROM world_mineral_commodity_report ORDER BY COMMODITY').fetchall())
-"
-```
-
----
-
-## Development
-
-### Project Structure
-
-```
-dpi_stdn_agentic/
-├── src/stdn_agentic/
-│   ├── agents/              # LLM agents
-│   ├── orchestrator/        # Pipeline & debate
-│   ├── data/                # USGS client & caching
-│   ├── models.py            # Pydantic models
-│   └── main.py              # CLI
-├── data/
-│   ├── tech_list.csv        # Input technologies
-│   ├── hs_codes_and_usgs_names.csv  # Material ontology
-│   └── world_mineral_commodity_reports_2022-2025_v8.db  # USGS data
-├── output/                  # Generated STDNs
-├── debate_transcripts/      # Agent debate logs
-├── config.json              # Configuration
-├── pyproject.toml           # Package metadata
-└── README.md
-```
-
-### Running Tests
-
-```
-# Unit tests
-uv run pytest tests/
-
-# Database connectivity test
+```bash
 uv run python debug_duckdb.py
-
-# Type checking
-uv run basedpyright src/
 ```
 
-### Code Style
+***
 
-- **Type hints**: Required for all functions
-- **Pydantic models**: For all data structures
-- **Logging**: Use `logger` not `print()` (except user-facing output)
-- **Error handling**: Always wrap external calls in try/except
-- **Docstrings**: Google style for all public functions
+## Extensibility & Integration
 
----
+- **Add new agent personas:** Extend/rewrite personalities in `src/stdn_agentic/agents/`.
+- **Swap LLM providers:** Change `model` in `config.json`, or rewrite agent construction logic.
+- **Ontology customization:** Edit mappings and allowable terms in `data/hs_codes_and_usgs_names.csv`.
+- **Data enrichment:** Attach more granular USGS datasets or provide more detailed tech/country splits.
+- **API integration:** Wrap `STDNOrchestrator` as a service endpoint for programmatic analysis.
 
-## Citation
+***
 
-If you use this tool in research, please cite:
+## Development Standards & Testing
 
-```
-@software{stdn_agentic2025,
-  title = {STDN Agentic: Multi-Agent Shallow Technology Dependency Networks},
-  author = {Aaron Schroeder, Mandy Wilson},
-  year = {2025},
-  url = {https://github.com/yourusername/dpi_stdn_agentic}
-}
-```
+- **Code style:** Follows Ruff linter (`pyproject.toml` config), Black-compatible
+- **Type safety:** All public functions and classes use complete type hints (enforced in CI)
+- **Logging:** Standard structured logging instead of print
+- **Testing:**  
+  - Pytest-based suite in `src/stdn_agentic/tests/` (both unit and integration tests)
+  - Test fixtures for I/O, agent composition, and fuzzy-matching/ontology logic
+- **Documentation:** All public APIs, classes, and non-trivial internal logic require docstrings.
 
----
+***
 
-## License
+## FAQ
 
-MIT License - see LICENSE file for details.
+**Q: How is "shallow" different from a full BOM?**  
+A: Shallow means only the primary dependency layer (components → materials → countries) is mapped, not a recursive full multi-level bill of materials.
 
----
+**Q: Where does agent debate actually improve accuracy?**  
+A: Multiple LLMs generate, defend, and critique answers, significantly decreasing systematic hallucinations or incomplete coverage. Transcripts provide auditable context for all agent choices.
 
-## Acknowledgments
+**Q: How transparent/auditable is this pipeline?**  
+A: Every debate, critique, and final consensus judgment is saved with agent IDs, prompts, proposals, and reasoning, making the pipeline suitable for audits, peer review, or explainable policy analysis.
 
-- **USGS**: World Mineral Commodity Reports data
-- **Pydantic AI**: Agent framework
-- **Ollama**: Local LLM serving
-- **Qwen Team**: Qwen 2.5 model
-
----
-
-## Support
-
-For issues and questions:
-- GitHub Issues: https://github.com/yourusername/dpi_stdn_agentic/issues
-- Documentation: https://github.com/yourusername/dpi_stdn_agentic/wiki
-
----
-
-**Version**: 0.1.0  
-**Last Updated**: November 2025
+**Q: Can I use this for custom technologies or materials?**  
+A: Yes. Just update your tech list and, if needed, the ontologies and mappings. The pipeline is generalizable.
 
 

@@ -13,7 +13,7 @@ producing country.
 import os
 from typing import List, Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 from pydantic_ai import Agent
 
 from ..models import STDNDependencies
@@ -24,11 +24,20 @@ from ..models import STDNDependencies
 
 
 class CountryPercentage(BaseModel):
-    country: str
-    meas_unit: str
-    amount: float
-    percentage: float = Field(ge=0.0, le=100.0)
-    hs_code: Optional[str] = None  # ADD THIS LINE
+    """Country production data with confidence scoring."""
+
+    country: str = Field(description="Country name")
+    percentage: float = Field(description="Percentage of global production", ge=0.0, le=100.0)
+    amount: float = Field(description="Production amount (numeric value)", default=0.0, ge=0.0)
+    confidence: float = Field(
+        description="Confidence score (0.0 to 1.0) in this estimate", ge=0.0, le=1.0, default=0.8
+    )
+    reasoning: str = Field(description="Explanation of data source and confidence", default="")
+    measurement_unit: Optional[str] = Field(
+        description="Unit of measurement (e.g., metric tons)", default=None, alias="meas_unit"
+    )
+
+    model_config = ConfigDict(populate_by_name=True)
 
 
 class CountryList(BaseModel):
@@ -43,45 +52,73 @@ class CountryList(BaseModel):
 # Country Data Agent
 # ============================================================================
 
-COUNTRY_DATA_SYSTEM_PROMPT = """You are an expert supply chain analyst specializing in global mineral and material production statistics.
+COUNTRY_DATA_SYSTEM_PROMPT = """You are an expert in global mineral production, mining operations, and commodity trade.
 
-Your task is to provide the top-producing countries for a given raw material, along with production statistics.
+Your task is to identify the PRIMARY PRODUCING COUNTRIES for a given raw material and estimate their share of global production.
 
-PROVIDE for each country:
-1. Country name or internationally recognized code
-2. Approximate amount produced (specific number with units)
-3. Unit of measure (metric tons, kilograms, tonnes, etc.)
-4. Percentage of global supply that this country produces
+CRITICAL: For each country you identify, you MUST provide:
 
-FOCUS on:
-- Major producing nations (responsible for 80%+ of global supply)
-- Strategic producers in geopolitically important regions
-- Countries with documented supply chain vulnerabilities
-- Producers with export restrictions or sanctions considerations
+1. **Country Name**: Use standard country names (e.g., China, United States, Australia)
 
-DATA QUALITY:
-- Use most recent publicly available data (within 2-3 years when possible)
-- Be specific about measurement units (metric tons ≠ kg ≠ ounces)
-- Ensure percentages sum to reasonable total (may be >100% if counting all producers)
-- Flag any known supply chain disruptions or constraints
+2. **Production Percentage**: Estimated percentage of global production (0-100)
+   - Must sum to approximately 100% across all countries
+   - Focus on top 3-5 producers
+   - Be realistic about market concentration
 
-EXCLUDE:
-- Informal or unverified producers
-- Countries with minimal production (<0.5% global supply)
-- Speculative or theoretical production potential
+3. **Production Amount**: Numeric production value with appropriate scale
+   - Provide specific numeric amounts (e.g., 78000 for 78,000 metric tons)
+   - Use realistic scales based on the material
+   - If exact figures unavailable, provide best estimate
 
-Return a JSON response with a list of countries and their production data.
-Be accurate in percentages and amounts - policy decisions depend on this data.
-Include confidence indicators if any data points are estimates vs. verified.
+4. **Measurement Unit**: Typical unit (metric tons, tonnes, kg, etc.)
 
-For example response format:
-{
-  "country_list": [
-    {"country": "China", "meas_unit": "metric tons", "amount": 10000000, "percentage": 75.5},
-    {"country": "Vietnam", "meas_unit": "metric tons", "amount": 1500000, "percentage": 12.3},
-    ...
-  ]
-}"""
+5. **Confidence Score (0.0 to 1.0)**: Your confidence in this country/percentage estimate
+   - **0.9-1.0**: Based on recent authoritative data (USGS, World Bank, national surveys)
+   - **0.8-0.89**: Very confident - well-documented major producer with reliable stats
+   - **0.7-0.79**: Confident - known producer with reasonable estimates
+   - **0.6-0.69**: Moderately confident - known producer, percentage approximate
+   - **0.5-0.59**: Uncertain - limited recent data, extrapolated estimates
+   - **0.3-0.49**: Low confidence - outdated data or significant uncertainty
+   - **0.0-0.29**: Very low confidence - speculative estimate
+
+6. **Reasoning**: Brief explanation (1-2 sentences) covering:
+   - Data source or basis for estimate (USGS 2024, industry report, etc.)
+   - Why you assigned this confidence level
+   - Any caveats or uncertainties
+
+Consider these factors when assigning confidence:
+- **Data recency**: How recent and up-to-date is your source?
+- **Source authority**: USGS, national geological surveys, and industry associations are most reliable
+- **Production stability**: Has this country's production been consistent over time?
+- **Data completeness**: Are there known gaps or reporting issues?
+- **Market dynamics**: Are there recent changes (new mines, closures, policy shifts)?
+
+EXAMPLES:
+
+For Lithium:
+- Country: China | Percentage: 62 | Amount: 78000 | Unit: metric tons | Confidence: 0.92 | Reasoning: Dominates production and refining based on USGS 2024 data; very reliable statistics
+- Country: Australia | Percentage: 18 | Amount: 22000 | Unit: metric tons | Confidence: 0.90 | Reasoning: Second largest producer with well-documented mining operations; USGS verified
+- Country: Chile | Percentage: 12 | Amount: 15000 | Unit: metric tons | Confidence: 0.85 | Reasoning: Major brine producer; data from Chilean mining ministry; slight reporting lag
+- Country: Argentina | Percentage: 5 | Amount: 6500 | Unit: metric tons | Confidence: 0.75 | Reasoning: Growing producer; recent expansion but data less comprehensive
+
+For Rare Earth Elements:
+- Country: China | Percentage: 70 | Amount: 210000 | Unit: metric tons | Confidence: 0.95 | Reasoning: Overwhelmingly dominant producer with comprehensive government statistics
+- Country: United States | Percentage: 15 | Amount: 45000 | Unit: metric tons | Confidence: 0.80 | Reasoning: Single major mine (Mountain Pass); well-documented but limited sources
+- Country: Myanmar | Percentage: 10 | Amount: 30000 | Unit: metric tons | Confidence: 0.50 | Reasoning: Significant but informal production; data quality poor and estimates vary widely
+- Country: Australia | Percentage: 5 | Amount: 15000 | Unit: metric tons | Confidence: 0.75 | Reasoning: Growing production; reliable Australian data but relatively new operations
+
+FOCUS ON:
+- Mining and primary production (not just refining or processing)
+- Recent data (prefer last 3-5 years)
+- Commercially significant production levels (typically top 3-5 countries)
+- Verifiable sources (government surveys, industry associations, academic research)
+
+If data is unavailable, outdated, or highly uncertain:
+- State this explicitly in reasoning
+- Use LOW confidence scores (0.3-0.5)
+- Provide best estimate with clear caveats
+- Mention the uncertainty and data limitations
+"""
 
 
 def _get_configured_model() -> str:
@@ -106,37 +143,29 @@ country_data_agent = Agent(
 # ============================================================================
 
 
-def get_country_data_agent(model_name: Optional[str] = None) -> Agent[STDNDependencies, CountryList]:
+def get_country_data_agent(
+    model_name: Optional[str] = None,
+) -> Agent[STDNDependencies, CountryList]:
     """
-    Get the country data extraction agent.
+    Get the country data agent with confidence scoring.
 
-    This agent is used as a fallback when USGS database queries don't return
-    results. It uses LLM reasoning to estimate top-producing countries and
-    their production statistics for a given material.
+    This agent identifies primary producing countries for raw materials
+    with confidence-weighted estimates and reasoning.
+
+    Args:
+        model_name: Optional model name override
 
     Returns:
-        Agent configured for extracting country production data.
-        The agent takes a material name and year, and returns CountryList
-        with top-producing countries and their production statistics.
-
-    Example:
-        >>> agent = get_country_data_agent()
-        >>> result = await agent.run(
-        ...     "Return the top 5 countries that produced lithium in 2024, "
-        ...     "with production amounts and percentage of global supply.",
-        ...     deps=STDNDependencies(...)
-        ... )
-        >>> print(result.data.country_list)
-        [
-            CountryPercentage(country="China", meas_unit="metric tons", amount=100000, percentage=65.5),
-            CountryPercentage(country="Australia", meas_unit="metric tons", amount=42000, percentage=27.3),
-            ...
-        ]
-
-    Notes:
-        - This agent is typically called by CountryDataGenerator in data/repository.py
-        - It serves as a fallback when USGS database queries are empty
-        - Results are cached to avoid redundant LLM calls
-        - For policy work, USGS data is preferred over LLM estimates
+        Configured Agent for country data extraction with CountryList output
     """
-    return country_data_agent
+    if model_name is None:
+        model_name = os.environ.get("STDN_MODEL") or os.environ.get(
+            "OLLAMA_MODEL", "ollama:qwen2.5-7b"
+        )
+
+    return Agent(
+        model_name,
+        output_type=CountryList,
+        deps_type=STDNDependencies,
+        system_prompt=COUNTRY_DATA_SYSTEM_PROMPT,
+    )

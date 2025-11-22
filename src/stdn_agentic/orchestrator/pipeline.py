@@ -14,11 +14,13 @@ Enhanced features:
 - Robust materials extraction with comprehensive error handling
 - Enhanced multi-agent debate with critique-driven convergence
 - Adaptive consensus building based on convergence scores
+- Dynamic confidence scoring for all components
 - Detailed logging and progress reporting
 """
 
 import asyncio
 import csv
+import json
 import logging
 import os
 from datetime import datetime
@@ -71,9 +73,12 @@ class STDNOrchestrator:
             config: ConfigModel instance
             enable_checkpoints: Enable checkpoint saving
             enable_debate: Use multi-agent debate (True) or simple voting (False)
+            enable_material_debate: Use debate for materials extraction
+            enable_country_debate: Use debate for country data
             max_debate_rounds: Max debate rounds
             convergence_threshold: Convergence threshold
             save_transcripts: Save debate transcripts
+            debate_top_p: Top-p sampling parameter for debate
         """
         self.config = config
 
@@ -160,7 +165,7 @@ class STDNOrchestrator:
         Validate inputs for materials extraction.
 
         Returns:
-            Tuple of (is_valid, valid_components, error_message)
+            Tuple of (is_valid, valid_component_names, error_message)
         """
         # Check component list exists
         if not componentlist or not hasattr(componentlist, "component_list"):
@@ -170,9 +175,13 @@ class STDNOrchestrator:
 
         components = componentlist.component_list
 
-        # Filter valid components
-        valid_components = [c for c in components if c and isinstance(c, str) and c.strip()]
-        if not valid_components:
+        # Filter valid components and extract names
+        # Components are now ComponentWithConfidence objects
+        valid_component_names = [
+            c.name for c in components if c and hasattr(c, "name") and c.name.strip()
+        ]
+
+        if not valid_component_names:
             logger.warning(f"All components were null/empty for {technology}")
             print("🔍 All components were null/empty")
             return (False, None, "All components null/empty")
@@ -183,7 +192,7 @@ class STDNOrchestrator:
             print("❌ Material ontology is empty!")
             return (False, None, "Ontology empty")
 
-        return (True, valid_components, None)
+        return (True, valid_component_names, None)
 
     async def extract_materials_safe(
         self,
@@ -196,18 +205,20 @@ class STDNOrchestrator:
         Safely extract materials with comprehensive error handling and retry logic.
         """
         # Validate inputs
-        is_valid, valid_components, error_msg = self._validate_materials_extraction_inputs(
+        is_valid, valid_component_names, error_msg = self._validate_materials_extraction_inputs(
             componentlist, technology
         )
 
         if not is_valid:
             return ComponentMaterialsList.model_validate({"componentlist": []})
 
-        # Type assertion - valid_components is guaranteed to be non-empty here
-        assert valid_components, "valid_components should be non-empty after successful validation"
+        # Type assertion - valid_component_names is guaranteed to be non-empty here
+        assert valid_component_names, (
+            "valid_component_names should be non-empty after successful validation"
+        )
 
-        # Build prompt with validated data
-        component_str = "\n".join(f"- {comp}" for comp in valid_components)
+        # Build prompt with validated data (names are now strings)
+        component_str = "\n".join(f"- {comp}" for comp in valid_component_names)
         ontology_sample = self.deps.material_ontology_list[:50]
         ontology_str = ", ".join(ontology_sample)
 
@@ -231,13 +242,10 @@ class STDNOrchestrator:
 
     Return a JSON response with componentlist containing component and materials fields."""
 
-        # Type guard: valid_components is guaranteed to be list[str] here
-        assert valid_components is not None, "valid_components should not be None after validation"
-
         logger.info(
-            f"📋 Extracting materials for {len(valid_components)} components of {technology}"
+            f"📋 Extracting materials for {len(valid_component_names)} components of {technology}"
         )
-        print(f"  🔍 Extracting materials for {len(valid_components)} components...")
+        print(f"  🔍 Extracting materials for {len(valid_component_names)} components...")
 
         # RETRY LOGIC: Handle transient Ollama/model errors
         for attempt in range(max_retries):
@@ -337,17 +345,23 @@ class STDNOrchestrator:
                         else result.output
                     )
 
+                    # Extract dynamic confidence from ComponentWithConfidence objects
                     agent_proposals[agent_id] = [
                         {
-                            "component": comp,
-                            "confidence": 0.85,
-                            "reasoning": "Identified as key component",
+                            "component": comp.name,
+                            "confidence": comp.confidence,  # Dynamic from LLM
+                            "reasoning": comp.reasoning,
                         }
                         for comp in components
                     ]
 
+                    # Calculate average confidence for reporting
+                    avg_conf = sum(p["confidence"] for p in agent_proposals[agent_id]) / len(
+                        agent_proposals[agent_id]
+                    )
+
                     print(
-                        f"  ✓ {agent_id} (top_p={self.debate_top_p}): {len(components)} components proposed"
+                        f"  ✓ {agent_id} (top_p={self.debate_top_p}): {len(components)} components proposed (avg confidence: {avg_conf:.2f})"
                     )
 
                     # Store for transcript
@@ -400,18 +414,75 @@ class STDNOrchestrator:
                 print(f"⚠️  Failed to save transcript: {e}")
 
         # Extract final components from debate result
-        final_components = debate_result.get("components", [])
+        final_component_names = debate_result.get("components", [])
+        debate_history = debate_result.get("debate_history", [])
 
         # Debug output
         print(f"\n🔍 Debug - Consensus type: {type(debate_result)}")
         print(f"🔍 Debug - Consensus keys: {list(debate_result.keys())}")
-        print(f"📊 Final components extracted: {final_components}")
+        print(f"📊 Final consensus components: {final_component_names}")
 
-        if final_components:
-            return ComponentList(componentlist=final_components)
-        else:
+        if not final_component_names:
             logger.warning(f"Debate produced no consensus components for {technology}")
             return None
+
+        # Reconstruct ComponentWithConfidence objects from final proposals
+        # Get the last round's proposals to extract confidence and reasoning
+        final_round_proposals = []
+        if debate_history:
+            last_round = debate_history[-1]
+            if isinstance(last_round, dict) and "proposals" in last_round:
+                for agent_id, proposals in last_round["proposals"].items():
+                    final_round_proposals.extend(proposals)
+
+        # Build a map of component name -> (confidence, reasoning)
+        component_confidence_map = {}
+        for prop in final_round_proposals:
+            comp_name = prop.get("component", "")
+            normalized_name = (
+                self.debater.normalize_component_name(comp_name)
+                if self.debater
+                else comp_name.lower().strip()
+            )
+
+            if normalized_name not in component_confidence_map:
+                component_confidence_map[normalized_name] = {
+                    "confidence": prop.get("confidence", 0.75),
+                    "reasoning": prop.get("reasoning", "Consensus component from debate"),
+                    "original_name": comp_name,  # Keep original for display
+                }
+            else:
+                # Average confidence if multiple proposals for same component
+                existing = component_confidence_map[normalized_name]
+                existing["confidence"] = (existing["confidence"] + prop.get("confidence", 0.75)) / 2
+
+        # Create ComponentWithConfidence objects for consensus components
+        from ..agents import ComponentWithConfidence
+
+        final_components_with_confidence = []
+        for norm_name in final_component_names:
+            if norm_name in component_confidence_map:
+                comp_info = component_confidence_map[norm_name]
+                final_components_with_confidence.append(
+                    ComponentWithConfidence(
+                        name=comp_info["original_name"],
+                        confidence=comp_info["confidence"],
+                        reasoning=comp_info["reasoning"],
+                    )
+                )
+            else:
+                # Fallback if not found in proposals (shouldn't happen)
+                final_components_with_confidence.append(
+                    ComponentWithConfidence(
+                        name=norm_name,
+                        confidence=0.75,
+                        reasoning="Consensus component from multi-agent debate",
+                    )
+                )
+
+        print(f"✓ Created {len(final_components_with_confidence)} ComponentWithConfidence objects")
+
+        return ComponentList(componentlist=final_components_with_confidence)
 
     def _save_debate_transcript(
         self, technology: str, agent_responses: List[Dict], debate_result: Dict
@@ -423,7 +494,6 @@ class STDNOrchestrator:
             technology: Technology name
             agent_responses: Agent proposals and reasoning
             debate_result: Final debate consensus with rounds metadata
-            materials_info: Optional materials extraction/debate information
 
         Returns:
             Path to saved transcript (text version)
@@ -483,11 +553,17 @@ class STDNOrchestrator:
         """
         Extract materials for components using debate or single-agent approach.
 
+        Args:
+            components: List of component names (already normalized strings)
+            technology: Technology name
+            usage: RunUsage tracker
+
         Returns:
-            ComponentMaterialsList or None if extraction fails
+            ComponentMaterialsList with MaterialWithConfidence objects, or None if extraction fails
         """
         if self.use_material_debate:
             from ..agents import ComponentMaterials, ComponentMaterialsList
+            from ..agents.materials_agent import MaterialWithConfidence
             from ..debate import MaterialDebater
 
             print("Using multi-agent debate for materials...")
@@ -502,26 +578,100 @@ class STDNOrchestrator:
             debate_result = await material_debater.run_full_debate(components, technology, usage)
 
             # Convert debate consensus to ComponentMaterialsList format
+            # consensus is now: {component: [{"name": ..., "confidence": ..., "reasoning": ...}]}
             consensus = debate_result["consensus"]
 
-            materials_list = ComponentMaterialsList(
-                componentlist=[
-                    ComponentMaterials(component=comp, materials=mats)
-                    for comp, mats in consensus.items()
-                ]
-            )
+            # Build material confidence map from debate proposals
+            material_confidence_map = {}
+
+            if hasattr(material_debater, "debate_history") and material_debater.debate_history:
+                # Get all proposals from all rounds (prioritize later rounds)
+                all_proposals = []
+                for debate_round in material_debater.debate_history:
+                    all_proposals.extend(debate_round.proposals)
+
+                # Build map: component|material -> confidence data
+                for prop in all_proposals:
+                    mat_key = f"{prop.normalizedcomponent}|{prop.normalizedmaterial}"
+                    # Keep highest confidence for each material
+                    if (
+                        mat_key not in material_confidence_map
+                        or prop.confidence > material_confidence_map[mat_key]["confidence"]
+                    ):
+                        material_confidence_map[mat_key] = {
+                            "name": prop.material,  # Original name
+                            "confidence": prop.confidence,
+                            "reasoning": prop.reasoning,
+                        }
+
+            # Convert consensus dicts to MaterialWithConfidence objects
+            materials_list_items = []
+
+            for comp, material_dicts in consensus.items():
+                # comp is already normalized from component phase
+                material_objects = []
+
+                for mat_dict in material_dicts:
+                    # Extract data from dict
+                    mat_name = mat_dict["name"]
+                    mat_confidence = mat_dict.get("confidence", 0.75)
+                    mat_reasoning = mat_dict.get(
+                        "reasoning", "Consensus material from multi-agent debate"
+                    )
+
+                    # Normalize material name for lookup
+                    mat_norm = material_debater.normalize_material_name(mat_name)
+                    mat_key = f"{comp}|{mat_norm}"
+
+                    # Look up confidence from debate proposals (may have higher confidence)
+                    if mat_key in material_confidence_map:
+                        mat_info = material_confidence_map[mat_key]
+                        material_objects.append(
+                            MaterialWithConfidence(
+                                name=mat_info["name"],
+                                confidence=mat_info["confidence"],
+                                reasoning=mat_info["reasoning"],
+                            )
+                        )
+                    else:
+                        # Use confidence from consensus dict
+                        material_objects.append(
+                            MaterialWithConfidence(
+                                name=mat_name,
+                                confidence=mat_confidence,
+                                reasoning=mat_reasoning,
+                            )
+                        )
+
+                materials_list_items.append(
+                    ComponentMaterials(component=comp, materials=material_objects)
+                )
+
+            materials_list = ComponentMaterialsList(componentlist=materials_list_items)
 
             # Save material debate transcript if enabled
             if self.save_transcripts and self.reporter:
                 self._save_material_debate_transcript(
                     technology, components, material_debater.debate_history, consensus
                 )
+
         else:
-            # Single-agent extraction
+            # Single-agent extraction (already returns MaterialWithConfidence objects)
             from ..agents import ComponentList
+            from ..agents.component_agent import ComponentWithConfidence
+
+            # Convert string components to ComponentWithConfidence objects
+            component_objects = [
+                ComponentWithConfidence(
+                    name=comp,
+                    confidence=0.8,  # Default for single-agent
+                    reasoning="Single-agent component extraction",
+                )
+                for comp in components
+            ]
 
             materials_result = await self.extract_materials_safe(
-                componentlist=ComponentList(componentlist=components),
+                componentlist=ComponentList(componentlist=component_objects),
                 technology=technology,
                 usage=usage,
             )
@@ -538,58 +688,144 @@ class STDNOrchestrator:
         materials_list: ComponentMaterialsList,
         technology: str,
         usage: RunUsage,
+        transcript_path: Optional[Path] = None,
+        component_confidence_map: Optional[dict] = None,
     ) -> list[dict[str, Any]]:
         """
-        Enrich materials with country production data.
+        Enrich materials with country production data including confidence scores.
+
+        Args:
+            materials_list: Materials for each component
+            technology: Technology name
+            usage: Usage tracker
+            transcript_path: Optional transcript path
+            component_confidence_map: Dict mapping component names to confidence scores
 
         Returns:
-            List of enriched data records
+            List of enriched data records with confidence columns
         """
         enriched_data = []
+
+        # Default to empty dict if not provided
+        if component_confidence_map is None:
+            component_confidence_map = {}
 
         for comp_mat in materials_list.component_list:
             component = comp_mat.component
 
-            for material in comp_mat.raw_materials:
+            # Get component confidence from the map
+            comp_info = component_confidence_map.get(component, {})
+            component_confidence = (
+                comp_info.get("confidence", 0.0) if isinstance(comp_info, dict) else 0.0
+            )
+
+            # Access raw_materials - should be a list of MaterialWithConfidence objects
+            raw_materials = comp_mat.raw_materials
+
+            # Ensure it's a list (not an iterator or generator)
+            if not isinstance(raw_materials, list):
+                raw_materials = list(raw_materials)
+
+            for material in raw_materials:
+                # Extract material name and confidence based on type
+                if hasattr(material, "name") and hasattr(material, "confidence"):
+                    # It's a MaterialWithConfidence object
+                    material_name = material.name
+                    material_confidence = material.confidence
+                elif isinstance(material, dict):
+                    # It's a dictionary (shouldn't happen but handle it)
+                    material_name = material.get("name", str(material))
+                    material_confidence = material.get("confidence", 0.0)
+                elif isinstance(material, str):
+                    # It's a plain string (legacy format)
+                    material_name = material
+                    material_confidence = 0.0
+                else:
+                    # Unknown type - convert to string and log warning
+                    material_name = str(material)
+                    material_confidence = 0.0
+                    logger.warning(f"Unexpected material type for {component}: {type(material)}")
+
+                # Skip empty material names
+                if not material_name or not material_name.strip():
+                    continue
+
                 try:
+                    # Query country data repository
                     country_data = await self.country_repo.get_country_data(
-                        material=material,
+                        material=material_name,
                         src_year=getattr(self.config, "src_year", 2024),
                         meas_year=getattr(self.config, "meas_year", 2025),
                         usage=usage,
                         use_debate=self.use_country_debate,
+                        transcript_path=transcript_path,
                     )
 
                     if country_data:
+                        # We have country data - create records with confidence
                         for country_info in country_data:
                             enriched_data.append(
                                 {
                                     "technology": technology,
                                     "component": component,
-                                    "material": material,
+                                    "component_confidence": round(component_confidence, 3),
+                                    "material": material_name,
+                                    "material_confidence": round(material_confidence, 3),
                                     "hs_code": country_info.get("hs_code"),
                                     "country": country_info.get("country", "Unknown"),
                                     "meas_unit": country_info.get("meas_unit", ""),
                                     "amount": country_info.get("amount", 0.0),
-                                    "percentage": country_info.get("percentage", 0.0),
+                                    "percentage": round(country_info.get("percentage", 0.0), 2),
+                                    "country_confidence": round(
+                                        country_info.get("confidence", 0.0), 3
+                                    ),
                                 }
                             )
                     elif self.write_nulls:
+                        # No country data found - write null record if enabled
                         enriched_data.append(
                             {
                                 "technology": technology,
                                 "component": component,
-                                "material": material,
+                                "component_confidence": round(component_confidence, 3),
+                                "material": material_name,
+                                "material_confidence": round(material_confidence, 3),
                                 "hs_code": None,
                                 "country": None,
                                 "meas_unit": None,
                                 "amount": None,
                                 "percentage": None,
+                                "country_confidence": None,
                             }
+                        )
+                    else:
+                        # No data and not writing nulls - log it
+                        logger.info(
+                            f"No country data for {material_name}, skipping (write_nulls=False)"
                         )
 
                 except Exception as e:
-                    logger.error(f"Error getting country data for {material}: {e}")
+                    logger.error(
+                        f"Error getting country data for {material_name} in {component}: {e}",
+                        exc_info=True,
+                    )
+                    # Optionally write error record if write_nulls enabled
+                    if self.write_nulls:
+                        enriched_data.append(
+                            {
+                                "technology": technology,
+                                "component": component,
+                                "component_confidence": round(component_confidence, 3),
+                                "material": material_name,
+                                "material_confidence": round(material_confidence, 3),
+                                "hs_code": None,
+                                "country": None,
+                                "meas_unit": None,
+                                "amount": None,
+                                "percentage": None,
+                                "country_confidence": None,
+                            }
+                        )
 
         return enriched_data
 
@@ -622,15 +858,35 @@ class STDNOrchestrator:
                 print(f"✗ No components extracted for {tech}")
                 return None
 
-            # Extract component list
+            # Extract component names and preserve full objects for potential transcript use
             if hasattr(components_result, "component_list"):
-                components: list[str] = components_result.component_list
+                # components_result.component_list now contains ComponentWithConfidence objects
+                component_objects = components_result.component_list
+                components: list[str] = [comp.name for comp in component_objects]
+
+                # Calculate and log average confidence
+                if component_objects:
+                    avg_confidence = sum(comp.confidence for comp in component_objects) / len(
+                        component_objects
+                    )
+                    print(
+                        f"✓ Extracted {len(components)} components (avg confidence: {avg_confidence:.2f})"
+                    )
+                else:
+                    print(f"✓ Extracted {len(components)} components")
             elif isinstance(components_result, list):
-                components = components_result
+                # Handle case where result is already a list
+                if components_result and hasattr(components_result[0], "name"):
+                    component_objects = components_result
+                    components = [comp.name for comp in components_result]
+                else:
+                    component_objects = []
+                    components = components_result
+                print(f"✓ Extracted {len(components)} components")
             else:
                 components = []
-
-            print(f"✓ Extracted {len(components)} components")
+                component_objects = []
+                print(f"✓ Extracted {len(components)} components")
 
             # Phase 2: Extract materials
             materials_list = await self._extract_materials_for_technology(components, tech, usage)
@@ -642,12 +898,25 @@ class STDNOrchestrator:
 
             print(f"✓ Extracted materials for {len(materials_list.component_list)} components")
 
+            # Get transcript path AFTER materials are extracted (so transcript exists)
+            transcript_path = None
+            if self.save_transcripts and self.reporter:
+                transcripts = list(self.reporter.output_dir.glob(f"{tech}_*.txt"))
+                if transcripts:
+                    transcript_path = max(transcripts, key=lambda p: p.stat().st_mtime)
+
             # Phase 3: Enrich with country data
-            enriched_data = await self._enrich_with_country_data(materials_list, tech, usage)
+            enriched_data = await self._enrich_with_country_data(
+                materials_list,
+                tech,
+                usage,
+                transcript_path=transcript_path,
+            )
 
             return {
                 "technology": tech,
                 "components": components,
+                "component_objects": component_objects,  # Preserve for transcript
                 "materials": materials_list,
                 "enriched_data": enriched_data,
             }
@@ -659,9 +928,9 @@ class STDNOrchestrator:
 
     def _build_material_transcript_content(
         self,
-        components: list[str],
+        components: list,  # Can accept ComponentWithConfidence or str
         debate_history: list,
-        consensus: dict[str, list[str]],
+        consensus: dict[str, list[dict]],  # ← Updated type hint: list[dict] not list[str]
     ) -> str:
         """Build the materials debate transcript content."""
         content = []
@@ -676,7 +945,12 @@ class STDNOrchestrator:
         content.append("-" * 80 + "\n")
         content.append(f"Total Components: {len(components)}\n")
         for comp in components:
-            content.append(f"  - {comp}\n")
+            # Handle both ComponentWithConfidence objects and strings
+            if hasattr(comp, "name"):
+                content.append(f"  - {comp.name} (confidence: {comp.confidence:.2f})\n")
+            else:
+                content.append(f"  - {comp}\n")
+
         content.append("\n")
 
         # Phase 2: Debate Rounds
@@ -712,8 +986,11 @@ class STDNOrchestrator:
         content.append("FINAL MATERIAL ASSIGNMENTS\n")
         content.append("=" * 80 + "\n\n")
 
+        # Extract material names from dicts
         total_materials = sum(len(mats) for mats in consensus.values())
-        unique_materials = len({mat for mats in consensus.values() for mat in mats})
+        unique_materials = len(
+            {mat_dict["name"] for mats in consensus.values() for mat_dict in mats}
+        )  # ✅ Extract 'name' from each dict
 
         content.append(f"Components: {len(consensus)}\n")
         content.append(f"Unique Materials: {unique_materials}\n")
@@ -722,8 +999,10 @@ class STDNOrchestrator:
         content.append("Materials by Component:\n")
         content.append("-" * 80 + "\n")
 
-        for component, materials in sorted(consensus.items()):
-            mat_list = ", ".join(sorted(materials))
+        for component, material_dicts in sorted(consensus.items()):
+            # Extract names from dicts and create sorted list
+            material_names = [mat_dict["name"] for mat_dict in material_dicts]
+            mat_list = ", ".join(sorted(material_names))  # ✅ Join strings
             content.append(f"  ✓ {component}: {mat_list}\n")
 
         content.append("\n" + "=" * 80 + "\n")
@@ -735,7 +1014,7 @@ class STDNOrchestrator:
     def _save_material_debate_transcript(
         self,
         technology: str,
-        components: list[str],
+        components: list,  # Can be strings or ComponentWithConfidence
         debate_history: list,
         consensus: dict[str, list[str]],
     ) -> None:
@@ -781,7 +1060,7 @@ class STDNOrchestrator:
             print(f"❌ EXCEPTION appending materials transcript: {type(e).__name__}: {e}")
             import traceback
 
-            traceback.print_exc()  # Print full stack trace
+            traceback.print_exc()
 
     def _update_material_json(
         self,
@@ -790,8 +1069,6 @@ class STDNOrchestrator:
         consensus: dict[str, list[str]],
     ) -> None:
         """Update JSON transcript with materials data."""
-        import json
-
         with open(json_path, "r", encoding="utf-8") as f:
             data = json.load(f)
 
@@ -830,9 +1107,6 @@ class STDNOrchestrator:
         Returns:
             Path to saved JSON file
         """
-        import csv
-        import json
-
         # Read the CSV file
         with open(self.output_file, "r", encoding="utf-8") as f:
             reader = csv.DictReader(f)
@@ -882,19 +1156,22 @@ class STDNOrchestrator:
         successful = 0
         failed = 0
 
-        # Write CSV header
+        # Write CSV header WITH CONFIDENCE COLUMNS
         with open(self.output_file, "w", newline="") as f:
             writer = csv.DictWriter(
                 f,
                 fieldnames=[
                     "technology",
                     "component",
+                    "component_confidence",  # ← ADDED
                     "material",
+                    "material_confidence",  # ← ADDED
                     "hs_code",
                     "country",
                     "meas_unit",
                     "amount",
                     "percentage",
+                    "country_confidence",  # ← ADDED
                 ],
             )
             writer.writeheader()
@@ -906,19 +1183,22 @@ class STDNOrchestrator:
             )
 
             if result and result["enriched_data"]:
-                # Write results to CSV
+                # Write results to CSV WITH CONFIDENCE COLUMNS
                 with open(self.output_file, "a", newline="") as f:
                     writer = csv.DictWriter(
                         f,
                         fieldnames=[
                             "technology",
                             "component",
+                            "component_confidence",  # ← ADDED
                             "material",
+                            "material_confidence",  # ← ADDED
                             "hs_code",
                             "country",
                             "meas_unit",
                             "amount",
                             "percentage",
+                            "country_confidence",  # ← ADDED
                         ],
                     )
 

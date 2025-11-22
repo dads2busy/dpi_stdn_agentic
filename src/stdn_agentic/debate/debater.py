@@ -10,6 +10,7 @@ Key enhancements:
 - Peer support calculation to boost consensus
 - Adaptive voting thresholds based on convergence
 - Confidence-weighted consensus building
+- Dynamic agent-specific confidence scoring
 """
 
 from __future__ import annotations
@@ -18,6 +19,8 @@ import logging
 from collections import Counter, defaultdict
 from dataclasses import dataclass
 from typing import Any, Dict, List, Optional
+
+from pydantic import BaseModel, Field
 
 logger = logging.getLogger(__name__)
 
@@ -33,7 +36,7 @@ class AgentProposal:
 
     agent_id: str
     component_name: str
-    confidence: float
+    confidence: float  # Now dynamically set by LLM
     reasoning: str
     round: int
 
@@ -47,6 +50,29 @@ class DebateRound:
     critiques: Dict[str, List[str]]
     convergence_score: float
     consensus_so_far: List[str]
+
+
+# ============================================================================
+# Pydantic Models for Structured Output
+# ============================================================================
+
+
+class ComponentWithConfidence(BaseModel):
+    """A single component proposal with confidence and reasoning."""
+
+    name: str = Field(description="Component name")
+    confidence: float = Field(
+        description="Confidence score (0.0 to 1.0) that this is a primary component", ge=0.0, le=1.0
+    )
+    reasoning: str = Field(description="Brief justification for this component")
+
+
+class DebateResponse(BaseModel):
+    """Structured response from an agent in a debate round."""
+
+    components: List[ComponentWithConfidence] = Field(
+        description="List of proposed components with confidence scores"
+    )
 
 
 # ============================================================================
@@ -64,6 +90,7 @@ class MultiAgentDebater:
     - Peer support boosts consensus formation
     - Adaptive voting thresholds based on convergence score
     - Confidence-weighted decision making
+    - Dynamic agent-specific confidence scores
     """
 
     def __init__(
@@ -86,6 +113,8 @@ class MultiAgentDebater:
                 Weight for confidence in voting (0–1, default: 0.3).
             peer_support_boost:
                 Confidence boost per supporting agent (default: 0.15).
+            debate_top_p:
+                Top-p sampling for debate rounds (default: 0.0001 for determinism).
         """
         self.max_rounds = max_rounds
         self.convergence_threshold = convergence_threshold
@@ -97,6 +126,83 @@ class MultiAgentDebater:
     # ------------------------------------------------------------------#
     # Normalization helpers
     # ------------------------------------------------------------------#
+
+    async def _normalize_initial_proposals(
+        self,
+        initial_proposals: Dict[str, List[Dict[str, Any]]],
+        component_agent: Any,
+        deps: Any,
+    ) -> Dict[str, List[Dict[str, Any]]]:
+        """
+        Semantically normalize all component names across all agents BEFORE debate.
+
+        This ensures all agents use the same normalized names from the start,
+        improving convergence and consensus quality.
+        """
+        # Flatten all proposals to collect component names
+        all_proposals = []
+        for agent_id, agent_props in initial_proposals.items():
+            for prop in agent_props:
+                if isinstance(prop, dict):
+                    p = dict(prop)
+                else:
+                    p = {
+                        "agent_id": getattr(prop, "agent_id", agent_id),
+                        "component": getattr(prop, "component_name", ""),
+                        "confidence": getattr(prop, "confidence", 0.8),
+                        "reasoning": getattr(prop, "reasoning", ""),
+                        "round": getattr(prop, "round", 1),
+                    }
+                p.setdefault("agent_id", agent_id)
+                all_proposals.append(p)
+
+        if not all_proposals:
+            return initial_proposals
+
+        # Collect all unique component names
+        all_component_names = [
+            p.get("component") or p.get("component_name", "") for p in all_proposals
+        ]
+
+        print(
+            f"\n🔄 Semantic normalization of {len(set(all_component_names))} unique components..."
+        )
+
+        # Use LLM semantic normalization
+        normalization_map = await self.normalize_components_with_llm(
+            all_component_names,
+            component_agent,
+            deps,
+        )
+
+        print(f"✓ Normalized to {len(set(normalization_map.values()))} unique concepts\n")
+
+        # Apply normalization to all proposals
+        normalized_proposals = {}
+        for agent_id, agent_props in initial_proposals.items():
+            updated = []
+            for prop in agent_props:
+                if isinstance(prop, dict):
+                    p = dict(prop)
+                else:
+                    p = {
+                        "agent_id": getattr(prop, "agent_id", agent_id),
+                        "component": getattr(prop, "component_name", ""),
+                        "confidence": getattr(prop, "confidence", 0.8),
+                        "reasoning": getattr(prop, "reasoning", ""),
+                        "round": getattr(prop, "round", 1),
+                    }
+
+                original = p.get("component", "")
+                normalized = normalization_map.get(
+                    original, self.normalize_component_name(original)
+                )
+                p["normalized_component"] = normalized
+                updated.append(p)
+
+            normalized_proposals[agent_id] = updated
+
+        return normalized_proposals
 
     def normalize_component_name(self, name: str) -> str:
         """Normalize component name using a rule-based approach."""
@@ -134,7 +240,6 @@ class MultiAgentDebater:
 
         Falls back to rule-based normalization if the LLM call fails.
         """
-        from pydantic import BaseModel, Field
         from pydantic_ai import Agent
 
         unique_names = list(set(component_names))
@@ -554,11 +659,15 @@ to its canonical form.
         roundnum: int,
     ) -> Dict[str, List[Dict[str, Any]]]:
         """
-        Run a single debate round with critique feedback.
+        Run a single debate round with critique feedback and dynamic confidence scoring.
 
         Returns:
-            Dict mapping agent_id -> list of proposal dicts.
+            Dict mapping agent_id -> list of proposal dicts with confidence scores.
         """
+        from dataclasses import replace
+
+        from pydantic_ai import Agent
+
         prev_context = "\n".join(
             f"- {self._get_prop_value(p, 'agent_id', 'unknown')}: "
             f"{self._get_prop_value(p, 'component') or self._get_prop_value(p, 'component_name', '')} "
@@ -567,11 +676,41 @@ to its canonical form.
         )
         critique_text = "\n".join(critiques)
 
+        # Enhanced system prompt that emphasizes confidence scoring
+        system_prompt = """You are an expert in technology component analysis participating in a multi-agent debate.
+
+Your task is to identify PRIMARY MANUFACTURING COMPONENTS for technologies.
+
+CRITICAL: For each component, you MUST provide:
+1. Component name
+2. Your confidence (0.0 to 1.0) that this is truly a primary component:
+   - 1.0 = Absolutely certain, universal standard
+   - 0.8-0.9 = Very confident, industry standard
+   - 0.6-0.7 = Moderately confident, common but may vary
+   - 0.4-0.5 = Uncertain, depends on implementation
+   - 0.0-0.3 = Low confidence, rarely separate
+3. Brief reasoning justifying your confidence
+
+Consider peer proposals and critiques carefully. Adjust your confidence based on:
+- Consensus among peers (higher confidence if many agree)
+- Strength of reasoning in critiques
+- Your own expertise and certainty
+"""
+
         new_proposals: Dict[str, List[Dict[str, Any]]] = {}
+
+        # Create a specialized agent for structured debate responses
+        debate_agent = Agent(
+            model=deps.model,
+            output_type=DebateResponse,
+            deps_type=type(deps),
+            system_prompt=system_prompt,
+        )
 
         # Use 3 agents with simple persona labels
         for agent_num in range(1, 4):
             agent_id = f"Agent{agent_num}"
+
             prompt = f"""DEBATE ROUND {roundnum}
 
 Technology: {technology}
@@ -583,38 +722,48 @@ PEER CRITIQUES AND GUIDANCE:
 {critique_text}
 
 YOUR TASK:
-1. Review peer proposals and critiques.
-2. Support strong consensus candidates.
-3. Drop isolated proposals unless critically justified.
-4. Propose a refined component list.
+1. Review all peer proposals and critiques carefully
+2. For EACH component you propose, assign a confidence score (0.0-1.0) based on:
+   - How certain you are it's a primary component
+   - Degree of peer support or opposition
+   - Strength of evidence and reasoning
+3. Support strong consensus candidates with high confidence
+4. Lower confidence for isolated proposals unless critically justified
+5. Provide clear reasoning for each confidence assessment
 
-Return only the updated list of primary components.
+Return your refined component list with confidence scores and reasoning.
 """
+
             try:
                 # Use very low Top-P for deterministic, focused refinements
-                from dataclasses import replace
-
                 debate_deps = replace(deps, top_p=self.debate_top_p)
 
-                result = await component_agent.run(prompt, deps=debate_deps, model=deps.model)
-                if result and result.output:
-                    if hasattr(result.output, "component_list"):
-                        components = result.output.component_list
-                    else:
-                        components = result.output
-                else:
-                    components = []
+                result = await debate_agent.run(prompt, deps=debate_deps, model=deps.model)
 
-                new_proposals[agent_id] = [
-                    {
-                        "agent_id": agent_id,
-                        "component": comp,
-                        "confidence": 0.85,
-                        "reasoning": "Refined based on debate feedback.",
-                        "round": roundnum,
-                    }
-                    for comp in components
-                ]
+                if result and result.output and result.output.components:
+                    proposals_list = []
+                    for comp in result.output.components:
+                        proposals_list.append(
+                            {
+                                "agent_id": agent_id,
+                                "component": comp.name,
+                                "confidence": comp.confidence,  # LLM-provided confidence
+                                "reasoning": comp.reasoning,
+                                "round": roundnum,
+                            }
+                        )
+                    new_proposals[agent_id] = proposals_list
+
+                    # Log confidence distribution for monitoring
+                    avg_conf = sum(p["confidence"] for p in proposals_list) / len(proposals_list)
+                    logger.info(
+                        f"Round {roundnum} - {agent_id}: {len(proposals_list)} components, "
+                        f"avg confidence={avg_conf:.2f}"
+                    )
+                else:
+                    logger.warning(f"No components returned from {agent_id} in round {roundnum}")
+                    new_proposals[agent_id] = []
+
             except Exception as exc:  # noqa: BLE001
                 logger.error("Error in debate round %s for %s: %s", roundnum, agent_id, exc)
                 # Fall back to previous proposals for this agent, if any
@@ -633,7 +782,7 @@ Return only the updated list of primary components.
         deps: Any,
     ) -> Dict[str, Any]:
         """
-        Run multi-round debate with LLM-based semantic normalization.
+        Run multi-round debate with LLM-based semantic normalization and dynamic confidence.
 
         Args:
             technology:
@@ -661,7 +810,9 @@ Return only the updated list of primary components.
         print(f"DEBATE: {technology}")
         print("=" * 80)
 
-        current_proposals: Dict[str, List[Dict[str, Any]]] = initial_proposals
+        current_proposals = await self._normalize_initial_proposals(
+            initial_proposals, component_agent, deps
+        )
 
         for roundnum in range(self.max_rounds):
             print(f"ROUND {roundnum + 1}:")
@@ -687,30 +838,12 @@ Return only the updated list of primary components.
                 print("  ⚠ No proposals available for this round.")
                 break
 
-            # Collect all component names for normalization
-            all_component_names = [
-                p.get("component") or p.get("component_name", "") for p in all_proposals
-            ]
-
-            # Use LLM normalization in later rounds or when convergence is modest
-            if roundnum == self.max_rounds - 1 or convergence >= 0.3:
-                print("  🔄 Using LLM-based semantic normalization...")
-                normalization_map = await self.normalize_components_with_llm(
-                    all_component_names,
-                    component_agent,
-                    deps,
-                )
-            else:
-                # Fast rule-based normalization for early rounds
-                normalization_map = {
-                    name: self.normalize_component_name(name) for name in all_component_names
-                }
-
-            # Apply normalization to all proposals
-            for prop in all_proposals:
-                original = prop.get("component") or prop.get("component_name", "")
-                norm = normalization_map.get(original, original)
-                prop["normalized_component"] = norm
+            # Log confidence statistics
+            confidences = [p.get("confidence", 0.8) for p in all_proposals]
+            avg_conf = sum(confidences) / len(confidences)
+            min_conf = min(confidences)
+            max_conf = max(confidences)
+            print(f"  Confidence: avg={avg_conf:.2f}, min={min_conf:.2f}, max={max_conf:.2f}")
 
             # Calculate convergence using normalized names
             convergence = self.calculate_convergence_semantic(all_proposals)
@@ -743,7 +876,7 @@ Return only the updated list of primary components.
                     critiques=critiques,
                     component_agent=component_agent,
                     deps=deps,
-                    roundnum=roundnum + 1,
+                    roundnum=roundnum + 2,  # Next round number
                 )
 
         # Final consensus building
@@ -770,7 +903,7 @@ Return only the updated list of primary components.
             all_final_proposals,
             convergence_score=convergence,
         )
-        print(f"  Extracted {len(consensus)} components")
+        print(f"  Extracted {len(consensus)} components with dynamic confidence weighting")
 
         return {
             "technology": technology,
@@ -789,4 +922,6 @@ __all__ = [
     "MultiAgentDebater",
     "AgentProposal",
     "DebateRound",
+    "ComponentWithConfidence",
+    "DebateResponse",
 ]

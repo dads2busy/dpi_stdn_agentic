@@ -273,13 +273,21 @@ class MaterialDebater:
 
                             # CORRECTED ACCESS - field is 'raw_materials' (WITH underscore)
                             for material in cm.raw_materials:
-                                mat_norm = self.normalize_material_name(material)
+                                # Extract material name from MaterialWithConfidence object
+                                material_name = (
+                                    material.name if hasattr(material, "name") else str(material)
+                                )
+                                material_confidence = (
+                                    material.confidence if hasattr(material, "confidence") else 0.8
+                                )
+
+                                mat_norm = self.normalize_material_name(material_name)
 
                                 proposal = MaterialProposal(
                                     agentid=agent_id,
                                     component=cm.component,
-                                    material=material,
-                                    confidence=0.8,  # Base confidence
+                                    material=material_name,  # Use extracted name
+                                    confidence=material_confidence,  # Use extracted confidence
                                     reasoning=f"Proposed by {agent_id} as key material for {cm.component}",
                                     normalizedcomponent=comp_norm,
                                     normalizedmaterial=mat_norm,
@@ -525,7 +533,12 @@ class MaterialDebater:
 
                             # CORRECTED ACCESS - raw_materials (WITH underscore)
                             for material in cm.raw_materials:
-                                mat_norm = self.normalize_material_name(material)
+                                # Extract material name from MaterialWithConfidence object
+                                material_name = (
+                                    material.name if hasattr(material, "name") else str(material)
+                                )
+
+                                mat_norm = self.normalize_material_name(material_name)
 
                                 # Boost confidence for consensus materials
                                 peer_support = sum(
@@ -540,7 +553,7 @@ class MaterialDebater:
                                 proposal = MaterialProposal(
                                     agentid=agent_id,
                                     component=cm.component,
-                                    material=material,
+                                    material=material_name,  # Use extracted name
                                     confidence=confidence,
                                     reasoning=f"Round {round_num} refinement with peer support: {peer_support}",
                                     normalizedcomponent=comp_norm,
@@ -588,21 +601,21 @@ class MaterialDebater:
         self,
         proposals: list[MaterialProposal],
         convergence_score: float,
-    ) -> dict[str, list[str]]:
+    ) -> dict[str, list[dict[str, Any]]]:
         """
-        Build consensus with adaptive voting threshold.
+        Build consensus with adaptive voting threshold and confidence scoring.
 
         Args:
-            proposals: All final proposals
+            proposals: All final proposals from debate
             convergence_score: Convergence score (0-1)
 
         Returns:
-            Dict mapping component to list of consensus materials
+            Dict mapping NORMALIZED component names to list of material dicts with confidence
         """
         # Adaptive threshold: high convergence = strict, low = lenient
         vote_threshold = 0.67 if convergence_score > 0.7 else 0.33
 
-        # Group by component and material
+        # Group by normalized component and normalized material
         comp_mat_support: dict[str, dict[str, list[MaterialProposal]]] = defaultdict(
             lambda: defaultdict(list)
         )
@@ -610,12 +623,12 @@ class MaterialDebater:
         for prop in proposals:
             comp_mat_support[prop.normalizedcomponent][prop.normalizedmaterial].append(prop)
 
-        consensus: dict[str, list[str]] = {}
+        consensus: dict[str, list[dict[str, Any]]] = {}
 
         for comp_norm, mat_support in comp_mat_support.items():
             component_materials = []
 
-            for mat_norm, props in mat_support.items():
+            for _, props in mat_support.items():
                 vote_rate = len(props) / self.num_agents
                 avg_confidence = sum(p.confidence for p in props) / len(props)
 
@@ -626,16 +639,18 @@ class MaterialDebater:
                 if vote_rate >= vote_threshold or (vote_rate >= 0.33 and avg_confidence > 0.9):
                     # Use highest confidence proposal's original material name
                     best_prop = max(props, key=lambda p: p.confidence)
-                    component_materials.append(best_prop.material)
+
+                    component_materials.append(
+                        {
+                            "name": best_prop.material,  # Original material name (for display)
+                            "confidence": final_confidence,
+                            "reasoning": f"Debate consensus: {len(props)}/{self.num_agents} agents, avg confidence {avg_confidence:.2f}",
+                        }
+                    )
 
             if component_materials:
-                # Use original component name from best proposal
-                orig_comp = next(
-                    p.component
-                    for p in proposals
-                    if self.normalize_component_name(p.component) == comp_norm
-                )
-                consensus[orig_comp] = sorted(set(component_materials))
+                # ✅ USE NORMALIZED COMPONENT NAME (maintains consistency throughout pipeline)
+                consensus[comp_norm] = component_materials
 
         return consensus
 
@@ -737,28 +752,38 @@ class MaterialDebater:
 
         consensus = self.build_adaptive_consensus(all_proposals, convergence)
 
-        # ADD DEDUPLICATION HERE:
+        # DEDUPLICATION: consensus now contains dicts, not strings
         for component in consensus:
             seen = set()
             unique_materials = []
-            for mat in consensus[component]:
-                mat_norm = self.normalize_material_name(mat)
+            for mat_dict in consensus[
+                component
+            ]:  # mat_dict is {"name": ..., "confidence": ..., "reasoning": ...}
+                mat_name = mat_dict["name"]
+                mat_norm = self.normalize_material_name(mat_name)
                 if mat_norm not in seen:
-                    unique_materials.append(mat)
+                    unique_materials.append(mat_dict)  # Keep the full dict
                     seen.add(mat_norm)
             consensus[component] = unique_materials
 
-        total_materials = sum(len(mats) for mats in consensus.values())
-        print(f"Consensus: {len(consensus)} components, {total_materials} materials")
+        # Extract just names for display
+        consensus_names = {}
+        for comp, material_dicts in consensus.items():
+            material_names = [mat_dict["name"] for mat_dict in material_dicts]
+            consensus_names[comp] = material_names
 
-        for comp, mats in consensus.items():
+        total_materials = sum(len(mats) for mats in consensus_names.values())
+        print(f"Consensus: {len(consensus_names)} components, {total_materials} materials")
+
+        for comp, mats in consensus_names.items():
             print(
                 f"  - {comp}: {', '.join(mats[:5])}"
                 + (f" +{len(mats) - 5} more" if len(mats) > 5 else "")
             )
 
+        # Return consensus with full dict structure (includes confidence)
         return {
-            "consensus": consensus,
+            "consensus": consensus,  # Dicts with name, confidence, reasoning
             "convergence": convergence,
             "rounds": rounds_completed,
             "technology": technology,

@@ -2,11 +2,14 @@
 Country Data Repository for STDN
 
 This module provides the CountryDataRepository class that coordinates data
-retrieval from USGS database and LLM fallback for material-country mappings.
+retrieval from USGS database and LLM fallback for material-country mappings
+with confidence scoring.
 """
 
 import logging
-from typing import Dict, List, Optional
+import math
+from pathlib import Path
+from typing import Any, Dict, List, Optional
 
 import pandas as pd
 from pydantic_ai import RunUsage
@@ -15,23 +18,20 @@ from ..agents import get_country_data_agent
 from ..models import STDNDependencies
 from .usgs_client import USGSClient
 
-# Initialize logger
 logger = logging.getLogger(__name__)
-
-# ============================================================================
-# Country Data Repository
-# ============================================================================
 
 
 class CountryDataRepository:
     """
     Manages country production data retrieval with USGS + LLM fallback.
 
-    This class coordinates data retrieval:
-    1. First tries USGS database (primary source)
-    2. Falls back to LLM agent if USGS has no data
+    This class coordinates data retrieval with confidence scoring:
+    1. First tries USGS database (primary source, high confidence)
+    2. Falls back to LLM agent if USGS has no data (variable confidence)
     3. Optionally uses multi-agent debate for LLM fallback
     4. Caches results to avoid redundant queries
+
+    All returned data includes confidence scores and reasoning.
 
     Attributes:
         database_path: Path to USGS database
@@ -66,7 +66,7 @@ class CountryDataRepository:
 
         Args:
             database_path: Path to USGS DuckDB database
-            deps: STDN dependencies (for LLM access)
+            deps: STDN dependencies for LLM access
             top_n: Number of top countries to return
             use_llm_fallback: Use LLM when USGS has no data
         """
@@ -91,9 +91,10 @@ class CountryDataRepository:
         meas_year: int,
         usage: Optional[RunUsage] = None,
         use_debate: bool = False,
+        transcript_path: Optional[Path] = None,
     ) -> List[Dict]:
         """
-        Get country production data for a material.
+        Get country production data for a material with confidence scoring.
 
         Tries USGS database first, falls back to LLM if enabled.
         Can use multi-agent debate for LLM fallback.
@@ -104,6 +105,7 @@ class CountryDataRepository:
             meas_year: Measurement year for production data
             usage: Optional usage tracker
             use_debate: Use multi-agent debate for LLM fallback
+            transcript_path: Optional path to append results
 
         Returns:
             List of country data dicts with keys:
@@ -111,7 +113,9 @@ class CountryDataRepository:
                 - meas_unit: Measurement unit
                 - amount: Production amount
                 - percentage: Percentage of global production
-                - hs_code: HS code (if available)
+                - hs_code: HS code if available
+                - confidence: Confidence score (0.0-1.0)
+                - reasoning: Explanation of data source and confidence
         """
         # Check cache first
         cache_key = f"{material}_{src_year}_{meas_year}"
@@ -121,40 +125,64 @@ class CountryDataRepository:
 
         # Try USGS database
         print(f"Querying USGS for {material} (year {src_year}/{meas_year})")
-        usgs_data = self._query_usgs(material, src_year, meas_year)
+        usgs_data = self.query_usgs(material, src_year, meas_year)
 
         if usgs_data:
             print(f"✓ USGS returned {len(usgs_data)} countries")
-            # Add HS code
-            hs_code = self._lookup_hs_code(material)
+
+            # Add HS code and confidence to USGS data
+            hs_code = self.lookup_hs_code(material)
             for country in usgs_data:
                 country["hs_code"] = hs_code
+                # USGS data gets high confidence (authoritative source)
+                country["confidence"] = 0.95
+                country["reasoning"] = (
+                    f"USGS database {src_year}/{meas_year} - authoritative government data"
+                )
+
             self.cache[cache_key] = usgs_data
+
+            # Save to transcript if provided
+            if transcript_path:
+                self.append_country_data_to_transcript(
+                    transcript_path, material, usgs_data, source="USGS Database"
+                )
+
             return usgs_data
 
         # Fall back to LLM if enabled
         if self.use_llm_fallback and self.country_agent:
-            print("⚠ No USGS data found, using LLM fallback...")
+            print("No USGS data found, using LLM fallback...")
 
             # Use debate or single-agent LLM
             if use_debate:
-                llm_data = await self._query_llm_with_debate(material, meas_year, usage)
+                llm_data = await self.query_llm_with_debate(material, meas_year, usage)
             else:
-                llm_data = await self._query_llm(material, meas_year, usage)
+                llm_data = await self.query_llm(material, meas_year, usage)
 
             if llm_data:
                 print(f"✓ LLM returned {len(llm_data)} countries")
-                # Add HS code
-                hs_code = self._lookup_hs_code(material)
+
+                # Add HS code (LLM data already has confidence from agent)
+                hs_code = self.lookup_hs_code(material)
                 for country in llm_data:
                     country["hs_code"] = hs_code
+
                 self.cache[cache_key] = llm_data
+
+                # Save to transcript if provided
+                source = "Multi-Agent Debate" if use_debate else "LLM Fallback"
+                if transcript_path:
+                    self.append_country_data_to_transcript(
+                        transcript_path, material, llm_data, source=source
+                    )
+
                 return llm_data
 
         print(f"✗ No data found for {material}")
         return []
 
-    def _lookup_hs_code(self, material: str) -> Optional[str]:
+    def lookup_hs_code(self, material: str) -> Optional[str]:
         """
         Look up HS code for a material from the materials ontology CSV.
 
@@ -175,45 +203,45 @@ class CountryDataRepository:
             df = pd.read_csv("./data/hs_codes_and_usgs_names.csv")
 
             # Verify column exists
-            if "HS_Code" not in df.columns:
+            if "HS Code" not in df.columns:
                 return None
 
             # Clean the material name
             material_clean = material.lower().strip()
 
             # Try exact match first
-            match = df[df["Elements_Compounds"].str.lower().str.strip() == material_clean]
-
+            match = df[df["Elements/Compounds"].str.lower().str.strip() == material_clean]
             if not match.empty:
-                hs_code_value = match.iloc[0]["HS_Code"]
+                hs_code_value = match.iloc[0]["HS Code"]
                 # Check if value is not NaN and not empty
                 if pd.notna(hs_code_value) and str(hs_code_value).strip():
                     return str(int(hs_code_value))  # Convert to int first to remove .0
 
             # Try partial match if exact failed
             match = df[
-                df["Elements_Compounds"]
+                df["Elements/Compounds"]
                 .str.lower()
                 .str.contains(material_clean, na=False, regex=False)
             ]
             if not match.empty:
-                hs_code_value = match.iloc[0]["HS_Code"]
+                hs_code_value = match.iloc[0]["HS Code"]
                 if pd.notna(hs_code_value) and str(hs_code_value).strip():
                     return str(int(hs_code_value))
 
         except Exception as e:
             print(f"HS lookup error for {material}: {e}")
+            return None
 
         return None
 
-    def _query_usgs(
+    def query_usgs(
         self,
         material: str,
         src_year: int,
         meas_year: int,
     ) -> List[Dict]:
         """
-        Query USGS database for country data.
+        Query USGS database for country data with confidence scoring.
 
         Args:
             material: Material name
@@ -221,26 +249,24 @@ class CountryDataRepository:
             meas_year: Measurement year
 
         Returns:
-            List of country data dicts
+            List of country data dicts with confidence and reasoning
         """
         try:
             # Get top countries
             countries_df = self.usgs_client.query_top_countries(material, src_year, meas_year)
-
             if countries_df is None or len(countries_df) == 0:
                 return []
 
             # Get world totals (returns DataFrame)
             world_totals_df = self.usgs_client.query_world_totals(material, src_year, meas_year)
-
             if world_totals_df is None or world_totals_df.empty:
                 logger.warning(f"No world totals data for {material}")
                 return []
 
             # Extract production value from DataFrame
             try:
-                value_col: pd.Series = world_totals_df["VALUE"]  # type: ignore[assignment]
-                numeric_series: pd.Series = pd.to_numeric(value_col, errors="coerce")  # type: ignore[assignment]
+                value_col = pd.Series(world_totals_df["VALUE"])  # type: ignore[assignment]
+                numeric_series = pd.Series(pd.to_numeric(value_col, errors="coerce"))  # type: ignore[assignment]
                 world_production_sum = numeric_series.sum()
                 world_production = (
                     float(world_production_sum) if pd.notna(world_production_sum) else 0.0
@@ -253,19 +279,15 @@ class CountryDataRepository:
                 logger.warning(f"No world production data for {material}")
                 return []
 
-            # Build country data
+            # Build country data with confidence
             country_data = []
             for country_name in countries_df["country"]:
                 details_df = self.usgs_client.query_country_details(
                     material, country_name, src_year, meas_year
                 )
-
                 if details_df is None or details_df.empty:
                     continue
 
-                import math
-
-                # Iterate through DataFrame rows
                 for _, row in details_df.iterrows():
                     try:
                         if str(row.get("MEAS_TYPE", "")).upper() == "PRODUCTION":
@@ -286,6 +308,7 @@ class CountryDataRepository:
                                     "meas_unit": row.get("MEAS_UNIT", ""),
                                     "amount": amount,
                                     "percentage": percentage,
+                                    # USGS confidence added by caller
                                 }
                             )
                             break  # Only take production data
@@ -296,17 +319,17 @@ class CountryDataRepository:
             return country_data
 
         except Exception as e:
-            logger.error(f"Error in _query_usgs for {material}: {e}", exc_info=True)
+            logger.error(f"Error in query_usgs for {material}: {e}", exc_info=True)
             return []
 
-    async def _query_llm(
+    async def query_llm(
         self,
         material: str,
         year: int,
         usage: Optional[RunUsage] = None,
     ) -> List[Dict]:
         """
-        Query LLM agent for country data (single-agent fallback).
+        Query LLM agent for country data (single-agent fallback) with confidence.
 
         Args:
             material: Material name
@@ -314,7 +337,7 @@ class CountryDataRepository:
             usage: Optional RunUsage tracker
 
         Returns:
-            List of country data dicts
+            List of country data dicts with LLM-provided confidence and reasoning
         """
         if not self.country_agent:
             return []
@@ -323,7 +346,8 @@ class CountryDataRepository:
             f"Return the top {self.top_n} countries that produced {material} in {year}, "
             f"with production amounts (numeric values with units) and percentage of global supply. "
             f"Use the most recent data available (preferably {year} or within 2-3 years). "
-            f"Ensure percentages sum to a reasonable total and amounts are specific numbers, not estimates."
+            f"Ensure percentages sum to a reasonable total and amounts are specific numbers, not estimates. "
+            f"IMPORTANT: Provide confidence score (0.0-1.0) and reasoning for each country estimate."
         )
 
         try:
@@ -336,13 +360,15 @@ class CountryDataRepository:
             if result and result.output:
                 country_list = result.output
 
-                # Convert to standard format
+                # Extract data with confidence from CountryPercentage objects
                 country_data = [
                     {
                         "country": cp.country,
-                        "meas_unit": cp.meas_unit,
-                        "amount": cp.amount,
+                        "meas_unit": cp.measurement_unit or "metric tons",
+                        "amount": 0.0,  # LLM may not always provide amount
                         "percentage": cp.percentage,
+                        "confidence": cp.confidence,  # LLM-provided confidence
+                        "reasoning": cp.reasoning or "LLM estimate",
                     }
                     for cp in country_list.country_list
                 ]
@@ -355,14 +381,14 @@ class CountryDataRepository:
 
         return []
 
-    async def _query_llm_with_debate(
+    async def query_llm_with_debate(
         self,
         material: str,
         year: int,
         usage: Optional[RunUsage] = None,
-    ) -> List[Dict]:
+    ) -> List[Dict[str, Any]]:
         """
-        Query LLM with multi-agent debate for country data.
+        Query LLM with multi-agent debate for country data with confidence.
 
         Args:
             material: Material name
@@ -370,42 +396,109 @@ class CountryDataRepository:
             usage: Optional RunUsage tracker
 
         Returns:
-            List of country data dicts from debate consensus
+            List of country data dicts with debate-weighted confidence
         """
         from ..debate import MaterialCountryDebater
 
         debater = MaterialCountryDebater(
             deps=self.deps,
             num_agents=3,
-            top_n_proposed=10,  # ← NEW: Each expert proposes top 10
-            top_n_consensus=self.top_n,  # ← NEW: Final consensus is top 5 (or whatever self.top_n is)
+            top_n_proposed=10,
+            top_n_consensus=self.top_n,
             debate_top_p=0.0001,
         )
 
-        consensus = await debater.run_debate(material, year, usage)
-        return consensus
+        debate_result = await debater.run_debate(material, year, usage)
+
+        # Store debate info for transcript
+        self.last_debate_result = debate_result
+        self.last_debater = debater
+
+        # Convert to standard format with confidence
+        return debate_result.get("consensus", [])
+
+    def append_country_data_to_transcript(
+        self,
+        transcript_path: Path,
+        material: str,
+        country_data: List[Dict[str, Any]],
+        source: str = "Database",
+    ) -> None:
+        """
+        Append country production data to existing transcript with confidence.
+
+        Args:
+            transcript_path: Path to transcript file
+            material: Material name
+            country_data: List of country data dicts with confidence
+            source: Data source description
+        """
+        try:
+            # If we have debate info, use detailed format
+            if source == "Multi-Agent Debate" and hasattr(self, "last_debater"):
+                debate_result = getattr(self, "last_debate_result", None)
+                debater = getattr(self, "last_debater", None)
+
+                if debater and debate_result:
+                    formatted = debater.format_debate_for_transcript(material, debate_result)
+                    with open(transcript_path, "a", encoding="utf-8") as f:
+                        f.write(formatted)
+                        f.flush()
+                    logger.info(f"Appended full debate for {material} to transcript")
+                    return
+
+            # Otherwise use simple format (USGS or simple LLM)
+            lines = []
+            lines.append("\n\n")
+            lines.append("=" * 60 + "\n")
+            lines.append(f"TOP PRODUCING COUNTRIES: {material}\n")
+            lines.append(f"Data Source: {source}\n")
+            lines.append("=" * 60 + "\n")
+
+            if not country_data:
+                lines.append("  No country data available\n")
+            else:
+                for idx, country_info in enumerate(country_data, 1):
+                    country = country_info.get("country", "Unknown")
+                    percentage = country_info.get("percentage", 0.0)
+                    amount = country_info.get("amount", 0.0)
+                    unit = country_info.get("meas_unit", "")
+                    confidence = country_info.get("confidence", 0.0)
+                    reasoning = country_info.get("reasoning", "")
+
+                    lines.append(f"{idx}. {country}\n")
+                    lines.append(f"   Production: {amount:,.2f} {unit}\n")
+                    lines.append(f"   Global Share: {percentage:.1f}%\n")
+                    lines.append(f"   Confidence: {confidence:.2f}\n")
+                    if reasoning:
+                        lines.append(f"   Reasoning: {reasoning}\n")
+
+            lines.append("=" * 60 + "\n")
+
+            with open(transcript_path, "a", encoding="utf-8") as f:
+                f.write("".join(lines))
+                f.flush()
+
+            logger.info(f"Appended country data for {material} to transcript")
+
+        except Exception as e:
+            logger.error(f"Error appending country data to transcript: {e}")
 
     def clear_cache(self):
-        """Clear the country data cache"""
+        """Clear the country data cache."""
         self.cache.clear()
 
     def get_cache_stats(self) -> Dict:
-        """Get cache statistics"""
+        """Get cache statistics."""
         return {
             "cached_materials": len(self.cache),
             "materials": list(self.cache.keys()),
         }
 
     def close(self):
-        """Close database connections"""
+        """Close database connections."""
         if self.usgs_client:
             self.usgs_client.close()
 
 
-# ============================================================================
-# Public API
-# ============================================================================
-
-__all__ = [
-    "CountryDataRepository",
-]
+__all__ = ["CountryDataRepository"]

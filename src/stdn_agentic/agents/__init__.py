@@ -1,34 +1,41 @@
 """
-Multi-agent component and materials extractors for STDN
+STDN Agents Module
 
-This module exports all agent-related functionality for supply chain analysis:
-- Component extraction agents
-- Materials extraction agents with validation
-- Country data agents (LLM fallback)
-- Agent factory for centralized creation
+Provides agent factories and models for STDN pipeline.
 """
 
-from .component_agent import ComponentList, get_component_agent
-from .country_agent import CountryList, CountryPercentage, get_country_data_agent
+from .component_agent import (
+    ComponentList,
+    ComponentWithConfidence,  # ADD THIS
+    get_component_agent,
+)
+from .country_agent import (
+    CountryList,
+    CountryPercentage,
+    get_country_data_agent,
+)
 from .factory import AgentFactory
 from .materials_agent import (
     ComponentMaterials,
     ComponentMaterialsList,
+    MaterialWithConfidence,  # ADD THIS if not already there
     get_materials_agent,
 )
 
 __all__ = [
     # Component agent
-    "get_component_agent",
     "ComponentList",
+    "ComponentWithConfidence",  # ADD THIS
+    "get_component_agent",
     # Materials agent
-    "get_materials_agent",
     "ComponentMaterials",
     "ComponentMaterialsList",
+    "MaterialWithConfidence",  # ADD THIS if not already there
+    "get_materials_agent",
     # Country agent
-    "get_country_data_agent",
-    "CountryPercentage",
     "CountryList",
+    "CountryPercentage",
+    "get_country_data_agent",
     # Factory
     "AgentFactory",
 ]

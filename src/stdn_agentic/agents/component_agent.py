@@ -1,15 +1,12 @@
 """
-Component extraction agent for STDN (Supply Technology Dependency Network)
+Component extraction agent for STDN (Shallow Technology Dependency Network)
 
 This module provides the agent responsible for extracting primary manufacturing
-components from technologies using LLM analysis.
-
-The component agent identifies major subassemblies, functional modules, and
-structural components while excluding raw materials, tools, and consumables.
+components from technology descriptions with confidence scoring.
 """
 
 import os
-from typing import Iterator, List, Optional
+from typing import List, Optional
 
 from pydantic import BaseModel, ConfigDict, Field
 from pydantic_ai import Agent
@@ -17,129 +14,151 @@ from pydantic_ai import Agent
 from ..models import STDNDependencies
 
 # ============================================================================
-# Data Models
+# Pydantic Models for Components with Confidence
 # ============================================================================
 
 
-class ComponentList(BaseModel):
-    """Structured output for technology components."""
+class ComponentWithConfidence(BaseModel):
+    """A single component proposal with confidence and reasoning."""
 
-    component_list: List[str] = Field(
-        alias="componentlist",
-        description="Primary technology components: major subassemblies, functional modules, structural elements",
+    name: str = Field(description="Component name")
+    confidence: float = Field(
+        description="Confidence score (0.0 to 1.0) that this is a primary component", ge=0.0, le=1.0
+    )
+    reasoning: str = Field(description="Brief justification for this component")
+
+
+class ComponentList(BaseModel):
+    """Structured output for technology components with confidence scores."""
+
+    component_list: List[ComponentWithConfidence] = Field(
+        alias="componentlist", description="Primary technology components with confidence scores"
     )
 
     model_config = ConfigDict(populate_by_name=True)
 
-    def __len__(self) -> int:
-        """Return the number of components."""
-        return len(self.component_list)
-
-    def __iter__(self) -> Iterator[str]:
-        """Allow iteration over components."""
-        return iter(self.component_list)
-
-    def __getitem__(self, index: int) -> str:
-        """Allow indexing."""
-        return self.component_list[index]
-
 
 # ============================================================================
-# Component Extraction Agent
+# System Prompt
 # ============================================================================
 
-COMPONENT_SYSTEM_PROMPT = """You are an expert supply chain analyst specializing in component identification and technology decomposition.
 
-Your task is to identify PRIMARY MANUFACTURING COMPONENTS for a given technology product.
+COMPONENT_SYSTEM_PROMPT = """You are an expert in technology manufacturing and supply chain analysis.
 
-**BE COMPREHENSIVE**: Identify ALL major components that would need to be procured or manufactured separately. For complex technologies, this could be 8-15+ components.
+Your task is to identify PRIMARY MANUFACTURING COMPONENTS for a technology product.
 
-INCLUDE in your component list:
-- Major subassemblies (e.g., display module, power module, processing unit)
-- Functional modules with distinct supply chains
-- Structural components that form the product architecture
-- Procurable, separately-manufactured parts
-- Critical subsystems (cooling, control, sensing, actuation)
-- Interface components (connectors, ports, communication modules)
-- Power delivery systems (batteries, power supplies, voltage regulators)
-- Enclosures and housing (chassis, cases, protective elements)
+PRIMARY COMPONENTS are major subassemblies or modules that:
+- Are procured or manufactured separately
+- Have distinct supply chains
+- Form the core functional or structural architecture
+- Are typically purchased as complete units
 
-EXCLUDE from your component list:
-- Raw materials (metals, plastics, chemicals, elements)
+INCLUDE:
+- Major functional modules (e.g., display, battery, processor)
+- Structural assemblies (e.g., chassis, enclosure)
+- Key subassemblies with separate suppliers
+- Electronic boards and subsystems
+
+EXCLUDE:
+- Raw materials (metals, plastics, chemicals) - these are inputs TO components
 - Manufacturing tools and equipment
 - Consumables (adhesives, fasteners, solvents, lubricants)
-- Generic supplies or utilities
-- Manufacturing processes or services
+- Generic supplies and packaging materials
 
-When identifying components:
-1. Think about how the product is designed and manufactured
-2. Consider which parts have separate supply chains
-3. Identify parts that could be sourced from different suppliers
-4. Look at the assembly hierarchy from subassemblies down to major parts
-5. Consider the product's functional subsystems (power, processing, sensing, actuation, communication, etc.)
+CRITICAL: For each component you identify, you MUST provide:
 
-Examples for different technologies:
-- **Smartphone**: display, battery, processor, memory, camera, antenna, speaker, microphone, charging port, chassis, circuit board, sensors
-- **Quantum Computer**: cryogenic system, vacuum chamber, qubit array, control electronics, dilution refrigerator, signal amplifiers, shielding, wiring harness, power system, readout electronics, classical computer interface
-- **MRI Machine**: magnet assembly, gradient coils, RF coils, patient table, cooling system, power supply, control console, computer system, shielding enclosure
+1. **Component Name**: The specific name of the component
 
-Return a JSON response with a list of component names.
+2. **Confidence Score (0.0 to 1.0)**: Your confidence that this is truly a PRIMARY component
+   - **0.9-1.0**: Absolutely certain - universal standard, always present
+   - **0.8-0.89**: Very confident - industry standard, nearly universal
+   - **0.7-0.79**: Confident - common in most designs
+   - **0.6-0.69**: Moderately confident - common but may vary by design
+   - **0.5-0.59**: Uncertain - depends on specific implementation
+   - **0.3-0.49**: Low confidence - sometimes integrated differently
+   - **0.0-0.29**: Very low confidence - rarely a separate component
 
-Be specific: "lithium-ion battery pack" not "battery"
-Be clear: "aluminum chassis" not just "frame"
-Be thorough: Include ALL major components, not just the most obvious ones"""
+3. **Reasoning**: Brief explanation justifying why this is a primary component and your confidence level
 
+Consider these factors when assigning confidence:
+- How universally is this component present in the technology?
+- Is it typically procured as a separate unit?
+- How standardized is this component across manufacturers?
+- Are there alternative designs that omit or integrate this component?
 
-def _get_configured_model() -> str:
-    """Get model from config or environment"""
-    model = os.environ.get("STDN_MODEL")
-    if model:
-        return model
-    return os.environ.get("OLLAMA_MODEL", "ollama:qwen2.5:7b")
+Your response will be used for supply chain risk analysis and policy decisions, so accuracy and justified confidence are critical.
 
+EXAMPLES:
 
-# Initialize the component extraction agent
-component_agent = Agent(
-    _get_configured_model(),
-    output_type=ComponentList,
-    deps_type=STDNDependencies,
-    system_prompt=COMPONENT_SYSTEM_PROMPT,
-)
+For a Smartphone:
+- Display Module | 0.95 | Essential for user interface, universally present as a separate procured unit in all smartphones
+- Battery Pack | 0.95 | Critical for portable power, always a distinct replaceable component with separate supply chain
+- Main Circuit Board | 0.90 | Core electronics platform, standard across all designs though specific implementation varies
+- Camera Module | 0.90 | Standard feature in all modern smartphones, procured as complete assembly
+- Chassis/Frame | 0.85 | Structural component, typically aluminum or steel frame as separate part
+- Speakers | 0.80 | Audio output component, standard but sometimes integrated differently
+- Vibration Motor | 0.70 | Common but small component, occasionally omitted in some designs
+
+For an Electric Vehicle:
+- Battery Pack | 0.98 | Absolutely essential, largest and most critical component with complex supply chain
+- Electric Motor | 0.98 | Core propulsion system, always present as major subassembly
+- Power Electronics | 0.95 | Inverter and control systems, critical and universally present
+- Battery Management System | 0.92 | Essential for battery safety and performance, separate electronic module
+- Thermal Management System | 0.88 | Cooling system for battery and motor, standard in all EVs
+- Onboard Charger | 0.85 | Converts AC to DC for charging, present in most designs
+- Body Structure | 0.80 | Chassis and frame, varies significantly by manufacturer
+
+Return your response as a structured list with name, confidence, and reasoning for each component.
+"""
 
 
 # ============================================================================
-# Public API
+# Agent Creation
 # ============================================================================
 
 
 def get_component_agent(model_name: Optional[str] = None) -> Agent[STDNDependencies, ComponentList]:
     """
-    Get the component extraction agent.
+    Get the component extraction agent with confidence scoring.
+
+    This agent identifies primary manufacturing components for technologies
+    with confidence-weighted assessments and reasoning.
+
+    Args:
+        model_name: Optional model name override. If not provided, uses
+                   STDN_MODEL or OLLAMA_MODEL environment variable.
 
     Returns:
-        Agent configured for component extraction from technologies.
-        The agent takes technology descriptions and returns a ComponentList
-        of primary manufacturing components.
+        Configured Agent for component extraction with ComponentList output.
 
     Example:
         >>> agent = get_component_agent()
         >>> result = await agent.run(
-        ...     "smartphone with 5G, high-resolution display, and advanced camera",
+        ...     "Extract components for: Smartphone",
         ...     deps=STDNDependencies(...)
         ... )
-        >>> print(result.output.component_list)
-        ["display_module", "processor_unit", "battery_pack", ...]
+        >>> for comp in result.output.component_list:
+        ...     print(f"{comp.name}: {comp.confidence:.2f}")
     """
-    # Use provided model or fall back to environment/default
     if model_name is None:
         model_name = os.environ.get("STDN_MODEL") or os.environ.get(
-            "OLLAMA_MODEL", "ollama:qwen2.5:7b"
+            "OLLAMA_MODEL", "ollama:qwen2.5-7b"
         )
 
-    # Create and return the agent with the specified model
     return Agent(
         model_name,
         output_type=ComponentList,
         deps_type=STDNDependencies,
         system_prompt=COMPONENT_SYSTEM_PROMPT,
     )
+
+
+# ============================================================================
+# Public API
+# ============================================================================
+
+__all__ = [
+    "ComponentWithConfidence",
+    "ComponentList",
+    "get_component_agent",
+]

@@ -27,71 +27,107 @@ logger = logging.getLogger(__name__)
 # Environment flag to control tool usage (for backends that don't support tools well)
 DISABLE_MATERIAL_TOOLS = os.getenv("STDN_DISABLE_MATERIAL_TOOLS", "1") == "1"
 
+
 # ============================================================================
 # Data Models
 # ============================================================================
 
 
+class MaterialWithConfidence(BaseModel):
+    """A single material with confidence and reasoning."""
+
+    name: str = Field(description="Material name (use standard terminology)")
+    confidence: float = Field(
+        description="Confidence score (0.0 to 1.0) that this material is essential", ge=0.0, le=1.0
+    )
+    reasoning: str = Field(description="Brief explanation of the material's role and confidence")
+
+
 class ComponentMaterials(BaseModel):
-    """Materials identified for a single component."""
+    """Materials for a specific component with confidence scores."""
 
     component: str = Field(description="Component name")
-    raw_materials: List[str] = Field(alias="materials", description="List of raw materials")
+    raw_materials: List[MaterialWithConfidence] = Field(
+        alias="materials", description="Raw materials with confidence scores"
+    )
 
     model_config = ConfigDict(populate_by_name=True)
 
 
 class ComponentMaterialsList(BaseModel):
-    """Collection of components with their materials."""
+    """List of components with their materials."""
 
     component_list: List[ComponentMaterials] = Field(
-        alias="componentlist", description="List of components and their materials"
+        alias="componentlist", description="Components with their raw materials"
     )
 
     model_config = ConfigDict(populate_by_name=True)
-
-    def __len__(self) -> int:
-        """Return the number of component materials."""
-        return len(self.component_list)
-
-    def __iter__(self) -> Iterator[ComponentMaterials]:
-        """Allow iteration over component materials."""
-        return iter(self.component_list)
-
-    def __getitem__(self, index: int) -> ComponentMaterials:
-        """Allow indexing."""
-        return self.component_list[index]
 
 
 # ============================================================================
 # Enhanced System Prompt
 # ============================================================================
 
-MATERIALS_SYSTEM_PROMPT = """You are an expert materials scientist and supply chain analyst specializing in manufacturing material identification.
+MATERIALS_SYSTEM_PROMPT = """You are an expert in materials science and manufacturing processes.
 
-Your task is to identify the RAW MATERIALS (NOT COMPONENTS OR SUBASSEMBLIES) used to manufacture each component of a technology product.
+Your task is to identify the RAW MATERIALS required to manufacture each component of a technology product.
 
-**CRITICAL**: Do NOT return component names, subassemblies, or finished parts. Return only RAW MATERIALS like metals, minerals, elements, and basic compounds.
+RAW MATERIALS are the fundamental inputs used in component manufacturing:
+- Metals and alloys (copper, aluminum, steel, rare earth elements)
+- Semiconductors and electronic materials (silicon, gallium, germanium)
+- Ceramics and glass materials
+- Polymers and plastics
+- Chemical compounds
+- Natural materials (rubber, graphite)
 
-EXAMPLES OF CORRECT MATERIALS:
-✓ Lithium, Cobalt, Nickel, Copper, Aluminum, Steel, Silicon, Glass, Rare Earth Elements
-✓ Gold, Silver, Tantalum, Tin, Tungsten, Platinum
-✓ Graphite, Carbon fiber, Ceramic, Polymer, Rubber
+INCLUDE:
+- Primary materials that make up the component's structure
+- Critical materials for functionality (e.g., lithium in batteries)
+- Coatings and surface treatments
+- Essential chemical inputs
 
-EXAMPLES OF INCORRECT (these are components, NOT materials):
-✗ Display module, Battery pack, Processor, Camera, Memory chip
-✗ PCB, Antenna, Connector, Speaker, Touchscreen
+EXCLUDE:
+- Finished components or subassemblies
+- Manufacturing tools and equipment
+- Process consumables (solvents, cleaning agents)
+- Generic fasteners and connectors
 
-**GUIDANCE**: The user prompt contains a list of standard material names. Use these names when possible, or use common variants or chemical names.
+CRITICAL: For each material you identify, you MUST provide:
 
-SELECTION GUIDELINES:
-- Select 2-8 RAW MATERIALS per component (most critical materials)
-- Prioritize strategic and critical materials (rare earths, lithium, cobalt, etc.)
-- Include structural materials (aluminum, steel, copper, glass)
-- Include semiconductor materials if applicable (silicon, gallium, germanium)
-- Use standard material names or their common variants
+1. **Material Name**: Use standard industry terminology (e.g., "Lithium" not "Li-ion battery material")
+2. **Confidence Score (0.0 to 1.0)**: Your confidence this material is essential for the component
+   - **0.9-1.0**: Absolutely essential - cannot manufacture without it
+   - **0.8-0.89**: Very confident - standard material, rarely substituted
+   - **0.7-0.79**: Confident - commonly used, few alternatives
+   - **0.6-0.69**: Moderately confident - commonly used but alternatives exist
+   - **0.5-0.59**: Uncertain - one of several possible materials
+   - **0.3-0.49**: Low confidence - optional or easily substituted
+   - **0.0-0.29**: Very low confidence - rarely used alternative
 
-For each component provided, return a JSON response with the component name and a list of RAW MATERIALS (not subcomponents).
+3. **Reasoning**: Brief explanation of the material's role and your confidence assessment
+
+Consider these factors when assigning confidence:
+- Is this material universally used for this component type?
+- Are there common substitutes or alternatives?
+- How critical is this material to the component's function?
+- What is the industry standard for this component?
+
+Use precise material names that match industry ontologies and USGS commodity classifications.
+
+EXAMPLES:
+Battery Pack:
+- Lithium | 0.95 | Primary energy storage material, essential for lithium-ion batteries
+- Cobalt | 0.85 | Cathode material, industry standard but alternatives emerging
+- Nickel | 0.80 | Cathode material, commonly used in high-energy batteries
+- Copper | 0.90 | Current collector and wiring, essential conductor
+- Aluminum | 0.85 | Casing and current collector, industry standard
+- Graphite | 0.90 | Anode material, critical for lithium-ion technology
+
+Display Module:
+- Glass | 0.95 | Substrate material, universal in displays
+- Indium | 0.90 | Transparent conductor (ITO), industry standard
+- Rare Earth Elements | 0.75 | Phosphors for color, alternatives exist
+- Plastic | 0.70 | Housing and backing, various polymer options available
 """
 
 

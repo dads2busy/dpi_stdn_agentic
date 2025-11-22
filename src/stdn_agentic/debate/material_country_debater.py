@@ -11,7 +11,7 @@ Integration point: CountryDataRepository._query_llm_with_debate()
 from __future__ import annotations
 
 import logging
-from collections import Counter
+from collections import defaultdict
 from dataclasses import dataclass, replace
 from typing import Any, Dict, List, Optional
 
@@ -39,6 +39,8 @@ class CountryProposal:
     percentage: float
     rank: int  # Cardinal rank (1-10)
     round_num: int
+    confidence: float = 0.8  # ADD THIS - default for backward compatibility
+    reasoning: str = ""  # ADD THIS
 
 
 # ============================================================================
@@ -90,7 +92,7 @@ class MaterialCountryDebater:
         material: str,
         year: int,
         usage: Optional[RunUsage] = None,
-    ) -> List[Dict[str, Any]]:
+    ) -> Dict[str, Any]:  # ← Changed from List[Dict[str, Any]]
         """
         Run multi-agent voting for country production data.
 
@@ -120,7 +122,12 @@ class MaterialCountryDebater:
         for i, country_data in enumerate(consensus, 1):
             print(f"  {i}. {country_data['country']}: {country_data['percentage']:.1f}%")
 
-        return consensus
+        return {
+            "consensus": consensus,
+            "proposals": self.proposals,
+            "num_agents": self.num_agents,
+            "top_n_proposed": self.top_n_proposed,
+        }
 
     async def _collect_expert_proposals(
         self,
@@ -161,11 +168,13 @@ class MaterialCountryDebater:
                         proposal = CountryProposal(
                             agent_id=agent_id,
                             country=cp.country,
-                            meas_unit=cp.meas_unit,
+                            meas_unit=cp.measurement_unit or "metric tons",
                             amount=cp.amount,
                             percentage=cp.percentage,
                             rank=rank,
                             round_num=1,
+                            confidence=cp.confidence,
+                            reasoning=cp.reasoning,
                         )
                         all_proposals.append(proposal)
 
@@ -198,59 +207,58 @@ Return exactly {self.top_n_proposed} countries in order of production volume."""
         self,
         all_proposals: List[CountryProposal],
     ) -> List[Dict[str, Any]]:
-        """Build consensus using ranked voting to select top 5."""
-        print(f"\n{'=' * 60}")
-        print("PHASE 2: VOTING CONSENSUS")
-        print(f"{'=' * 60}")
+        """
+        Build consensus using confidence-weighted Borda voting.
 
-        # Score countries using Borda count (weighted by rank)
-        # Rank 1 gets highest score, rank 10 gets lowest
-        country_scores: Dict[str, float] = {}
-        country_data: Dict[str, List[CountryProposal]] = {}
+        Returns:
+            List of country dicts with confidence and reasoning
+        """
+        if not all_proposals:
+            return []
 
-        for proposal in all_proposals:
-            country_lower = proposal.country.lower()
+        # Group proposals by country (case-insensitive)
+        country_data: Dict[str, List[CountryProposal]] = defaultdict(list)
 
-            # Borda score: 11 - rank (so rank 1 = 10 points, rank 10 = 1 point)
-            score = self.top_n_proposed + 1 - proposal.rank
+        for prop in all_proposals:
+            country_lower = prop.country.lower().strip()
+            country_data[country_lower].append(prop)
 
-            if country_lower not in country_scores:
-                country_scores[country_lower] = 0.0
-                country_data[country_lower] = []
+        # Calculate Borda scores (existing logic)
+        borda_scores: Dict[str, float] = defaultdict(float)
+        for prop in all_proposals:
+            country_lower = prop.country.lower().strip()
+            # Borda: top rank gets n points, second gets n-1, etc.
+            points = self.top_n_proposed - prop.rank + 1
+            borda_scores[country_lower] += points
 
-            country_scores[country_lower] += score
-            country_data[country_lower].append(proposal)
-
-        # Sort by score and select top N
-        sorted_countries = sorted(country_scores.items(), key=lambda x: x[1], reverse=True)[
-            : self.top_n_consensus
-        ]
-
-        print(f"\nVoting results (Borda count):")
-        for country_lower, score in sorted_countries:
-            proposals = country_data[country_lower]
-            num_votes = len(proposals)
-            avg_rank = sum(p.rank for p in proposals) / num_votes
-            print(
-                f"  - {proposals[0].country}: score={score:.1f}, votes={num_votes}, avg_rank={avg_rank:.1f}"
-            )
-
-        # Build final consensus with averaged values
+        # Build consensus with confidence
         consensus = []
 
-        for country_lower, _ in sorted_countries:
-            proposals = country_data[country_lower]
+        for country_lower, proposals in country_data.items():
+            if not proposals:
+                continue
 
-            # Average the production values across agents who proposed this country
-            avg_amount = sum(p.amount for p in proposals) / len(proposals)
-            avg_percentage = sum(p.percentage for p in proposals) / len(proposals)
+            # Calculate weighted average confidence - DEFINE IT HERE
+            total_confidence = sum(p.confidence for p in proposals)
+            avg_confidence = total_confidence / len(proposals)
 
-            # Use most common unit
-            units = [p.meas_unit for p in proposals]
-            common_unit = Counter(units).most_common(1)[0][0]
+            # Calculate weighted average production values
+            total_amount = sum(p.amount for p in proposals)
+            avg_amount = total_amount / len(proposals)
+
+            total_percentage = sum(p.percentage for p in proposals)
+            avg_percentage = total_percentage / len(proposals)
+
+            # Get best reasoning (from highest confidence proposal)
+            best_proposal = max(proposals, key=lambda p: p.confidence)
+            best_reasoning = best_proposal.reasoning if best_proposal.reasoning else ""
 
             # Use original country name (not lowercased)
             country_name = proposals[0].country
+            common_unit = proposals[0].meas_unit
+
+            # Get Borda score
+            borda_score = borda_scores.get(country_lower, 0.0)
 
             consensus.append(
                 {
@@ -258,10 +266,112 @@ Return exactly {self.top_n_proposed} countries in order of production volume."""
                     "meas_unit": common_unit,
                     "amount": avg_amount,
                     "percentage": avg_percentage,
+                    "borda_score": borda_score,
+                    "num_votes": len(proposals),
+                    "confidence": avg_confidence,
+                    "reasoning": best_reasoning,
                 }
             )
 
-        return consensus
+        # Sort by Borda score descending
+        consensus.sort(key=lambda x: x["borda_score"], reverse=True)
+
+        # Return top N
+        return consensus[: self.top_n_consensus]
+
+    def format_debate_for_transcript(
+        self,
+        material: str,
+        debate_result: Dict[str, Any],
+    ) -> str:
+        """
+        Format full debate process for transcript.
+
+        Args:
+            material: Material name
+            debate_result: Result dict from run_debate
+
+        Returns:
+            Formatted debate transcript string
+        """
+        lines = []
+        lines.append(f"\n{'=' * 80}")
+        lines.append(f"COUNTRY PRODUCTION DEBATE: {material}")
+        lines.append(f"{'=' * 80}\n")
+
+        # Phase 1: Agent Proposals
+        lines.append("PHASE 1: EXPERT PROPOSALS")
+        lines.append("-" * 80)
+
+        proposals_by_agent: Dict[str, List[CountryProposal]] = {}
+        for prop in debate_result.get("proposals", []):
+            if prop.agent_id not in proposals_by_agent:
+                proposals_by_agent[prop.agent_id] = []
+            proposals_by_agent[prop.agent_id].append(prop)
+
+        for agent_id in sorted(proposals_by_agent.keys()):
+            props = sorted(proposals_by_agent[agent_id], key=lambda p: p.rank)
+            lines.append(f"\n{agent_id} (Mining Expert):")
+            lines.append(f"  Proposed {len(props)} countries:")
+            for prop in props:
+                lines.append(
+                    f"    {prop.rank}. {prop.country} - "
+                    f"{prop.amount:,.2f} {prop.meas_unit} ({prop.percentage:.1f}%)"
+                    f"(confidence: {prop.confidence:.2f})"
+                )
+
+        # Phase 2: Voting Results
+        lines.append(f"\n{'=' * 80}")
+        lines.append("PHASE 2: BORDA COUNT VOTING")
+        lines.append("-" * 80)
+
+        # Calculate voting details
+        from collections import defaultdict
+
+        country_scores: Dict[str, float] = defaultdict(float)
+        country_votes: Dict[str, int] = defaultdict(int)
+        country_ranks: Dict[str, List[int]] = defaultdict(list)
+
+        for prop in debate_result.get("proposals", []):
+            country_lower = prop.country.lower()
+            score = debate_result["top_n_proposed"] + 1 - prop.rank
+            country_scores[country_lower] += score
+            country_votes[country_lower] += 1
+            country_ranks[country_lower].append(prop.rank)
+
+        sorted_countries = sorted(country_scores.items(), key=lambda x: x[1], reverse=True)
+
+        lines.append("\nVoting Results (Rank × Agents):")
+        for country_lower, score in sorted_countries[:10]:
+            votes = country_votes[country_lower]
+            ranks = country_ranks[country_lower]
+            avg_rank = sum(ranks) / len(ranks)
+            lines.append(
+                f"  {country_lower.title()}: "
+                f"score={score:.1f}, votes={votes}/{self.num_agents}, avg_rank={avg_rank:.1f}"
+            )
+
+        # Phase 3: Final Consensus
+        lines.append(f"\n{'=' * 80}")
+        lines.append("PHASE 3: FINAL CONSENSUS (Top 5)")
+        lines.append("-" * 80)
+
+        consensus = debate_result.get("consensus", [])
+        if not consensus:
+            lines.append("  (No consensus reached)")
+        else:
+            for idx, country_data in enumerate(consensus, 1):
+                lines.append(f"\n{idx}. {country_data['country']}")
+                lines.append(
+                    f"   Production: {country_data['amount']:,.2f} {country_data['meas_unit']}"
+                )
+                lines.append(f"   Global Share: {country_data['percentage']:.1f}%")
+                lines.append(f"   Confidence: {country_data['confidence']:.2f}")
+                if country_data.get("reasoning"):
+                    lines.append(f"   Reasoning: {country_data['reasoning']}")
+
+        lines.append(f"\n{'=' * 80}\n")
+        return "\n".join(lines)
 
 
 # ============================================================================
