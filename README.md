@@ -15,6 +15,7 @@ Multi-agent, LLM-driven, fully auditable, and reproducible supply network modeli
 - [Pipeline Inputs & Outputs](#pipeline-inputs--outputs)
 - [Configuration & Environment](#configuration--environment)
 - [Usage](#usage)
+- [STDN Calculations Reference](#stdn-calculations-reference)
 - [Extensibility & Integration](#extensibility--integration)
 - [Development Standards & Testing](#development-standards--testing)
 - [FAQ](#faq)
