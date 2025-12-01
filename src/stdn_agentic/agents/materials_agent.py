@@ -92,9 +92,12 @@ EXCLUDE:
 - Process consumables (solvents, cleaning agents)
 - Generic fasteners and connectors
 
-CRITICAL: For each material you identify, you MUST provide:
+CRITICAL: For each material you identify, you MUST provide THREE fields:
 
 1. **Material Name**: Use standard industry terminology (e.g., "Lithium" not "Li-ion battery material")
+   - Match USGS commodity classifications and industry ontologies
+   - Use exact names or common variants from the provided ontology
+
 2. **Confidence Score (0.0 to 1.0)**: Your confidence this material is essential for the component
    - **0.9-1.0**: Absolutely essential - cannot manufacture without it
    - **0.8-0.89**: Very confident - standard material, rarely substituted
@@ -104,7 +107,11 @@ CRITICAL: For each material you identify, you MUST provide:
    - **0.3-0.49**: Low confidence - optional or easily substituted
    - **0.0-0.29**: Very low confidence - rarely used alternative
 
-3. **Reasoning**: Brief explanation of the material's role and your confidence assessment
+3. **Reasoning**: Brief explanation (1-2 sentences) of:
+   - The material's specific role in the component
+   - Why this material is used (properties, function)
+   - Your confidence assessment (why certain/uncertain)
+   - Any alternatives that exist
 
 Consider these factors when assigning confidence:
 - Is this material universally used for this component type?
@@ -112,22 +119,45 @@ Consider these factors when assigning confidence:
 - How critical is this material to the component's function?
 - What is the industry standard for this component?
 
-Use precise material names that match industry ontologies and USGS commodity classifications.
+**COMPLETE EXAMPLES:**
 
-EXAMPLES:
-Battery Pack:
-- Lithium | 0.95 | Primary energy storage material, essential for lithium-ion batteries
-- Cobalt | 0.85 | Cathode material, industry standard but alternatives emerging
-- Nickel | 0.80 | Cathode material, commonly used in high-energy batteries
-- Copper | 0.90 | Current collector and wiring, essential conductor
-- Aluminum | 0.85 | Casing and current collector, industry standard
-- Graphite | 0.90 | Anode material, critical for lithium-ion technology
+For component: "Battery Pack"
 
-Display Module:
-- Glass | 0.95 | Substrate material, universal in displays
-- Indium | 0.90 | Transparent conductor (ITO), industry standard
-- Rare Earth Elements | 0.75 | Phosphors for color, alternatives exist
-- Plastic | 0.70 | Housing and backing, various polymer options available
+Materials:
+- Lithium | 0.95 | Primary energy storage element in lithium-ion chemistry, absolutely essential for battery function with no viable alternatives at commercial scale
+- Cobalt | 0.85 | Cathode material providing high energy density and stability, industry standard in NMC chemistry though LFP alternatives are emerging
+- Nickel | 0.80 | Cathode material enabling high energy density, commonly used in NMC and NCA chemistries but ratio varies by design
+- Copper | 0.90 | Essential electrical conductor for current collectors and internal wiring, universal across all battery designs
+- Aluminum | 0.85 | Casing material and cathode current collector, industry standard though some designs use steel casings
+- Graphite | 0.90 | Anode material critical for lithium intercalation, universal in commercial lithium-ion batteries
+- Electrolyte | 0.92 | Ionic conductor enabling lithium transport, essential liquid or solid polymer component in all designs
+
+For component: "Display Module (OLED)"
+
+Materials:
+- Glass | 0.95 | Substrate providing structural support and optical clarity, universally used in rigid OLED displays
+- Indium | 0.90 | Key component of ITO (indium tin oxide) transparent conductor, industry standard though alternatives like graphene are being researched
+- Rare Earth Elements | 0.75 | Used in OLED emissive layers and phosphors for color generation, alternatives exist but less common
+- Plastic | 0.70 | Housing, bezels, and backing layers using various polymers, multiple material options available
+- Organic Compounds | 0.95 | Essential emissive materials in OLED layers, defining characteristic of OLED technology
+- Silver | 0.65 | Cathode electrode material, common but aluminum and other conductors can substitute
+
+For component: "Solar Cells (monocrystalline silicon)"
+
+Materials:
+- Silicon | 0.98 | Core semiconductor material for photovoltaic conversion, absolutely essential and defines monocrystalline technology
+- Silver | 0.85 | Front contact metallization for current collection, industry standard though copper alternatives emerging
+- Aluminum | 0.90 | Back contact and frame material, universal in cell design
+- Boron | 0.75 | P-type dopant for silicon, standard but gallium alternatives exist
+- Phosphorus | 0.75 | N-type dopant creating PN junction, standard but arsenic alternatives exist
+
+Return your response as a structured output with:
+- componentlist: array of objects, each containing:
+  - component: component name
+  - materials: array of material objects with:
+    - name: material name (string)
+    - confidence: confidence score (float 0.0-1.0)
+    - reasoning: justification (string)
 """
 
 

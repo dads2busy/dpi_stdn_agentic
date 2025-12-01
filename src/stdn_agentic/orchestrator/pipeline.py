@@ -322,12 +322,18 @@ class STDNOrchestrator:
         agent_proposals = {}
         agent_responses_for_transcript = []
 
+        technology_specification = technology  # Default to input
+        technology_reasoning = ""
+
         for agent_num in range(1, num_agents + 1):
             agent_id = f"Agent_{agent_num}"
 
             try:
                 # Create deps with very low Top-P for focused outputs
                 from dataclasses import replace
+                from typing import cast
+
+                from ..agents.component_agent import ComponentWithConfidence
 
                 agent_deps = replace(self.deps, top_p=self.debate_top_p)
 
@@ -345,6 +351,14 @@ class STDNOrchestrator:
                         else result.output
                     )
 
+                    # ✅ CAPTURE TECH SPEC FROM FIRST AGENT
+                    if agent_num == 1 and hasattr(result.output, "technology_specification"):
+                        technology_specification = result.output.technology_specification
+                        technology_reasoning = result.output.technology_reasoning
+
+                    # Cast to tell type checker this is a list of ComponentWithConfidence
+                    components_typed = cast(list[ComponentWithConfidence], components)
+
                     # Extract dynamic confidence from ComponentWithConfidence objects
                     agent_proposals[agent_id] = [
                         {
@@ -352,7 +366,7 @@ class STDNOrchestrator:
                             "confidence": comp.confidence,  # Dynamic from LLM
                             "reasoning": comp.reasoning,
                         }
-                        for comp in components
+                        for comp in components_typed  # ← USE THE CASTED VERSION
                     ]
 
                     # Calculate average confidence for reporting
@@ -361,7 +375,7 @@ class STDNOrchestrator:
                     )
 
                     print(
-                        f"  ✓ {agent_id} (top_p={self.debate_top_p}): {len(components)} components proposed (avg confidence: {avg_conf:.2f})"
+                        f"  ✓ {agent_id} (top_p={self.debate_top_p}): {len(components_typed)} components proposed (avg confidence: {avg_conf:.2f})"
                     )
 
                     # Store for transcript
@@ -482,7 +496,11 @@ class STDNOrchestrator:
 
         print(f"✓ Created {len(final_components_with_confidence)} ComponentWithConfidence objects")
 
-        return ComponentList(componentlist=final_components_with_confidence)
+        return ComponentList(
+            componentlist=final_components_with_confidence,
+            technology_specification=technology_specification,  # ✅ Use captured value from first agent
+            technology_reasoning=technology_reasoning,  # ✅ Use captured value from first agent
+        )
 
     def _save_debate_transcript(
         self, technology: str, agent_responses: List[Dict], debate_result: Dict
@@ -671,7 +689,11 @@ class STDNOrchestrator:
             ]
 
             materials_result = await self.extract_materials_safe(
-                componentlist=ComponentList(componentlist=component_objects),
+                componentlist=ComponentList(
+                    componentlist=component_objects,
+                    technology_specification=technology,  # ← ADD THIS
+                    technology_reasoning="Single-agent component extraction without debate",  # ← ADD THIS
+                ),
                 technology=technology,
                 usage=usage,
             )
@@ -692,17 +714,17 @@ class STDNOrchestrator:
         component_confidence_map: Optional[dict] = None,
     ) -> list[dict[str, Any]]:
         """
-        Enrich materials with country production data including confidence scores.
+        Enrich materials with country production data including confidence scores and reasoning.
 
         Args:
             materials_list: Materials for each component
             technology: Technology name
             usage: Usage tracker
             transcript_path: Optional transcript path
-            component_confidence_map: Dict mapping component names to confidence scores
+            component_confidence_map: Dict mapping component names to confidence/reasoning
 
         Returns:
-            List of enriched data records with confidence columns
+            List of enriched data records with confidence and reasoning columns
         """
         enriched_data = []
 
@@ -713,11 +735,10 @@ class STDNOrchestrator:
         for comp_mat in materials_list.component_list:
             component = comp_mat.component
 
-            # Get component confidence from the map
+            # Get component confidence and reasoning from the map
             comp_info = component_confidence_map.get(component, {})
-            component_confidence = (
-                comp_info.get("confidence", 0.0) if isinstance(comp_info, dict) else 0.0
-            )
+            component_confidence = comp_info.get("confidence", 0.0)
+            component_reasoning = comp_info.get("reasoning", "")
 
             # Access raw_materials - should be a list of MaterialWithConfidence objects
             raw_materials = comp_mat.raw_materials
@@ -727,23 +748,27 @@ class STDNOrchestrator:
                 raw_materials = list(raw_materials)
 
             for material in raw_materials:
-                # Extract material name and confidence based on type
+                # Extract material name, confidence, and reasoning based on type
                 if hasattr(material, "name") and hasattr(material, "confidence"):
                     # It's a MaterialWithConfidence object
                     material_name = material.name
                     material_confidence = material.confidence
+                    material_reasoning = getattr(material, "reasoning", "")
                 elif isinstance(material, dict):
                     # It's a dictionary (shouldn't happen but handle it)
                     material_name = material.get("name", str(material))
                     material_confidence = material.get("confidence", 0.0)
+                    material_reasoning = material.get("reasoning", "")
                 elif isinstance(material, str):
                     # It's a plain string (legacy format)
                     material_name = material
                     material_confidence = 0.0
+                    material_reasoning = ""
                 else:
                     # Unknown type - convert to string and log warning
                     material_name = str(material)
                     material_confidence = 0.0
+                    material_reasoning = ""
                     logger.warning(f"Unexpected material type for {component}: {type(material)}")
 
                 # Skip empty material names
@@ -762,15 +787,17 @@ class STDNOrchestrator:
                     )
 
                     if country_data:
-                        # We have country data - create records with confidence
+                        # We have country data - create records with confidence and reasoning
                         for country_info in country_data:
                             enriched_data.append(
                                 {
                                     "technology": technology,
                                     "component": component,
                                     "component_confidence": round(component_confidence, 3),
+                                    "component_reasoning": component_reasoning,  # ← ADDED
                                     "material": material_name,
                                     "material_confidence": round(material_confidence, 3),
+                                    "material_reasoning": material_reasoning,  # ← ADDED
                                     "hs_code": country_info.get("hs_code"),
                                     "country": country_info.get("country", "Unknown"),
                                     "meas_unit": country_info.get("meas_unit", ""),
@@ -779,6 +806,9 @@ class STDNOrchestrator:
                                     "country_confidence": round(
                                         country_info.get("confidence", 0.0), 3
                                     ),
+                                    "country_reasoning": country_info.get(
+                                        "reasoning", ""
+                                    ),  # ← ADDED
                                 }
                             )
                     elif self.write_nulls:
@@ -788,14 +818,17 @@ class STDNOrchestrator:
                                 "technology": technology,
                                 "component": component,
                                 "component_confidence": round(component_confidence, 3),
+                                "component_reasoning": component_reasoning,  # ← ADDED
                                 "material": material_name,
                                 "material_confidence": round(material_confidence, 3),
+                                "material_reasoning": material_reasoning,  # ← ADDED
                                 "hs_code": None,
                                 "country": None,
                                 "meas_unit": None,
                                 "amount": None,
                                 "percentage": None,
                                 "country_confidence": None,
+                                "country_reasoning": None,  # ← ADDED
                             }
                         )
                     else:
@@ -816,14 +849,17 @@ class STDNOrchestrator:
                                 "technology": technology,
                                 "component": component,
                                 "component_confidence": round(component_confidence, 3),
+                                "component_reasoning": component_reasoning,  # ← ADDED
                                 "material": material_name,
                                 "material_confidence": round(material_confidence, 3),
+                                "material_reasoning": material_reasoning,  # ← ADDED
                                 "hs_code": None,
                                 "country": None,
                                 "meas_unit": None,
                                 "amount": None,
                                 "percentage": None,
                                 "country_confidence": None,
+                                "country_reasoning": None,  # ← ADDED
                             }
                         )
 
@@ -858,11 +894,27 @@ class STDNOrchestrator:
                 print(f"✗ No components extracted for {tech}")
                 return None
 
+            # Import for type checking
+            from typing import cast
+
+            from ..agents.component_agent import ComponentWithConfidence
+
             # Extract component names and preserve full objects for potential transcript use
             if hasattr(components_result, "component_list"):
                 # components_result.component_list now contains ComponentWithConfidence objects
-                component_objects = components_result.component_list
+                # Use cast to tell type checker what type this is
+                component_objects = cast(
+                    list[ComponentWithConfidence], components_result.component_list
+                )
                 components: list[str] = [comp.name for comp in component_objects]
+
+                # Build component confidence map for enrichment phase
+                component_confidence_map: dict[str, dict[str, Any]] = {}
+                for comp in component_objects:
+                    component_confidence_map[comp.name] = {
+                        "confidence": comp.confidence,
+                        "reasoning": comp.reasoning,
+                    }
 
                 # Calculate and log average confidence
                 if component_objects:
@@ -877,15 +929,22 @@ class STDNOrchestrator:
             elif isinstance(components_result, list):
                 # Handle case where result is already a list
                 if components_result and hasattr(components_result[0], "name"):
-                    component_objects = components_result
-                    components = [comp.name for comp in components_result]
+                    component_objects = cast(list[ComponentWithConfidence], components_result)
+                    components = [comp.name for comp in component_objects]
+
+                    component_confidence_map = {
+                        comp.name: {"confidence": comp.confidence, "reasoning": comp.reasoning}
+                        for comp in component_objects
+                    }
                 else:
                     component_objects = []
                     components = components_result
+                    component_confidence_map = {}
                 print(f"✓ Extracted {len(components)} components")
             else:
                 components = []
                 component_objects = []
+                component_confidence_map = {}
                 print(f"✓ Extracted {len(components)} components")
 
             # Phase 2: Extract materials
@@ -905,12 +964,13 @@ class STDNOrchestrator:
                 if transcripts:
                     transcript_path = max(transcripts, key=lambda p: p.stat().st_mtime)
 
-            # Phase 3: Enrich with country data
+            # Phase 3: Enrich with country data (pass component_confidence_map)
             enriched_data = await self._enrich_with_country_data(
                 materials_list,
                 tech,
                 usage,
                 transcript_path=transcript_path,
+                component_confidence_map=component_confidence_map,  # ← PASS THIS
             )
 
             return {
@@ -930,9 +990,9 @@ class STDNOrchestrator:
         self,
         components: list,  # Can accept ComponentWithConfidence or str
         debate_history: list,
-        consensus: dict[str, list[dict]],  # ← Updated type hint: list[dict] not list[str]
+        consensus: dict[str, list[dict]],  # list[dict] with name, confidence, reasoning
     ) -> str:
-        """Build the materials debate transcript content."""
+        """Build the materials debate transcript content with confidence and reasoning."""
         content = []
 
         content.append("\n\n")
@@ -948,6 +1008,8 @@ class STDNOrchestrator:
             # Handle both ComponentWithConfidence objects and strings
             if hasattr(comp, "name"):
                 content.append(f"  - {comp.name} (confidence: {comp.confidence:.2f})\n")
+                if hasattr(comp, "reasoning") and comp.reasoning:
+                    content.append(f"    → {comp.reasoning}\n")  # ✅ ADD COMPONENT REASONING
             else:
                 content.append(f"  - {comp}\n")
 
@@ -981,7 +1043,7 @@ class STDNOrchestrator:
 
             content.append("\n")
 
-        # Phase 3: Final Consensus
+        # Phase 3: Final Consensus WITH REASONING
         content.append("=" * 80 + "\n")
         content.append("FINAL MATERIAL ASSIGNMENTS\n")
         content.append("=" * 80 + "\n\n")
@@ -990,22 +1052,39 @@ class STDNOrchestrator:
         total_materials = sum(len(mats) for mats in consensus.values())
         unique_materials = len(
             {mat_dict["name"] for mats in consensus.values() for mat_dict in mats}
-        )  # ✅ Extract 'name' from each dict
+        )
 
         content.append(f"Components: {len(consensus)}\n")
         content.append(f"Unique Materials: {unique_materials}\n")
         content.append(f"Total Assignments: {total_materials}\n\n")
 
         content.append("Materials by Component:\n")
-        content.append("-" * 80 + "\n")
+        content.append("-" * 80 + "\n\n")
 
         for component, material_dicts in sorted(consensus.items()):
-            # Extract names from dicts and create sorted list
-            material_names = [mat_dict["name"] for mat_dict in material_dicts]
-            mat_list = ", ".join(sorted(material_names))  # ✅ Join strings
-            content.append(f"  ✓ {component}: {mat_list}\n")
+            content.append(f"{component}:\n")
 
-        content.append("\n" + "=" * 80 + "\n")
+            # Sort materials by confidence (highest first), then by name
+            sorted_materials = sorted(
+                material_dicts,
+                key=lambda m: (-m.get("confidence", 0.0), m.get("name", "")),
+            )
+
+            for mat_dict in sorted_materials:
+                name = mat_dict.get("name", "Unknown")
+                confidence = mat_dict.get("confidence", 0.0)
+                reasoning = mat_dict.get("reasoning", "")
+
+                # Material name and confidence
+                content.append(f"  • {name} (confidence: {confidence:.2f})\n")
+
+                # Material reasoning (indented)
+                if reasoning:
+                    content.append(f"    → {reasoning}\n")
+
+            content.append("\n")  # Blank line between components
+
+        content.append("=" * 80 + "\n")
         content.append("END OF COMBINED TRANSCRIPT\n")
         content.append("=" * 80 + "\n")
 
@@ -1016,7 +1095,7 @@ class STDNOrchestrator:
         technology: str,
         components: list,  # Can be strings or ComponentWithConfidence
         debate_history: list,
-        consensus: dict[str, list[str]],
+        consensus: dict[str, list[dict]],
     ) -> None:
         """Append material debate results to existing component transcript."""
         print(f"🔍 DEBUG: Attempting to save material transcript for {technology}")
@@ -1066,14 +1145,14 @@ class STDNOrchestrator:
         self,
         json_path: Path,
         debate_history: list,
-        consensus: dict[str, list[str]],
+        consensus: dict[str, list[dict]],
     ) -> None:
         """Update JSON transcript with materials data."""
         with open(json_path, "r", encoding="utf-8") as f:
             data = json.load(f)
 
         total_materials = sum(len(mats) for mats in consensus.values())
-        unique_materials = len({mat for mats in consensus.values() for mat in mats})
+        unique_materials = len({mat["name"] for mats in consensus.values() for mat in mats})
 
         data["materials_debate"] = {
             "debate_rounds": [
@@ -1156,22 +1235,25 @@ class STDNOrchestrator:
         successful = 0
         failed = 0
 
-        # Write CSV header WITH CONFIDENCE COLUMNS
+        # Write CSV header WITH CONFIDENCE AND REASONING COLUMNS
         with open(self.output_file, "w", newline="") as f:
             writer = csv.DictWriter(
                 f,
                 fieldnames=[
                     "technology",
                     "component",
-                    "component_confidence",  # ← ADDED
+                    "component_confidence",
+                    "component_reasoning",  # ← ADDED
                     "material",
-                    "material_confidence",  # ← ADDED
+                    "material_confidence",
+                    "material_reasoning",  # ← ADDED
                     "hs_code",
                     "country",
                     "meas_unit",
                     "amount",
                     "percentage",
-                    "country_confidence",  # ← ADDED
+                    "country_confidence",
+                    "country_reasoning",  # ← ADDED
                 ],
             )
             writer.writeheader()
@@ -1183,22 +1265,25 @@ class STDNOrchestrator:
             )
 
             if result and result["enriched_data"]:
-                # Write results to CSV WITH CONFIDENCE COLUMNS
+                # Write results to CSV WITH CONFIDENCE AND REASONING COLUMNS
                 with open(self.output_file, "a", newline="") as f:
                     writer = csv.DictWriter(
                         f,
                         fieldnames=[
                             "technology",
                             "component",
-                            "component_confidence",  # ← ADDED
+                            "component_confidence",
+                            "component_reasoning",  # ← ADDED
                             "material",
-                            "material_confidence",  # ← ADDED
+                            "material_confidence",
+                            "material_reasoning",  # ← ADDED
                             "hs_code",
                             "country",
                             "meas_unit",
                             "amount",
                             "percentage",
-                            "country_confidence",  # ← ADDED
+                            "country_confidence",
+                            "country_reasoning",  # ← ADDED
                         ],
                     )
 

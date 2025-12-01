@@ -102,6 +102,19 @@ class DebateReporter:
             f.write(f"Generated: {datetime.now().isoformat()}\n")
             f.write("=" * 80 + "\n\n")
 
+            # ✅ ADD TECHNOLOGY SPECIFICATION SECTION
+            tech_spec = final_consensus.get("technology_specification", technology)
+            tech_reasoning = final_consensus.get("technology_reasoning", "")
+
+            if tech_spec != technology or tech_reasoning:
+                f.write("TECHNOLOGY SPECIFICATION:\n")
+                f.write("-" * 80 + "\n")
+                f.write(f"User Query: {technology}\n")
+                f.write(f"Analyzed Technology: {tech_spec}\n")
+                if tech_reasoning:
+                    f.write(f"\nReasoning: {tech_reasoning}\n")
+                f.write("-" * 80 + "\n\n")
+
             # Phase 1: Initial Proposals
             f.write("PHASE 1: INDEPENDENT COMPONENT EXTRACTION\n")
             f.write("-" * 80 + "\n\n")
@@ -185,6 +198,10 @@ class DebateReporter:
         """Save debate as JSON file"""
         transcript = {
             "technology": technology,
+            "technology_specification": final_consensus.get(
+                "technology_specification", technology
+            ),  # ✅ ADD
+            "technology_reasoning": final_consensus.get("technology_reasoning", ""),  # ✅ ADD
             "timestamp": datetime.now().isoformat(),
             "phase1_initial_proposals": agent_responses,
             "phase2_debate_rounds": debate_history,

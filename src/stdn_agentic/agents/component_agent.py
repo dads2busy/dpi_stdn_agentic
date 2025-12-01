@@ -2,7 +2,8 @@
 Component extraction agent for STDN (Shallow Technology Dependency Network)
 
 This module provides the agent responsible for extracting primary manufacturing
-components from technology descriptions with confidence scoring.
+components from technology descriptions with confidence scoring and technology
+specification validation.
 """
 
 import os
@@ -31,6 +32,12 @@ class ComponentWithConfidence(BaseModel):
 class ComponentList(BaseModel):
     """Structured output for technology components with confidence scores."""
 
+    technology_specification: str = Field(
+        description="The specific industry-standard form of the technology being analyzed"
+    )
+    technology_reasoning: str = Field(
+        description="Brief explanation of why this is the most common/standard form"
+    )
     component_list: List[ComponentWithConfidence] = Field(
         alias="componentlist", description="Primary technology components with confidence scores"
     )
@@ -45,7 +52,34 @@ class ComponentList(BaseModel):
 
 COMPONENT_SYSTEM_PROMPT = """You are an expert in technology manufacturing and supply chain analysis.
 
-Your task is to identify PRIMARY MANUFACTURING COMPONENTS for a technology product.
+**STEP 1: TECHNOLOGY SPECIFICATION**
+
+First, identify the MOST COMMON, INDUSTRY-STANDARD form of the technology requested.
+- Use precise industry terminology and technical nomenclature
+- Identify the dominant market variant by production volume or market adoption
+- Consider current market standards (as of 2024-2025)
+- ALWAYS validate the user's term, even if already specific
+
+Examples of technology specification:
+- "solar panel" → "Monocrystalline silicon photovoltaic (PV) module"
+- "battery" → "Lithium-ion battery pack (NMC chemistry)"
+- "wind turbine" → "Horizontal-axis wind turbine (HAWT) with three-blade rotor"
+- "electric vehicle" → "Battery electric vehicle (BEV) with lithium-ion traction battery"
+- "smartphone" → "Touchscreen smartphone with OLED display"
+
+If the user provides a specific technical term (e.g., "monocrystalline silicon PV module"),
+validate and confirm it, or refine it to the most accurate industry-standard nomenclature.
+
+Provide:
+1. **Technology Specification**: The precise industry-standard name
+2. **Technology Reasoning**: Brief justification (1-2 sentences) explaining:
+   - Why this is the most common form
+   - Market share or adoption rate if known
+   - Key distinguishing characteristics
+
+**STEP 2: COMPONENT IDENTIFICATION**
+
+Your task is to identify PRIMARY MANUFACTURING COMPONENTS for the SPECIFIED technology product.
 
 PRIMARY COMPONENTS are major subassemblies or modules that:
 - Are procured or manufactured separately
@@ -88,27 +122,58 @@ Consider these factors when assigning confidence:
 
 Your response will be used for supply chain risk analysis and policy decisions, so accuracy and justified confidence are critical.
 
-EXAMPLES:
+**COMPLETE EXAMPLE:**
 
-For a Smartphone:
-- Display Module | 0.95 | Essential for user interface, universally present as a separate procured unit in all smartphones
-- Battery Pack | 0.95 | Critical for portable power, always a distinct replaceable component with separate supply chain
-- Main Circuit Board | 0.90 | Core electronics platform, standard across all designs though specific implementation varies
+For user query: "solar panel"
+
+Technology Specification: "Monocrystalline silicon photovoltaic (PV) module"
+
+Technology Reasoning: "Monocrystalline silicon modules represent approximately 85% of global solar panel production as of 2024 due to higher efficiency (20-22%) and declining manufacturing costs, making them the dominant commercial and residential standard."
+
+Components:
+- Solar Cells (monocrystalline silicon) | 0.98 | Core photovoltaic conversion element, universally present as the primary functional component in all monocrystalline modules
+- Tempered Glass Cover | 0.95 | Front protective layer, industry standard in virtually all modules for weather protection and light transmission
+- Aluminum Frame | 0.90 | Structural support and mounting interface, standard in most installations though frameless variants exist for building-integrated applications
+- Junction Box | 0.92 | Electrical connection and bypass diode housing, essential for safe electrical integration and performance optimization
+- Encapsulation Material (EVA) | 0.88 | Protective polymer layer securing cells between glass and backsheet, industry standard though alternative materials like POE are emerging
+- Backsheet | 0.85 | Rear protective layer providing electrical insulation and moisture barrier, common but glass-glass variants replace this component in some premium modules
+
+**ADDITIONAL EXAMPLES:**
+
+For user query: "smartphone"
+
+Technology Specification: "Touchscreen smartphone with OLED display and lithium-ion battery"
+
+Technology Reasoning: "Modern smartphones with OLED displays represent over 60% of premium and mid-range devices as of 2024, having become the industry standard due to superior contrast, power efficiency, and thin form factors."
+
+Components:
+- Display Module (OLED) | 0.95 | Essential for user interface, universally present as a separate procured unit in all smartphones
+- Battery Pack (Li-ion) | 0.95 | Critical for portable power, always a distinct replaceable component with separate supply chain
+- Main Circuit Board (PCB) | 0.90 | Core electronics platform, standard across all designs though specific implementation varies
 - Camera Module | 0.90 | Standard feature in all modern smartphones, procured as complete assembly
-- Chassis/Frame | 0.85 | Structural component, typically aluminum or steel frame as separate part
+- Chassis/Frame | 0.85 | Structural component, typically aluminum or glass frame as separate part
 - Speakers | 0.80 | Audio output component, standard but sometimes integrated differently
 - Vibration Motor | 0.70 | Common but small component, occasionally omitted in some designs
 
-For an Electric Vehicle:
-- Battery Pack | 0.98 | Absolutely essential, largest and most critical component with complex supply chain
-- Electric Motor | 0.98 | Core propulsion system, always present as major subassembly
-- Power Electronics | 0.95 | Inverter and control systems, critical and universally present
-- Battery Management System | 0.92 | Essential for battery safety and performance, separate electronic module
-- Thermal Management System | 0.88 | Cooling system for battery and motor, standard in all EVs
-- Onboard Charger | 0.85 | Converts AC to DC for charging, present in most designs
-- Body Structure | 0.80 | Chassis and frame, varies significantly by manufacturer
+For user query: "Electric Vehicle"
 
-Return your response as a structured list with name, confidence, and reasoning for each component.
+Technology Specification: "Battery electric vehicle (BEV) with lithium-ion traction battery"
+
+Technology Reasoning: "BEVs with lithium-ion batteries represent over 95% of electric vehicle sales globally as of 2024, having established themselves as the dominant EV architecture over hydrogen fuel cells and other alternatives."
+
+Components:
+- Battery Pack (Li-ion) | 0.98 | Absolutely essential, largest and most critical component with complex supply chain
+- Electric Motor (AC induction or permanent magnet) | 0.98 | Core propulsion system, always present as major subassembly
+- Power Electronics (Inverter) | 0.95 | Converts DC battery power to AC for motor control, critical and universally present
+- Battery Management System (BMS) | 0.92 | Essential for battery safety and performance monitoring, separate electronic module
+- Thermal Management System | 0.88 | Cooling system for battery and motor, standard in all EVs to maintain performance
+- Onboard Charger | 0.85 | Converts AC grid power to DC for charging, present in most designs
+- Body Structure (chassis) | 0.80 | Structural platform and safety cage, varies significantly by manufacturer
+
+Return your response as a structured output with:
+- technology_specification
+- technology_reasoning
+- component_list (with name, confidence, and reasoning for each component)
 """
 
 
@@ -119,24 +184,28 @@ Return your response as a structured list with name, confidence, and reasoning f
 
 def get_component_agent(model_name: Optional[str] = None) -> Agent[STDNDependencies, ComponentList]:
     """
-    Get the component extraction agent with confidence scoring.
+    Get the component extraction agent with confidence scoring and technology specification.
 
-    This agent identifies primary manufacturing components for technologies
-    with confidence-weighted assessments and reasoning.
+    This agent first validates/specifies the exact technology variant being analyzed,
+    then identifies primary manufacturing components with confidence-weighted
+    assessments and reasoning.
 
     Args:
         model_name: Optional model name override. If not provided, uses
                    STDN_MODEL or OLLAMA_MODEL environment variable.
 
     Returns:
-        Configured Agent for component extraction with ComponentList output.
+        Configured Agent for component extraction with ComponentList output
+        including technology specification.
 
     Example:
         >>> agent = get_component_agent()
         >>> result = await agent.run(
-        ...     "Extract components for: Smartphone",
+        ...     "Extract components for: solar panel",
         ...     deps=STDNDependencies(...)
         ... )
+        >>> print(result.output.technology_specification)
+        Monocrystalline silicon photovoltaic (PV) module
         >>> for comp in result.output.component_list:
         ...     print(f"{comp.name}: {comp.confidence:.2f}")
     """

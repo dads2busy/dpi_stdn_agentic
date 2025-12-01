@@ -130,14 +130,15 @@ class CountryDataRepository:
         if usgs_data:
             print(f"✓ USGS returned {len(usgs_data)} countries")
 
-            # Add HS code and confidence to USGS data
+            # Add HS code, confidence, and reasoning to USGS data
             hs_code = self.lookup_hs_code(material)
             for country in usgs_data:
                 country["hs_code"] = hs_code
                 # USGS data gets high confidence (authoritative source)
                 country["confidence"] = 0.95
                 country["reasoning"] = (
-                    f"USGS database {src_year}/{meas_year} - authoritative government data"
+                    f"USGS Mineral Commodity Summaries {src_year}/{meas_year} - "
+                    f"authoritative U.S. government production data with global coverage"
                 )
 
             self.cache[cache_key] = usgs_data
@@ -163,10 +164,18 @@ class CountryDataRepository:
             if llm_data:
                 print(f"✓ LLM returned {len(llm_data)} countries")
 
-                # Add HS code (LLM data already has confidence from agent)
+                # Add HS code to LLM data (confidence and reasoning should already be from agent)
                 hs_code = self.lookup_hs_code(material)
                 for country in llm_data:
                     country["hs_code"] = hs_code
+
+                    # Ensure reasoning field exists (fallback if LLM didn't provide it)
+                    if "reasoning" not in country or not country["reasoning"]:
+                        source = "multi-agent debate consensus" if use_debate else "LLM estimate"
+                        country["reasoning"] = (
+                            f"LLM-generated estimate from {source} - "
+                            f"no USGS data available for {material} in {meas_year}"
+                        )
 
                 self.cache[cache_key] = llm_data
 
@@ -396,7 +405,7 @@ class CountryDataRepository:
             usage: Optional RunUsage tracker
 
         Returns:
-            List of country data dicts with debate-weighted confidence
+            List of country data dicts with debate-weighted confidence and reasoning
         """
         from ..debate import MaterialCountryDebater
 
@@ -414,8 +423,42 @@ class CountryDataRepository:
         self.last_debate_result = debate_result
         self.last_debater = debater
 
-        # Convert to standard format with confidence
-        return debate_result.get("consensus", [])
+        # Normalize debate consensus to standard format with reasoning
+        consensus_items = debate_result.get("consensus", [])
+
+        country_data = []
+        for item in consensus_items:
+            # Handle both CountryPercentage objects and dicts
+            if hasattr(item, "country"):
+                # It's a CountryPercentage object
+                country_data.append(
+                    {
+                        "country": item.country,
+                        "meas_unit": item.measurement_unit or "metric tons",
+                        "amount": item.amount or 0.0,
+                        "percentage": item.percentage,
+                        "confidence": item.confidence,
+                        "reasoning": item.reasoning
+                        or "Multi-agent debate consensus",  # ✅ EXTRACT REASONING
+                    }
+                )
+            elif isinstance(item, dict):
+                # It's already a dict - ensure reasoning exists
+                country_data.append(
+                    {
+                        "country": item.get("country", "Unknown"),
+                        "meas_unit": item.get("meas_unit")
+                        or item.get("measurement_unit")
+                        or "metric tons",
+                        "amount": item.get("amount", 0.0),
+                        "percentage": item.get("percentage", 0.0),
+                        "confidence": item.get("confidence", 0.75),
+                        "reasoning": item.get("reasoning")
+                        or "Multi-agent debate consensus",  # ✅ ENSURE REASONING
+                    }
+                )
+
+        return country_data
 
     def append_country_data_to_transcript(
         self,
