@@ -352,9 +352,13 @@ class STDNOrchestrator:
                     )
 
                     # ✅ CAPTURE TECH SPEC FROM FIRST AGENT
-                    if agent_num == 1 and hasattr(result.output, "technology_specification"):
-                        technology_specification = result.output.technology_specification
-                        technology_reasoning = result.output.technology_reasoning
+                    if agent_num == 1:
+                        if hasattr(result.output, "technology_specification"):
+                            technology_specification = result.output.technology_specification
+                            print(f"✓ Captured tech spec: {technology_specification}")
+                        if hasattr(result.output, "technology_reasoning"):
+                            technology_reasoning = result.output.technology_reasoning
+                            print(f"✓ Captured tech reasoning: {technology_reasoning[:100]}...")
 
                     # Cast to tell type checker this is a list of ComponentWithConfidence
                     components_typed = cast(list[ComponentWithConfidence], components)
@@ -366,7 +370,7 @@ class STDNOrchestrator:
                             "confidence": comp.confidence,  # Dynamic from LLM
                             "reasoning": comp.reasoning,
                         }
-                        for comp in components_typed  # ← USE THE CASTED VERSION
+                        for comp in components_typed
                     ]
 
                     # Calculate average confidence for reporting
@@ -415,6 +419,11 @@ class STDNOrchestrator:
             logger.error(f"Error during debate for {technology}: {e}", exc_info=True)
             print(f"❌ Debate failed: {e}")
             return None
+
+        # ✅✅✅ ADD TECH SPEC TO debate_result BEFORE SAVING TRANSCRIPT ✅✅✅
+        debate_result["technology_specification"] = technology_specification
+        debate_result["technology_reasoning"] = technology_reasoning
+        print(f"✓ Injected tech spec into debate_result: {technology_specification}")
 
         # Save transcript if enabled
         if self.save_transcripts and self.reporter:
@@ -498,8 +507,8 @@ class STDNOrchestrator:
 
         return ComponentList(
             componentlist=final_components_with_confidence,
-            technology_specification=technology_specification,  # ✅ Use captured value from first agent
-            technology_reasoning=technology_reasoning,  # ✅ Use captured value from first agent
+            technology_specification=technology_specification,
+            technology_reasoning=technology_reasoning,
         )
 
     def _save_debate_transcript(
