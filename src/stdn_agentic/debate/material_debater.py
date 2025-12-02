@@ -392,7 +392,7 @@ class MaterialDebater:
         round_num: int,
     ) -> dict[str, dict[str, list[str]]]:
         """
-        Generate critiques with peer support analysis.
+        Generate critiques with peer support analysis and substantive feedback.
 
         Args:
             proposals: All current proposals
@@ -413,31 +413,59 @@ class MaterialDebater:
 
         # Generate critiques for each component-material pair
         for comp, mat_support in comp_mat_support.items():
+            # Get all materials proposed for this component
+            all_materials_for_comp = list(mat_support.keys())
+
             for mat_norm, supporting in mat_support.items():
                 num_supporting = len(supporting)
                 support_rate = num_supporting / self.num_agents
 
-                # Get original material name (non-normalized)
+                # Get original material name and reasoning from first supporter
                 orig_material = supporting[0].material
+                sample_reasoning = supporting[0].reasoning[:100] if supporting[0].reasoning else ""
 
                 if support_rate >= 0.67:
-                    # Strong consensus
+                    # Strong consensus - reinforce
+                    avg_conf = sum(p.confidence for p in supporting) / len(supporting)
                     critiques[comp][mat_norm].append(
-                        f"CONSENSUS: {num_supporting}/{self.num_agents} agents agree on {orig_material}. "
-                        f"Strong evidence for this material."
+                        f"✓ CONSENSUS: {num_supporting}/{self.num_agents} agents agree on {orig_material} "
+                        f"(avg confidence: {avg_conf:.2f}). Strong evidence: {sample_reasoning}"
                     )
                 elif support_rate >= 0.33:
-                    # Partial support
-                    critiques[comp][mat_norm].append(
-                        f"PARTIAL: {num_supporting}/{self.num_agents} agents proposed {orig_material}. "
-                        f"Consider if this is truly essential or could be consolidated."
-                    )
+                    # Partial support - provide specific guidance
+                    non_supporters = self.num_agents - num_supporting
+                    other_mats = [m for m in all_materials_for_comp if m != mat_norm]
+
+                    critique = f"⚠ PARTIAL: {num_supporting}/{self.num_agents} agents proposed {orig_material}. "
+
+                    if other_mats:
+                        # Show what other agents proposed instead
+                        alternatives = ", ".join(other_mats[:3])
+                        critique += (
+                            f"{non_supporters} agent(s) proposed alternatives: {alternatives}. "
+                        )
+                        critique += f"Evaluate if {orig_material} is functionally distinct or if materials can be consolidated."
+                    else:
+                        # Material omitted by some agents
+                        critique += f"{non_supporters} agent(s) omitted this material. "
+                        critique += f"Consider: Is {orig_material} truly essential for {comp}?"
+
+                    critiques[comp][mat_norm].append(critique)
                 else:
-                    # Isolated proposal
+                    # Isolated proposal - challenge strongly
+                    other_agents_count = self.num_agents - num_supporting
                     critiques[comp][mat_norm].append(
-                        f"ISOLATED: Only {num_supporting}/{self.num_agents} agent(s) proposed {orig_material}. "
-                        f"Verify if this is truly a key material or too specific."
+                        f"❌ ISOLATED: Only {num_supporting}/{self.num_agents} agent proposed {orig_material} "
+                        f"while {other_agents_count} agents did not. Reasoning: {sample_reasoning}. "
+                        f"Verify if this material is critical or too specific/redundant for {comp}."
                     )
+
+            # Add component-level guidance if there are too many materials
+            if len(all_materials_for_comp) > 8:
+                critiques[comp]["_component_level"] = [
+                    f"⚠ {comp} has {len(all_materials_for_comp)} proposed materials - "
+                    f"focus on primary/essential materials and consolidate variants."
+                ]
 
         return dict(critiques)
 

@@ -304,7 +304,7 @@ class STDNOrchestrator:
 
         Args:
             technology: Technology name
-            role: Expert role context
+            role: Expert role context (from CSV)
             usage: RunUsage tracker
             num_agents: Number of agents to use in debate (default: 3)
 
@@ -316,8 +316,16 @@ class STDNOrchestrator:
         print(f"DEBATE-BASED COMPONENT EXTRACTION: {technology}")
         print(f"{'=' * 80}\n")
 
+        # Define different analytical perspectives for agents with the same role
+        PERSPECTIVE_FOCUS = [
+            "Focus on identifying major procurable subassemblies and modules with distinct supply chains",
+            "Focus on structural components and physical assemblies required for construction",
+            "Focus on distinguishing true manufactured components from raw materials and consumables",
+        ]
+
         # Collect initial proposals from multiple agents
         print(f"📋 Collecting proposals from {num_agents} agents...\n")
+        print(f"🎭 Role: {role}\n")
 
         agent_proposals = {}
         agent_responses_for_transcript = []
@@ -328,6 +336,16 @@ class STDNOrchestrator:
         for agent_num in range(1, num_agents + 1):
             agent_id = f"Agent_{agent_num}"
 
+            # Get analytical perspective for this agent
+            perspective = (
+                PERSPECTIVE_FOCUS[agent_num - 1]
+                if agent_num <= len(PERSPECTIVE_FOCUS)
+                else "Focus on identifying essential subsystems and modules"
+            )
+
+            # Create short version for console output
+            perspective_short = perspective.replace("Focus on ", "").replace("identifying ", "")
+
             try:
                 # Create deps with very low Top-P for focused outputs
                 from dataclasses import replace
@@ -337,10 +355,11 @@ class STDNOrchestrator:
 
                 agent_deps = replace(self.deps, top_p=self.debate_top_p)
 
-                # Each agent gets a slightly different perspective prompt
+                # Each agent uses the CSV role with their specific perspective
                 result = await self.component_agent.run(
-                    f"Extract the primary components of a {technology}. "
-                    f"Perspective #{agent_num}: Focus on identifying essential subsystems and modules.",
+                    f"You are a {role} analyzing {technology}. "
+                    f"{perspective}. "
+                    f"Extract the primary manufacturing components from this analytical perspective.",
                     deps=agent_deps,
                 )
 
@@ -351,7 +370,7 @@ class STDNOrchestrator:
                         else result.output
                     )
 
-                    # ✅ CAPTURE TECH SPEC FROM FIRST AGENT
+                    # Capture tech spec from first agent
                     if agent_num == 1:
                         if hasattr(result.output, "technology_specification"):
                             technology_specification = result.output.technology_specification
@@ -378,16 +397,19 @@ class STDNOrchestrator:
                         agent_proposals[agent_id]
                     )
 
+                    # Show role and component count
                     print(
-                        f"  ✓ {agent_id} (top_p={self.debate_top_p}): {len(components_typed)} components proposed (avg confidence: {avg_conf:.2f})"
+                        f"  ✓ {agent_id} ({role}): {len(components_typed)} components proposed (avg confidence: {avg_conf:.2f})"
                     )
+                    # Show actual perspective on next line
+                    print(f"     → {perspective_short}")
 
-                    # Store for transcript
+                    # Store for transcript with role + perspective
                     agent_responses_for_transcript.append(
                         {
                             "agent_id": agent_id,
                             "components": agent_proposals[agent_id],
-                            "persona": f"Component extraction perspective #{agent_num}",
+                            "persona": f"{role} - {perspective}",
                         }
                     )
 
@@ -420,7 +442,7 @@ class STDNOrchestrator:
             print(f"❌ Debate failed: {e}")
             return None
 
-        # ✅✅✅ ADD TECH SPEC TO debate_result BEFORE SAVING TRANSCRIPT ✅✅✅
+        # Add tech spec to debate_result BEFORE saving transcript
         debate_result["technology_specification"] = technology_specification
         debate_result["technology_reasoning"] = technology_reasoning
         print(f"✓ Injected tech spec into debate_result: {technology_specification}")
@@ -436,68 +458,43 @@ class STDNOrchestrator:
                 logger.error(f"Error saving debate transcript: {e}")
                 print(f"⚠️  Failed to save transcript: {e}")
 
-        # Extract final components from debate result
+        # Extract final components and details from debate result
         final_component_names = debate_result.get("components", [])
-        debate_history = debate_result.get("debate_history", [])
+        component_details = debate_result.get("component_details", {})
 
         # Debug output
         print(f"\n🔍 Debug - Consensus type: {type(debate_result)}")
         print(f"🔍 Debug - Consensus keys: {list(debate_result.keys())}")
         print(f"📊 Final consensus components: {final_component_names}")
 
+        print(f"\n🔍 Component details from debate:")
+        for norm_name, details in component_details.items():
+            print(f"  {norm_name} → {details['original_name']} (conf: {details['confidence']:.2f})")
+
         if not final_component_names:
             logger.warning(f"Debate produced no consensus components for {technology}")
             return None
 
-        # Reconstruct ComponentWithConfidence objects from final proposals
-        # Get the last round's proposals to extract confidence and reasoning
-        final_round_proposals = []
-        if debate_history:
-            last_round = debate_history[-1]
-            if isinstance(last_round, dict) and "proposals" in last_round:
-                for agent_id, proposals in last_round["proposals"].items():
-                    final_round_proposals.extend(proposals)
-
-        # Build a map of component name -> (confidence, reasoning)
-        component_confidence_map = {}
-        for prop in final_round_proposals:
-            comp_name = prop.get("component", "")
-            normalized_name = (
-                self.debater.normalize_component_name(comp_name)
-                if self.debater
-                else comp_name.lower().strip()
-            )
-
-            if normalized_name not in component_confidence_map:
-                component_confidence_map[normalized_name] = {
-                    "confidence": prop.get("confidence", 0.75),
-                    "reasoning": prop.get("reasoning", "Consensus component from debate"),
-                    "original_name": comp_name,  # Keep original for display
-                }
-            else:
-                # Average confidence if multiple proposals for same component
-                existing = component_confidence_map[normalized_name]
-                existing["confidence"] = (existing["confidence"] + prop.get("confidence", 0.75)) / 2
-
-        # Create ComponentWithConfidence objects for consensus components
+        # Create ComponentWithConfidence objects using debate-provided details
         from ..agents import ComponentWithConfidence
 
         final_components_with_confidence = []
         for norm_name in final_component_names:
-            if norm_name in component_confidence_map:
-                comp_info = component_confidence_map[norm_name]
+            if norm_name in component_details:
+                details = component_details[norm_name]
                 final_components_with_confidence.append(
                     ComponentWithConfidence(
-                        name=comp_info["original_name"],
-                        confidence=comp_info["confidence"],
-                        reasoning=comp_info["reasoning"],
+                        name=details["original_name"],
+                        confidence=details["confidence"],
+                        reasoning=details["reasoning"],
                     )
                 )
             else:
-                # Fallback if not found in proposals (shouldn't happen)
+                # Fallback (should never happen now that debate returns details)
+                print(f"  ⚠️  No details found for '{norm_name}', using fallback")
                 final_components_with_confidence.append(
                     ComponentWithConfidence(
-                        name=norm_name,
+                        name=norm_name.title(),
                         confidence=0.75,
                         reasoning="Consensus component from multi-agent debate",
                     )
@@ -534,9 +531,21 @@ class STDNOrchestrator:
             confidence = debate_result.get("confidence", 0.0)
             debate_history = debate_result.get("debate_history", [])
 
+            # ✅✅✅ EXTRACT TECH SPEC FROM debate_result ✅✅✅
+            technology_specification = debate_result.get("technology_specification", technology)
+            technology_reasoning = debate_result.get("technology_reasoning", "")
+
+            # ✅ DEBUG PRINTS
+            print(f"✓ Passing to reporter - Tech spec: {technology_specification}")
+            print(
+                f"✓ Passing to reporter - Tech reasoning: {technology_reasoning[:100] if technology_reasoning else 'None'}..."
+            )
+
             # Build final consensus dict with proper metadata
             final_consensus = {
                 "technology": technology,
+                "technology_specification": technology_specification,  # ✅✅✅ ADD THIS
+                "technology_reasoning": technology_reasoning,  # ✅✅✅ ADD THIS
                 "components": debate_result.get("components", []),
                 "confidence": confidence,
                 "rounds": num_rounds,
@@ -1117,15 +1126,23 @@ class STDNOrchestrator:
         try:
             output_dir = Path(self.reporter.output_dir)
 
+            # ✅ FIX: Replace spaces with underscores to match filename format
+            tech_filename = technology.replace(" ", "_")
+
             # Find most recent component transcript
-            component_transcripts = list(output_dir.glob(f"{technology}_*.txt"))
+            component_transcripts = list(output_dir.glob(f"{tech_filename}_*.txt"))  # ✅ FIXED
             component_transcripts = [f for f in component_transcripts if "_materials" not in f.name]
+
+            print(f"🔍 DEBUG: Looking for: {tech_filename}_*.txt")  # ✅ ADD
+            print(f"🔍 DEBUG: Found {len(component_transcripts)} component transcripts")  # ✅ ADD
 
             if not component_transcripts:
                 logger.warning(f"No component transcript found for {technology}")
+                print(f"❌ No component transcript found in {output_dir}")  # ✅ ADD
                 return
 
             filepath = max(component_transcripts, key=lambda p: p.stat().st_mtime)
+            print(f"🔍 DEBUG: Will append to: {filepath.name}")  # ✅ ADD
 
             # Build and write content
             materials_content = self._build_material_transcript_content(

@@ -33,7 +33,7 @@ load_dotenv()
 # ============================================================================
 
 
-def find_config_file(specified_path: str = None) -> str:
+def find_config_file(specified_path: str | None = None) -> str:
     """
     Search for config file in multiple locations.
 
@@ -72,12 +72,12 @@ def find_config_file(specified_path: str = None) -> str:
         ".config/config.json",
     ]
 
-    # Add home directory locations
+    # Add home directory locations (convert Path to str)
     home = Path.home()
     locations.extend(
         [
-            home / ".stdn" / "config.json",
-            home / "stdn" / "config.json",
+            str(home / ".stdn" / "config.json"),
+            str(home / "stdn" / "config.json"),
         ]
     )
 
@@ -102,9 +102,6 @@ def find_config_file(specified_path: str = None) -> str:
 async def process_all_technologies(config: ConfigModel) -> dict:
     """
     Process all technologies using the enhanced orchestrator.
-
-    The new orchestrator handles CSV writing internally via run_pipeline(),
-    so we don't need separate write_csv_output calls.
 
     Args:
         config: Configuration model with paths and settings
@@ -138,24 +135,99 @@ async def process_all_technologies(config: ConfigModel) -> dict:
     if not tech_list_path.exists():
         raise FileNotFoundError(f"Technology list not found: {tech_list_path}")
 
-    # Read tech list
+    # Read full CSV data including role
     import csv
 
-    technologies = []
+    tech_data = []
     with open(tech_list_path, "r", encoding="utf-8") as f:
         reader = csv.DictReader(f)
         for row in reader:
             if "tech" in row and row["tech"]:
-                technologies.append(row["tech"].strip())
+                tech_data.append(
+                    {
+                        "tech": row["tech"].strip(),
+                        "role": row.get("role", "supply chain analyst").strip(),
+                        "domain": row.get("domain", "technology").strip(),
+                    }
+                )
 
-    # Run the pipeline (handles everything internally)
-    results = await orchestrator.run_pipeline(
-        technologies=technologies,
-        role="supply chain analyst",
-        domain="technology",
-    )
+    print(f"{'=' * 80}")
+    print(f"STDN Generation Started: {datetime.now()}")
+    print(f"{'=' * 80}")
 
-    return results
+    if enable_debate:
+        print("🔄 Multi-agent debate ENABLED")
+        print(f"📊 Max rounds: {max_debate_rounds}")
+        print(f"🎯 Convergence threshold: {convergence_threshold}")
+        print(f"💾 Save transcripts: {save_transcripts}")
+
+    print(f"\n📋 {len(tech_data)} technologies from {config.tech_list_path}\n")
+
+    # ✅ Call run_pipeline with tech list that will be processed with roles
+    # We need to modify this to process individually OR modify run_pipeline
+    # Let's use the simpler approach: call run_pipeline for each tech
+
+    successful = 0
+    failed = 0
+
+    # Initialize the CSV file with headers
+    import csv as csv_module
+
+    with open(orchestrator.output_file, "w", newline="") as f:
+        writer = csv_module.DictWriter(
+            f,
+            fieldnames=[
+                "technology",
+                "component",
+                "component_confidence",
+                "component_reasoning",
+                "material",
+                "material_confidence",
+                "material_reasoning",
+                "hs_code",
+                "country",
+                "meas_unit",
+                "amount",
+                "percentage",
+                "country_confidence",
+                "country_reasoning",
+            ],
+        )
+        writer.writeheader()
+
+    # Process each technology with its specific role
+    for tech_info in tech_data:
+        tech = tech_info["tech"]
+        role = tech_info["role"]
+        domain = tech_info["domain"]
+
+        # ✅ Use run_pipeline with single technology and specific role
+        result = await orchestrator.run_pipeline(
+            technologies=[tech],
+            role=role,  # ✅ Use role from CSV
+            domain=domain,  # ✅ Use domain from CSV
+        )
+
+        if result["successful"] > 0:
+            successful += 1
+        else:
+            failed += 1
+
+    print(f"\n{'=' * 80}")
+    print(f"STDN Generation Completed: {datetime.now()}")
+    print(f"{'=' * 80}")
+    print(f"Successfully processed: {successful}/{len(tech_data)} technologies")
+    print(f"Output saved to: {orchestrator.output_file}")
+
+    if enable_debate and orchestrator.reporter:
+        print(f"Debate transcripts saved to: {orchestrator.reporter.output_dir}")
+
+    return {
+        "successful": successful,
+        "failed": failed,
+        "total": len(tech_data),
+        "output_file": orchestrator.output_file,
+    }
 
 
 # ============================================================================

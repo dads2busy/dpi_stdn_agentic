@@ -18,7 +18,7 @@ from __future__ import annotations
 import logging
 from collections import Counter, defaultdict
 from dataclasses import dataclass
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 from pydantic import BaseModel, Field
 
@@ -582,18 +582,20 @@ to its canonical form.
         self,
         proposals: List[Dict[str, Any]],
         convergence_score: float,
-    ) -> List[str]:
+    ) -> Tuple[List[str], Dict[str, Dict[str, Any]]]:  # ✅ Return tuple: (names, details)
         """
         Build consensus using semantically normalized component names.
 
-        This is analogous to `build_adaptive_consensus` but uses the
-        `normalized_component` field when available.
+        Returns:
+            Tuple of (consensus_names, component_details) where component_details
+            maps normalized names to their original names, confidence, and reasoning.
         """
         if not proposals:
-            return []
+            return [], {}
 
         norm_to_confidences: Dict[str, List[float]] = defaultdict(list)
         norm_to_agents: Dict[str, set[str]] = defaultdict(set)
+        norm_to_proposals: Dict[str, List[Dict[str, Any]]] = defaultdict(list)  # ✅ Track proposals
 
         for prop in proposals:
             agent_id = self._get_prop_value(prop, "agent_id", "unknown")
@@ -610,18 +612,19 @@ to its canonical form.
             confidence = float(self._get_prop_value(prop, "confidence", 0.8))
             norm_to_confidences[norm].append(confidence)
             norm_to_agents[norm].add(agent_id)
+            norm_to_proposals[norm].append(prop)  # ✅ Store proposal
 
         if not norm_to_confidences:
-            return []
+            return [], {}
 
         num_agents = max(len(agent_set) for agent_set in norm_to_agents.values())
 
-        if convergence_score >= 0.7:
+        if convergence_score >= 0.9:  # ✅ Raise from 0.7 to 0.9
             min_support_frac = 2.0 / 3.0
-        elif convergence_score <= 0.2:
+        elif convergence_score <= 0.3:
             min_support_frac = 1.0 / 3.0
         else:
-            frac = (convergence_score - 0.2) / (0.7 - 0.2)
+            frac = (convergence_score - 0.3) / (0.9 - 0.3)
             min_support_frac = (1.0 / 3.0) + frac * (1.0 / 3.0)
 
         min_support = max(1, int(round(min_support_frac * max(num_agents, 1))))
@@ -643,7 +646,38 @@ to its canonical form.
                 scores[norm_name] = score
 
         consensus = [name for name, _ in sorted(scores.items(), key=lambda kv: kv[1], reverse=True)]
-        return consensus
+
+        # ✅ BUILD COMPONENT DETAILS MAP
+        component_details = {}
+        for norm_name in consensus:
+            # Get all proposals for this normalized name
+            matching_props = norm_to_proposals[norm_name]
+
+            # Find the proposal with highest confidence (or most recent)
+            best_prop = max(
+                matching_props, key=lambda p: self._get_prop_value(p, "confidence", 0.0)
+            )
+
+            # Extract original name (before normalization)
+            original_name = (
+                self._get_prop_value(best_prop, "component")
+                or self._get_prop_value(best_prop, "component_name")
+                or norm_name.title()
+            )
+
+            # Get confidence and reasoning
+            confidence = self._get_prop_value(best_prop, "confidence", 0.75)
+            reasoning = self._get_prop_value(
+                best_prop, "reasoning", "Consensus component from debate"
+            )
+
+            component_details[norm_name] = {
+                "original_name": original_name,
+                "confidence": float(confidence),
+                "reasoning": reasoning,
+            }
+
+        return consensus, component_details  # ✅ Return both
 
     # ------------------------------------------------------------------#
     # Round execution and full debate
@@ -899,7 +933,14 @@ Return your refined component list with confidence scores and reasoning.
                 norm = final_norm_map.get(original, original)
                 prop["normalized_component"] = norm
 
-        consensus = self.build_adaptive_consensus_semantic(
+        print(f"\n🔍 All final proposals before consensus:")
+        for prop in all_final_proposals:
+            norm = prop.get("normalized_component", prop.get("component", ""))
+            agent = prop.get("agent_id", "unknown")
+            conf = prop.get("confidence", 0.0)
+            print(f"  '{norm}' - agent: {agent}, confidence: {conf:.2f}")
+
+        consensus, component_details = self.build_adaptive_consensus_semantic(  # ✅ Unpack tuple
             all_final_proposals,
             convergence_score=convergence,
         )
@@ -908,6 +949,7 @@ Return your refined component list with confidence scores and reasoning.
         return {
             "technology": technology,
             "components": consensus,
+            "component_details": component_details,
             "confidence": convergence,
             "rounds": rounds_completed,
             "debate_history": debate_rounds,
