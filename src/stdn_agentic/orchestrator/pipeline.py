@@ -203,86 +203,113 @@ class STDNOrchestrator:
     ) -> Optional[ComponentMaterialsList]:
         """
         Safely extract materials with comprehensive error handling and retry logic.
+        Materials are strictly constrained to the ontology list from hs_codes_and_usgs_names.csv
         """
-        # Validate inputs
-        is_valid, valid_component_names, error_msg = self._validate_materials_extraction_inputs(
-            componentlist, technology
+        # Check ontology availability
+        is_valid, valid_component_names, error_msg = (
+            self._validate_materials_extraction_inputs(  # ✅ FIXED
+                componentlist, technology
+            )
         )
-
         if not is_valid:
             return ComponentMaterialsList.model_validate({"componentlist": []})
 
-        # Type assertion - valid_component_names is guaranteed to be non-empty here
         assert valid_component_names, (
             "valid_component_names should be non-empty after successful validation"
         )
 
-        # Build prompt with validated data (names are now strings)
         component_str = "\n".join(f"- {comp}" for comp in valid_component_names)
-        ontology_sample = self.deps.material_ontology_list[:50]
-        ontology_str = ", ".join(ontology_sample)
 
-        materials_prompt = f"""Extract RAW MATERIALS (NOT components or subassemblies) for these components of a {technology}:
+        # Use FULL ontology for strict matching (not just 50 samples)
+        ontology_str = "\n".join(f"  - {mat}" for mat in self.deps.material_ontology_list)
+
+        # Stricter prompt - no "common variants" allowed
+        materials_prompt = f"""Extract RAW MATERIALS for these components of a {technology}:
 
     {component_str}
 
-    AVAILABLE RAW MATERIALS (use exact names or common variants):
+    STRICT CONSTRAINT - You MUST ONLY select materials from this exact list:
     {ontology_str}
 
-    CRITICAL INSTRUCTIONS:
-    - For each component, identify 2-8 key RAW MATERIALS (metals, minerals, elements, compounds)
-    - Do NOT return component names, subassemblies, or finished parts
-    - Return only basic materials like Aluminum, Copper, Silicon, Lithium, Glass, Steel, Rare Earth Elements
-    - Use standard material names or their common variants
+    RULES:
+    1. Use ONLY material names from the above list (exact matches required)
+    2. Do NOT use synonyms, abbreviations, or variations
+    3. Do NOT invent new materials or use brand names
+    4. Do NOT use manufactured products (e.g., "EVA", "PET film") - use base materials instead
+    5. If unsure, choose the closest base material from the list
 
-    EXAMPLES:
-    - Battery Pack: Lithium, Cobalt, Nickel, Copper, Aluminum, Graphite
-    - Display Module: Glass, Indium, Rare Earth Elements, Plastic
-    - Processor Unit: Silicon, Copper, Gold, Tantalum, Ceramic
+    EXAMPLES OF CORRECT USAGE:
+    ✓ Use "Silicon" not "Monocrystalline silicon"
+    ✓ Use "Aluminum" not "Aluminum alloy" or "6061 aluminum"
+    ✓ Use "Polyethylene terephthalate" not "PET" or "Polyester film"
+    ✓ Use "Glass" not "Borosilicate glass" (unless "Borosilicate glass" is in the list)
+    ✓ Use "Copper" not "Copper wire"
 
-    Return a JSON response with componentlist containing component and materials fields."""
+    For each component, identify 2-8 key RAW MATERIALS from the list above.
+
+    Return a JSON response with componentlist containing component and materials fields.
+    Use ONLY materials from the provided list above.
+    """
 
         logger.info(
-            f"📋 Extracting materials for {len(valid_component_names)} components of {technology}"
+            f"Extracting materials for {len(valid_component_names)} components of {technology}"
         )
-        print(f"  🔍 Extracting materials for {len(valid_component_names)} components...")
+        print(f"Extracting materials for {len(valid_component_names)} components...")
 
-        # RETRY LOGIC: Handle transient Ollama/model errors
         for attempt in range(max_retries):
             try:
-                result = await self.materials_agent.run(materials_prompt, deps=self.deps)
+                result = await self.materials_agent.run(
+                    materials_prompt, deps=self.deps
+                )  # ✅ FIXED
 
                 if not result or not result.output:
-                    if attempt < max_retries - 1:
+                    if attempt == max_retries - 1:
                         await asyncio.sleep(2**attempt)
-                        continue
+                    continue
                     return ComponentMaterialsList.model_validate({"componentlist": []})
 
                 materials_list = result.output
 
                 if not materials_list.component_list:
-                    if attempt < max_retries - 1:
+                    if attempt == max_retries - 1:
                         await asyncio.sleep(2**attempt)
-                        continue
+                    continue
                     return ComponentMaterialsList.model_validate({"componentlist": []})
 
-                # SUCCESS
+                # Post-extraction filtering: Remove materials not in ontology
+                ontology_set = set(self.deps.material_ontology_list)
+                filtered_count = 0
+
+                for comp_mat in materials_list.component_list:
+                    filtered_materials = []
+                    for mat in comp_mat.raw_materials:
+                        if mat.name in ontology_set:
+                            filtered_materials.append(mat)
+                        else:
+                            logger.warning(
+                                f"Material '{mat.name}' for component '{comp_mat.component}' "
+                                f"not in ontology, filtering out"
+                            )
+                            print(f"  ⚠️  Filtered out '{mat.name}' (not in ontology)")
+                            filtered_count += 1
+                    comp_mat.raw_materials = filtered_materials
+
+                if filtered_count > 0:
+                    print(f"  ℹ️  Filtered {filtered_count} materials not in ontology")
+
                 num_materials = sum(len(cm.raw_materials) for cm in materials_list.component_list)
                 logger.info(
-                    f"✅ Extracted {num_materials} materials for {len(materials_list.component_list)} components"
+                    f"Extracted {num_materials} materials for {len(materials_list.component_list)} components"
                 )
-                print(
-                    f"  ✅ Extracted materials for {len(materials_list.component_list)} components"
-                )
+                print(f"Extracted materials for {len(materials_list.component_list)} components")
 
                 return materials_list
 
             except Exception as e:
                 error_str = str(e)
                 is_transient = "invalid message content type" in error_str or "400" in error_str
-
                 if is_transient and attempt < max_retries - 1:
-                    wait_time = (attempt + 1) * 2  # 2s, 4s, 6s instead of 1s, 2s, 4s
+                    wait_time = (attempt + 1) * 2  # 2s, 4s, 6s
                     logger.warning(f"Transient error (attempt {attempt + 1}/{max_retries}): {e}")
                     await asyncio.sleep(wait_time)
                     continue
@@ -991,6 +1018,9 @@ class STDNOrchestrator:
                 component_confidence_map=component_confidence_map,  # ← PASS THIS
             )
 
+            if self.save_transcripts and self.reporter and enriched_data:
+                self._append_country_data_to_transcript(tech, enriched_data)
+
             return {
                 "technology": tech,
                 "components": components,
@@ -1200,6 +1230,113 @@ class STDNOrchestrator:
         with open(json_path, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=2)
             f.flush()
+
+    def _append_country_data_to_transcript(
+        self,
+        technology: str,
+        enriched_data: list[dict[str, Any]],
+    ) -> None:
+        """Append country production data to existing transcript."""
+
+        if not self.reporter:
+            print("❌ Reporter is None, cannot append country data")
+            return
+
+        if not enriched_data:
+            print("⚠️  No enriched data to append")
+            return
+
+        try:
+            output_dir = Path(self.reporter.output_dir)
+
+            # Find most recent transcript for this technology
+            tech_filename = technology.replace(" ", "_")
+            transcripts = list(output_dir.glob(f"{tech_filename}_*.txt"))
+
+            if not transcripts:
+                logger.warning(f"No transcript found for {technology}")
+                print(f"❌ No transcript found for {technology}")
+                return
+
+            filepath = max(transcripts, key=lambda p: p.stat().st_mtime)
+            print(f"🔍 DEBUG: Appending country data to: {filepath.name}")
+
+            # Build country data section
+            content = []
+            content.append("\n\n")
+            content.append("=" * 80 + "\n")
+            content.append("COUNTRY PRODUCTION DATA\n")
+            content.append("=" * 80 + "\n\n")
+
+            # Group by component -> material -> countries
+            from collections import defaultdict
+
+            comp_mat_countries = defaultdict(lambda: defaultdict(list))
+
+            for row in enriched_data:
+                comp = row.get("component", "")
+                mat = row.get("material", "")
+                country = row.get("country", "")
+                if comp and mat and country:
+                    comp_mat_countries[comp][mat].append(row)
+
+            content.append(f"Total Components: {len(comp_mat_countries)}\n")
+            total_materials = sum(len(mats) for mats in comp_mat_countries.values())
+            content.append(f"Total Materials: {total_materials}\n")
+            total_countries = len(enriched_data)
+            content.append(f"Total Country Records: {total_countries}\n\n")
+
+            content.append("Production Data by Component:\n")
+            content.append("-" * 80 + "\n\n")
+
+            # Write organized output
+            for comp in sorted(comp_mat_countries.keys()):
+                materials = comp_mat_countries[comp]
+                content.append(f"{comp}:\n")
+
+                for mat in sorted(materials.keys()):
+                    countries = materials[mat]
+                    content.append(f"  {mat}:\n")
+
+                    # Sort countries by percentage (highest first)
+                    countries_sorted = sorted(
+                        countries, key=lambda x: x.get("percentage", 0.0), reverse=True
+                    )
+
+                    for country_data in countries_sorted:
+                        country = country_data.get("country", "Unknown")
+                        percentage = country_data.get("percentage", 0.0)
+                        confidence = country_data.get("country_confidence", 0.0)
+                        reasoning = country_data.get("country_reasoning", "")
+
+                        content.append(f"    • {country}: {percentage:.1f}%")
+                        if confidence:
+                            content.append(f" (confidence: {confidence:.2f})")
+                        content.append("\n")
+
+                        if reasoning:
+                            # Truncate long reasoning
+                            reasoning_display = (
+                                reasoning[:150] + "..." if len(reasoning) > 150 else reasoning
+                            )
+                            content.append(f"      → {reasoning_display}\n")
+
+                    content.append("\n")
+
+            content.append("=" * 80 + "\n")
+            content.append("END OF STDN TRANSCRIPT\n")
+            content.append("=" * 80 + "\n")
+
+            # Append to file
+            with open(filepath, "a", encoding="utf-8") as f:
+                f.write("".join(content))
+                f.flush()
+
+            print(f"✓ Appended country data to: {filepath.name}")
+
+        except Exception as e:
+            logger.error(f"Error appending country data to transcript: {e}", exc_info=True)
+            print(f"❌ Failed to append country data: {e}")
 
     # ========================================================================
     # Pipeline Execution
