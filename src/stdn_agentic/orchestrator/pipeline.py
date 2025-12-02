@@ -954,9 +954,11 @@ class STDNOrchestrator:
                 components: list[str] = [comp.name for comp in component_objects]
 
                 # Build component confidence map for enrichment phase
+                # ✅ FIX: Normalize keys to match materials list
                 component_confidence_map: dict[str, dict[str, Any]] = {}
                 for comp in component_objects:
-                    component_confidence_map[comp.name] = {
+                    normalized_name = comp.name.lower().strip()
+                    component_confidence_map[normalized_name] = {
                         "confidence": comp.confidence,
                         "reasoning": comp.reasoning,
                     }
@@ -977,8 +979,12 @@ class STDNOrchestrator:
                     component_objects = cast(list[ComponentWithConfidence], components_result)
                     components = [comp.name for comp in component_objects]
 
+                    # ✅ FIX: Normalize keys to match materials list
                     component_confidence_map = {
-                        comp.name: {"confidence": comp.confidence, "reasoning": comp.reasoning}
+                        comp.name.lower().strip(): {
+                            "confidence": comp.confidence,
+                            "reasoning": comp.reasoning,
+                        }
                         for comp in component_objects
                     }
                 else:
