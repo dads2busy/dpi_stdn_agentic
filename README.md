@@ -1,428 +1,611 @@
-# dpi_stdn_agentic
+# STDN Agentic Framework
 
-**Shallow Technology Dependency Network (STDN) Generation & Analysis**  
-Multi-agent, LLM-driven, fully auditable, and reproducible supply network modeling.
+A multi-agent AI framework for generating **Shallow Technology Dependency Networks (STDNs)** through iterative debate and consensus-building. The system extracts technology components, identifies raw materials, and enriches with global production data using LLM-powered agents and USGS databases.
 
 ***
 
 ## Table of Contents
 
 - [Overview](#overview)
-- [What Is a Shallow Technology Dependency Network?](#what-is-a-shallow-technology-dependency-network)
-- [Key Features](#key-features)
-- [Architecture & Debate Pipeline](#architecture--debate-pipeline)
-- [Data Model](#data-model)
-- [Pipeline Inputs & Outputs](#pipeline-inputs--outputs)
-- [Configuration & Environment](#configuration--environment)
-- [Usage](#usage)
-- [STDN Calculations Reference](#stdn-calculations-reference)
-- [Extensibility & Integration](#extensibility--integration)
-- [Development Standards & Testing](#development-standards--testing)
-- [FAQ](#faq)
-- [Citations & Policy Use](#citations--policy-use)
+- [Architecture](#architecture)
+- [Pipeline Stages](#pipeline-stages)
+  - [Stage 1: Component Extraction](#stage-1-component-extraction)
+  - [Stage 2: Materials Identification](#stage-2-materials-identification)
+  - [Stage 3: Country Production Data](#stage-3-country-production-data)
+- [Multi-Agent Debate System](#multi-agent-debate-system)
+- [Output Format](#output-format)
+- [Configuration](#configuration)
+- [Installation & Usage](#installation--usage)
+- [Technical Details](#technical-details)
 
 ***
 
 ## Overview
 
-`dpi_stdn_agentic` generates highly explainable, single-layer ("shallow") technology dependency networks. It automates the extraction of:
-- Key technology components,
-- Their constituent raw materials,
-- And the country-level distribution of those materials’ production or supply.
+**Problem:** Understanding global supply chains for complex technologies requires identifying components, materials, and production countries—a task traditionally requiring extensive domain expertise and manual research.
 
-This is performed through orchestrated debate and consensus among multiple LLM agents—making all reasoning steps transparent and reproducible.
+**Solution:** STDN Agentic uses multiple AI agents that debate and reach consensus on:
+1. **Components**: What are the major subassemblies? (e.g., "Solar Cells", "Junction Box")
+2. **Materials**: What raw materials are needed? (e.g., Silicon, Copper, Glass)
+3. **Production**: Which countries produce these materials and in what quantities?
 
-***
-
-## What Is a Shallow Technology Dependency Network?
-
-A **Shallow Technology Dependency Network (STDN)** encodes, for a target technology:
-- **Primary components** (the most significant modules/assemblies needed for function or manufacture),
-- **Raw materials** for each component (metals, minerals, chemicals, etc.),
-- **The principal countries** producing or supplying those materials (quantified as percentage market share, tonnage, or HS code association).
-
-Unlike fully recursive "deep" BOMs, STDNs focus on a single level of decomposition—ideal for policy intervention, FTA supply planning, and rapid supply risk assessment.
+**Key Features:**
+- ✅ Multi-agent debate with critique-driven convergence
+- ✅ Dynamic confidence scoring for all outputs
+- ✅ Strict ontology enforcement (materials must exist in USGS database)
+- ✅ Comprehensive transcripts with reasoning chains
+- ✅ CSV output with confidence scores and justifications
 
 ***
 
-## Key Features
+## Architecture
 
-- **Multi-Agent LLM Debate:** Leverages independent LLM "personas" to propose, defend, and critique technology decompositions and material lists.
-- **Consistent Ontology Enforcement:** Raw materials are cross-validated against industry/material ontologies; ambiguous matches spark additional debate rounds.
-- **Country-Level Data Sourcing:** Uses USGS global mineral production stats as ground truth, with LLM fallback if ambiguities or gaps arise.
-- **Transparent Audit Trail:** Every stage (component, material, country) produces a transcript—enabling forensic reconstruction of every decision.
-- **Configurable & Reproducible:** Full decoupling of parameters (`config.json`), secrets (`.env`), and inputs/outputs; pipeline runs are precisely reproducible.
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    STDNOrchestrator                          │
+│  • Coordinates 3-stage pipeline                             │
+│  • Manages debate system and transcripts                    │
+│  • Handles checkpointing and error recovery                 │
+└─────────────────────────────────────────────────────────────┘
+                            │
+        ┌───────────────────┼───────────────────┐
+        ▼                   ▼                   ▼
+┌───────────────┐   ┌───────────────┐   ┌───────────────┐
+│  Component    │   │  Materials    │   │   Country     │
+│    Agent      │   │    Agent      │   │    Repo       │
+│               │   │               │   │               │
+│ • Extracts    │   │ • Maps comp → │   │ • USGS DB     │
+│   components  │   │   materials   │   │ • LLM fallback│
+│ • Debate      │   │ • Ontology    │   │ • Debate      │
+│   support     │   │   constrained │   │   (optional)  │
+└───────────────┘   └───────────────┘   └───────────────┘
+```
 
 ***
 
-## Architecture & Debate Pipeline
+## Pipeline Stages
 
-Debate and consensus mechanisms are used at each key pipeline stage:
+### Stage 1: Component Extraction
 
-```
-+--------------------+
-| 1. Component Debate |
-|  (Component Agents) |
-+--------------------+
-           |
-           v
-+---------------------+
-| 2. Material Debate  |
-|  (Materials Agents) |
-+---------------------+
-           |
-           v
-+---------------------+
-| 3. Country Debate   |
-|  (Country Agents)   |
-+---------------------+
-```
+**Goal:** Identify the major manufactured components/subassemblies of a technology.
 
-### Debate Process by Stage
+#### **Process:**
 
-#### 1. Component Selection Debate
+1. **Multi-Agent Proposal** (if debate enabled):
+   - 3 agents analyze the technology from different perspectives:
+     - **Agent 1**: "Focus on major procurable subassemblies with distinct supply chains"
+     - **Agent 2**: "Focus on structural components required for construction"
+     - **Agent 3**: "Distinguish manufactured components from raw materials"
+   
+   - Each agent proposes 4-8 components with:
+     - **Name**: Component identifier
+     - **Confidence** (0-1): LLM's certainty
+     - **Reasoning**: Why this component is essential
 
-```
-[ Component Agents ]
-      |         |          |
-   +--+---------+----------+--+
-   | Independent proposal rounds  |
-   +-------------+---------------+
-                 |
-                 v
-       +-----------------------+
-       |   Component Debate    |
-       | (LLM Agent Personas)  |
-       +-----------------------+
-                 |
-        Consensus Components
-```
-- **Agents:** Multiple LLM-powered *Component Agents* with varied personas (specialist, generalist, risk analyst, etc.)
-- **Inputs:** Technology CSV or database records (see `tech_list.csv`)
-- **Outputs:** Consensus list of primary physical components
+2. **Debate Rounds**:
+   - Agents review each other's proposals
+   - Generate **critiques** identifying:
+     - ✓ **Consensus** (3/3 agents agree)
+     - ⚠ **Partial support** (2/3 agents, with alternatives suggested)
+     - ❌ **Isolated proposals** (1/3 agents, questioned for necessity)
+   
+   - Agents refine proposals based on critiques
+   - **Convergence calculation**:
+     ```python
+     overlap_score = (number_of_agreed_components) / (total_unique_components)
+     ```
+   
+   - Stop when: `overlap_score ≥ convergence_threshold` (default: 0.8) or max rounds (default: 3)
 
-#### 2. Material Selection Debate
+3. **Consensus Building**:
+   - Components mentioned by ≥2 agents → **consensus set**
+   - Confidence calculation:
+     ```python
+     final_confidence = (num_supporting_agents / total_agents) × avg_agent_confidence
+     ```
+   - Reasoning merged from all supporting agents
 
-```
-     [ Materials Agents ]
-      |         |          |
-   +--+---------+----------+--+
-   | Independent material proposals |
-   +-------------+---------------+
-                 |
-                 v
-    +-----------------------------+
-    |   Material Debate Process   |
-    | (LLM Material Agents)       |
-    +-----------------------------+
-                 |
-        Consensus Materials Set
-```
-- **Agents:** Multiple LLM-powered *Materials Agents* (ontology specialist, substitution analyst, etc.)
-- **Inputs:** Consensus component set from above  
-- **Outputs:** List of raw materials for each component with ontology/HS code validation
+#### **Example Output** (Solar Panel):
 
-#### 3. Country Data Enrichment Debate
-
-```
-      [ Country Agents ]
-       |        |        |
-     +-+--------+--------+-+
-     | USGS Query/LLM Estimate      |
-     +--------------+--------------+
-                    |
-                    v
-        +---------------------------+
-        | Country Data Debate/Consensus|
-        | (LLM Country Agents + DB validation) |
-        +---------------------------+
-                    |
-                Final Country Data
-```
-- **Agents:** LLM-powered *Country Agents* (statistical analyst, policy reviewer, foreign trade specialist, etc.)
-- **Inputs:** Material list per component  
-- **Outputs:** For each material, country-wise stats (production, % global, HS code); USGS DB is queried first, LLM fallback used for unlisted materials.
+| Component | Confidence | Reasoning |
+|-----------|------------|-----------|
+| Solar Cells (monocrystalline silicon) | 0.98 | Core photovoltaic conversion element, universally present |
+| Tempered Glass Cover | 0.95 | Front protective layer, industry standard in virtually all modules |
+| Aluminum Frame | 0.90 | Structural support and mounting interface, standard in most installations |
+| Junction Box | 0.92 | Essential for safe electrical integration and performance optimization |
+| EVA Encapsulant | 0.88 | Protective polymer layer, industry standard |
+| Backsheet | 0.85 | Rear protective layer providing electrical insulation |
 
 ***
 
-## Data Model
+### Stage 2: Materials Identification
 
-This project ensures complete data integrity using [Pydantic](https://docs.pydantic.dev/) and standard Python dataclasses.  
-*(See `src/stdn_agentic/models.py` for canonical definitions.)*
+**Goal:** Map each component to its constituent raw materials (metals, minerals, compounds).
 
-**Core model highlights:**
-- `ComponentList` – list of extracted components per technology
-- `ComponentMaterialsList` – mapping from each component to a set of materials
-- `CountryList` – mapping from each material to country split (% and tonnage, optionally with HS code)
-- `ConfigModel` – all pipeline configuration, paths, and operational controls
-- `Debate*` structures – encapsulate agent IDs, proposals, critiques, and consensus history
+#### **Process:**
+
+1. **Ontology Loading**:
+   - Load `hs_codes_and_usgs_names.csv` (650+ materials)
+   - Materials include: Silicon, Aluminum, Copper, Glass, Rare earths, etc.
+   - **Strict constraint**: Materials MUST be in this list
+
+2. **Materials Extraction** (per component):
+   
+   **Single-Agent Mode** (default):
+   - LLM receives:
+     - Component name
+     - **FULL ontology list** (all 650+ materials)
+     - Strict prompt: "Use ONLY exact names from list, no synonyms"
+   
+   - Returns: 2-8 materials per component
+   
+   - **Post-extraction filtering**:
+     ```python
+     ontology_set = set(material_ontology_list)
+     for material in extracted_materials:
+         if material.name not in ontology_set:
+             log_warning(f"Filtered out '{material.name}'")
+             remove_material()
+     ```
+
+   **Multi-Agent Debate Mode** (optional):
+   - 3 agents independently propose materials
+   - Debate with critiques showing alternatives:
+     ```
+     ⚠ PARTIAL: 2/3 agents proposed "Aluminum". 1 agent proposed "Steel" instead.
+     Evaluate if Aluminum is functionally distinct or if materials can be consolidated.
+     ```
+   - Consensus materials have higher confidence
+
+3. **Confidence Assignment**:
+   - **Debate mode**: Based on agent agreement (3/3 = 0.95, 2/3 = 0.70)
+   - **Single-agent**: Default 0.80
+   - **Reasoning**: Tracks which debate round and peer support level
+
+#### **Example Output** (Solar Panel → Solar Cells):
+
+| Material | Confidence | Reasoning |
+|----------|------------|-----------|
+| Silicon | 0.95 | Round 2 refinement with peer support: 2 agents |
+| Aluminum | 0.90 | Used for electrical contacts, 2/3 agent consensus |
+| Silver | 0.70 | Front contact metallization, 1/3 agent proposal |
+
+#### **Validation:**
+```
+✓ 21 materials extracted
+✓ 100% in ontology (no filtered materials)
+✓ Average 3.5 materials per component
+```
 
 ***
 
-## Pipeline Inputs & Outputs
+### Stage 3: Country Production Data
 
-### Inputs
+**Goal:** Identify which countries produce each material and their production share.
 
-- `config.json` – default pipeline settings, file paths, main model selection, static parameters
-- `.env` – environment-specific tokens, keys, and override flags
-- `data/tech_list.csv` – list of target technologies
-- `data/hs_codes_and_usgs_names.csv` – mapping from ontology names ↔ HS codes/USGS records
-- `data/world_mineral_commodity_reports_2022-2025_v8.db` – USGS DuckDB database of global mineral statistics
+#### **Process:**
 
-### Outputs
+1. **USGS Database Lookup**:
+   - Query `usgs_production.db` for material name
+   - Fields: `country`, `amount`, `meas_unit`, `year`
+   - Calculate percentage of global production:
+     ```python
+     total_global = sum(country_amounts)
+     percentage = (country_amount / total_global) × 100
+     ```
 
-- `output/stdns_output.csv` / `output/stdns_output.json` – normalized STDN for all targets
-- `src/stdn_agentic/debate_transcripts/results/` – per-run-full agent debate transcripts at every stage
-- Log files, pipeline performance metrics
+2. **Top-N Selection**:
+   - Return top 5 countries by production volume
+   - Include "OTHER" category for remaining producers
+   - Confidence: 0.95 (USGS data is authoritative)
 
-#### Example Output (CSV row)
+3. **LLM Fallback** (if no USGS data):
+   - LLM estimates production based on:
+     - Industry reports
+     - Trade data
+     - Geographic factors
+   - Confidence: 0.70-0.85 (lower than USGS)
+   - **Reasoning** includes data sources
 
-| Technology | Component | Material | Country | Production | % Global | HS Code  |
-|------------|-----------|----------|---------|------------|----------|----------|
-| Smartphone | Battery   | Lithium  | China   | 78,000t    | 75.5     | 85076000 |
+4. **Country Debate Mode** (optional):
+   - 3 agents independently research production data
+   - Debate to reconcile discrepancies
+   - Consensus countries and percentages selected
+
+#### **Example Output** (Silicon production):
+
+| Country | Amount | Unit | Percentage | Confidence | Reasoning |
+|---------|--------|------|------------|------------|-----------|
+| CHINA | 3600.0 | THOUSAND METRIC TONS | 40.0% | 0.95 | USGS Mineral Commodity Summaries 2024 |
+| RUSSIA | 570.0 | THOUSAND METRIC TONS | 6.33% | 0.95 | USGS authoritative data |
+| BRAZIL | 190.0 | THOUSAND METRIC TONS | 2.11% | 0.95 | USGS authoritative data |
+| NORWAY | 200.0 | THOUSAND METRIC TONS | 2.22% | 0.95 | USGS authoritative data |
+| OTHER | 100.0 | THOUSAND METRIC TONS | 1.11% | 0.95 | Aggregated remaining producers |
 
 ***
 
-## Configuration & Environment
+## Multi-Agent Debate System
 
-**Best Practice:**  
-- **Static, version-controlled config:** `config.json` (model names, file paths, non-secret toggles)
-- **Secrets and deployment specifics:**  `.env` (API keys, database URLs, fast-override flags only as needed)
+### **Critique-Driven Convergence**
 
-| Type                        | File        | Example                        |
-|-----------------------------|-------------|--------------------------------|
-| Model/paths/static params   | config.json | model, top_n_countries, years  |
-| API keys/endpoints          | .env        | OPENAI_API_KEY, OLLAMA_URL     |
-| Per-deployment feature flag | .env        | ENABLE_DEBATE [optional]       |
+The debate system uses **structured critiques** to guide agents toward consensus:
 
-Precedence: `.env` overrides only if explicitly checked for, and always document this logic.
+#### **Critique Generation:**
+```python
+def generate_critique(proposals, component):
+    agent_support = count_supporting_agents(component)
+    
+    if agent_support == 3:
+        return f"✓ CONSENSUS: 3/3 agents agree on {component}. Strong evidence."
+    
+    elif agent_support == 2:
+        alternatives = get_alternatives_from_other_agent(component)
+        return f"⚠ PARTIAL: 2/3 agents proposed {component}. " \
+               f"1 agent proposed: {alternatives}. " \
+               f"Evaluate if functionally distinct."
+    
+    else:  # agent_support == 1
+        alternatives = get_all_other_proposals(component)
+        return f"❌ ISOLATED: Only 1/3 agents proposed {component}. " \
+               f"Others proposed: {alternatives}. " \
+               f"Is this truly essential?"
+```
+
+#### **Convergence Calculation:**
+
+```python
+def calculate_convergence(round_proposals):
+    # Build agreement matrix
+    all_components = set()
+    for agent, proposals in round_proposals.items():
+        all_components.update(proposals)
+    
+    # Count agreements
+    agreed_components = []
+    for component in all_components:
+        supporting_agents = count_supporters(component, round_proposals)
+        if supporting_agents >= 2:  # Majority
+            agreed_components.append(component)
+    
+    # Convergence score
+    convergence = len(agreed_components) / len(all_components)
+    
+    return convergence, agreed_components
+```
+
+#### **Confidence Weighting:**
+
+Final confidence incorporates:
+1. **Base confidence**: Average of agent-proposed confidences
+2. **Support weight**: Number of supporting agents
+3. **Peer boost**: Bonus per additional supporting agent
+
+```python
+base_confidence = mean([agent.confidence for agent in supporters])
+support_weight = num_supporters / total_agents
+peer_boost = (num_supporters - 1) × 0.15
+
+final_confidence = base_confidence × support_weight + peer_boost
+final_confidence = min(final_confidence, 1.0)  # Cap at 1.0
+```
 
 ***
 
-## Usage
+## Output Format
 
-### 1. Prepare Data and Config  
-- Fill out `data/tech_list.csv` with technologies to analyze.
-- Customize `config.json` for your project (model name, years, paths, etc.)
-- Copy `.env.example` to `.env` and set API keys if needed.
+### **CSV Output** (`stdn_output.csv`)
 
-### 2. Run the Full Pipeline
+Each row represents: **Technology → Component → Material → Country**
+
+| Column | Type | Description | Example |
+|--------|------|-------------|---------|
+| `technology` | str | Technology name | "Solar Panel" |
+| `component` | str | Component name (normalized) | "solar cells (monocrystalline silicon)" |
+| `component_confidence` | float | Component confidence (0-1) | 0.98 |
+| `component_reasoning` | str | Why component is essential | "Core photovoltaic conversion element..." |
+| `material` | str | Raw material name | "Silicon" |
+| `material_confidence` | float | Material confidence (0-1) | 0.95 |
+| `material_reasoning` | str | Material extraction context | "Round 2 refinement with peer support: 2" |
+| `hs_code` | str | Harmonized System trade code | "280469" |
+| `country` | str | Producing country | "CHINA" |
+| `meas_unit` | str | Production unit | "THOUSAND METRIC TONS" |
+| `amount` | float | Production quantity | 3600.0 |
+| `percentage` | float | % of global production | 40.0 |
+| `country_confidence` | float | Country data confidence | 0.95 |
+| `country_reasoning` | str | Data source | "USGS Mineral Commodity Summaries 2024" |
+
+### **Transcript Output** (`.txt` files)
+
+Saved to: `src/stdn_agentic/debate_transcripts/results/`
+
+**Structure:**
+```
+================================================================================
+MULTI-AGENT DEBATE TRANSCRIPT: Solar Panel
+Generated: 2025-12-01T21:11:49
+================================================================================
+
+TECHNOLOGY SPECIFICATION:
+  Monocrystalline silicon photovoltaic (PV) module
+  Reasoning: 85% of global production as of 2024...
+
+PHASE 1: INDEPENDENT COMPONENT EXTRACTION
+  Agent_1: 6 components proposed (avg confidence: 0.91)
+  Agent_2: 6 components proposed (avg confidence: 0.92)
+  Agent_3: 6 components proposed (avg confidence: 0.91)
+
+PHASE 2: DEBATE ROUNDS
+  ROUND 1: Convergence: 75.0%
+    Critiques:
+      - Solar Cells: ✓ CONSENSUS (3/3 agents)
+      - Aluminum Frame: ⚠ PARTIAL (2/3 agents, alternatives: Steel Frame)
+  
+  ROUND 2: Convergence: 100.0% ✓ Threshold reached
+
+PHASE 3: FINAL CONSENSUS
+  Total Debate Rounds: 2
+  Overall Confidence: 0.95
+  
+  Final Components (6):
+    ✓ Solar Cells (monocrystalline silicon) - confidence: 0.98
+    ✓ Tempered Glass Cover - confidence: 0.95
+    ✓ Aluminum Frame - confidence: 0.90
+    ... [continued]
+
+MATERIALS EXTRACTION DEBATE
+  ROUND 1: Convergence: 24.4%
+    solar cells (monocrystalline silicon):
+      - Silicon: ✓ CONSENSUS (3/3 agents, confidence: 0.98)
+      - Aluminum: ⚠ PARTIAL (2/3 agents, alternatives: Steel)
+      - Silver: ❌ ISOLATED (1/3 agents, alternatives: Copper)
+
+  ROUND 2: Convergence: 85.0% ✓ Threshold reached
+
+FINAL MATERIAL ASSIGNMENTS
+  solar cells (monocrystalline silicon):
+    • Silicon (confidence: 0.95) → 3/3 agents, avg confidence 0.95
+    • Aluminum (confidence: 0.76) → 2/3 agents, avg confidence 0.90
+    • Silver (confidence: 0.48) → 1/3 agents, avg confidence 0.70
+
+COUNTRY PRODUCTION DATA
+  solar cells (monocrystalline silicon):
+    Silicon:
+      • CHINA: 40.0% (confidence: 0.95)
+        → USGS Mineral Commodity Summaries 2024
+      • RUSSIA: 6.33% (confidence: 0.95)
+      • BRAZIL: 2.11% (confidence: 0.95)
+    
+    Aluminum:
+      • CHINA: 58.57% (confidence: 0.95)
+        → USGS authoritative data
+      ... [continued]
+
+================================================================================
+END OF STDN TRANSCRIPT
+================================================================================
+```
+
+***
+
+## Configuration
+
+### **config.json**
+
+```json
+{
+  "model": "ollama/qwen2.5:14b",
+  "usgs_database": "/path/to/usgs_production.db",
+  "tech_list_path": "/path/to/technologies.csv",
+  "output_dir": "./output",
+  "output_csv_filename": "stdn_output",
+  "src_year": 2024,
+  "meas_year": 2025,
+  "write_nulls_to_output": false
+}
+```
+
+| Parameter | Description | Default |
+|-----------|-------------|---------|
+| `model` | LLM model identifier | "ollama/qwen2.5:14b" |
+| `usgs_database` | Path to USGS SQLite database | (required) |
+| `tech_list_path` | CSV with technology names and roles | (required) |
+| `output_dir` | Output directory | "./output" |
+| `output_csv_filename` | CSV filename (no extension) | "stdn_output" |
+| `src_year` | USGS data source year | 2024 |
+| `meas_year` | USGS measurement year | 2025 |
+| `write_nulls_to_output` | Write rows even if no country data found | false |
+
+### **technologies.csv**
+
+```csv
+technology,role,domain
+Solar Panel,renewable energy consultant,technology
+Electric Vehicle,automotive supply chain analyst,technology
+Wind Turbine,energy systems engineer,technology
+```
+
+***
+
+## Installation & Usage
+
+### **Installation**
 
 ```bash
-uv run python src/stdn_agentic/main.py
+# Clone repository
+git clone <repository_url>
+cd stdn-agentic
+
+# Install dependencies
+pip install -e .
+
+# Verify installation
+python -c "from stdn_agentic import STDNOrchestrator; print('✓ Installed')"
 ```
 
-### 3. Inspect Outputs
+### **Basic Usage**
 
-- See results in `output/`, and all debate transcripts in `src/stdn_agentic/debate_transcripts/results/`.
+```python
+from stdn_agentic import STDNOrchestrator
+from stdn_agentic.models import ConfigModel
 
-### 4. [Optional] Debug USGS DB
+# Load configuration
+config = ConfigModel.from_json("config.json")
+
+# Initialize orchestrator
+orchestrator = STDNOrchestrator(
+    config=config,
+    enable_debate=True,              # Use multi-agent debate
+    enable_material_debate=True,     # Debate for materials too
+    enable_country_debate=False,     # Skip country debate (use USGS)
+    max_debate_rounds=3,
+    convergence_threshold=0.8,
+    save_transcripts=True
+)
+
+# Run pipeline
+import asyncio
+
+async def main():
+    technologies = ["Solar Panel", "Electric Vehicle"]
+    results = await orchestrator.run_pipeline(
+        technologies=technologies,
+        role="supply chain analyst",
+        domain="technology"
+    )
+    
+    print(f"✓ Processed {results['successful']} technologies")
+    print(f"✓ Output: {orchestrator.output_file}")
+
+asyncio.run(main())
+```
+
+### **Command-Line Usage**
 
 ```bash
-uv run python debug_duckdb.py
+# Run full pipeline
+python -m stdn_agentic.cli run --config config.json
+
+# Single technology
+python -m stdn_agentic.cli run --config config.json --tech "Solar Panel"
+
+# Disable debate (faster, lower quality)
+python -m stdn_agentic.cli run --config config.json --no-debate
+
+# Custom parameters
+python -m stdn_agentic.cli run \
+    --config config.json \
+    --max-rounds 5 \
+    --convergence 0.9 \
+    --no-transcripts
 ```
 
 ***
 
-## Extensibility & Integration
+## Technical Details
 
-- **Add new agent personas:** Extend/rewrite personalities in `src/stdn_agentic/agents/`.
-- **Swap LLM providers:** Change `model` in `config.json`, or rewrite agent construction logic.
-- **Ontology customization:** Edit mappings and allowable terms in `data/hs_codes_and_usgs_names.csv`.
-- **Data enrichment:** Attach more granular USGS datasets or provide more detailed tech/country splits.
-- **API integration:** Wrap `STDNOrchestrator` as a service endpoint for programmatic analysis.
+### **Ontology Constraint Enforcement**
 
-***
+Materials are strictly validated against `hs_codes_and_usgs_names.csv`:
 
-## Development Standards & Testing
+```python
+# Before (incorrect LLM outputs):
+"EVA"                           ❌ Not in ontology
+"Ethylene-vinyl acetate"        ❌ Not in ontology
+"PET film"                      ❌ Not in ontology
+"Aluminum alloy 6061"           ❌ Too specific
 
-- **Code style:** Follows Ruff linter (`pyproject.toml` config), Black-compatible
-- **Type safety:** All public functions and classes use complete type hints (enforced in CI)
-- **Logging:** Standard structured logging instead of print
-- **Testing:**  
-  - Pytest-based suite in `src/stdn_agentic/tests/` (both unit and integration tests)
-  - Test fixtures for I/O, agent composition, and fuzzy-matching/ontology logic
-- **Documentation:** All public APIs, classes, and non-trivial internal logic require docstrings.
+# After (filtered to ontology):
+"Polyethylene"                  ✓ Base polymer
+"Polyethylene terephthalate"    ✓ Exact match
+"Aluminum"                      ✓ Base metal
+```
 
-***
+**Enforcement mechanism:**
+1. LLM prompt includes FULL ontology list (650+ materials)
+2. Post-extraction filtering removes non-ontology materials
+3. Console warnings: `⚠️ Filtered out 'EVA' (not in ontology)`
 
-## STDN Calculations Reference
+### **Normalization**
 
-This document describes all mathematical calculations used in the STDN (Supply Technology Dependency Network) agentic system.
+Component and material names are normalized for matching:
 
-### 1. Convergence Calculation
+```python
+def normalize_name(name: str) -> str:
+    return name.lower().strip()
 
-Convergence measures agreement between agents using **Jaccard similarity**, averaged across all agent pairs.
+# Examples:
+"Solar Cells (Monocrystalline Silicon)" → "solar cells (monocrystalline silicon)"
+"Tempered Glass Cover"                  → "tempered glass cover"
+"Junction Box"                          → "junction box"
+```
 
-#### Formula
+This ensures consistency between debate phases and CSV output.
 
-For $n$ agents:
+### **Confidence Score Interpretation**
 
-$$
-\text{Convergence} = \frac{2}{n(n-1)} \sum_{i=1}^{n-1} \sum_{j=i+1}^{n} \frac{|A_i \cap A_j|}{|A_i \cup A_j|}
-$$
+| Range | Interpretation | Source |
+|-------|----------------|--------|
+| 0.95-1.0 | High confidence | 3/3 agent consensus, USGS data |
+| 0.80-0.94 | Good confidence | 2/3 agents, single-agent extraction |
+| 0.70-0.79 | Moderate confidence | 2/3 agents (materials), LLM fallback |
+| 0.50-0.69 | Low confidence | 1/3 agent proposals, uncertain LLM estimates |
+| 0.0-0.49 | Very low confidence | Isolated proposals, speculative data |
 
-Where:
-- $A_i$ = set of components/materials proposed by agent $i$
-- $|A_i \cap A_j|$ = intersection (shared proposals between agents)
-- $|A_i \cup A_j|$ = union (all unique proposals from both agents)
+### **Performance Considerations**
 
-#### Example
+**Single technology (6 components, debate mode):**
+- Component extraction: ~30 seconds (3 agents × 3 rounds)
+- Materials extraction: ~45 seconds (3 agents × 2 rounds × 6 components)
+- Country data: ~5 seconds (USGS lookups)
+- **Total**: ~80 seconds
 
-With 3 agents and pairwise similarities of 0.50, 0.50, and 0.20:
+**Optimizations:**
+- Use `enable_debate=False` for 3x speedup (lower quality)
+- Reduce `max_debate_rounds` to 2 for faster convergence
+- Increase `convergence_threshold` to 0.9 for earlier stopping
 
-$$
-\text{Convergence} = \frac{0.50 + 0.50 + 0.20}{3} = 0.40 = 40\%
-$$
+### **Error Handling**
 
-#### Interpretation
+```python
+# Transient LLM errors (network, timeouts)
+→ Retry with exponential backoff (2s, 4s, 6s)
 
-| Range | Meaning |
-|-------|---------|
-| 0% - 30% | Low agreement, agents have very different proposals |
-| 30% - 60% | Moderate agreement, some common components |
-| 60% - 80% | High agreement, strong consensus forming |
-| 80% - 100% | Very high agreement, agents mostly aligned |
+# Missing USGS data
+→ LLM fallback with lower confidence
 
----
+# Empty components/materials
+→ Log warning, skip technology, continue pipeline
 
-### 2. Confidence Scoring
-
-#### Vote-Weighted Confidence
-
-Combines vote rate and average agent confidence:
-
-$$
-\text{Final Confidence} = (\text{Vote Rate} \times 0.6) + (\text{Avg Confidence} \times 0.4)
-$$
-
-Where:
-
-$$
-\text{Vote Rate} = \frac{\text{Supporting Agents}}{\text{Total Agents}}
-$$
-
-$$
-\text{Avg Confidence} = \frac{\sum \text{Agent Confidences}}{\text{Supporting Agents}}
-$$
-
-#### Example
-
-If 2 out of 3 agents support a material with average confidence 0.85:
-
-$$
-\text{Final} = (0.667 \times 0.6) + (0.85 \times 0.4) = 0.40 + 0.34 = 0.74
-$$
-
----
-
-### 3. Consensus Building Score
-
-#### Adaptive Scoring with Peer Support
-
-$$
-\text{Score} = (1 - w_c) \times \text{Support Fraction} + w_c \times \text{Avg Confidence} + b \times (\text{Support} - 1)
-$$
-
-**Parameters:**
-- $w_c$ = confidence weight (default: 0.3)
-- $b$ = peer support boost (default: 0.15)
-- Support Fraction = proportion of agents supporting the proposal
-
-#### Example
-
-If 3 agents support a component with average confidence 0.80:
-
-$$
-\text{Score} = (0.7 \times 1.0) + (0.3 \times 0.80) + (0.15 \times 2) = 0.7 + 0.24 + 0.30 = 1.24
-$$
-
----
-
-### 4. Adaptive Voting Threshold
-
-The voting threshold adjusts based on convergence level to balance strictness and inclusiveness.
-
-#### Formula
-
-$$
-\text{Threshold} = \begin{cases}
-\frac{2}{3} & \text{if convergence} \geq 0.7 \text{ (strict)} \\[10pt]
-\frac{1}{3} & \text{if convergence} \leq 0.2 \text{ (lenient)} \\[10pt]
-\frac{1}{3} + \left(\frac{\text{convergence} - 0.2}{0.5}\right) \times \frac{1}{3} & \text{otherwise (interpolated)}
-\end{cases}
-$$
-
-#### Example
-
-At 45% convergence:
-
-$$
-\text{Threshold} = \frac{1}{3} + \left(\frac{0.45 - 0.2}{0.5}\right) \times \frac{1}{3} = 0.333 + (0.5 \times 0.333) = 0.50
-$$
-
----
-
-### 5. Country Production Normalization
-
-When country production percentages don't sum to 100%, they are normalized:
-
-$$
-\text{Normalized}_i = \frac{\text{Percentage}_i}{\sum_{j=1}^{n} \text{Percentage}_j} \times 100
-$$
-
----
-
-### 6. Peer Support Calculation
-
-Counts the number of unique agents proposing an equivalent normalized concept:
-
-$$
-\text{Support}(x) = |\{i : \text{Agent}_i \text{ proposes normalized}(x)\}|
-$$
-
----
-
-### Summary Table
-
-| Calculation | Formula | Default Values | Purpose |
-|-------------|---------|----------------|---------|
-| **Convergence** | Jaccard similarity average | threshold = 0.51-0.8 | Measure agent agreement |
-| **Final Confidence** | $0.6 \times \text{vote} + 0.4 \times \text{confidence}$ | — | Combine voting & confidence |
-| **Consensus Score** | Support + confidence + boost | $w_c=0.3$, $b=0.15$ | Rank proposals |
-| **Adaptive Threshold** | Linear interpolation | strict=0.67, lenient=0.33 | Adjust by convergence |
-| **Normalization** | Percentage rescaling | sum to 100% | Ensure valid percentages |
-
----
-
-### Confidence Scale Reference
-
-All confidence scores in the system use a 0.0 to 1.0 scale:
-
-- **0.9-1.0**: Absolutely certain, universal standard
-- **0.8-0.9**: Very confident, industry standard
-- **0.6-0.7**: Moderately confident, common but may vary
-- **0.4-0.5**: Uncertain, depends on implementation
-- **0.0-0.3**: Low confidence, rarely separate
-
----
-
-### Typical Debate Convergence Pattern
-
-A healthy multi-agent debate typically shows this pattern:
+# Ontology violations
+→ Filter materials, log violations, continue with valid materials
+```
 
 ***
 
-## FAQ
+## Citation
 
-**Q: How is "shallow" different from a full BOM?**  
-A: Shallow means only the primary dependency layer (components → materials → countries) is mapped, not a recursive full multi-level bill of materials.
+If you use this framework in research, please cite:
 
-**Q: Where does agent debate actually improve accuracy?**  
-A: Multiple LLMs generate, defend, and critique answers, significantly decreasing systematic hallucinations or incomplete coverage. Transcripts provide auditable context for all agent choices.
+```bibtex
+@software{stdn_agentic,
+  title = {STDN Agentic: Multi-Agent Framework for Supply Chain Network Analysis},
+  author = {[Your Name]},
+  year = {2025},
+  url = {https://github.com/[your-repo]}
+}
+```
 
-**Q: How transparent/auditable is this pipeline?**  
-A: Every debate, critique, and final consensus judgment is saved with agent IDs, prompts, proposals, and reasoning, making the pipeline suitable for audits, peer review, or explainable policy analysis.
+***
 
-**Q: Can I use this for custom technologies or materials?**  
-A: Yes. Just update your tech list and, if needed, the ontologies and mappings. The pipeline is generalizable.
+## License
+
+[Your License Here]
+
+***
+
+## Contact
+
+For questions or contributions:
+- **Email**: [your-email]
+- **Issues**: [GitHub Issues URL]
+- **Discussions**: [GitHub Discussions URL]
