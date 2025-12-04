@@ -219,6 +219,7 @@ def get_component_agent(model_name: Optional[str] = None) -> Agent[STDNDependenc
         output_type=ComponentList,
         deps_type=STDNDependencies,
         system_prompt=COMPONENT_SYSTEM_PROMPT,
+        retries=5,
     )
 
 

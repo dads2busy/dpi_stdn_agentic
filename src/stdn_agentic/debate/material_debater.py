@@ -202,33 +202,115 @@ class MaterialDebater:
         print(f"PHASE 1: INDEPENDENT MATERIAL PROPOSALS - {technology}")
         print("=" * 60)
 
+        # ========================================================================
+        # VALIDATION: Input Parameters
+        # ========================================================================
+        if not componentlist or len(componentlist) == 0:
+            logger.error(f"Empty component list for {technology}")
+            print("❌ No components provided")
+            return {}
+
+        if not technology or not technology.strip():
+            logger.error("Empty technology name")
+            print("❌ Technology name is empty")
+            return {}
+
+        # Filter out any None or empty components
+        valid_components = [c for c in componentlist if c and c.strip()]
+        if not valid_components:
+            logger.error(f"All components are None/empty for {technology}")
+            print("❌ All components are None or empty")
+            return {}
+
+        if len(valid_components) < len(componentlist):
+            filtered_count = len(componentlist) - len(valid_components)
+            logger.warning(f"Filtered out {filtered_count} None/empty components")
+            print(f"⚠️  Filtered out {filtered_count} invalid components")
+
         agent_proposals: dict[str, list[MaterialProposal]] = {}
 
+        # ========================================================================
+        # VALIDATION: Dependencies
+        # ========================================================================
+        if not self.deps or not self.deps.model:
+            logger.error("Invalid dependencies - no model configured")
+            print("❌ No model configured in dependencies")
+            return {}
+
+        if not self.deps.material_ontology_list or len(self.deps.material_ontology_list) == 0:
+            logger.error("Material ontology is empty")
+            print("❌ Material ontology not loaded")
+            return {}
+
+        # ========================================================================
         # Prepare ontology string
+        # ========================================================================
         ontology_sample = self.deps.material_ontology_list[:50]
         ontology_str = ", ".join(ontology_sample)
 
-        # Get materials agent
-        agent = get_materials_agent(model_name=self.deps.model)
+        if not ontology_str or len(ontology_str.strip()) < 10:
+            logger.error("Ontology string is empty or too short")
+            print("❌ Failed to build ontology string")
+            return {}
 
+        # ========================================================================
+        # Get materials agent
+        # ========================================================================
+        try:
+            agent = get_materials_agent(model_name=self.deps.model)
+        except Exception as e:
+            logger.error(f"Failed to create materials agent: {e}")
+            print(f"❌ Agent creation failed: {e}")
+            return {}
+
+        # ========================================================================
+        # Define perspectives with validation
+        # ========================================================================
+        perspectives = [
+            "Focus on primary structural and functional materials.",
+            "Consider trace elements and specialty materials critical to performance.",
+            "Emphasize materials with known supply chain constraints.",
+        ]
+
+        # Validate all perspectives are non-empty
+        perspectives = [p for p in perspectives if p and p.strip()]
+        if not perspectives:
+            perspectives = ["Identify essential raw materials for manufacturing."]
+            logger.warning("Using fallback perspective")
+
+        # ========================================================================
         # Each agent generates independent proposals
+        # ========================================================================
         for agent_num in range(1, self.num_agents + 1):
             agent_id = f"Agent{agent_num}"
 
             # ADD DELAY BEFORE EACH AGENT (including first one)
             await asyncio.sleep(2.0)  # Give Ollama time to recover
 
-            # Each agent gets slightly different perspective
-            perspectives = [
-                "Focus on primary structural and functional materials.",
-                "Consider trace elements and specialty materials critical to performance.",
-                "Emphasize materials with known supply chain constraints.",
-            ]
+            # ====================================================================
+            # Get perspective for this agent
+            # ====================================================================
             perspective = perspectives[(agent_num - 1) % len(perspectives)]
 
-            # Build component string
-            component_str = "\n".join(f"- {comp}" for comp in componentlist)
+            # Validate perspective is not None or empty
+            if not perspective or not perspective.strip():
+                perspective = "Identify essential raw materials for manufacturing."
+                logger.warning(f"{agent_id}: Using fallback perspective")
 
+            # ====================================================================
+            # Build component string
+            # ====================================================================
+            component_str = "\n".join(f"- {comp}" for comp in valid_components)
+
+            # Validate component string
+            if not component_str or len(component_str.strip()) < 3:
+                logger.error(f"{agent_id}: Failed to build component string")
+                print(f"{agent_id}: Skipping - invalid component string")
+                continue
+
+            # ====================================================================
+            # Build prompt with validation
+            # ====================================================================
             prompt = (
                 f"Extract RAW MATERIALS (NOT components or subassemblies) for these "
                 f"components of a {technology}:\n{component_str}\n\n"
@@ -242,18 +324,32 @@ class MaterialDebater:
                 f"Return a JSON response with 'component_list' containing 'component' and 'materials' fields."
             )
 
-            # ADD VALIDATION HERE:
+            # ====================================================================
+            # STRICT VALIDATION: Prompt content
+            # ====================================================================
             if not prompt or len(prompt.strip()) < 50:
                 logger.error(f"{agent_id}: Invalid prompt (too short or empty)")
-                print(f"{agent_id}: Skipping due to invalid prompt")
+                print(f"{agent_id}: Skipping - prompt too short")
                 continue
 
-            if not self.deps or not self.deps.model:
-                logger.error(f"{agent_id}: Invalid dependencies")
-                print(f"{agent_id}: Skipping due to invalid dependencies")
+            # Check for None or null values in prompt
+            if "None" in prompt or "<nil>" in prompt or "null" in prompt:
+                logger.error(f"{agent_id}: Prompt contains None/null values")
+                logger.debug(f"Problematic prompt snippet: {prompt[:300]}")
+                print(f"{agent_id}: Skipping - prompt contains None values")
                 continue
 
+            # Check for excessive whitespace (indicates missing content)
+            if "\n\n\n\n" in prompt or "  \n  \n" in prompt:
+                logger.warning(f"{agent_id}: Prompt has excessive whitespace")
+                # Don't skip, but log it
+
+            # Log first part of prompt for debugging (only in debug mode)
+            logger.debug(f"{agent_id}: Prompt preview: {prompt[:200]}...")
+
+            # ====================================================================
             # RETRY LOGIC: Handle transient Ollama errors
+            # ====================================================================
             max_retries = 5
             for attempt in range(max_retries):
                 try:
@@ -262,52 +358,124 @@ class MaterialDebater:
 
                     debate_deps = replace(self.deps, top_p=self.debate_top_p)
 
+                    # Validate deps before sending
+                    if not debate_deps.model or not debate_deps.model.strip():
+                        logger.error(f"{agent_id}: Model name is empty in deps")
+                        break
+
                     result = await agent.run(prompt, deps=debate_deps)
 
-                    # CORRECTED ACCESS - field is 'component_list' (WITH underscore)
-                    if result and result.output and result.output.component_list:
-                        proposals = []
+                    # ============================================================
+                    # VALIDATION: Result structure
+                    # ============================================================
+                    if not result:
+                        logger.warning(f"{agent_id}: Agent returned None result")
+                        if attempt < max_retries - 1:
+                            await asyncio.sleep(2)
+                            continue
+                        else:
+                            print(f"{agent_id}: Failed - no result returned")
+                            break
 
-                        for cm in result.output.component_list:
-                            comp_norm = self.normalize_component_name(cm.component)
+                    if not result.output:
+                        logger.warning(f"{agent_id}: Result has no output")
+                        if attempt < max_retries - 1:
+                            await asyncio.sleep(2)
+                            continue
+                        else:
+                            print(f"{agent_id}: Failed - empty output")
+                            break
 
-                            # CORRECTED ACCESS - field is 'raw_materials' (WITH underscore)
-                            for material in cm.raw_materials:
-                                # Extract material name from MaterialWithConfidence object
-                                material_name = (
-                                    material.name if hasattr(material, "name") else str(material)
-                                )
-                                material_confidence = (
-                                    material.confidence if hasattr(material, "confidence") else 0.8
-                                )
+                    if not hasattr(result.output, "component_list"):
+                        logger.error(f"{agent_id}: Output missing 'component_list' field")
+                        print(f"{agent_id}: Failed - invalid output structure")
+                        break
 
-                                mat_norm = self.normalize_material_name(material_name)
+                    if not result.output.component_list:
+                        logger.warning(f"{agent_id}: component_list is empty")
+                        if attempt < max_retries - 1:
+                            await asyncio.sleep(2)
+                            continue
+                        else:
+                            print(f"{agent_id}: Failed - no components in output")
+                            break
 
-                                proposal = MaterialProposal(
-                                    agentid=agent_id,
-                                    component=cm.component,
-                                    material=material_name,  # Use extracted name
-                                    confidence=material_confidence,  # Use extracted confidence
-                                    reasoning=f"Proposed by {agent_id} as key material for {cm.component}",
-                                    normalizedcomponent=comp_norm,
-                                    normalizedmaterial=mat_norm,
-                                    round=1,
-                                )
-                                proposals.append(proposal)
+                    # ============================================================
+                    # Extract proposals from valid result
+                    # ============================================================
+                    proposals = []
 
-                        agent_proposals[agent_id] = proposals
+                    for cm in result.output.component_list:
+                        # Validate component
+                        if not hasattr(cm, "component") or not cm.component:
+                            logger.warning(f"{agent_id}: Skipping component with no name")
+                            continue
 
-                        # Count materials per component
-                        comp_mat_counts = defaultdict(int)
-                        for p in proposals:
-                            comp_mat_counts[p.normalizedcomponent] += 1
+                        comp_norm = self.normalize_component_name(cm.component)
 
-                        print(
-                            print(
-                                f"{agent_id} (top_p={self.debate_top_p}): {len(proposals)} material proposals across {len(comp_mat_counts)} components"
+                        # Validate materials list
+                        if not hasattr(cm, "raw_materials") or not cm.raw_materials:
+                            logger.warning(
+                                f"{agent_id}: Component '{cm.component}' has no materials"
                             )
-                        )
-                        break  # Success - exit retry loop
+                            continue
+
+                        for material in cm.raw_materials:
+                            # Extract material name from MaterialWithConfidence object
+                            material_name = (
+                                material.name if hasattr(material, "name") else str(material)
+                            )
+
+                            # Skip None or empty materials
+                            if not material_name or not material_name.strip():
+                                logger.warning(
+                                    f"{agent_id}: Skipping empty material for {cm.component}"
+                                )
+                                continue
+
+                            material_confidence = (
+                                material.confidence if hasattr(material, "confidence") else 0.8
+                            )
+
+                            mat_norm = self.normalize_material_name(material_name)
+
+                            proposal = MaterialProposal(
+                                agentid=agent_id,
+                                component=cm.component,
+                                material=material_name,
+                                confidence=material_confidence,
+                                reasoning=f"Proposed by {agent_id} as key material for {cm.component}",
+                                normalizedcomponent=comp_norm,
+                                normalizedmaterial=mat_norm,
+                                round=1,
+                            )
+                            proposals.append(proposal)
+
+                    # ============================================================
+                    # Validate we got proposals
+                    # ============================================================
+                    if not proposals:
+                        logger.warning(f"{agent_id}: No valid proposals extracted from result")
+                        if attempt < max_retries - 1:
+                            await asyncio.sleep(2)
+                            continue
+                        else:
+                            print(f"{agent_id}: Failed - no valid proposals")
+                            break
+
+                    agent_proposals[agent_id] = proposals
+
+                    # Count materials per component
+                    comp_mat_counts = defaultdict(int)
+                    for p in proposals:
+                        comp_mat_counts[p.normalizedcomponent] += 1
+
+                    print(
+                        f"✓ {agent_id} (top_p={self.debate_top_p}): "
+                        f"{len(proposals)} material proposals across "
+                        f"{len(comp_mat_counts)} components"
+                    )
+                    break  # Success - exit retry loop
 
                 except Exception as e:
                     error_str = str(e)
@@ -315,6 +483,7 @@ class MaterialDebater:
                         "invalid message content type" in error_str
                         or "400" in error_str
                         or "BadRequestError" in error_str
+                        or "<nil>" in error_str
                     )
 
                     if is_transient and attempt < max_retries - 1:
@@ -322,17 +491,27 @@ class MaterialDebater:
                         logger.warning(
                             f"{agent_id} transient error (attempt {attempt + 1}/{max_retries}): {e}"
                         )
-                        print(f"{agent_id}: Retry in {wait_time}s...")
+                        print(f"  ⚠️  {agent_id}: Retry in {wait_time}s...")
                         await asyncio.sleep(wait_time)
                         continue
                     else:
-                        logger.error(f"Error in {agent_id} proposal for {technology}: {e}")
-                        print(f"{agent_id}: Failed to generate proposal")
+                        logger.error(
+                            f"Error in {agent_id} proposal for {technology}: {e}", exc_info=True
+                        )
+                        print(f"  ✗ {agent_id}: Failed to generate proposal")
                         break
 
+        # ========================================================================
+        # Final validation
+        # ========================================================================
         if not agent_proposals:
             logger.error(f"No agent proposals generated for {technology}")
             print("❌ No agent proposals generated")
+        else:
+            total_proposals = sum(len(props) for props in agent_proposals.values())
+            print(
+                f"\n✓ Generated {total_proposals} total proposals from {len(agent_proposals)} agents"
+            )
 
         return agent_proposals
 
