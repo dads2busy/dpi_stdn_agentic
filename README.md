@@ -8,14 +8,18 @@ A multi-agent AI framework for generating **Shallow Technology Dependency Networ
 
 - [Overview](#overview)
 - [Architecture](#architecture)
+- [Installation & Usage](#installation--usage)
+  - [Prerequisites](#prerequisites)
+  - [Quick Start](#quick-start)
+  - [Configuration](#configuration)
+  - [Running the Pipeline](#running-the-pipeline)
+  - [Advanced Usage](#advanced-usage)
 - [Pipeline Stages](#pipeline-stages)
   - [Stage 1: Component Extraction](#stage-1-component-extraction)
   - [Stage 2: Materials Identification](#stage-2-materials-identification)
   - [Stage 3: Country Production Data](#stage-3-country-production-data)
 - [Multi-Agent Debate System](#multi-agent-debate-system)
 - [Output Format](#output-format)
-- [Configuration](#configuration)
-- [Installation & Usage](#installation--usage)
 - [Technical Details](#technical-details)
 
 ***
@@ -59,6 +63,320 @@ A multi-agent AI framework for generating **Shallow Technology Dependency Networ
 │ • Debate      │   │ • Ontology    │   │ • Debate      │
 │   support     │   │   constrained │   │   (optional)  │
 └───────────────┘   └───────────────┘   └───────────────┘
+```
+
+***
+
+## Installation & Usage
+
+### Prerequisites
+
+**Required:**
+- **Python 3.10+**
+- **[uv](https://github.com/astral-sh/uv)** - Fast Python package installer and resolver
+- **Ollama** (for local LLM inference) or API keys for OpenAI/Anthropic
+
+**Install uv:**
+```bash
+# macOS/Linux
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Windows
+powershell -c "irm https://astral.sh/uv/install.ps1 | iex"
+
+# Or via pip
+pip install uv
+```
+
+**Install Ollama** (for local models):
+```bash
+# macOS
+brew install ollama
+
+# Linux
+curl -fsSL https://ollama.ai/install.sh | sh
+
+# Start Ollama service
+ollama serve
+
+# Pull recommended model
+ollama pull qwen2.5:7b
+```
+
+### Quick Start
+
+**1. Clone the repository:**
+```bash
+git clone https://github.com/[your-repo]/dpi_stdn_agentic.git
+cd dpi_stdn_agentic
+```
+
+**2. Install dependencies with uv:**
+```bash
+# Install all dependencies (creates .venv automatically)
+uv sync
+
+# Or install with development dependencies
+uv sync --group dev
+```
+
+**3. Set up configuration:**
+```bash
+# Copy example config
+cp config_example.json config.json
+
+# Edit config.json with your paths and settings
+# Minimum required: import_tech_list, model, usgs_database
+```
+
+**4. Prepare your technology list:**
+
+Create a CSV file with technologies to analyze:
+```csv
+tech,role,domain
+Solar Panel,supply chain analyst,renewable energy
+Lithium-ion Battery,materials engineer,energy storage
+Wind Turbine,mechanical engineer,renewable energy
+```
+
+**5. Run the pipeline:**
+```bash
+# Basic run (single-agent mode, fast)
+uv run stdn -i config.json
+
+# With component debate enabled
+ENABLE_DEBATE=true uv run stdn -i config.json
+
+# With full multi-agent debate (all stages)
+ENABLE_DEBATE=true \
+ENABLE_MATERIAL_DEBATE=true \
+ENABLE_COUNTRY_DEBATE=true \
+uv run stdn -i config.json
+```
+
+### Configuration
+
+#### **Minimal config.json**
+
+```json
+{
+  "import_tech_list": "./data/tech_list.csv",
+  "model": "ollama:qwen2.5:7b",
+  "usgs_database": "./data/usgs_production.db",
+  "output_dir": "./output"
+}
+```
+
+#### **Full config.json with all options**
+
+```json
+{
+  "import_tech_list": "./data/tech_list.csv",
+  "model": "ollama:qwen2.5:14b",
+  "output_dir": "./output",
+  "output_csv_filename": "stdns_output",
+  
+  "materials_hs_codes_listing": "./data/hs_codes_and_usgs_names.csv",
+  "materials_column_name": "Elements_Compounds",
+  "materials_top_countries_repository": "./data/material_top_countries.json",
+  
+  "usgs_database": "./data/world_mineral_commodity_reports_2022-2025_v8.db",
+  "top_n_countries": 5,
+  "years_to_query": [2024, 2023],
+  "write_nulls_to_output": true,
+  
+  "topp": 0.000001,
+  "materials_use_topp": true,
+  "materials_iteration_count": 10,
+  "materials_count_threshold": 5,
+  
+  "enable_checkpoints": true,
+  "checkpoint_interval": 5
+}
+```
+
+#### **Configuration Parameters**
+
+| Parameter | Description | Default |
+|-----------|-------------|---------|  
+| `import_tech_list` | Path to CSV with technology list | (required) |
+| `model` | Model identifier (e.g., `ollama:qwen2.5:7b`, `openai:gpt-4`) | (required) |
+| `usgs_database` | Path to USGS SQLite database | (required) |
+| `output_dir` | Output directory for CSV and transcripts | `./output` |
+| `output_csv_filename` | Output CSV name (no extension) | `stdns_output` |
+| `top_n_countries` | Number of top producing countries | `5` |
+| `years_to_query` | Years for historical data | `[2024, 2023]` |
+| `write_nulls_to_output` | Include rows with missing country data | `true` |
+| `enable_checkpoints` | Enable state persistence | `true` |
+| `checkpoint_interval` | Save state every N technologies | `5` |
+
+### Running the Pipeline
+
+#### **Basic Commands**
+
+```bash
+# Standard run with default config
+uv run stdn
+
+# Specify config file explicitly
+uv run stdn -i config.json
+
+# Use environment variable for config
+export STDN_CONFIG=./config.json
+uv run stdn
+```
+
+#### **Debate Mode Options**
+
+**Component Debate Only** (recommended starting point):
+```bash
+ENABLE_DEBATE=true uv run stdn -i config.json
+```
+
+**Full Multi-Agent Debate** (highest quality, slower):
+```bash
+ENABLE_DEBATE=true \
+ENABLE_MATERIAL_DEBATE=true \
+ENABLE_COUNTRY_DEBATE=true \
+MAX_DEBATE_ROUNDS=3 \
+CONVERGENCE_THRESHOLD=0.8 \
+uv run stdn -i config.json
+```
+
+**Fast Mode** (single-agent, no debate):
+```bash
+# No environment variables needed - this is the default
+uv run stdn -i config.json
+```
+
+#### **Environment Variables**
+
+| Variable | Description | Default |
+|----------|-------------|---------|  
+| `ENABLE_DEBATE` | Enable component debate | `false` |
+| `ENABLE_MATERIAL_DEBATE` | Enable materials debate | `false` |
+| `ENABLE_COUNTRY_DEBATE` | Enable country data debate | `false` |
+| `MAX_DEBATE_ROUNDS` | Maximum debate rounds | `3` |
+| `CONVERGENCE_THRESHOLD` | Stop when overlap ≥ threshold | `0.8` |
+| `SAVE_TRANSCRIPTS` | Save debate transcripts | `true` |
+| `DEBATE_TOP_P` | Top-p sampling for debate | `0.0001` |
+| `STDN_CONFIG` | Config file path | (none) |
+
+### Advanced Usage
+
+#### **Using Different Models**
+
+**Ollama (local):**
+```json
+{
+  "model": "ollama:qwen2.5:14b"
+}
+```
+
+```bash
+# Make sure model is pulled
+ollama pull qwen2.5:14b
+uv run stdn -i config.json
+```
+
+**OpenAI:**
+```json
+{
+  "model": "openai:gpt-4"
+}
+```
+
+```bash
+export OPENAI_API_KEY=your_api_key_here
+uv run stdn -i config.json
+```
+
+**Anthropic Claude:**
+```json
+{
+  "model": "anthropic:claude-3-sonnet-20240229"
+}
+```
+
+```bash
+export ANTHROPIC_API_KEY=your_api_key_here
+uv run stdn -i config.json
+```
+
+#### **Running Tests**
+
+```bash
+# Run all tests
+uv run pytest
+
+# Run with coverage
+uv run pytest --cov=src/stdn_agentic --cov-report=html
+
+# Run specific test file
+uv run pytest src/stdn_agentic/tests/test_pipeline_integration.py
+
+# Run unit tests only
+uv run pytest src/stdn_agentic/tests/unit/
+```
+
+#### **Development Tools**
+
+```bash
+# Format code with black
+uv run black src/
+
+# Lint with ruff
+uv run ruff check src/
+
+# Type checking with basedpyright
+uv run basedpyright src/
+
+# Run all quality checks
+uv run black src/ && uv run ruff check src/ && uv run basedpyright src/
+```
+
+#### **Inspecting Outputs**
+
+```bash
+# View generated CSV
+head -n 20 output/stdns_output.csv
+
+# View latest debate transcript
+ls -lt src/stdn_agentic/debate_transcripts/results/ | head -n 5
+cat src/stdn_agentic/debate_transcripts/results/Solar_Panel_*.txt
+
+# Count technologies processed
+wc -l output/stdns_output.csv
+
+# Check unique materials
+cut -d',' -f5 output/stdns_output.csv | sort -u | wc -l
+```
+
+#### **Performance Tuning**
+
+**Parallel Processing** (experimental):
+```json
+{
+  "parallel_processing": true,
+  "max_parallel_jobs": 3
+}
+```
+
+**Timeout Adjustments:**
+```json
+{
+  "component_timeout": 180,
+  "materials_timeout": 180,
+  "country_timeout": 120
+}
+```
+
+**Reduce Debate Rounds for Speed:**
+```bash
+ENABLE_DEBATE=true \
+MAX_DEBATE_ROUNDS=2 \
+CONVERGENCE_THRESHOLD=0.9 \
+uv run stdn -i config.json
 ```
 
 ***
@@ -108,7 +426,7 @@ A multi-agent AI framework for generating **Shallow Technology Dependency Networ
 #### **Example Output** (Solar Panel):
 
 | Component | Confidence | Reasoning |
-|-----------|------------|-----------|
+|-----------|------------|-----------|  
 | Solar Cells (monocrystalline silicon) | 0.98 | Core photovoltaic conversion element, universally present |
 | Tempered Glass Cover | 0.95 | Front protective layer, industry standard in virtually all modules |
 | Aluminum Frame | 0.90 | Structural support and mounting interface, standard in most installations |
@@ -165,7 +483,7 @@ A multi-agent AI framework for generating **Shallow Technology Dependency Networ
 #### **Example Output** (Solar Panel → Solar Cells):
 
 | Material | Confidence | Reasoning |
-|----------|------------|-----------|
+|----------|------------|-----------|  
 | Silicon | 0.95 | Round 2 refinement with peer support: 2 agents |
 | Aluminum | 0.90 | Used for electrical contacts, 2/3 agent consensus |
 | Silver | 0.70 | Front contact metallization, 1/3 agent proposal |
@@ -215,7 +533,7 @@ A multi-agent AI framework for generating **Shallow Technology Dependency Networ
 #### **Example Output** (Silicon production):
 
 | Country | Amount | Unit | Percentage | Confidence | Reasoning |
-|---------|--------|------|------------|------------|-----------|
+|---------|--------|------|------------|------------|-----------|  
 | CHINA | 3600.0 | THOUSAND METRIC TONS | 40.0% | 0.95 | USGS Mineral Commodity Summaries 2024 |
 | RUSSIA | 570.0 | THOUSAND METRIC TONS | 6.33% | 0.95 | USGS authoritative data |
 | BRAZIL | 190.0 | THOUSAND METRIC TONS | 2.11% | 0.95 | USGS authoritative data |
@@ -298,7 +616,7 @@ final_confidence = min(final_confidence, 1.0)  # Cap at 1.0
 Each row represents: **Technology → Component → Material → Country**
 
 | Column | Type | Description | Example |
-|--------|------|-------------|---------|
+|--------|------|-------------|---------|  
 | `technology` | str | Technology name | "Solar Panel" |
 | `component` | str | Component name (normalized) | "solar cells (monocrystalline silicon)" |
 | `component_confidence` | float | Component confidence (0-1) | 0.98 |
@@ -387,129 +705,89 @@ END OF STDN TRANSCRIPT
 
 ***
 
-## Configuration
-
-### **config.json**
-
-```json
-{
-  "model": "ollama/qwen2.5:14b",
-  "usgs_database": "/path/to/usgs_production.db",
-  "tech_list_path": "/path/to/technologies.csv",
-  "output_dir": "./output",
-  "output_csv_filename": "stdn_output",
-  "src_year": 2024,
-  "meas_year": 2025,
-  "write_nulls_to_output": false
-}
-```
-
-| Parameter | Description | Default |
-|-----------|-------------|---------|
-| `model` | LLM model identifier | "ollama/qwen2.5:14b" |
-| `usgs_database` | Path to USGS SQLite database | (required) |
-| `tech_list_path` | CSV with technology names and roles | (required) |
-| `output_dir` | Output directory | "./output" |
-| `output_csv_filename` | CSV filename (no extension) | "stdn_output" |
-| `src_year` | USGS data source year | 2024 |
-| `meas_year` | USGS measurement year | 2025 |
-| `write_nulls_to_output` | Write rows even if no country data found | false |
-
-### **technologies.csv**
-
-```csv
-technology,role,domain
-Solar Panel,renewable energy consultant,technology
-Electric Vehicle,automotive supply chain analyst,technology
-Wind Turbine,energy systems engineer,technology
-```
-
-***
-
-## Installation & Usage
-
-### **Installation**
-
-```bash
-# Clone repository
-git clone <repository_url>
-cd stdn-agentic
-
-# Install dependencies
-pip install -e .
-
-# Verify installation
-python -c "from stdn_agentic import STDNOrchestrator; print('✓ Installed')"
-```
-
-### **Basic Usage**
-
-```python
-from stdn_agentic import STDNOrchestrator
-from stdn_agentic.models import ConfigModel
-
-# Load configuration
-config = ConfigModel.from_json("config.json")
-
-# Initialize orchestrator
-orchestrator = STDNOrchestrator(
-    config=config,
-    enable_debate=True,              # Use multi-agent debate
-    enable_material_debate=True,     # Debate for materials too
-    enable_country_debate=False,     # Skip country debate (use USGS)
-    max_debate_rounds=3,
-    convergence_threshold=0.8,
-    save_transcripts=True
-)
-
-# Run pipeline
-import asyncio
-
-async def main():
-    technologies = ["Solar Panel", "Electric Vehicle"]
-    results = await orchestrator.run_pipeline(
-        technologies=technologies,
-        role="supply chain analyst",
-        domain="technology"
-    )
-    
-    print(f"✓ Processed {results['successful']} technologies")
-    print(f"✓ Output: {orchestrator.output_file}")
-
-asyncio.run(main())
-```
-
-### **Command-Line Usage**
-
-```bash
-# Run full pipeline
-python -m stdn_agentic.cli run --config config.json
-
-# Single technology
-python -m stdn_agentic.cli run --config config.json --tech "Solar Panel"
-
-# Disable debate (faster, lower quality)
-python -m stdn_agentic.cli run --config config.json --no-debate
-
-# Custom parameters
-python -m stdn_agentic.cli run \
-    --config config.json \
-    --max-rounds 5 \
-    --convergence 0.9 \
-    --no-transcripts
-```
-
-***
-
 ## Technical Details
 
-### **Ontology Constraint Enforcement**
+### **Technology Stack**
 
-Materials are strictly validated against `hs_codes_and_usgs_names.csv`:
+**Core Dependencies:**
+- `pydantic-ai>=0.0.14` - LLM agent framework with structured outputs
+- `pydantic>=2.5.0` - Data validation and settings management
+- `ollama>=0.3.0` - Local LLM inference client
+- `pandas>=2.0.0` - Data manipulation and CSV I/O
+- `duckdb>=1.2.2` - Embedded analytics for USGS data
+- `python-dotenv>=1.0.0` - Environment configuration
+
+**Development Tools:**
+- `pytest>=7.0.0` - Testing framework
+- `pytest-asyncio>=0.20.0` - Async test support
+- `ruff>=0.1.0` - Fast Python linter
+- `black>=23.0.0` - Code formatter
+- `basedpyright>=1.0.0` - Type checker
+
+**Python Version:** 3.10+
+
+### **Project Structure**
+
+```
+dpi_stdn_agentic/
+├── src/stdn_agentic/
+│   ├── agents/              # Agent implementations
+│   │   ├── component_agent.py
+│   │   ├── materials_agent.py
+│   │   └── country_agent.py
+│   ├── debate/              # Multi-agent debate system
+│   │   ├── debater.py
+│   │   ├── material_debater.py
+│   │   └── material_country_debater.py
+│   ├── orchestrator/        # Pipeline coordination
+│   │   ├── pipeline.py
+│   │   ├── checkpoint.py
+│   │   ├── error_handler.py
+│   │   └── state_manager.py
+│   ├── data/                # Data access layer
+│   │   ├── repository.py
+│   │   ├── usgs_client.py
+│   │   ├── loaders.py
+│   │   └── cache.py
+│   ├── core/                # Core types and schemas
+│   │   ├── schemas.py
+│   │   ├── base_agent.py
+│   │   └── constants.py
+│   ├── reporting/           # Output generation
+│   │   └── debate_reporter.py
+│   ├── tests/               # Test suite
+│   └── main.py              # CLI entry point
+├── data/                    # Data files
+│   ├── hs_codes_and_usgs_names.csv
+│   ├── usgs_production.db
+│   └── tech_list.csv
+├── output/                  # Generated outputs
+├── config.json              # Configuration
+├── pyproject.toml           # Project metadata
+└── README.md
+```
+
+### **Model Support**
+
+The framework supports multiple LLM providers:
+
+| Provider | Model Examples | Configuration |
+|----------|----------------|---------------|
+| **Ollama** | `ollama:qwen2.5:7b`, `ollama:llama3:8b` | Local, no API key needed |
+| **OpenAI** | `openai:gpt-4`, `openai:gpt-3.5-turbo` | Set `OPENAI_API_KEY` |
+| **Anthropic** | `anthropic:claude-3-sonnet-20240229` | Set `ANTHROPIC_API_KEY` |
+
+**Recommended Models:**
+- **Fast & Local**: `ollama:qwen2.5:7b` (~4GB RAM)
+- **Balanced**: `ollama:qwen2.5:14b` (~9GB RAM)
+- **Best Quality**: `openai:gpt-4` or `anthropic:claude-3-sonnet`
+
+### **Material Ontology Enforcement**
+
+The system enforces strict ontology compliance for materials:
 
 ```python
-# Before (incorrect LLM outputs):
-"EVA"                           ❌ Not in ontology
+# Before (raw LLM output):
 "Ethylene-vinyl acetate"        ❌ Not in ontology
 "PET film"                      ❌ Not in ontology
 "Aluminum alloy 6061"           ❌ Too specific
@@ -556,13 +834,14 @@ This ensures consistency between debate phases and CSV output.
 **Single technology (6 components, debate mode):**
 - Component extraction: ~30 seconds (3 agents × 3 rounds)
 - Materials extraction: ~45 seconds (3 agents × 2 rounds × 6 components)
-- Country data: ~5 seconds (USGS lookups)
+- Country  ~5 seconds (USGS lookups)
 - **Total**: ~80 seconds
 
 **Optimizations:**
 - Use `enable_debate=False` for 3x speedup (lower quality)
 - Reduce `max_debate_rounds` to 2 for faster convergence
 - Increase `convergence_threshold` to 0.9 for earlier stopping
+- Use local Ollama models to avoid API rate limits
 
 ### **Error Handling**
 
@@ -579,6 +858,25 @@ This ensures consistency between debate phases and CSV output.
 # Ontology violations
 → Filter materials, log violations, continue with valid materials
 ```
+
+### **Checkpointing & Resume**
+
+Enable checkpointing for long-running jobs:
+
+```json
+{
+  "enable_checkpoints": true,
+  "checkpoint_interval": 5
+}
+```
+
+To resume from checkpoint:
+```bash
+# Checkpoints are automatically detected and loaded
+uv run stdn -i config.json
+```
+
+Checkpoint files stored in: `.checkpoints/`
 
 ***
 
@@ -599,13 +897,37 @@ If you use this framework in research, please cite:
 
 ## License
 
-[Your License Here]
+MIT License - See LICENSE file for details
+
+***
+
+## Contributing
+
+Contributions welcome! Please:
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+**Development setup:**
+```bash
+# Clone and install with dev dependencies
+git clone https://github.com/[your-repo]/dpi_stdn_agentic.git
+cd dpi_stdn_agentic
+uv sync --group dev
+
+# Run tests before submitting PR
+uv run pytest
+uv run black src/
+uv run ruff check src/
+```
 
 ***
 
 ## Contact
 
 For questions or contributions:
+- **Issues**: [GitHub Issues](https://github.com/[your-repo]/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/[your-repo]/discussions)
 - **Email**: [your-email]
-- **Issues**: [GitHub Issues URL]
-- **Discussions**: [GitHub Discussions URL]
