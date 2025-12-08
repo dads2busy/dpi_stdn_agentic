@@ -90,8 +90,11 @@ class CountryDataEnricher:
         for comp_mat in materials_list.component_list:
             component = comp_mat.component
 
+            # ✅ FIX: Normalize the component name for lookup (match how map keys were created)
+            normalized_component = component.lower().strip()
+
             # Get component confidence and reasoning from the map
-            comp_info = component_confidence_map.get(component, {})
+            comp_info = component_confidence_map.get(normalized_component, {})
             component_confidence = comp_info.get("confidence", 0.0)
             component_reasoning = comp_info.get("reasoning", "")
 
