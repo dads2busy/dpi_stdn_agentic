@@ -57,6 +57,7 @@ class DebateReporter:
         debate_history: List[Dict[str, Any]],
         final_consensus: Dict[str, Any],
         file_format: str = "txt",
+        timestamp: str = None,
     ) -> Path:
         """
         Save debate transcript to file.
@@ -67,11 +68,13 @@ class DebateReporter:
             debate_history: List of debate round results with convergence
             final_consensus: Final consensus data
             file_format: Output format ('txt' or 'json')
+            timestamp: Optional timestamp string (YYYYMMDD_HHMMSS), generates new if None
 
         Returns:
             Path to saved file
         """
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        if timestamp is None:
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         filename = f"{technology.replace(' ', '_')}_{timestamp}.{file_format}"
         filepath = self.output_dir / filename
 

@@ -100,8 +100,7 @@ def find_config_file(specified_path: str | None = None) -> str:
 
 
 async def process_all_technologies(config: ConfigModel) -> dict:
-    """
-    Process all technologies using the enhanced orchestrator.
+    """Process all technologies using the enhanced orchestrator.
 
     Args:
         config: Configuration model with paths and settings
@@ -109,16 +108,15 @@ async def process_all_technologies(config: ConfigModel) -> dict:
     Returns:
         Dict with processing statistics
     """
-    # Read debate settings from environment or config
+
     enable_debate = os.getenv("ENABLE_DEBATE", "false").lower() == "true"
     enable_material_debate = os.getenv("ENABLE_MATERIAL_DEBATE", "false").lower() == "true"
     enable_country_debate = os.getenv("ENABLE_COUNTRY_DEBATE", "false").lower() == "true"
-    max_debate_rounds = int(os.getenv("MAX_DEBATE_ROUNDS", "3"))
-    convergence_threshold = float(os.getenv("CONVERGENCE_THRESHOLD", "0.8"))
+    max_debate_rounds = int(os.getenv("MAX_DEBATE_ROUNDS", 3))
+    convergence_threshold = float(os.getenv("CONVERGENCE_THRESHOLD", 0.8))
     save_transcripts = os.getenv("SAVE_TRANSCRIPTS", "true").lower() == "true"
-    debate_top_p = float(os.getenv("DEBATE_TOP_P", "0.0001"))
+    debate_top_p = float(os.getenv("DEBATE_TOP_P", 0.0001))
 
-    # Initialize enhanced orchestrator
     orchestrator = STDNOrchestrator(
         config,
         enable_debate=enable_debate,
@@ -130,12 +128,11 @@ async def process_all_technologies(config: ConfigModel) -> dict:
         debate_top_p=debate_top_p,
     )
 
-    # Load technologies from config
     tech_list_path = Path(config.tech_list_path)
     if not tech_list_path.exists():
         raise FileNotFoundError(f"Technology list not found: {tech_list_path}")
 
-    # Read full CSV data including role
+    # Load technologies with their specific roles and domains
     import csv
 
     tech_data = []
@@ -151,80 +148,23 @@ async def process_all_technologies(config: ConfigModel) -> dict:
                     }
                 )
 
-    print(f"{'=' * 80}")
-    print(f"STDN Generation Started: {datetime.now()}")
-    print(f"{'=' * 80}")
+    # Build mappings for per-technology roles and domains
+    technologies = [t["tech"] for t in tech_data]
+    tech_roles = {t["tech"]: t["role"] for t in tech_data}
+    tech_domains = {t["tech"]: t["domain"] for t in tech_data}
 
-    if enable_debate:
-        print("🔄 Multi-agent debate ENABLED")
-        print(f"📊 Max rounds: {max_debate_rounds}")
-        print(f"🎯 Convergence threshold: {convergence_threshold}")
-        print(f"💾 Save transcripts: {save_transcripts}")
-
-    print(f"\n📋 {len(tech_data)} technologies from {config.tech_list_path}\n")
-
-    # ✅ Call run_pipeline with tech list that will be processed with roles
-    # We need to modify this to process individually OR modify run_pipeline
-    # Let's use the simpler approach: call run_pipeline for each tech
-
-    successful = 0
-    failed = 0
-
-    # Initialize the CSV file with headers
-    import csv as csv_module
-
-    with open(orchestrator.output_file, "w", newline="") as f:
-        writer = csv_module.DictWriter(
-            f,
-            fieldnames=[
-                "technology",
-                "component",
-                "component_confidence",
-                "component_reasoning",
-                "material",
-                "material_confidence",
-                "material_reasoning",
-                "hs_code",
-                "country",
-                "meas_unit",
-                "amount",
-                "percentage",
-                "country_confidence",
-                "country_reasoning",
-            ],
-        )
-        writer.writeheader()
-
-    # Process each technology with its specific role
-    for tech_info in tech_data:
-        tech = tech_info["tech"]
-        role = tech_info["role"]
-        domain = tech_info["domain"]
-
-        # ✅ Use run_pipeline with single technology and specific role
-        result = await orchestrator.run_pipeline(
-            technologies=[tech],
-            role=role,  # ✅ Use role from CSV
-            domain=domain,  # ✅ Use domain from CSV
-        )
-
-        if result["successful"] > 0:
-            successful += 1
-        else:
-            failed += 1
-
-    print(f"\n{'=' * 80}")
-    print(f"STDN Generation Completed: {datetime.now()}")
-    print(f"{'=' * 80}")
-    print(f"Successfully processed: {successful}/{len(tech_data)} technologies")
-    print(f"Output saved to: {orchestrator.output_file}")
-
-    if enable_debate and orchestrator.reporter:
-        print(f"Debate transcripts saved to: {orchestrator.reporter.output_dir}")
+    # Call run_pipeline ONCE with all technologies and their role/domain mappings
+    result = await orchestrator.run_pipeline(
+        technologies=technologies,
+        role="supply chain analyst",  # Default fallback
+        domain="technology",  # Default fallback
+        tech_roles=tech_roles,  # ← Per-tech role mapping
+        tech_domains=tech_domains,  # ← Per-tech domain mapping
+    )
 
     return {
-        "successful": successful,
-        "failed": failed,
+        "successful": result["successful"],
+        "failed": result["failed"],
         "total": len(tech_data),
         "output_file": orchestrator.output_file,
     }
