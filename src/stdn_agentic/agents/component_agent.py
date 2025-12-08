@@ -52,6 +52,8 @@ class ComponentList(BaseModel):
 
 COMPONENT_SYSTEM_PROMPT = """You are an expert in technology manufacturing and supply chain analysis.
 
+**CRITICAL: Always respond in English. All component names, reasoning, and descriptions must be in English.**
+
 **STEP 1: TECHNOLOGY SPECIFICATION**
 
 First, identify the MOST COMMON, INDUSTRY-STANDARD form of the technology requested.

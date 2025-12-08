@@ -808,56 +808,115 @@ class MaterialDebater:
         self,
         proposals: list[MaterialProposal],
         convergence_score: float,
+        expected_components: list[str],  # ✅ NEW PARAMETER
     ) -> dict[str, list[dict[str, Any]]]:
         """
         Build consensus with adaptive voting threshold and confidence scoring.
 
         Args:
             proposals: All final proposals from debate
-            convergence_score: Convergence score (0-1)
+            convergence_score: Convergence score 0-1
+            expected_components: List of expected component names from component phase
 
         Returns:
-            Dict mapping NORMALIZED component names to list of material dicts with confidence
+            Dict mapping CORRECTED component names to list of material dicts with confidence
         """
-        # Adaptive threshold: high convergence = strict, low = lenient
-        vote_threshold = 0.67 if convergence_score > 0.7 else 0.33
+        if not proposals:
+            return {}
 
-        # Group by normalized component and normalized material
+        # ✅ Build case-insensitive lookup for component name correction
+        component_lookup = {comp.lower().strip(): comp for comp in expected_components}
+
+        print(f"\n🔍 Building consensus with component name enforcement...")
+        print(f"  Expected components: {expected_components}")
+
+        def find_correct_component_name(comp_name: str) -> str:
+            """Find the correct component name from expected components."""
+            comp_lower = comp_name.lower().strip()
+
+            # Try exact match
+            if comp_lower in component_lookup:
+                return component_lookup[comp_lower]
+
+            # Try base name (without qualifiers like "(OLED)")
+            base_name = comp_lower.split("(")[0].strip()
+            if base_name in component_lookup:
+                return component_lookup[base_name]
+
+            # Try partial matching (e.g., "display" matches "display module")
+            for key, correct_name in component_lookup.items():
+                if base_name in key or key in base_name:
+                    return correct_name
+
+            # No match found - return original (will be flagged later)
+            logger.warning(f"Component '{comp_name}' not found in expected components")
+            return comp_name
+
+        # Group proposals by CORRECTED component name and normalized material
         comp_mat_support: dict[str, dict[str, list[MaterialProposal]]] = defaultdict(
             lambda: defaultdict(list)
         )
 
         for prop in proposals:
-            comp_mat_support[prop.normalizedcomponent][prop.normalizedmaterial].append(prop)
+            # ✅ CORRECT COMPONENT NAME BEFORE GROUPING
+            corrected_comp = find_correct_component_name(prop.normalizedcomponent)
+            mat_norm = prop.normalizedmaterial
+
+            comp_mat_support[corrected_comp][mat_norm].append(prop)
+
+        # Build consensus with adaptive thresholds
+        if convergence_score >= 0.7:
+            min_support_frac = 2.0 / 3.0
+        elif convergence_score <= 0.3:
+            min_support_frac = 1.0 / 3.0
+        else:
+            frac = (convergence_score - 0.3) / (0.7 - 0.3)
+            min_support_frac = (1.0 / 3.0) + frac * (1.0 / 3.0)
+
+        min_support = max(1, int(round(min_support_frac * max(self.num_agents, 1))))
+
+        print(f"  Convergence: {convergence_score:.2f}")
+        print(f"  Min support required: {min_support}/{self.num_agents} agents")
 
         consensus: dict[str, list[dict[str, Any]]] = {}
 
         for comp_norm, mat_support in comp_mat_support.items():
             component_materials = []
 
-            for _, props in mat_support.items():
+            for mat_norm, props in mat_support.items():
+                # Calculate support and confidence
                 vote_rate = len(props) / self.num_agents
                 avg_confidence = sum(p.confidence for p in props) / len(props)
 
-                # Final confidence: weighted by vote rate and confidence
-                final_confidence = vote_rate * 0.6 + avg_confidence * 0.4
+                # Adaptive consensus scoring
+                score = (
+                    (1.0 - self.confidence_weight) * vote_rate
+                    + self.confidence_weight * avg_confidence
+                    + self.peer_support_boost * (len(props) - 1)
+                )
 
-                # Include if meets threshold
-                if vote_rate >= vote_threshold or (vote_rate >= 0.33 and avg_confidence > 0.9):
-                    # Use highest confidence proposal's original material name
+                # Only include if meets minimum support threshold
+                if len(props) >= min_support:
+                    # Get best proposal for this material (highest confidence)
                     best_prop = max(props, key=lambda p: p.confidence)
 
                     component_materials.append(
                         {
-                            "name": best_prop.material,  # Original material name (for display)
-                            "confidence": final_confidence,
-                            "reasoning": f"Debate consensus: {len(props)}/{self.num_agents} agents, avg confidence {avg_confidence:.2f}",
+                            "name": best_prop.material,  # Original material name
+                            "confidence": avg_confidence,
+                            "reasoning": best_prop.reasoning,
+                            "score": score,
+                            "support": len(props),
                         }
                     )
 
+            # Sort materials by score (highest first)
+            component_materials.sort(key=lambda m: m["score"], reverse=True)
+
+            # Store in consensus if any materials qualified
             if component_materials:
-                # ✅ USE NORMALIZED COMPONENT NAME (maintains consistency throughout pipeline)
                 consensus[comp_norm] = component_materials
+                print(f"  ✓ {comp_norm}: {len(component_materials)} materials")
 
         return consensus
 
@@ -940,7 +999,11 @@ class MaterialDebater:
             print(f"Convergence: {convergence:.1%}")
 
             # Store round data
-            consensus_so_far = self.build_adaptive_consensus(all_proposals, convergence)
+            consensus_so_far = self.build_adaptive_consensus(
+                all_proposals,
+                convergence,
+                expected_components=componentlist,
+            )
             debate_round = MaterialDebateRound(
                 roundnumber=round_num,
                 proposals=all_proposals.copy(),
@@ -957,7 +1020,11 @@ class MaterialDebater:
         print("PHASE 3: BUILDING CONSENSUS")
         print(f"{'=' * 60}")
 
-        consensus = self.build_adaptive_consensus(all_proposals, convergence)
+        consensus = self.build_adaptive_consensus(
+            all_proposals,
+            convergence_score=convergence,
+            expected_components=componentlist,  # ✅ ADD THIS
+        )
 
         # DEDUPLICATION: consensus now contains dicts, not strings
         for component in consensus:

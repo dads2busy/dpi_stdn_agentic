@@ -77,7 +77,7 @@ class MaterialsExtractor:
         self.timestamp = timestamp or datetime.now().strftime("%Y%m%d_%H%M%S")
         self.use_debate = use_debate
         self.max_retries = max_retries
-        
+
         # Initialize material debater if using debate
         self.material_debater = None
         if use_debate:
@@ -146,8 +146,8 @@ class MaterialsExtractor:
         Materials are strictly constrained to the ontology list from hs_codes_and_usgs_names.csv
         """
         # Check ontology availability
-        is_valid, valid_component_names, error_msg = (
-            self._validate_materials_extraction_inputs(componentlist, technology)
+        is_valid, valid_component_names, error_msg = self._validate_materials_extraction_inputs(
+            componentlist, technology
         )
 
         if not is_valid:
@@ -163,32 +163,43 @@ class MaterialsExtractor:
         ontology_str = "\n".join(f"  - {mat}" for mat in self.deps.material_ontology_list)
 
         # Stricter prompt - no "common variants" allowed
-        materials_prompt = f"""Extract RAW MATERIALS for these components of a {technology}:
+        materials_prompt = f"""Extract RAW MATERIALS for this component of a {technology}:
 
-{component_str}
+        COMPONENT NAME (use EXACTLY as written, do not modify):
+        "{component_str}"
 
-STRICT CONSTRAINT - You MUST ONLY select materials from this exact list:
+        CRITICAL REQUIREMENT:
+        - When returning results, use the EXACT component name: "{component_str}"
+        - Do NOT add qualifiers like "(NAND Flash)", "(OLED)", or any other descriptors
+        - Do NOT rename, rephrase, or modify the component name in any way
+        - The component field in your response MUST be exactly: "{component_str}"
 
-{ontology_str}
+        MATERIAL CONSTRAINT - You MUST ONLY select materials from this exact list:
 
-RULES:
-1. Use ONLY material names from the above list (exact matches required)
-2. Do NOT use synonyms, abbreviations, or variations
-3. Do NOT invent new materials or use brand names
-4. Do NOT use manufactured products (e.g., "EVA", "PET film") - use base materials instead
-5. If unsure, choose the closest base material from the list
+        {ontology_str}
 
-EXAMPLES OF CORRECT USAGE:
-✓ Use "Silicon" not "Monocrystalline silicon"
-✓ Use "Aluminum" not "Aluminum alloy" or "6061 aluminum"
-✓ Use "Polyethylene terephthalate" not "PET" or "Polyester film"
-✓ Use "Glass" not "Borosilicate glass" (unless "Borosilicate glass" is in the list)
-✓ Use "Copper" not "Copper wire"
+        RULES:
+        1. Use ONLY material names from the above list (exact matches required)
+        2. Do NOT use synonyms, abbreviations, or variations
+        3. Do NOT invent new materials or use brand names
+        4. Do NOT use manufactured products (e.g., "EVA", "PET film") - use base materials instead
+        5. If unsure, choose the closest base material from the list
+        6. Component name in response must match exactly: "{component_str}"
 
-For each component, identify 2-8 key RAW MATERIALS from the list above.
-Return a JSON response with componentlist containing component and materials fields.
-Use ONLY materials from the provided list above.
-"""
+        EXAMPLES OF CORRECT USAGE:
+        ✓ Use "Silicon" not "Monocrystalline silicon"
+        ✓ Use "Aluminum" not "Aluminum alloy" or "6061 aluminum"
+        ✓ Use "Polyethylene terephthalate" not "PET" or "Polyester film"
+        ✓ Use "Glass" not "Borosilicate glass" (unless "Borosilicate glass" is in the list)
+        ✓ Use "Copper" not "Copper wire"
+
+        COMPONENT NAME TO USE IN RESPONSE:
+        "{component_str}"
+
+        For this component, identify 2-8 key RAW MATERIALS from the list above.
+        Return a JSON response with the component field set to exactly "{component_str}"
+        and materials field containing only materials from the provided list.
+        """
 
         logger.info(
             f"Extracting materials for {len(valid_component_names)} components of {technology}"
@@ -206,6 +217,34 @@ Use ONLY materials from the provided list above.
                     return ComponentMaterialsList.model_validate({"componentlist": []})
 
                 materials_list = result.output
+
+                # Force component name correction
+                for comp_mat in materials_list.component_list:
+                    # valid_component_names is the list of expected names
+                    # Check if LLM changed the component name
+                    if comp_mat.component not in valid_component_names:
+                        # Try to find matching component (case-insensitive)
+                        matched = None
+                        comp_lower = comp_mat.component.lower().strip()
+
+                        for expected in valid_component_names:
+                            if expected.lower().strip() == comp_lower:
+                                matched = expected
+                                break
+
+                        if matched:
+                            logger.warning(
+                                f"LLM changed component name from '{matched}' to '{comp_mat.component}', correcting..."
+                            )
+                            print(
+                                f"  ⚠️ Correcting component name: '{comp_mat.component}' → '{matched}'"
+                            )
+                            comp_mat.component = matched
+                        else:
+                            logger.warning(
+                                f"Unknown component '{comp_mat.component}' not in expected list: {valid_component_names}"
+                            )
+                            print(f"  ⚠️ Unknown component: '{comp_mat.component}'")
 
                 if not materials_list.component_list:
                     if attempt == self.max_retries - 1:
@@ -252,7 +291,9 @@ Use ONLY materials from the provided list above.
 
                 if is_transient and attempt < self.max_retries - 1:
                     wait_time = (attempt + 1) * 2  # 2s, 4s, 6s
-                    logger.warning(f"Transient error (attempt {attempt + 1}/{self.max_retries}): {e}")
+                    logger.warning(
+                        f"Transient error (attempt {attempt + 1}/{self.max_retries}): {e}"
+                    )
                     await asyncio.sleep(wait_time)
                     continue
                 else:
@@ -297,7 +338,10 @@ Use ONLY materials from the provided list above.
 
         # Build material confidence map from debate proposals
         material_confidence_map = {}
-        if hasattr(self.material_debater, "debate_history") and self.material_debater.debate_history:
+        if (
+            hasattr(self.material_debater, "debate_history")
+            and self.material_debater.debate_history
+        ):
             # Get all proposals from all rounds (prioritize later rounds)
             all_proposals = []
             for debate_round in self.material_debater.debate_history:
@@ -358,6 +402,90 @@ Use ONLY materials from the provided list above.
                 ComponentMaterials(component=comp, materials=material_objects)
             )
 
+        # ========================================================================
+        # VALIDATION SECTION - Fix component names and filter invalid materials
+        # ========================================================================
+
+        # STEP 1: Fix component names to match input components
+        print(f"\n🔍 Validating component names...")
+        print(f"  Expected components: {components}")
+        print(f"  Materials list has {len(materials_list_items)} items")
+
+        # Build case-insensitive lookup map: lowercase -> correct name
+        component_lookup = {comp.lower().strip(): comp for comp in components}
+
+        for i, comp_mat in enumerate(materials_list_items):
+            comp_lower = comp_mat.component.lower().strip()
+
+            # Remove any qualifiers like "(amoled)" or "(32mp sensor)"
+            # Extract base name before first parenthesis
+            base_name_lower = comp_lower.split("(")[0].strip()
+
+            print(f"  [{i}] Component from debate: '{comp_mat.component}'")
+            print(f"      Base name (lowercase): '{base_name_lower}'")
+
+            # Try exact match first
+            if comp_lower in component_lookup:
+                expected = component_lookup[comp_lower]
+                if comp_mat.component != expected:
+                    print(
+                        f"    ⚠️ Case mismatch - correcting: '{comp_mat.component}' → '{expected}'"
+                    )
+                    comp_mat.component = expected
+                else:
+                    print(f"    ✓ Component name matches expected input")
+
+            # Try base name match (without qualifiers)
+            elif base_name_lower in component_lookup:
+                expected = component_lookup[base_name_lower]
+                print(f"    ⚠️ Qualifier added - correcting: '{comp_mat.component}' → '{expected}'")
+                comp_mat.component = expected
+
+            # Unknown component
+            else:
+                logger.warning(
+                    f"Materials debate introduced unknown component '{comp_mat.component}' "
+                    f"not in input: {components}"
+                )
+                print(f"    ❌ Unknown component - no match found!")
+                print(f"       Available: {list(component_lookup.keys())}")
+
+        # STEP 2: Filter invalid materials not in ontology
+        print(f"\n🔍 Filtering materials against ontology...")
+        ontology_set = set(self.deps.material_ontology_list)
+        print(f"  Ontology has {len(ontology_set)} materials")
+
+        filtered_count = 0
+
+        for comp_mat in materials_list_items:
+            print(f"\n  Checking materials for '{comp_mat.component}':")
+            valid_materials = []
+
+            for mat in comp_mat.raw_materials:  # ✅ Use raw_materials
+                # Check if material name is in ontology
+                if mat.name in ontology_set:
+                    valid_materials.append(mat)
+                    print(f"    ✓ '{mat.name}' - valid (in ontology)")
+                else:
+                    logger.warning(
+                        f"Rejecting invalid material '{mat.name}' for '{comp_mat.component}' "
+                        f"(not in ontology)"
+                    )
+                    print(f"    ✗ '{mat.name}' - NOT IN ONTOLOGY, filtering out")
+                    filtered_count += 1
+
+            # Update with only valid materials
+            comp_mat.raw_materials = valid_materials  # ✅ Use raw_materials
+
+        if filtered_count > 0:
+            print(f"\n  ℹ️ Total filtered: {filtered_count} invalid materials")
+        else:
+            print(f"\n  ✓ All materials validated successfully")
+
+        # ========================================================================
+        # END VALIDATION SECTION
+        # ========================================================================
+
         materials_list = ComponentMaterialsList(componentlist=materials_list_items)
 
         # Save material debate transcript if enabled
@@ -365,6 +493,14 @@ Use ONLY materials from the provided list above.
             self._save_material_debate_transcript(
                 technology, components, self.material_debater.debate_history, consensus
             )
+
+        # Final summary
+        total_materials = sum(
+            len(cm.raw_materials) for cm in materials_list.component_list
+        )  # ✅ Use raw_materials
+        print(
+            f"\n✓ Final result: {len(materials_list.component_list)} components, {total_materials} materials"
+        )
 
         return materials_list
 
@@ -581,6 +717,7 @@ Use ONLY materials from the provided list above.
             logger.error(f"Error appending material debate transcript: {e}", exc_info=True)
             print(f"❌ EXCEPTION appending materials transcript: {type(e).__name__}: {e}")
             import traceback
+
             traceback.print_exc()
 
     def _update_material_json(

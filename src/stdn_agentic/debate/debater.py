@@ -95,8 +95,8 @@ class MultiAgentDebater:
 
     def __init__(
         self,
-        max_rounds: int = 3,
-        convergence_threshold: float = 0.8,
+        max_rounds: int = 5,
+        convergence_threshold: float = 0.75,
         confidence_weight: float = 0.3,
         peer_support_boost: float = 0.15,
         debate_top_p: float = 0.0001,
@@ -252,24 +252,47 @@ class MultiAgentDebater:
         names_list = "\n".join(f"{i + 1}. {name}" for i, name in enumerate(unique_names))
         prompt = f"""Map duplicate/similar component names to canonical names.
 
-NAMES:
-{names_list}
+    CRITICAL: All output must be in English only. If any input names are in other
+    languages, translate them to English equivalents before mapping.
 
-RULES:
-- Treat names as the same if they differ only by spacing, prefixes/suffixes,
-  or generic qualifiers like "module", "system", "unit", "assembly".
-- Treat names as different if they represent clearly different functions.
+    AVOID OVERLY GENERIC NAMES:
+    - Do NOT use vague terms like "Chip", "Module", "Component", "Part", "Unit"
+    - Use SPECIFIC names like "Memory Chip", "Power IC", "Display Module"
+    - If a component is too generic to identify, mark it as "Generic Component"
 
-Return JSON with a single field "mappings" mapping each original name
-to its canonical form.
-"""
+    NAMES:
+    {names_list}
+
+    RULES:
+    - Treat names as the same if they differ only by spacing, prefixes/suffixes,
+      or generic qualifiers like "module", "system", "unit", "assembly".
+    - Treat names as different if they represent clearly different functions.
+    - Use clear, standard English terminology for all canonical names.
+    - Prefer specific technical terms over generic ones.
+
+    EXAMPLES:
+    - "Main Circuit Board (PCB)" → "Main Circuit Board"
+    - "PCB" → "Main Circuit Board"
+    - "Motherboard" → "Main Circuit Board"
+    - "Display Module (OLED)" → "Display Module"
+    - "OLED Display" → "Display Module"
+    - "Touch Screen" → "Display Module"
+    - "Memory (RAM)" → "Memory"
+    - "RAM" → "Memory"
+    - "Memory (RAM & Storage)" → "Memory"
+    - "Storage" → "Storage"
+    - "Flash Storage" → "Storage"
+
+    Return JSON with a single field "mappings" mapping each original name
+    to its canonical form.
+    """
 
         try:
             agent = Agent(
                 model=deps.model,
                 output_type=ComponentMapping,
                 deps_type=type(deps),
-                system_prompt="Normalize component names to canonical forms.",
+                system_prompt="You are a component naming expert. Normalize component names to canonical English forms. Always respond in English only.",
             )
 
             result = await agent.run(prompt, deps=deps)
@@ -279,10 +302,36 @@ to its canonical form.
             for name in unique_names:
                 mapping.setdefault(name, self.normalize_component_name(name))
 
+            # ✅ DEBUG LOGGING
+            print(f"\n🔍 LLM Normalization Results:")
+            print(f"   Input: {len(unique_names)} unique component names")
+            print(f"   Output: {len(set(mapping.values()))} normalized canonical names")
+
+            # Group by normalized name to show what got merged
+            normalized_groups = {}
+            for original, normalized in mapping.items():
+                if normalized not in normalized_groups:
+                    normalized_groups[normalized] = []
+                normalized_groups[normalized].append(original)
+
+            print(f"\n   Normalization Mappings:")
+            for normalized, originals in sorted(normalized_groups.items()):
+                if len(originals) > 1:
+                    # Show merged components
+                    print(f"   ✓ '{normalized}' ← merged from {len(originals)} variants:")
+                    for orig in originals:
+                        print(f"      - '{orig}'")
+                else:
+                    # No change
+                    if originals[0] != normalized:
+                        print(f"   → '{originals[0]}' → '{normalized}'")
+
             logger.info("✓ LLM normalization produced %d unique names", len(set(mapping.values())))
             return mapping
+
         except Exception as exc:  # noqa: BLE001
             logger.warning("LLM normalization failed: %s", exc)
+            print(f"⚠️ LLM normalization failed, using rule-based fallback")
             return {name: self.normalize_component_name(name) for name in unique_names}
 
     # ------------------------------------------------------------------#
@@ -599,20 +648,29 @@ to its canonical form.
 
         for prop in proposals:
             agent_id = self._get_prop_value(prop, "agent_id", "unknown")
-            name = (
+
+            # Use normalized_component if available, otherwise use raw component name
+            norm = (
                 self._get_prop_value(prop, "normalized_component")
                 or self._get_prop_value(prop, "component")
                 or self._get_prop_value(prop, "component_name")
                 or ""
             )
-            norm = self.normalize_component_name(name)
-            if not norm:
+
+            # ✅ NORMALIZE CASE to prevent duplicates
+            norm = norm.strip()  # Remove extra spaces
+            if norm:
+                # Convert to Title Case for consistency
+                norm = " ".join(word.capitalize() for word in norm.split())
+
+            # ✅ No additional normalization - trust the LLM or use raw name
+            if not norm or not norm.strip():
                 continue
 
             confidence = float(self._get_prop_value(prop, "confidence", 0.8))
             norm_to_confidences[norm].append(confidence)
             norm_to_agents[norm].add(agent_id)
-            norm_to_proposals[norm].append(prop)  # ✅ Store proposal
+            norm_to_proposals[norm].append(prop)
 
         if not norm_to_confidences:
             return [], {}
@@ -642,8 +700,41 @@ to its canonical form.
                 + self.peer_support_boost * (support - 1)
             )
 
-            if support >= min_support:
+            # ✅ ADD FILTERING: Require both minimum support AND minimum confidence
+            MIN_CONFIDENCE = 0.7  # Require at least 70% confidence
+
+            if support >= min_support and avg_conf >= MIN_CONFIDENCE:
                 scores[norm_name] = score
+            elif support >= min_support:
+                print(
+                    f"   ⚠️ Excluded '{norm_name}': confidence {avg_conf:.2f} below {MIN_CONFIDENCE}"
+                )
+
+        # ✅ ADD THIS DEBUG LOGGING:
+        print(f"\n🔍 Consensus Scoring Debug:")
+        print(f"   Convergence: {convergence_score:.2f}")
+        print(f"   Min support required: {min_support}/{num_agents} agents")
+        print(f"   Peer support boost: {self.peer_support_boost}")
+        print(f"\n   Component Scoring:")
+
+        # Show ALL proposals (both included and excluded)
+        all_norms = sorted(norm_to_confidences.keys())
+        for norm_name in all_norms:
+            support = len(norm_to_agents[norm_name])
+            confs = norm_to_confidences[norm_name]
+            avg_conf = sum(confs) / len(confs)
+
+            if norm_name in scores:
+                score = scores[norm_name]
+                print(
+                    f"   ✓ '{norm_name}': {support}/{num_agents} agents, "
+                    f"avg_conf={avg_conf:.2f}, score={score:.3f}"
+                )
+            else:
+                print(
+                    f"   ✗ '{norm_name}': {support}/{num_agents} agents, "
+                    f"avg_conf={avg_conf:.2f} — EXCLUDED (below min_support)"
+                )
 
         consensus = [name for name, _ in sorted(scores.items(), key=lambda kv: kv[1], reverse=True)]
 
@@ -702,6 +793,7 @@ to its canonical form.
 
         from pydantic_ai import Agent
 
+        # Build context from previous proposals
         prev_context = "\n".join(
             f"- {self._get_prop_value(p, 'agent_id', 'unknown')}: "
             f"{self._get_prop_value(p, 'component') or self._get_prop_value(p, 'component_name', '')} "
@@ -710,26 +802,35 @@ to its canonical form.
         )
         critique_text = "\n".join(critiques)
 
+        # Validate that we have content to send to LLM
+        if not prev_context or not prev_context.strip():
+            prev_context = "No previous proposals available."
+            logger.warning(f"Round {roundnum}: No previous proposals, using fallback text")
+
+        if not critique_text or not critique_text.strip():
+            critique_text = "Focus on reaching consensus on essential components."
+            logger.warning(f"Round {roundnum}: No critiques, using fallback text")
+
         # Enhanced system prompt that emphasizes confidence scoring
         system_prompt = """You are an expert in technology component analysis participating in a multi-agent debate.
 
-Your task is to identify PRIMARY MANUFACTURING COMPONENTS for technologies.
+    Your task is to identify PRIMARY MANUFACTURING COMPONENTS for technologies.
 
-CRITICAL: For each component, you MUST provide:
-1. Component name
-2. Your confidence (0.0 to 1.0) that this is truly a primary component:
-   - 1.0 = Absolutely certain, universal standard
-   - 0.8-0.9 = Very confident, industry standard
-   - 0.6-0.7 = Moderately confident, common but may vary
-   - 0.4-0.5 = Uncertain, depends on implementation
-   - 0.0-0.3 = Low confidence, rarely separate
-3. Brief reasoning justifying your confidence
+    CRITICAL: For each component, you MUST provide:
+    1. Component name
+    2. Your confidence (0.0 to 1.0) that this is truly a primary component:
+       - 1.0 = Absolutely certain, universal standard
+       - 0.8-0.9 = Very confident, industry standard
+       - 0.6-0.7 = Moderately confident, common but may vary
+       - 0.4-0.5 = Uncertain, depends on implementation
+       - 0.0-0.3 = Low confidence, rarely separate
+    3. Brief reasoning justifying your confidence
 
-Consider peer proposals and critiques carefully. Adjust your confidence based on:
-- Consensus among peers (higher confidence if many agree)
-- Strength of reasoning in critiques
-- Your own expertise and certainty
-"""
+    Consider peer proposals and critiques carefully. Adjust your confidence based on:
+    - Consensus among peers (higher confidence if many agree)
+    - Strength of reasoning in critiques
+    - Your own expertise and certainty
+    """
 
         new_proposals: Dict[str, List[Dict[str, Any]]] = {}
 
@@ -745,32 +846,55 @@ Consider peer proposals and critiques carefully. Adjust your confidence based on
         for agent_num in range(1, 4):
             agent_id = f"Agent{agent_num}"
 
+            # Build the debate prompt
             prompt = f"""DEBATE ROUND {roundnum}
 
-Technology: {technology}
+    Technology: {technology}
 
-PREVIOUS ROUND PROPOSALS:
-{prev_context}
+    PREVIOUS ROUND PROPOSALS:
+    {prev_context}
 
-PEER CRITIQUES AND GUIDANCE:
-{critique_text}
+    PEER CRITIQUES AND GUIDANCE:
+    {critique_text}
 
-YOUR TASK:
-1. Review all peer proposals and critiques carefully
-2. For EACH component you propose, assign a confidence score (0.0-1.0) based on:
-   - How certain you are it's a primary component
-   - Degree of peer support or opposition
-   - Strength of evidence and reasoning
-3. Support strong consensus candidates with high confidence
-4. Lower confidence for isolated proposals unless critically justified
-5. Provide clear reasoning for each confidence assessment
+    YOUR TASK:
+    1. Review all peer proposals and critiques carefully
+    2. For EACH component you propose, assign a confidence score (0.0-1.0) based on:
+       - How certain you are it's a primary component
+       - Degree of peer support or opposition
+       - Strength of evidence and reasoning
+    3. Support strong consensus candidates with high confidence
+    4. Lower confidence for isolated proposals unless critically justified
+    5. Provide clear reasoning for each confidence assessment
 
-Return your refined component list with confidence scores and reasoning.
-"""
+    Return your refined component list with confidence scores and reasoning.
+    """
+
+            # Validate final prompt before sending to LLM
+            if not prompt or not prompt.strip() or len(prompt) < 100:
+                logger.error(
+                    f"Invalid prompt for {agent_id} in round {roundnum}: "
+                    f"prompt too short or empty (length={len(prompt) if prompt else 0})"
+                )
+                print(
+                    f"  ❌ Skipping {agent_id}: invalid prompt (length={len(prompt) if prompt else 0})"
+                )
+                # Fall back to previous proposals for this agent
+                prev_for_agent = [
+                    p for p in previous_proposals if self._get_prop_value(p, "agent_id") == agent_id
+                ]
+                new_proposals[agent_id] = prev_for_agent
+                continue  # Skip to next agent
 
             try:
                 # Use very low Top-P for deterministic, focused refinements
                 debate_deps = replace(deps, top_p=self.debate_top_p)
+
+                # Debug output to trace what's being sent
+                print(f"  🔍 {agent_id} calling LLM with:")
+                print(f"     - Prompt length: {len(prompt)} chars")
+                print(f"     - Previous proposals: {len(previous_proposals)}")
+                print(f"     - Critiques: {len(critiques)}")
 
                 result = await debate_agent.run(prompt, deps=debate_deps, model=deps.model)
 
@@ -794,12 +918,17 @@ Return your refined component list with confidence scores and reasoning.
                         f"Round {roundnum} - {agent_id}: {len(proposals_list)} components, "
                         f"avg confidence={avg_conf:.2f}"
                     )
+                    print(
+                        f"  ✓ {agent_id}: {len(proposals_list)} components (avg conf: {avg_conf:.2f})"
+                    )
                 else:
                     logger.warning(f"No components returned from {agent_id} in round {roundnum}")
+                    print(f"  ⚠️ {agent_id}: No components returned")
                     new_proposals[agent_id] = []
 
             except Exception as exc:  # noqa: BLE001
                 logger.error("Error in debate round %s for %s: %s", roundnum, agent_id, exc)
+                print(f"  ❌ Error in {agent_id}: {exc}")
                 # Fall back to previous proposals for this agent, if any
                 prev_for_agent = [
                     p for p in previous_proposals if self._get_prop_value(p, "agent_id") == agent_id
@@ -932,6 +1061,27 @@ Return your refined component list with confidence scores and reasoning.
                 original = prop.get("component") or prop.get("component_name", "")
                 norm = final_norm_map.get(original, original)
                 prop["normalized_component"] = norm
+
+        print(f"\n🔍 Final Proposals Summary (After Round {rounds_completed}):")
+        component_counts = {}
+        component_agents = {}
+        for prop in all_final_proposals:
+            norm = prop.get("normalized_component", prop.get("component", ""))
+            agent = prop.get("agent_id", "unknown")
+
+            if norm not in component_counts:
+                component_counts[norm] = 0
+                component_agents[norm] = set()
+
+            component_counts[norm] += 1
+            component_agents[norm].add(agent)
+
+        print(f"   Components proposed by agents:")
+        for name in sorted(component_counts.keys()):
+            agent_count = len(component_agents[name])
+            total_count = component_counts[name]
+            agents = ", ".join(sorted(component_agents[name]))
+            print(f"   - '{name}': {agent_count}/3 agents ({total_count} proposals) [{agents}]")
 
         print(f"\n🔍 All final proposals before consensus:")
         for prop in all_final_proposals:

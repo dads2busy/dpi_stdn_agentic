@@ -79,43 +79,16 @@ class ComponentExtractor:
                 f"Extract the primary components of a {technology}",
                 deps=self.deps,
             )
-            
+
             if result and result.usage():
                 usage.incr(result.usage())
-            
+
             return result.output if result else None
-        
+
         except Exception as e:
-            logger.error(f"Error in simple component extraction for {technology}: {e}", exc_info=True)
-            print(f"✗ Error extracting components: {e}")
-            return None
-
-    async def extract_components_simple(
-        self, technology: str, usage: RunUsage
-    ) -> Optional[ComponentList]:
-        """
-        Simple single-agent component extraction without debate.
-
-        Args:
-            technology: Technology name
-            usage: RunUsage tracker
-
-        Returns:
-            ComponentList with components, or None if extraction fails
-        """
-        try:
-            result = await self.component_agent.run(
-                f"Extract the primary components of a {technology}",
-                deps=self.deps,
+            logger.error(
+                f"Error in simple component extraction for {technology}: {e}", exc_info=True
             )
-            
-            if result and result.usage():
-                usage.incr(result.usage())
-            
-            return result.output if result else None
-        
-        except Exception as e:
-            logger.error(f"Error in simple component extraction for {technology}: {e}", exc_info=True)
             print(f"✗ Error extracting components: {e}")
             return None
 
@@ -167,6 +140,9 @@ class ComponentExtractor:
             # Create structured prompt with role and perspective
             prompt = f"""You are a {role} expert analyzing the '{technology}' technology.
     {perspective}
+
+    **CRITICAL: You MUST respond ONLY in English. All component names, reasoning,
+    and descriptions must be in English. Do not use any other languages.**
 
     IMPORTANT INSTRUCTIONS:
     1. FIRST, before listing components:
@@ -319,7 +295,7 @@ class ComponentExtractor:
         for i, comp_name in enumerate(final_component_names, 1):
             details = component_details.get(comp_name, {})
             conf = details.get("confidence", 0.0)
-            print(f"  {i}. {details.get('original_name', comp_name)} (confidence: {conf:.2f})")
+            print(f"  {i}. {comp_name} (confidence: {conf:.2f})")
 
         # Save debate transcript
         transcript_path = None
@@ -337,7 +313,7 @@ class ComponentExtractor:
                 details = component_details[norm_name]
                 final_components_with_confidence.append(
                     ComponentWithConfidence(
-                        name=details["original_name"],
+                        name=norm_name,
                         confidence=details["confidence"],
                         reasoning=details["reasoning"],
                     )
@@ -354,6 +330,10 @@ class ComponentExtractor:
                 )
 
         print(f"✓ Created {len(final_components_with_confidence)} ComponentWithConfidence objects")
+
+        print(f"\n🔍 ComponentList names (what will be saved):")
+        for comp in final_components_with_confidence:
+            print(f"   - {comp.name} (confidence: {comp.confidence:.2f})")
 
         return ComponentList(
             componentlist=final_components_with_confidence,
