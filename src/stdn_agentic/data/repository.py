@@ -93,31 +93,7 @@ class CountryDataRepository:
         use_debate: bool = False,
         transcript_path: Optional[Path] = None,
     ) -> List[Dict]:
-        """
-        Get country production data for a material with confidence scoring.
-
-        Tries USGS database first, falls back to LLM if enabled.
-        Can use multi-agent debate for LLM fallback.
-
-        Args:
-            material: Material name
-            src_year: Source year of report
-            meas_year: Measurement year for production data
-            usage: Optional usage tracker
-            use_debate: Use multi-agent debate for LLM fallback
-            transcript_path: Optional path to append results
-
-        Returns:
-            List of country data dicts with keys:
-                - country: Country name
-                - meas_unit: Measurement unit
-                - amount: Production amount
-                - percentage: Percentage of global production
-                - hs_code: HS code if available
-                - confidence: Confidence score (0.0-1.0)
-                - reasoning: Explanation of data source and confidence
-        """
-        # Check cache first
+        """Get country production data for a material with confidence scoring."""
         cache_key = f"{material}_{src_year}_{meas_year}"
         if cache_key in self.cache:
             print(f"✓ Cache hit for {material}")
@@ -127,82 +103,93 @@ class CountryDataRepository:
         print(f"Querying USGS for {material} (year {src_year}/{meas_year})")
         usgs_data = self.query_usgs(material, src_year, meas_year)
 
-        print(f"🔍 DEBUG: query_usgs returned: {usgs_data}")
-        print(f"🔍 DEBUG: Type: {type(usgs_data)}")
-
-        # ✅ ADD THIS DEBUG
-        print(f"🔍 DEBUG: usgs_data type = {type(usgs_data)}")
-        print(f"🔍 DEBUG: usgs_data length = {len(usgs_data) if usgs_data else 0}")
-        print(f"🔍 DEBUG: usgs_data bool = {bool(usgs_data)}")
-
         if usgs_data:
-            print(f"✓ USGS returned {len(usgs_data)} countries")
-
-            print("🔍 DEBUG: About to add hs_code...")
-
-            # Add HS code, confidence, and reasoning to USGS data
-            hs_code = self.lookup_hs_code(material)
-
-            print(f"🔍 DEBUG: hs_code from lookup = {hs_code}")
-
-            for country in usgs_data:
-                country["hs_code"] = hs_code
-                # USGS data gets high confidence (authoritative source)
-                country["confidence"] = 0.95
-                country["reasoning"] = (
-                    f"USGS Mineral Commodity Summaries {src_year}/{meas_year} - "
-                    f"authoritative U.S. government production data with global coverage"
-                )
-
-            self.cache[cache_key] = usgs_data
-
-            # Save to transcript if provided
-            if transcript_path:
-                self.append_country_data_to_transcript(
-                    transcript_path, material, usgs_data, source="USGS Database"
-                )
-
-            return usgs_data
+            return self._process_usgs_data(
+                material, usgs_data, src_year, meas_year, cache_key, transcript_path
+            )
 
         # Fall back to LLM if enabled
         if self.use_llm_fallback and self.country_agent:
-            print("No USGS data found, using LLM fallback...")
-
-            # Use debate or single-agent LLM
-            if use_debate:
-                llm_data = await self.query_llm_with_debate(material, meas_year, usage)
-            else:
-                llm_data = await self.query_llm(material, meas_year, usage)
-
-            if llm_data:
-                print(f"✓ LLM returned {len(llm_data)} countries")
-
-                # Add HS code to LLM data (confidence and reasoning should already be from agent)
-                hs_code = self.lookup_hs_code(material)
-                for country in llm_data:
-                    country["hs_code"] = hs_code
-
-                    # Ensure reasoning field exists (fallback if LLM didn't provide it)
-                    if "reasoning" not in country or not country["reasoning"]:
-                        source = "multi-agent debate consensus" if use_debate else "LLM estimate"
-                        country["reasoning"] = (
-                            f"LLM-generated estimate from {source} - "
-                            f"no USGS data available for {material} in {meas_year}"
-                        )
-
-                self.cache[cache_key] = llm_data
-
-                # Save to transcript if provided
-                source = "Multi-Agent Debate" if use_debate else "LLM Fallback"
-                if transcript_path:
-                    self.append_country_data_to_transcript(
-                        transcript_path, material, llm_data, source=source
-                    )
-
-                return llm_data
+            return await self._process_llm_fallback(
+                material, meas_year, usage, use_debate, cache_key, transcript_path
+            )
 
         print(f"✗ No data found for {material}")
         return []
+
+    def _process_usgs_data(
+        self,
+        material: str,
+        usgs_data: List[Dict],
+        src_year: int,
+        meas_year: int,
+        cache_key: str,
+        transcript_path: Optional[Path],
+    ) -> List[Dict]:
+        """Process and cache USGS data with metadata."""
+        print(f"✓ USGS returned {len(usgs_data)} countries")
+
+        hs_code = self.lookup_hs_code(material)
+
+        for country_dict in usgs_data:
+            country_dict["hs_code"] = hs_code
+            country_dict["confidence"] = 0.95
+            country_dict["reasoning"] = (
+                f"USGS Mineral Commodity Summaries {src_year}/{meas_year} - "
+                f"authoritative U.S. government production data with global coverage"
+            )
+
+        self.cache[cache_key] = usgs_data
+
+        if transcript_path:
+            self.append_country_data_to_transcript(
+                transcript_path, material, usgs_data, source="USGS Database"
+            )
+
+        return usgs_data
+
+    async def _process_llm_fallback(
+        self,
+        material: str,
+        meas_year: int,
+        usage: Optional[RunUsage],
+        use_debate: bool,
+        cache_key: str,
+        transcript_path: Optional[Path],
+    ) -> List[Dict]:
+        """Process LLM fallback data with metadata."""
+        print("No USGS data found, using LLM fallback...")
+
+        if use_debate:
+            llm_data = await self.query_llm_with_debate(material, meas_year, usage)
+        else:
+            llm_data = await self.query_llm(material, meas_year, usage)
+
+        if not llm_data:
+            return []
+
+        print(f"✓ LLM returned {len(llm_data)} countries")
+
+        hs_code = self.lookup_hs_code(material)
+        source_description = "multi-agent debate consensus" if use_debate else "LLM estimate"
+
+        for country_dict in llm_data:
+            country_dict["hs_code"] = hs_code
+            if "reasoning" not in country_dict or not country_dict["reasoning"]:
+                country_dict["reasoning"] = (
+                    f"LLM-generated estimate from {source_description} - "
+                    f"no USGS data available for {material} in {meas_year}"
+                )
+
+        self.cache[cache_key] = llm_data
+
+        if transcript_path:
+            source_label = "Multi-Agent Debate" if use_debate else "LLM Fallback"
+            self.append_country_data_to_transcript(
+                transcript_path, material, llm_data, source=source_label
+            )
+
+        return llm_data
 
     def lookup_hs_code(self, material: str) -> Optional[str]:
         """
@@ -261,7 +248,7 @@ class CountryDataRepository:
             # ✅ ADD: Show what didn't match
             print(f"   ❌ No match found for '{material}'")
             print(
-                f"   Available materials (first 10): {df['Elements/Compounds'].head(10).tolist()}"
+                f"   Available materials (first 10): {df['Elements_Compounds'].head(10).tolist()}"
             )
 
         except Exception as e:
@@ -288,75 +275,120 @@ class CountryDataRepository:
             List of country data dicts with confidence and reasoning
         """
         try:
-            # Get top countries
             countries_df = self.usgs_client.query_top_countries(material, src_year, meas_year)
             if countries_df is None or len(countries_df) == 0:
                 return []
 
-            # Get world totals (returns DataFrame)
-            world_totals_df = self.usgs_client.query_world_totals(material, src_year, meas_year)
-            if world_totals_df is None or world_totals_df.empty:
-                logger.warning(f"No world totals data for {material}")
-                return []
-
-            # Extract production value from DataFrame
-            try:
-                value_col = pd.Series(world_totals_df["VALUE"])  # type: ignore[assignment]
-                numeric_series = pd.Series(pd.to_numeric(value_col, errors="coerce"))  # type: ignore[assignment]
-                world_production_sum = numeric_series.sum()
-                world_production = (
-                    float(world_production_sum) if pd.notna(world_production_sum) else 0.0
-                )
-            except (KeyError, ValueError) as e:
-                logger.warning(f"Could not extract world production for {material}: {e}")
-                return []
-
+            world_production = self._extract_world_production_total(material, src_year, meas_year)
             if world_production == 0:
-                logger.warning(f"No world production data for {material}")
                 return []
 
-            # Build country data with confidence
-            country_data = []
-            for country_name in countries_df["country"]:
-                details_df = self.usgs_client.query_country_details(
-                    material, country_name, src_year, meas_year
-                )
-                if details_df is None or details_df.empty:
-                    continue
-
-                for _, row in details_df.iterrows():
-                    try:
-                        if str(row.get("MEAS_TYPE", "")).upper() == "PRODUCTION":
-                            value_raw = row.get("VALUE", 0)
-                            amount_numeric = pd.to_numeric(value_raw, errors="coerce")
-                            amount = float(amount_numeric)  # type: ignore[arg-type]
-
-                            if math.isnan(amount):
-                                continue
-
-                            percentage = (
-                                (amount / world_production * 100) if world_production > 0 else 0.0
-                            )
-
-                            country_data.append(
-                                {
-                                    "country": country_name,
-                                    "meas_unit": row.get("MEAS_UNIT", ""),
-                                    "amount": amount,
-                                    "percentage": percentage,
-                                    # USGS confidence added by caller
-                                }
-                            )
-                            break  # Only take production data
-                    except (ValueError, TypeError, KeyError) as e:
-                        logger.debug(f"Error processing row for {country_name}: {e}")
-                        continue
-
-            return country_data
+            return self._build_country_data_from_usgs(
+                material, countries_df, world_production, src_year, meas_year
+            )
 
         except Exception as e:
             logger.error(f"Error in query_usgs for {material}: {e}", exc_info=True)
             return []
+
+    def _extract_world_production_total(
+        self, material: str, src_year: int, meas_year: int
+    ) -> float:
+        """Extract world production total value from USGS data."""
+        world_totals_df = self.usgs_client.query_world_totals(material, src_year, meas_year)
+        if world_totals_df is None or world_totals_df.empty:
+            logger.warning(f"No world totals data for {material}")
+            return 0.0
+
+        try:
+            value_column = pd.Series(world_totals_df["VALUE"])  # type: ignore[assignment]
+            numeric_series = pd.Series(pd.to_numeric(value_column, errors="coerce"))  # type: ignore[assignment]
+            world_production_sum = numeric_series.sum()
+            world_production = (
+                float(world_production_sum) if pd.notna(world_production_sum) else 0.0
+            )
+            return world_production
+        except (KeyError, ValueError) as e:
+            logger.warning(f"Could not extract world production for {material}: {e}")
+            return 0.0
+
+    def _build_country_data_from_usgs(
+        self,
+        material: str,
+        countries_df: pd.DataFrame,
+        world_production: float,
+        src_year: int,
+        meas_year: int,
+    ) -> List[Dict]:
+        """Build country data list with production percentages from USGS."""
+        country_data_list = []
+
+        for country_name in countries_df["country"]:
+            country_entry = self._get_country_production_entry(
+                material,
+                str(country_name),
+                world_production,
+                src_year,
+                meas_year,  # <-- FIX HERE
+            )
+            if country_entry:
+                country_data_list.append(country_entry)
+
+        return country_data_list
+
+    def _get_country_production_entry(
+        self,
+        material: str,
+        country_name: str,
+        world_production: float,
+        src_year: int,
+        meas_year: int,
+    ) -> Optional[Dict]:
+        """Get production data entry for a single country from USGS."""
+        details_df = self.usgs_client.query_country_details(
+            material, country_name, src_year, meas_year
+        )
+        if details_df is None or details_df.empty:
+            return None
+
+        for _, row_data in details_df.iterrows():
+            row_data = pd.Series(row_data)  # Explicit cast to help type checker
+            production_entry = self._extract_production_from_row(
+                row_data, str(country_name), world_production
+            )
+            if production_entry:
+                return production_entry
+
+        return None
+
+    def _extract_production_from_row(
+        self, row_data: pd.Series, country_name: str, world_production: float
+    ) -> Optional[Dict]:
+        """Extract production data from a single USGS database row."""
+        try:
+            if str(row_data.get("MEAS_TYPE", "")).upper() != "PRODUCTION":
+                return None
+
+            value_raw = row_data.get("VALUE", 0)
+            amount_numeric = pd.to_numeric(value_raw, errors="coerce")
+            amount = float(amount_numeric)  # type: ignore[arg-type]
+
+            if math.isnan(amount):
+                return None
+
+            percentage = (amount / world_production * 100) if world_production > 0 else 0.0
+
+            return {
+                "country": country_name,
+                "meas_unit": row_data.get("MEAS_UNIT", ""),
+                "amount": amount,
+                "percentage": percentage,
+                # USGS confidence added by caller
+            }
+
+        except (ValueError, TypeError, KeyError) as e:
+            logger.debug(f"Error processing row for {country_name}: {e}")
+            return None
 
     async def query_llm(
         self,
