@@ -18,7 +18,6 @@ Enhanced features:
 - Detailed logging and progress reporting
 """
 
-import asyncio
 import csv
 import json
 import logging
@@ -30,7 +29,6 @@ from typing import Any, Dict, List, Optional
 from pydantic_ai import RunUsage
 
 from ..agents import (
-    ComponentList,
     ComponentMaterialsList,
 )
 from ..data import CountryDataRepository

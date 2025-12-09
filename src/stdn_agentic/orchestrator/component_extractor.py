@@ -95,50 +95,129 @@ class ComponentExtractor:
     async def extract_components_with_debate(
         self, technology: str, role: str, usage: RunUsage, num_agents: int = 3
     ) -> Optional[ComponentList]:
-        """
-        Extract components using enhanced multi-agent debate with critique-driven convergence.
+        """Extract components using enhanced multi-agent debate."""
+        self._print_debate_header(technology)
 
-        Args:
-            technology: Technology name
-            role: Expert role context (from CSV)
-            usage: RunUsage tracker
-            num_agents: Number of agents to use in debate (default: 3)
+        # Collect proposals
+        (
+            agent_proposals,
+            agent_responses,
+            tech_spec,
+            tech_reasoning,
+        ) = await self._collect_agent_proposals(technology, role, usage, num_agents)
 
-        Returns:
-            ComponentList with consensus components, or None if extraction fails
-        """
-        print(f"\n{'=' * 80}")
-        print(f"DEBATE-BASED COMPONENT EXTRACTION: {technology}")
-        print(f"{'=' * 80}\n")
+        if not agent_proposals:
+            logger.error("No proposals collected from any agent")
+            print("❌ No valid proposals from agents")
+            return None
 
-        # Define different analytical perspectives for agents with the same role
-        PERSPECTIVE_FOCUS = [
+        # Run debate
+        debate_result = await self._run_debate(technology, agent_proposals)
+        if not debate_result:
+            return None
+
+        # Process results
+        return self._create_final_component_list(
+            technology, debate_result, agent_responses, tech_spec, tech_reasoning
+        )
+
+    async def _collect_agent_proposals(
+        self, technology: str, role: str, usage: RunUsage, num_agents: int
+    ) -> tuple[dict, list, str, str]:
+        """Collect initial proposals from multiple agents."""
+        print(f"\n📋 Collecting proposals from {num_agents} agents...")
+        print(f"🎭 Role: {role}\n")
+
+        agent_proposals = {}
+        agent_responses = []
+        technology_specification = technology
+        technology_reasoning = ""
+
+        for agent_num in range(1, num_agents + 1):
+            result = await self._run_single_agent(agent_num, technology, role, num_agents, usage)
+
+            if result:
+                agent_id = f"Agent_{agent_num}"
+                components_data, tech_spec, tech_reason = result
+                agent_proposals[agent_id] = components_data
+                agent_responses.append(
+                    {
+                        "agent_id": agent_id,
+                        "components": components_data,
+                        "technology_specification": tech_spec,
+                        "technology_reasoning": tech_reason,
+                    }
+                )
+
+                if agent_num == 1:
+                    technology_specification = tech_spec
+                    technology_reasoning = tech_reason
+
+                print(f"✓ {agent_id}: {len(components_data)} components proposed")
+
+        return agent_proposals, agent_responses, technology_specification, technology_reasoning
+
+    async def _run_single_agent(
+        self, agent_num: int, technology: str, role: str, num_agents: int, usage: RunUsage
+    ) -> Optional[tuple[list, str, str]]:
+        """Run a single agent to collect component proposals."""
+        try:
+            perspective = self._get_agent_perspective(agent_num)
+            prompt = self._create_agent_prompt(technology, role, perspective)
+
+            from dataclasses import replace
+
+            agent_deps = replace(self.deps, top_p=self.debate_top_p)
+            result = await self.component_agent.run(prompt, deps=agent_deps)
+
+            if not result or not result.output:
+                logger.warning(f"No response from Agent_{agent_num}")
+                return None
+
+            component_list = result.output
+            if not component_list or not component_list.component_list:
+                logger.warning(f"Empty component list from Agent_{agent_num}")
+                return None
+
+            # Extract data
+            tech_spec = getattr(component_list, "technology_specification", technology)
+            tech_reason = getattr(component_list, "technology_reasoning", "")
+
+            components_data = [
+                {
+                    "name": comp.name,
+                    "confidence": comp.confidence,
+                    "reasoning": comp.reasoning,
+                }
+                for comp in component_list.component_list
+            ]
+
+            if hasattr(result, "usage") and result.usage():
+                usage.incr(result.usage())
+
+            return components_data, tech_spec, tech_reason
+
+        except Exception as e:
+            logger.error(f"Error in Agent_{agent_num}: {e}", exc_info=True)
+            print(f"✗ Agent_{agent_num}: Error - {e}")
+            return None
+
+    def _get_agent_perspective(self, agent_num: int) -> str:
+        """Get analytical perspective for agent."""
+        perspectives = [
             "Focus on identifying major procurable subassemblies and modules with distinct supply chains",
             "Focus on structural components and physical assemblies required for construction",
             "Focus on distinguishing true manufactured components from raw materials and consumables",
         ]
+        return (
+            perspectives[agent_num - 1]
+            if agent_num <= len(perspectives)
+            else "Focus on identifying essential subsystems and modules"
+        )
 
-        # Collect initial proposals from multiple agents
-        print(f"📋 Collecting proposals from {num_agents} agents...\n")
-        print(f"🎭 Role: {role}\n")
-
-        agent_proposals = {}
-        agent_responses_for_transcript = []
-        technology_specification = technology  # Default to input
-        technology_reasoning = ""
-
-        for agent_num in range(1, num_agents + 1):
-            agent_id = f"Agent_{agent_num}"
-
-            # Get analytical perspective for this agent
-            perspective = (
-                PERSPECTIVE_FOCUS[agent_num - 1]
-                if agent_num <= len(PERSPECTIVE_FOCUS)
-                else "Focus on identifying essential subsystems and modules"
-            )
-
-            # Create structured prompt with role and perspective
-            prompt = f"""You are a {role} expert analyzing the '{technology}' technology.
+    def _create_agent_prompt(self, technology: str, role: str, perspective: str) -> str:
+        """Create structured prompt for agent."""
+        return f"""You are a {role} expert analyzing the '{technology}' technology.
     {perspective}
 
     **CRITICAL: You MUST respond ONLY in English. All component names, reasoning,
@@ -192,69 +271,8 @@ class ComponentExtractor:
     (continue for all components)
     """
 
-            try:
-                # Create deps with very low Top-P for focused outputs
-                from dataclasses import replace
-
-                agent_deps = replace(self.deps, top_p=self.debate_top_p)
-
-                # Run agent with explicit prompt
-                result = await self.component_agent.run(prompt, deps=agent_deps)
-
-                if not result or not result.output:
-                    logger.warning(f"No response from {agent_id}")
-                    continue
-
-                # Extract the ComponentList
-                component_list = result.output
-                if not component_list or not component_list.component_list:
-                    logger.warning(f"Empty component list from {agent_id}")
-                    continue
-
-                # Store technology specification and reasoning from first agent
-                if agent_num == 1 and hasattr(component_list, "technology_specification"):
-                    technology_specification = component_list.technology_specification
-                    technology_reasoning = getattr(component_list, "technology_reasoning", "")
-
-                # Convert ComponentWithConfidence objects to dict for storage
-                components_data = []
-                for comp in component_list.component_list:
-                    components_data.append(
-                        {
-                            "name": comp.name,
-                            "confidence": comp.confidence,
-                            "reasoning": comp.reasoning,
-                        }
-                    )
-
-                agent_proposals[agent_id] = components_data
-
-                # Store for transcript
-                agent_responses_for_transcript.append(
-                    {
-                        "agent_id": agent_id,
-                        "components": components_data,
-                        "technology_specification": technology_specification,
-                        "technology_reasoning": technology_reasoning,
-                    }
-                )
-
-                print(f"✓ {agent_id}: {len(components_data)} components proposed")
-
-                # Accumulate usage
-                if hasattr(result, "usage") and result.usage():
-                    usage.incr(result.usage())
-
-            except Exception as e:
-                logger.error(f"Error in {agent_id}: {e}", exc_info=True)
-                print(f"✗ {agent_id}: Error - {e}")
-                continue
-
-        if not agent_proposals:
-            logger.error("No proposals collected from any agent")
-            print("❌ No valid proposals from agents")
-            return None
-
+    async def _run_debate(self, technology: str, agent_proposals: dict) -> Optional[dict]:
+        """Run debate to reach consensus."""
         if not self.debater:
             logger.error("Debater not initialized")
             print("❌ Debater not initialized")
@@ -264,7 +282,6 @@ class ComponentExtractor:
         print("RUNNING MULTI-AGENT DEBATE")
         print(f"{'=' * 80}\n")
 
-        # Run debate to reach consensus
         debate_result = await self.debater.run_debate(
             technology=technology,
             initial_proposals=agent_proposals,
@@ -277,69 +294,89 @@ class ComponentExtractor:
             print("❌ Debate failed")
             return None
 
-        # Extract consensus components
+        return debate_result
+
+    def _create_final_component_list(
+        self,
+        technology: str,
+        debate_result: dict,
+        agent_responses: list,
+        tech_spec: str,
+        tech_reasoning: str,
+    ) -> ComponentList:
+        """Create final ComponentList from debate results."""
         final_component_names = debate_result.get("components", [])
         component_details = debate_result.get("component_details", {})
 
-        # Store technology specification from debate result
-        if "technology_specification" in debate_result:
-            technology_specification = debate_result["technology_specification"]
-        if "technology_reasoning" in debate_result:
-            technology_reasoning = debate_result["technology_reasoning"]
+        # Update specs from debate if available
+        tech_spec = debate_result.get("technology_specification", tech_spec)
+        tech_reasoning = debate_result.get("technology_reasoning", tech_reasoning)
 
-        print(f"\n{'=' * 80}")
-        print("CONSENSUS REACHED")
-        print(f"{'=' * 80}\n")
-        print(f"Technology Specification: {technology_specification}\n")
-        print(f"Final Components ({len(final_component_names)}):")
-        for i, comp_name in enumerate(final_component_names, 1):
-            details = component_details.get(comp_name, {})
-            conf = details.get("confidence", 0.0)
-            print(f"  {i}. {comp_name} (confidence: {conf:.2f})")
+        self._print_consensus(tech_spec, final_component_names, component_details)
 
-        # Save debate transcript
-        transcript_path = None
+        # Save transcript
         if self.reporter:
             transcript_path = self._save_debate_transcript(
-                technology, agent_responses_for_transcript, debate_result
+                technology, agent_responses, debate_result
             )
             if transcript_path:
                 print(f"\n📄 Debate transcript saved to: {transcript_path}")
 
-        # Create ComponentWithConfidence objects using debate-provided details
-        final_components_with_confidence = []
-        for norm_name in final_component_names:
-            if norm_name in component_details:
-                details = component_details[norm_name]
-                final_components_with_confidence.append(
+        # Create components
+        final_components = self._build_components(final_component_names, component_details)
+
+        print(f"✓ Created {len(final_components)} ComponentWithConfidence objects")
+        print("\n🔍 ComponentList names (what will be saved):")
+        for comp in final_components:
+            print(f"   - {comp.name} (confidence: {comp.confidence:.2f})")
+
+        return ComponentList(
+            componentlist=final_components,
+            technology_specification=tech_spec,
+            technology_reasoning=tech_reasoning,
+        )
+
+    def _build_components(self, names: list, details: dict) -> list:
+        """Build ComponentWithConfidence objects."""
+        components = []
+        for norm_name in names:
+            if norm_name in details:
+                detail = details[norm_name]
+                components.append(
                     ComponentWithConfidence(
                         name=norm_name,
-                        confidence=details["confidence"],
-                        reasoning=details["reasoning"],
+                        confidence=detail["confidence"],
+                        reasoning=detail["reasoning"],
                     )
                 )
             else:
-                # Fallback (should never happen now that debate returns details)
                 print(f"  ⚠️ No details found for '{norm_name}', using fallback")
-                final_components_with_confidence.append(
+                components.append(
                     ComponentWithConfidence(
                         name=norm_name.title(),
                         confidence=0.75,
                         reasoning="Consensus component from multi-agent debate",
                     )
                 )
+        return components
 
-        print(f"✓ Created {len(final_components_with_confidence)} ComponentWithConfidence objects")
+    def _print_debate_header(self, technology: str) -> None:
+        """Print debate header."""
+        print(f"\n{'=' * 80}")
+        print(f"DEBATE-BASED COMPONENT EXTRACTION: {technology}")
+        print(f"{'=' * 80}\n")
 
-        print("\n🔍 ComponentList names (what will be saved):")
-        for comp in final_components_with_confidence:
-            print(f"   - {comp.name} (confidence: {comp.confidence:.2f})")
-
-        return ComponentList(
-            componentlist=final_components_with_confidence,
-            technology_specification=technology_specification,
-            technology_reasoning=technology_reasoning,
-        )
+    def _print_consensus(self, tech_spec: str, names: list, details: dict) -> None:
+        """Print consensus results."""
+        print(f"\n{'=' * 80}")
+        print("CONSENSUS REACHED")
+        print(f"{'=' * 80}\n")
+        print(f"Technology Specification: {tech_spec}\n")
+        print(f"Final Components ({len(names)}):")
+        for i, comp_name in enumerate(names, 1):
+            detail = details.get(comp_name, {})
+            conf = detail.get("confidence", 0.0)
+            print(f"  {i}. {comp_name} (confidence: {conf:.2f})")
 
     def _save_debate_transcript(
         self, technology: str, agent_responses: List[Dict], debate_result: Dict

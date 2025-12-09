@@ -14,9 +14,9 @@ from collections import defaultdict
 from dataclasses import dataclass
 from typing import Any
 
-from pydantic_ai import Agent, RunUsage
+from pydantic_ai import RunUsage
 
-from ..agents import ComponentMaterialsList, get_materials_agent
+from ..agents import get_materials_agent
 from ..models import STDNDependencies
 
 logger = logging.getLogger(__name__)
@@ -827,7 +827,7 @@ class MaterialDebater:
         # ✅ Build case-insensitive lookup for component name correction
         component_lookup = {comp.lower().strip(): comp for comp in expected_components}
 
-        print(f"\n🔍 Building consensus with component name enforcement...")
+        print("\n🔍 Building consensus with component name enforcement...")
         print(f"  Expected components: {expected_components}")
 
         def find_correct_component_name(comp_name: str) -> str:

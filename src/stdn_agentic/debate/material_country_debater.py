@@ -113,7 +113,7 @@ class MaterialCountryDebater:
 
         if not all_proposals:
             print("✗ No proposals generated")
-            return []
+            return {}
 
         # Phase 2: Simple voting to select top 5
         consensus = self._build_voting_consensus(all_proposals)
