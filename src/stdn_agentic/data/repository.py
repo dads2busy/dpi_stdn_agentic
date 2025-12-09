@@ -138,7 +138,7 @@ class CountryDataRepository:
         if usgs_data:
             print(f"✓ USGS returned {len(usgs_data)} countries")
 
-            print(f"🔍 DEBUG: About to add hs_code...")
+            print("🔍 DEBUG: About to add hs_code...")
 
             # Add HS code, confidence, and reasoning to USGS data
             hs_code = self.lookup_hs_code(material)

@@ -331,7 +331,7 @@ class ComponentExtractor:
 
         print(f"✓ Created {len(final_components_with_confidence)} ComponentWithConfidence objects")
 
-        print(f"\n🔍 ComponentList names (what will be saved):")
+        print("\n🔍 ComponentList names (what will be saved):")
         for comp in final_components_with_confidence:
             print(f"   - {comp.name} (confidence: {comp.confidence:.2f})")
 

@@ -7,7 +7,7 @@ It handles all database queries and connection management for material productio
 
 import logging
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Optional
 
 import duckdb
 import pandas as pd

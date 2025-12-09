@@ -313,7 +313,7 @@ class CountryDataEnricher:
                                     f"      Confidence: {record['country_confidence']:.3f}\n"
                                 )
                         else:
-                            content.append(f"    • No country data available\n")
+                            content.append("    • No country data available\n")
 
                 content.append("\n")
 

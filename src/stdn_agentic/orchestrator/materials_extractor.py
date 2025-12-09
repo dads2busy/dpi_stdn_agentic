@@ -17,7 +17,7 @@ import json
 import logging
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Optional
 
 from pydantic_ai import RunUsage
 
@@ -407,7 +407,7 @@ class MaterialsExtractor:
         # ========================================================================
 
         # STEP 1: Fix component names to match input components
-        print(f"\n🔍 Validating component names...")
+        print("\n🔍 Validating component names...")
         print(f"  Expected components: {components}")
         print(f"  Materials list has {len(materials_list_items)} items")
 
@@ -447,11 +447,11 @@ class MaterialsExtractor:
                     f"Materials debate introduced unknown component '{comp_mat.component}' "
                     f"not in input: {components}"
                 )
-                print(f"    ❌ Unknown component - no match found!")
+                print("    ❌ Unknown component - no match found!")
                 print(f"       Available: {list(component_lookup.keys())}")
 
         # STEP 2: Filter invalid materials not in ontology
-        print(f"\n🔍 Filtering materials against ontology...")
+        print("\n🔍 Filtering materials against ontology...")
         ontology_set = set(self.deps.material_ontology_list)
         print(f"  Ontology has {len(ontology_set)} materials")
 
@@ -480,7 +480,7 @@ class MaterialsExtractor:
         if filtered_count > 0:
             print(f"\n  ℹ️ Total filtered: {filtered_count} invalid materials")
         else:
-            print(f"\n  ✓ All materials validated successfully")
+            print("\n  ✓ All materials validated successfully")
 
         # ========================================================================
         # END VALIDATION SECTION

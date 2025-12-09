@@ -16,9 +16,9 @@ Key enhancements:
 from __future__ import annotations
 
 import logging
-from collections import Counter, defaultdict
+from collections import defaultdict
 from dataclasses import dataclass
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Tuple
 
 from pydantic import BaseModel, Field
 
@@ -303,7 +303,7 @@ class MultiAgentDebater:
                 mapping.setdefault(name, self.normalize_component_name(name))
 
             # ✅ DEBUG LOGGING
-            print(f"\n🔍 LLM Normalization Results:")
+            print("\n🔍 LLM Normalization Results:")
             print(f"   Input: {len(unique_names)} unique component names")
             print(f"   Output: {len(set(mapping.values()))} normalized canonical names")
 
@@ -314,7 +314,7 @@ class MultiAgentDebater:
                     normalized_groups[normalized] = []
                 normalized_groups[normalized].append(original)
 
-            print(f"\n   Normalization Mappings:")
+            print("\n   Normalization Mappings:")
             for normalized, originals in sorted(normalized_groups.items()):
                 if len(originals) > 1:
                     # Show merged components
@@ -331,7 +331,7 @@ class MultiAgentDebater:
 
         except Exception as exc:  # noqa: BLE001
             logger.warning("LLM normalization failed: %s", exc)
-            print(f"⚠️ LLM normalization failed, using rule-based fallback")
+            print("⚠️ LLM normalization failed, using rule-based fallback")
             return {name: self.normalize_component_name(name) for name in unique_names}
 
     # ------------------------------------------------------------------#
@@ -711,11 +711,11 @@ class MultiAgentDebater:
                 )
 
         # ✅ ADD THIS DEBUG LOGGING:
-        print(f"\n🔍 Consensus Scoring Debug:")
+        print("\n🔍 Consensus Scoring Debug:")
         print(f"   Convergence: {convergence_score:.2f}")
         print(f"   Min support required: {min_support}/{num_agents} agents")
         print(f"   Peer support boost: {self.peer_support_boost}")
-        print(f"\n   Component Scoring:")
+        print("\n   Component Scoring:")
 
         # Show ALL proposals (both included and excluded)
         all_norms = sorted(norm_to_confidences.keys())
@@ -1076,14 +1076,14 @@ class MultiAgentDebater:
             component_counts[norm] += 1
             component_agents[norm].add(agent)
 
-        print(f"   Components proposed by agents:")
+        print("   Components proposed by agents:")
         for name in sorted(component_counts.keys()):
             agent_count = len(component_agents[name])
             total_count = component_counts[name]
             agents = ", ".join(sorted(component_agents[name]))
             print(f"   - '{name}': {agent_count}/3 agents ({total_count} proposals) [{agents}]")
 
-        print(f"\n🔍 All final proposals before consensus:")
+        print("\n🔍 All final proposals before consensus:")
         for prop in all_final_proposals:
             norm = prop.get("normalized_component", prop.get("component", ""))
             agent = prop.get("agent_id", "unknown")

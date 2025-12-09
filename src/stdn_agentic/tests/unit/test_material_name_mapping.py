@@ -4,11 +4,9 @@ from pathlib import Path
 
 import ollama
 import pandas as pd
-import pytest
 
 from stdn_agentic.debate.material_debater import MaterialDebater, MaterialProposal
 from stdn_agentic.models import STDNDependencies
-from stdn_agentic.utils import create_ontology
 
 
 def test_material_name_preservation():
@@ -98,7 +96,7 @@ def test_material_name_preservation():
     assert material_name == "Lithium", f"Expected 'Lithium', got '{material_name}'"
 
     print(f"✓ Test passed: Consensus uses exact ontology name '{material_name}'")
-    print(f"✓ LLM proposals were: 'lithium', 'Lithium', 'LITHIUM'")
+    print("✓ LLM proposals were: 'lithium', 'Lithium', 'LITHIUM'")
     print(f"✓ Consensus normalized all to: '{material_name}' (from ontology)")
 
 
