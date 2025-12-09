@@ -127,11 +127,24 @@ class CountryDataRepository:
         print(f"Querying USGS for {material} (year {src_year}/{meas_year})")
         usgs_data = self.query_usgs(material, src_year, meas_year)
 
+        print(f"🔍 DEBUG: query_usgs returned: {usgs_data}")
+        print(f"🔍 DEBUG: Type: {type(usgs_data)}")
+
+        # ✅ ADD THIS DEBUG
+        print(f"🔍 DEBUG: usgs_data type = {type(usgs_data)}")
+        print(f"🔍 DEBUG: usgs_data length = {len(usgs_data) if usgs_data else 0}")
+        print(f"🔍 DEBUG: usgs_data bool = {bool(usgs_data)}")
+
         if usgs_data:
             print(f"✓ USGS returned {len(usgs_data)} countries")
 
+            print(f"🔍 DEBUG: About to add hs_code...")
+
             # Add HS code, confidence, and reasoning to USGS data
             hs_code = self.lookup_hs_code(material)
+
+            print(f"🔍 DEBUG: hs_code from lookup = {hs_code}")
+
             for country in usgs_data:
                 country["hs_code"] = hs_code
                 # USGS data gets high confidence (authoritative source)
@@ -211,31 +224,45 @@ class CountryDataRepository:
         try:
             df = pd.read_csv("./data/hs_codes_and_usgs_names.csv")
 
+            # ✅ ADD DEBUG
+            print(f"🔍 Looking up HS code for: '{material}'")
+            print(f"   CSV has {len(df)} rows")
+
+            if "HS_Code" not in df.columns:
+                print("   ❌ 'HS_Code' column not found in CSV")
+                return None
+
             # Verify column exists
-            if "HS Code" not in df.columns:
+            if "HS_Code" not in df.columns:
                 return None
 
             # Clean the material name
             material_clean = material.lower().strip()
 
             # Try exact match first
-            match = df[df["Elements/Compounds"].str.lower().str.strip() == material_clean]
+            match = df[df["Elements_Compounds"].str.lower().str.strip() == material_clean]
             if not match.empty:
-                hs_code_value = match.iloc[0]["HS Code"]
+                hs_code_value = match.iloc[0]["HS_Code"]
                 # Check if value is not NaN and not empty
                 if pd.notna(hs_code_value) and str(hs_code_value).strip():
                     return str(int(hs_code_value))  # Convert to int first to remove .0
 
             # Try partial match if exact failed
             match = df[
-                df["Elements/Compounds"]
+                df["Elements_Compounds"]
                 .str.lower()
                 .str.contains(material_clean, na=False, regex=False)
             ]
             if not match.empty:
-                hs_code_value = match.iloc[0]["HS Code"]
+                hs_code_value = match.iloc[0]["HS_Code"]
                 if pd.notna(hs_code_value) and str(hs_code_value).strip():
                     return str(int(hs_code_value))
+
+            # ✅ ADD: Show what didn't match
+            print(f"   ❌ No match found for '{material}'")
+            print(
+                f"   Available materials (first 10): {df['Elements/Compounds'].head(10).tolist()}"
+            )
 
         except Exception as e:
             print(f"HS lookup error for {material}: {e}")

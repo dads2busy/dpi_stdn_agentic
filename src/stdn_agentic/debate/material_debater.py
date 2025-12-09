@@ -900,9 +900,15 @@ class MaterialDebater:
                     # Get best proposal for this material (highest confidence)
                     best_prop = max(props, key=lambda p: p.confidence)
 
+                    # ✅ USE THE MAPPING CREATED IN run_full_debate()
+                    original_name = self.material_name_map.get(
+                        mat_norm,  # normalized name
+                        best_prop.material,  # fallback to LLM's name
+                    )
+
                     component_materials.append(
                         {
-                            "name": best_prop.material,  # Original material name
+                            "name": original_name,  # Original material name
                             "confidence": avg_confidence,
                             "reasoning": best_prop.reasoning,
                             "score": score,
@@ -942,19 +948,14 @@ class MaterialDebater:
         print(f"Components: {len(componentlist)}")
         print(f"{'=' * 60}")
 
-        # # ADD HEALTH CHECK HERE:
-        # print("Checking Ollama availability...")
-        # if not await self._check_ollama_health():
-        #     logger.error("Ollama is not responsive. Aborting material debate.")
-        #     print("❌ Ollama health check failed - cannot proceed with material debate")
-        #     # Return empty consensus
-        #     return {
-        #         "consensus": {},
-        #         "debate_history": [],
-        #         "convergence_scores": [],
-        #     }
+        # ✅ CREATE NORMALIZED-TO-ORIGINAL MAPPING FROM ONTOLOGY
+        # Build once at start, use throughout consensus building
+        self.material_name_map = {}
+        for original_name in self.deps.material_ontology_list:
+            normalized = self.normalize_material_name(original_name)
+            self.material_name_map[normalized] = original_name
 
-        # print("✓ Ollama is ready\n")
+        print(f"✓ Material ontology: {len(self.material_name_map)} materials loaded")
 
         # Phase 1: Independent generation
         initial_proposals = await self.phase1_independent_generation(
