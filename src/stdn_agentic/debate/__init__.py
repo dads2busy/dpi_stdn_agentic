@@ -4,7 +4,8 @@ Multi-agent debate system for consensus-building
 
 from .debater import AgentProposal, DebateRound, MultiAgentDebater
 from .material_country_debater import CountryProposal, MaterialCountryDebater
-from .material_debater import MaterialDebater, MaterialDebateRound, MaterialProposal
+from .material_debater import MaterialDebater
+from .material_models import MaterialDebateRound, MaterialProposal
 
 __all__ = [
     # Base debate
