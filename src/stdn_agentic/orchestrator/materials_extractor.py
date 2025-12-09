@@ -17,7 +17,7 @@ import json
 import logging
 from datetime import datetime
 from pathlib import Path
-from typing import Optional
+from typing import Any, Optional
 
 from pydantic_ai import RunUsage
 
@@ -30,6 +30,7 @@ from ..agents import (
 )
 from ..agents.materials_agent import MaterialWithConfidence
 from ..debate import MaterialDebater
+from ..debate.material_normalization import normalize_material_name
 from ..dependencies import STDNDependencies
 from ..reporting import DebateReporter
 
@@ -145,7 +146,6 @@ class MaterialsExtractor:
         Safely extract materials with comprehensive error handling and retry logic.
         Materials are strictly constrained to the ontology list from hs_codes_and_usgs_names.csv
         """
-        # Check ontology availability
         is_valid, valid_component_names, error_msg = self._validate_materials_extraction_inputs(
             componentlist, technology
         )
@@ -157,12 +157,88 @@ class MaterialsExtractor:
             "valid_component_names should be non-empty after successful validation"
         )
 
+        materials_prompt = self._build_materials_prompt(valid_component_names, technology)
+
+        logger.info(
+            f"Extracting materials for {len(valid_component_names)} components of {technology}"
+        )
+        print(f"Extracting materials for {len(valid_component_names)} components...")
+
+        result = await self._run_materials_agent_with_retries(materials_prompt)
+        if not result or not result.output:
+            return ComponentMaterialsList.model_validate({"componentlist": []})
+
+        materials_list = result.output
+
+        # Force component name correction (in-place)
+        self._correct_component_names_in_place(materials_list, valid_component_names)
+
+        if not materials_list.component_list:
+            return ComponentMaterialsList.model_validate({"componentlist": []})
+
+        # Post-extraction filtering: Remove materials not in ontology
+        ontology_set = set(self.deps.material_ontology_list)
+        filtered_count = self._filter_materials_not_in_ontology(materials_list, ontology_set)
+
+        if filtered_count > 0:
+            print(f"  ℹ️ Filtered {filtered_count} materials not in ontology")
+
+        num_materials = sum(len(cm.raw_materials) for cm in materials_list.component_list)
+        logger.info(
+            f"Extracted {num_materials} materials for "
+            f"{len(materials_list.component_list)} components"
+        )
+        print(f"Extracted materials for {len(materials_list.component_list)} components")
+
+        # Accumulate usage
+        if hasattr(result, "usage") and result.usage():
+            usage.incr(result.usage())
+
+        return materials_list
+
+    async def _run_materials_agent_with_retries(
+        self,
+        materials_prompt: str,
+    ) -> Optional[Any]:
+        for attempt in range(self.max_retries):
+            try:
+                result = await self.materials_agent.run(materials_prompt, deps=self.deps)
+
+                if not result or not result.output:
+                    if attempt == self.max_retries - 1:
+                        await asyncio.sleep(2**attempt)
+                        continue
+                    return None
+
+                return result
+
+            except Exception as e:
+                error_str = str(e)
+                is_transient = "invalid message content type" in error_str or "400" in error_str
+
+                if is_transient and attempt < self.max_retries - 1:
+                    wait_time = (attempt + 1) * 2  # 2s, 4s, 6s
+                    logger.warning(
+                        f"Transient error (attempt {attempt + 1}/{self.max_retries}): {e}"
+                    )
+                    await asyncio.sleep(wait_time)
+                    continue
+
+                logger.error(f"Error extracting materials: {e}", exc_info=True)
+                return None
+
+        return None
+
+    def _build_materials_prompt(
+        self,
+        valid_component_names: list[str],
+        technology: str,
+    ) -> str:
         component_str = "\n".join(f"- {comp}" for comp in valid_component_names)
 
         # Use FULL ontology for strict matching (not just 50 samples)
         ontology_str = "\n".join(f"  - {mat}" for mat in self.deps.material_ontology_list)
 
-        # Stricter prompt - no "common variants" allowed
         materials_prompt = f"""Extract RAW MATERIALS for this component of a {technology}:
 
         COMPONENT NAME (use EXACTLY as written, do not modify):
@@ -200,107 +276,59 @@ class MaterialsExtractor:
         Return a JSON response with the component field set to exactly "{component_str}"
         and materials field containing only materials from the provided list.
         """
+        return materials_prompt
 
-        logger.info(
-            f"Extracting materials for {len(valid_component_names)} components of {technology}"
-        )
-        print(f"Extracting materials for {len(valid_component_names)} components...")
+    def _correct_component_names_in_place(
+        self,
+        materials_list: ComponentMaterialsList,
+        valid_component_names: list[str],
+    ) -> None:
+        for comp_mat in materials_list.component_list:
+            if comp_mat.component not in valid_component_names:
+                matched = None
+                comp_lower = comp_mat.component.lower().strip()
 
-        for attempt in range(self.max_retries):
-            try:
-                result = await self.materials_agent.run(materials_prompt, deps=self.deps)
+                for expected in valid_component_names:
+                    if expected.lower().strip() == comp_lower:
+                        matched = expected
+                        break
 
-                if not result or not result.output:
-                    if attempt == self.max_retries - 1:
-                        await asyncio.sleep(2**attempt)
-                        continue
-                    return ComponentMaterialsList.model_validate({"componentlist": []})
-
-                materials_list = result.output
-
-                # Force component name correction
-                for comp_mat in materials_list.component_list:
-                    # valid_component_names is the list of expected names
-                    # Check if LLM changed the component name
-                    if comp_mat.component not in valid_component_names:
-                        # Try to find matching component (case-insensitive)
-                        matched = None
-                        comp_lower = comp_mat.component.lower().strip()
-
-                        for expected in valid_component_names:
-                            if expected.lower().strip() == comp_lower:
-                                matched = expected
-                                break
-
-                        if matched:
-                            logger.warning(
-                                f"LLM changed component name from '{matched}' to '{comp_mat.component}', correcting..."
-                            )
-                            print(
-                                f"  ⚠️ Correcting component name: '{comp_mat.component}' → '{matched}'"
-                            )
-                            comp_mat.component = matched
-                        else:
-                            logger.warning(
-                                f"Unknown component '{comp_mat.component}' not in expected list: {valid_component_names}"
-                            )
-                            print(f"  ⚠️ Unknown component: '{comp_mat.component}'")
-
-                if not materials_list.component_list:
-                    if attempt == self.max_retries - 1:
-                        await asyncio.sleep(2**attempt)
-                        continue
-                    return ComponentMaterialsList.model_validate({"componentlist": []})
-
-                # Post-extraction filtering: Remove materials not in ontology
-                ontology_set = set(self.deps.material_ontology_list)
-                filtered_count = 0
-
-                for comp_mat in materials_list.component_list:
-                    filtered_materials = []
-                    for mat in comp_mat.raw_materials:
-                        if mat.name in ontology_set:
-                            filtered_materials.append(mat)
-                        else:
-                            logger.warning(
-                                f"Material '{mat.name}' for component '{comp_mat.component}' "
-                                f"not in ontology, filtering out"
-                            )
-                            print(f"  ⚠️ Filtered out '{mat.name}' (not in ontology)")
-                            filtered_count += 1
-                    comp_mat.raw_materials = filtered_materials
-
-                if filtered_count > 0:
-                    print(f"  ℹ️ Filtered {filtered_count} materials not in ontology")
-
-                num_materials = sum(len(cm.raw_materials) for cm in materials_list.component_list)
-                logger.info(
-                    f"Extracted {num_materials} materials for {len(materials_list.component_list)} components"
-                )
-                print(f"Extracted materials for {len(materials_list.component_list)} components")
-
-                # Accumulate usage
-                if hasattr(result, "usage") and result.usage():
-                    usage.incr(result.usage())
-
-                return materials_list
-
-            except Exception as e:
-                error_str = str(e)
-                is_transient = "invalid message content type" in error_str or "400" in error_str
-
-                if is_transient and attempt < self.max_retries - 1:
-                    wait_time = (attempt + 1) * 2  # 2s, 4s, 6s
+                if matched:
                     logger.warning(
-                        f"Transient error (attempt {attempt + 1}/{self.max_retries}): {e}"
+                        f"LLM changed component name from '{matched}' to '{comp_mat.component}', "
+                        "correcting..."
                     )
-                    await asyncio.sleep(wait_time)
-                    continue
+                    print(f"  ⚠️ Correcting component name: '{comp_mat.component}' → '{matched}'")
+                    comp_mat.component = matched
                 else:
-                    logger.error(f"Error extracting materials: {e}", exc_info=True)
-                    return ComponentMaterialsList.model_validate({"componentlist": []})
+                    logger.warning(
+                        f"Unknown component '{comp_mat.component}' not in expected list: "
+                        f"{valid_component_names}"
+                    )
+                    print(f"  ⚠️ Unknown component: '{comp_mat.component}'")
 
-        return ComponentMaterialsList.model_validate({"componentlist": []})
+    def _filter_materials_not_in_ontology(
+        self,
+        materials_list: ComponentMaterialsList,
+        ontology_set: set[str],
+    ) -> int:
+        filtered_count = 0
+
+        for comp_mat in materials_list.component_list:
+            filtered_materials = []
+            for mat in comp_mat.raw_materials:
+                if mat.name in ontology_set:
+                    filtered_materials.append(mat)
+                else:
+                    logger.warning(
+                        f"Material '{mat.name}' for component '{comp_mat.component}' "
+                        f"not in ontology, filtering out"
+                    )
+                    print(f"  ⚠️ Filtered out '{mat.name}' (not in ontology)")
+                    filtered_count += 1
+            comp_mat.raw_materials = filtered_materials
+
+        return filtered_count
 
     # ========================================================================
     # Multi-Agent Debate Extraction
@@ -332,53 +360,93 @@ class MaterialsExtractor:
 
         debate_result = await self.material_debater.run_full_debate(components, technology, usage)
 
-        # Convert debate consensus to ComponentMaterialsList format
-        # consensus is now: {component: [{"name": ..., "confidence": ..., "reasoning": ...}]}
+        # consensus is: {component: [{"name": ..., "confidence": ..., "reasoning": ...}]}
         consensus = debate_result["consensus"]
 
-        # Build material confidence map from debate proposals
-        material_confidence_map = {}
-        if (
-            hasattr(self.material_debater, "debate_history")
-            and self.material_debater.debate_history
-        ):
-            # Get all proposals from all rounds (prioritize later rounds)
-            all_proposals = []
-            for debate_round in self.material_debater.debate_history:
-                all_proposals.extend(debate_round.proposals)
+        material_confidence_map = self._build_material_confidence_map()
+        materials_list_items = self._build_materials_list_from_consensus(
+            consensus,
+            material_confidence_map,
+        )
 
-            # Build map: component|material -> confidence data
-            for prop in all_proposals:
-                mat_key = f"{prop.normalizedcomponent}|{prop.normalizedmaterial}"
-                # Keep highest confidence for each material
-                if (
-                    mat_key not in material_confidence_map
-                    or prop.confidence > material_confidence_map[mat_key]["confidence"]
-                ):
-                    material_confidence_map[mat_key] = {
-                        "name": prop.material,  # Original name
-                        "confidence": prop.confidence,
-                        "reasoning": prop.reasoning,
-                    }
+        self._validate_and_fix_components_and_materials(
+            components,
+            materials_list_items,
+        )
 
-        # Convert consensus dicts to MaterialWithConfidence objects
-        materials_list_items = []
+        materials_list = ComponentMaterialsList(componentlist=materials_list_items)
+
+        # Save material debate transcript if enabled
+        if self.reporter:
+            self._save_material_debate_transcript(
+                technology,
+                components,
+                self.material_debater.debate_history,
+                consensus,
+            )
+
+        total_materials = sum(len(cm.raw_materials) for cm in materials_list.component_list)
+        print(
+            f"\n✓ Final result: {len(materials_list.component_list)} components, "
+            f"{total_materials} materials"
+        )
+
+        return materials_list
+
+    def _build_material_confidence_map(self) -> dict[str, dict]:
+        """Build map: 'component|material' -> best confidence proposal."""
+        material_confidence_map: dict[str, dict] = {}
+
+        # Explicit None / attribute guards so type checkers are happy
+        if self.material_debater is None:
+            return material_confidence_map
+
+        if not hasattr(self.material_debater, "debate_history"):
+            return material_confidence_map
+
+        if not self.material_debater.debate_history:
+            return material_confidence_map
+
+        all_proposals = []
+        for debate_round in self.material_debater.debate_history:
+            all_proposals.extend(debate_round.proposals)
+
+        for prop in all_proposals:
+            mat_key = f"{prop.normalizedcomponent}|{prop.normalizedmaterial}"
+            if (
+                mat_key not in material_confidence_map
+                or prop.confidence > material_confidence_map[mat_key]["confidence"]
+            ):
+                material_confidence_map[mat_key] = {
+                    "name": prop.material,
+                    "confidence": prop.confidence,
+                    "reasoning": prop.reasoning,
+                }
+
+        return material_confidence_map
+
+    def _build_materials_list_from_consensus(
+        self,
+        consensus: dict[str, list[dict]],
+        material_confidence_map: dict[str, dict],
+    ) -> list[ComponentMaterials]:
+        """Convert consensus dicts into ComponentMaterials items."""
+        materials_list_items: list[ComponentMaterials] = []
+
         for comp, material_dicts in consensus.items():
-            # comp is already normalized from component phase
-            material_objects = []
+            material_objects: list[MaterialWithConfidence] = []
+
             for mat_dict in material_dicts:
-                # Extract data from dict
                 mat_name = mat_dict["name"]
                 mat_confidence = mat_dict.get("confidence", 0.75)
                 mat_reasoning = mat_dict.get(
-                    "reasoning", "Consensus material from multi-agent debate"
+                    "reasoning",
+                    "Consensus material from multi-agent debate",
                 )
 
-                # Normalize material name for lookup
-                mat_norm = self.material_debater.normalize_material_name(mat_name)
+                mat_norm = normalize_material_name(mat_name)
                 mat_key = f"{comp}|{mat_norm}"
 
-                # Look up confidence from debate proposals (may have higher confidence)
                 if mat_key in material_confidence_map:
                     mat_info = material_confidence_map[mat_key]
                     material_objects.append(
@@ -389,7 +457,6 @@ class MaterialsExtractor:
                         )
                     )
                 else:
-                    # Use confidence from consensus dict
                     material_objects.append(
                         MaterialWithConfidence(
                             name=mat_name,
@@ -402,29 +469,27 @@ class MaterialsExtractor:
                 ComponentMaterials(component=comp, materials=material_objects)
             )
 
-        # ========================================================================
-        # VALIDATION SECTION - Fix component names and filter invalid materials
-        # ========================================================================
+        return materials_list_items
 
-        # STEP 1: Fix component names to match input components
+    def _validate_and_fix_components_and_materials(
+        self,
+        components: list[str],
+        materials_list_items: list[ComponentMaterials],
+    ) -> None:
+        """Fix component names and filter invalid materials in-place."""
         print("\n🔍 Validating component names...")
         print(f"  Expected components: {components}")
         print(f"  Materials list has {len(materials_list_items)} items")
 
-        # Build case-insensitive lookup map: lowercase -> correct name
         component_lookup = {comp.lower().strip(): comp for comp in components}
 
         for i, comp_mat in enumerate(materials_list_items):
             comp_lower = comp_mat.component.lower().strip()
-
-            # Remove any qualifiers like "(amoled)" or "(32mp sensor)"
-            # Extract base name before first parenthesis
             base_name_lower = comp_lower.split("(")[0].strip()
 
             print(f"  [{i}] Component from debate: '{comp_mat.component}'")
             print(f"      Base name (lowercase): '{base_name_lower}'")
 
-            # Try exact match first
             if comp_lower in component_lookup:
                 expected = component_lookup[comp_lower]
                 if comp_mat.component != expected:
@@ -433,24 +498,20 @@ class MaterialsExtractor:
                     )
                     comp_mat.component = expected
                 else:
-                    print(f"    ✓ Component name matches expected input")
-
-            # Try base name match (without qualifiers)
+                    print("    ✓ Component name matches expected input")
             elif base_name_lower in component_lookup:
                 expected = component_lookup[base_name_lower]
                 print(f"    ⚠️ Qualifier added - correcting: '{comp_mat.component}' → '{expected}'")
                 comp_mat.component = expected
-
-            # Unknown component
             else:
                 logger.warning(
-                    f"Materials debate introduced unknown component '{comp_mat.component}' "
-                    f"not in input: {components}"
+                    "Materials debate introduced unknown component '%s' not in input: %s",
+                    comp_mat.component,
+                    components,
                 )
                 print("    ❌ Unknown component - no match found!")
                 print(f"       Available: {list(component_lookup.keys())}")
 
-        # STEP 2: Filter invalid materials not in ontology
         print("\n🔍 Filtering materials against ontology...")
         ontology_set = set(self.deps.material_ontology_list)
         print(f"  Ontology has {len(ontology_set)} materials")
@@ -461,48 +522,25 @@ class MaterialsExtractor:
             print(f"\n  Checking materials for '{comp_mat.component}':")
             valid_materials = []
 
-            for mat in comp_mat.raw_materials:  # ✅ Use raw_materials
-                # Check if material name is in ontology
+            for mat in comp_mat.raw_materials:
                 if mat.name in ontology_set:
                     valid_materials.append(mat)
                     print(f"    ✓ '{mat.name}' - valid (in ontology)")
                 else:
                     logger.warning(
-                        f"Rejecting invalid material '{mat.name}' for '{comp_mat.component}' "
-                        f"(not in ontology)"
+                        "Rejecting invalid material '%s' for '%s' (not in ontology)",
+                        mat.name,
+                        comp_mat.component,
                     )
                     print(f"    ✗ '{mat.name}' - NOT IN ONTOLOGY, filtering out")
                     filtered_count += 1
 
-            # Update with only valid materials
-            comp_mat.raw_materials = valid_materials  # ✅ Use raw_materials
+            comp_mat.raw_materials = valid_materials
 
         if filtered_count > 0:
             print(f"\n  ℹ️ Total filtered: {filtered_count} invalid materials")
         else:
             print("\n  ✓ All materials validated successfully")
-
-        # ========================================================================
-        # END VALIDATION SECTION
-        # ========================================================================
-
-        materials_list = ComponentMaterialsList(componentlist=materials_list_items)
-
-        # Save material debate transcript if enabled
-        if self.reporter:
-            self._save_material_debate_transcript(
-                technology, components, self.material_debater.debate_history, consensus
-            )
-
-        # Final summary
-        total_materials = sum(
-            len(cm.raw_materials) for cm in materials_list.component_list
-        )  # ✅ Use raw_materials
-        print(
-            f"\n✓ Final result: {len(materials_list.component_list)} components, {total_materials} materials"
-        )
-
-        return materials_list
 
     # ========================================================================
     # Main Entry Point
@@ -565,14 +603,28 @@ class MaterialsExtractor:
         consensus: dict[str, list[dict]],  # list[dict] with name, confidence, reasoning
     ) -> str:
         """Build the materials debate transcript content with confidence and reasoning."""
-        content = []
+        content: list[str] = []
 
         content.append("\n\n")
         content.append("=" * 80 + "\n")
         content.append("MATERIALS EXTRACTION DEBATE\n")
         content.append("=" * 80 + "\n\n")
 
-        # Phase 1: Components
+        self._append_material_transcript_components_section(content, components)
+        self._append_material_transcript_debate_rounds_section(content, debate_history)
+        self._append_material_transcript_final_consensus_section(content, consensus)
+
+        content.append("=" * 80 + "\n")
+        content.append("END OF COMBINED TRANSCRIPT\n")
+        content.append("=" * 80 + "\n")
+
+        return "".join(content)
+
+    def _append_material_transcript_components_section(
+        self,
+        content: list[str],
+        components: list,
+    ) -> None:
         content.append("COMPONENTS PROCESSED:\n")
         content.append("-" * 80 + "\n")
         content.append(f"Total Components: {len(components)}\n")
@@ -586,7 +638,11 @@ class MaterialsExtractor:
                 content.append(f"  - {comp}\n")
         content.append("\n")
 
-        # Phase 2: Debate Rounds
+    def _append_material_transcript_debate_rounds_section(
+        self,
+        content: list[str],
+        debate_history: list,
+    ) -> None:
         content.append("=" * 80 + "\n")
         content.append("MATERIAL DEBATE ROUNDS\n")
         content.append("=" * 80 + "\n\n")
@@ -597,7 +653,6 @@ class MaterialsExtractor:
 
             if round_data.critiques:
                 content.append(f"  Critiques ({len(round_data.critiques)} total):\n")
-                # critiques is a dict, so iterate over values
                 critique_list = (
                     list(round_data.critiques.values())
                     if isinstance(round_data.critiques, dict)
@@ -614,7 +669,11 @@ class MaterialsExtractor:
                 content.append(f"  Consensus materials: {len(round_data.consensussofar)}\n")
             content.append("\n")
 
-        # Phase 3: Final Consensus WITH REASONING
+    def _append_material_transcript_final_consensus_section(
+        self,
+        content: list[str],
+        consensus: dict[str, list[dict]],
+    ) -> None:
         content.append("=" * 80 + "\n")
         content.append("FINAL MATERIAL ASSIGNMENTS\n")
         content.append("=" * 80 + "\n\n")
@@ -654,12 +713,6 @@ class MaterialsExtractor:
                     content.append(f"    → {reasoning}\n")
 
             content.append("\n")  # Blank line between components
-
-        content.append("=" * 80 + "\n")
-        content.append("END OF COMBINED TRANSCRIPT\n")
-        content.append("=" * 80 + "\n")
-
-        return "".join(content)
 
     def _save_material_debate_transcript(
         self,

@@ -17,62 +17,23 @@ from __future__ import annotations
 
 import logging
 from collections import defaultdict
-from dataclasses import dataclass
 from typing import Any, Dict, List, Tuple
 
 from pydantic import BaseModel, Field
+from pydantic_ai import Agent
+
+from .component_models import (
+    AgentProposal,
+    ComponentWithConfidence,
+    DebateResponse,
+    DebateRound,
+)
+from .component_normalization import (
+    normalize_component_name,
+    normalize_components_with_llm,
+)
 
 logger = logging.getLogger(__name__)
-
-
-# ============================================================================
-# Data Structures
-# ============================================================================
-
-
-@dataclass
-class AgentProposal:
-    """A component/material proposal from an agent."""
-
-    agent_id: str
-    component_name: str
-    confidence: float  # Now dynamically set by LLM
-    reasoning: str
-    round: int
-
-
-@dataclass
-class DebateRound:
-    """Results from one round of debate."""
-
-    round_number: int
-    proposals: List[AgentProposal]
-    critiques: Dict[str, List[str]]
-    convergence_score: float
-    consensus_so_far: List[str]
-
-
-# ============================================================================
-# Pydantic Models for Structured Output
-# ============================================================================
-
-
-class ComponentWithConfidence(BaseModel):
-    """A single component proposal with confidence and reasoning."""
-
-    name: str = Field(description="Component name")
-    confidence: float = Field(
-        description="Confidence score (0.0 to 1.0) that this is a primary component", ge=0.0, le=1.0
-    )
-    reasoning: str = Field(description="Brief justification for this component")
-
-
-class DebateResponse(BaseModel):
-    """Structured response from an agent in a debate round."""
-
-    components: List[ComponentWithConfidence] = Field(
-        description="List of proposed components with confidence scores"
-    )
 
 
 # ============================================================================
@@ -101,31 +62,12 @@ class MultiAgentDebater:
         peer_support_boost: float = 0.15,
         debate_top_p: float = 0.0001,
     ) -> None:
-        """
-        Initialize the enhanced multi-agent debater.
-
-        Args:
-            max_rounds:
-                Maximum number of debate rounds (default: 3).
-            convergence_threshold:
-                Stop debate when convergence >= this value (default: 0.8).
-            confidence_weight:
-                Weight for confidence in voting (0–1, default: 0.3).
-            peer_support_boost:
-                Confidence boost per supporting agent (default: 0.15).
-            debate_top_p:
-                Top-p sampling for debate rounds (default: 0.0001 for determinism).
-        """
         self.max_rounds = max_rounds
         self.convergence_threshold = convergence_threshold
         self.confidence_weight = confidence_weight
         self.peer_support_boost = peer_support_boost
         self.debate_history: List[DebateRound] = []
         self.debate_top_p = debate_top_p
-
-    # ------------------------------------------------------------------#
-    # Normalization helpers
-    # ------------------------------------------------------------------#
 
     async def _normalize_initial_proposals(
         self,
@@ -135,12 +77,8 @@ class MultiAgentDebater:
     ) -> Dict[str, List[Dict[str, Any]]]:
         """
         Semantically normalize all component names across all agents BEFORE debate.
-
-        This ensures all agents use the same normalized names from the start,
-        improving convergence and consensus quality.
         """
-        # Flatten all proposals to collect component names
-        all_proposals = []
+        all_proposals: List[Dict[str, Any]] = []
         for agent_id, agent_props in initial_proposals.items():
             for prop in agent_props:
                 if isinstance(prop, dict):
@@ -159,7 +97,6 @@ class MultiAgentDebater:
         if not all_proposals:
             return initial_proposals
 
-        # Collect all unique component names
         all_component_names = [
             p.get("component") or p.get("component_name", "") for p in all_proposals
         ]
@@ -168,8 +105,7 @@ class MultiAgentDebater:
             f"\n🔄 Semantic normalization of {len(set(all_component_names))} unique components..."
         )
 
-        # Use LLM semantic normalization
-        normalization_map = await self.normalize_components_with_llm(
+        normalization_map = await normalize_components_with_llm(
             all_component_names,
             component_agent,
             deps,
@@ -177,8 +113,7 @@ class MultiAgentDebater:
 
         print(f"✓ Normalized to {len(set(normalization_map.values()))} unique concepts\n")
 
-        # Apply normalization to all proposals
-        normalized_proposals = {}
+        normalized_proposals: Dict[str, List[Dict[str, Any]]] = {}
         for agent_id, agent_props in initial_proposals.items():
             updated = []
             for prop in agent_props:
@@ -194,15 +129,18 @@ class MultiAgentDebater:
                     }
 
                 original = p.get("component", "")
-                normalized = normalization_map.get(
-                    original, self.normalize_component_name(original)
-                )
+                normalized = normalization_map.get(original, normalize_component_name(original))
                 p["normalized_component"] = normalized
                 updated.append(p)
 
             normalized_proposals[agent_id] = updated
 
         return normalized_proposals
+
+    # ... rest of MultiAgentDebater stays as-is, but if it previously called
+    # self.normalize_component_name or self.normalize_components_with_llm,
+    # update those calls to use normalize_component_name(...) and
+    # normalize_components_with_llm(...) from the imports.
 
     def normalize_component_name(self, name: str) -> str:
         """Normalize component name using a rule-based approach."""
@@ -240,7 +178,6 @@ class MultiAgentDebater:
 
         Falls back to rule-based normalization if the LLM call fails.
         """
-        from pydantic_ai import Agent
 
         unique_names = list(set(component_names))
         if len(unique_names) <= 1:
@@ -631,7 +568,7 @@ class MultiAgentDebater:
         self,
         proposals: List[Dict[str, Any]],
         convergence_score: float,
-    ) -> Tuple[List[str], Dict[str, Dict[str, Any]]]:  # ✅ Return tuple: (names, details)
+    ) -> Tuple[List[str], Dict[str, Dict[str, Any]]]:
         """
         Build consensus using semantically normalized component names.
 
@@ -642,14 +579,55 @@ class MultiAgentDebater:
         if not proposals:
             return [], {}
 
+        (
+            norm_to_confidences,
+            norm_to_agents,
+            norm_to_proposals,
+        ) = self._aggregate_proposals_by_norm(proposals)
+
+        if not norm_to_confidences:
+            return [], {}
+
+        num_agents = max(len(agent_set) for agent_set in norm_to_agents.values())
+        min_support = self._compute_min_support(convergence_score, num_agents)
+
+        scores = self._score_consensus_candidates(
+            norm_to_confidences,
+            norm_to_agents,
+            num_agents,
+            min_support,
+        )
+
+        self._log_consensus_scoring_debug(
+            convergence_score,
+            min_support,
+            num_agents,
+            norm_to_confidences,
+            norm_to_agents,
+            scores,
+        )
+
+        consensus = [name for name, _ in sorted(scores.items(), key=lambda kv: kv[1], reverse=True)]
+
+        component_details = self._build_component_details(consensus, norm_to_proposals)
+
+        return consensus, component_details
+
+    def _aggregate_proposals_by_norm(
+        self,
+        proposals: List[Dict[str, Any]],
+    ) -> tuple[
+        Dict[str, List[float]],
+        Dict[str, set[str]],
+        Dict[str, List[Dict[str, Any]]],
+    ]:
         norm_to_confidences: Dict[str, List[float]] = defaultdict(list)
         norm_to_agents: Dict[str, set[str]] = defaultdict(set)
-        norm_to_proposals: Dict[str, List[Dict[str, Any]]] = defaultdict(list)  # ✅ Track proposals
+        norm_to_proposals: Dict[str, List[Dict[str, Any]]] = defaultdict(list)
 
         for prop in proposals:
             agent_id = self._get_prop_value(prop, "agent_id", "unknown")
 
-            # Use normalized_component if available, otherwise use raw component name
             norm = (
                 self._get_prop_value(prop, "normalized_component")
                 or self._get_prop_value(prop, "component")
@@ -657,13 +635,10 @@ class MultiAgentDebater:
                 or ""
             )
 
-            # ✅ NORMALIZE CASE to prevent duplicates
-            norm = norm.strip()  # Remove extra spaces
+            norm = norm.strip()
             if norm:
-                # Convert to Title Case for consistency
                 norm = " ".join(word.capitalize() for word in norm.split())
 
-            # ✅ No additional normalization - trust the LLM or use raw name
             if not norm or not norm.strip():
                 continue
 
@@ -672,12 +647,14 @@ class MultiAgentDebater:
             norm_to_agents[norm].add(agent_id)
             norm_to_proposals[norm].append(prop)
 
-        if not norm_to_confidences:
-            return [], {}
+        return norm_to_confidences, norm_to_agents, norm_to_proposals
 
-        num_agents = max(len(agent_set) for agent_set in norm_to_agents.values())
-
-        if convergence_score >= 0.9:  # ✅ Raise from 0.7 to 0.9
+    def _compute_min_support(
+        self,
+        convergence_score: float,
+        num_agents: int,
+    ) -> int:
+        if convergence_score >= 0.9:
             min_support_frac = 2.0 / 3.0
         elif convergence_score <= 0.3:
             min_support_frac = 1.0 / 3.0
@@ -685,9 +662,17 @@ class MultiAgentDebater:
             frac = (convergence_score - 0.3) / (0.9 - 0.3)
             min_support_frac = (1.0 / 3.0) + frac * (1.0 / 3.0)
 
-        min_support = max(1, int(round(min_support_frac * max(num_agents, 1))))
+        return max(1, int(round(min_support_frac * max(num_agents, 1))))
 
+    def _score_consensus_candidates(
+        self,
+        norm_to_confidences: Dict[str, List[float]],
+        norm_to_agents: Dict[str, set[str]],
+        num_agents: int,
+        min_support: int,
+    ) -> Dict[str, float]:
         scores: Dict[str, float] = {}
+        MIN_CONFIDENCE = 0.7
 
         for norm_name, confs in norm_to_confidences.items():
             support = len(norm_to_agents[norm_name])
@@ -700,9 +685,6 @@ class MultiAgentDebater:
                 + self.peer_support_boost * (support - 1)
             )
 
-            # ✅ ADD FILTERING: Require both minimum support AND minimum confidence
-            MIN_CONFIDENCE = 0.7  # Require at least 70% confidence
-
             if support >= min_support and avg_conf >= MIN_CONFIDENCE:
                 scores[norm_name] = score
             elif support >= min_support:
@@ -710,14 +692,23 @@ class MultiAgentDebater:
                     f"   ⚠️ Excluded '{norm_name}': confidence {avg_conf:.2f} below {MIN_CONFIDENCE}"
                 )
 
-        # ✅ ADD THIS DEBUG LOGGING:
+        return scores
+
+    def _log_consensus_scoring_debug(
+        self,
+        convergence_score: float,
+        min_support: int,
+        num_agents: int,
+        norm_to_confidences: Dict[str, List[float]],
+        norm_to_agents: Dict[str, set[str]],
+        scores: Dict[str, float],
+    ) -> None:
         print("\n🔍 Consensus Scoring Debug:")
         print(f"   Convergence: {convergence_score:.2f}")
         print(f"   Min support required: {min_support}/{num_agents} agents")
         print(f"   Peer support boost: {self.peer_support_boost}")
         print("\n   Component Scoring:")
 
-        # Show ALL proposals (both included and excluded)
         all_norms = sorted(norm_to_confidences.keys())
         for norm_name in all_norms:
             support = len(norm_to_agents[norm_name])
@@ -736,30 +727,32 @@ class MultiAgentDebater:
                     f"avg_conf={avg_conf:.2f} — EXCLUDED (below min_support)"
                 )
 
-        consensus = [name for name, _ in sorted(scores.items(), key=lambda kv: kv[1], reverse=True)]
+    def _build_component_details(
+        self,
+        consensus: List[str],
+        norm_to_proposals: Dict[str, List[Dict[str, Any]]],
+    ) -> Dict[str, Dict[str, Any]]:
+        component_details: Dict[str, Dict[str, Any]] = {}
 
-        # ✅ BUILD COMPONENT DETAILS MAP
-        component_details = {}
         for norm_name in consensus:
-            # Get all proposals for this normalized name
             matching_props = norm_to_proposals[norm_name]
 
-            # Find the proposal with highest confidence (or most recent)
             best_prop = max(
-                matching_props, key=lambda p: self._get_prop_value(p, "confidence", 0.0)
+                matching_props,
+                key=lambda p: self._get_prop_value(p, "confidence", 0.0),
             )
 
-            # Extract original name (before normalization)
             original_name = (
                 self._get_prop_value(best_prop, "component")
                 or self._get_prop_value(best_prop, "component_name")
                 or norm_name.title()
             )
 
-            # Get confidence and reasoning
             confidence = self._get_prop_value(best_prop, "confidence", 0.75)
             reasoning = self._get_prop_value(
-                best_prop, "reasoning", "Consensus component from debate"
+                best_prop,
+                "reasoning",
+                "Consensus component from debate",
             )
 
             component_details[norm_name] = {
@@ -768,7 +761,7 @@ class MultiAgentDebater:
                 "reasoning": reasoning,
             }
 
-        return consensus, component_details  # ✅ Return both
+        return component_details
 
     # ------------------------------------------------------------------#
     # Round execution and full debate
@@ -790,8 +783,6 @@ class MultiAgentDebater:
             Dict mapping agent_id -> list of proposal dicts with confidence scores.
         """
         from dataclasses import replace
-
-        from pydantic_ai import Agent
 
         # Build context from previous proposals
         prev_context = "\n".join(
@@ -946,24 +937,6 @@ class MultiAgentDebater:
     ) -> Dict[str, Any]:
         """
         Run multi-round debate with LLM-based semantic normalization and dynamic confidence.
-
-        Args:
-            technology:
-                Technology name.
-            initial_proposals:
-                Mapping agent_id -> list of proposal dicts.
-            component_agent:
-                Agent to use for refinement and normalization.
-            deps:
-                Shared STDN dependencies (includes model name).
-
-        Returns:
-            Dict with keys:
-                - "technology": technology name
-                - "components": list of consensus component names
-                - "confidence": final convergence score
-                - "rounds": number of rounds completed
-                - "debate_history": list of per-round metadata dicts
         """
         convergence = 0.0
         rounds_completed = 0
@@ -974,46 +947,83 @@ class MultiAgentDebater:
         print("=" * 80)
 
         current_proposals = await self._normalize_initial_proposals(
-            initial_proposals, component_agent, deps
+            initial_proposals,
+            component_agent,
+            deps,
         )
 
+        (
+            convergence,
+            rounds_completed,
+            debate_rounds,
+            current_proposals,
+        ) = await self._run_debate_rounds(
+            technology,
+            current_proposals,
+            component_agent,
+            deps,
+            convergence,
+            rounds_completed,
+            debate_rounds,
+        )
+
+        all_final_proposals = self._flatten_final_proposals(current_proposals)
+
+        await self._apply_final_normalization(
+            all_final_proposals,
+            component_agent,
+            deps,
+            rounds_completed,
+        )
+
+        consensus, component_details = self.build_adaptive_consensus_semantic(
+            all_final_proposals,
+            convergence_score=convergence,
+        )
+        print(f"  Extracted {len(consensus)} components with dynamic confidence weighting")
+
+        return {
+            "technology": technology,
+            "components": consensus,
+            "component_details": component_details,
+            "confidence": convergence,
+            "rounds": rounds_completed,
+            "debate_history": debate_rounds,
+        }
+
+    async def _run_debate_rounds(
+        self,
+        technology: str,
+        current_proposals: Dict[str, List[Dict[str, Any]]],
+        component_agent: Any,
+        deps: Any,
+        convergence: float,
+        rounds_completed: int,
+        debate_rounds: List[Dict[str, Any]],
+    ) -> tuple[
+        float,
+        int,
+        List[Dict[str, Any]],
+        Dict[str, List[Dict[str, Any]]],
+    ]:
         for roundnum in range(self.max_rounds):
             print(f"ROUND {roundnum + 1}:")
 
-            # Flatten proposals for analysis
-            all_proposals: List[Dict[str, Any]] = []
-            for agent_id, agent_props in current_proposals.items():
-                for prop in agent_props:
-                    if isinstance(prop, dict):
-                        p = dict(prop)
-                    else:
-                        p = {
-                            "agent_id": getattr(prop, "agent_id", agent_id),
-                            "component": getattr(prop, "component_name", ""),
-                            "confidence": getattr(prop, "confidence", 0.8),
-                            "reasoning": getattr(prop, "reasoning", ""),
-                            "round": getattr(prop, "round", roundnum),
-                        }
-                    p.setdefault("agent_id", agent_id)
-                    all_proposals.append(p)
+            all_proposals = self._flatten_proposals_for_round(
+                current_proposals,
+                roundnum,
+            )
 
             if not all_proposals:
                 print("  ⚠ No proposals available for this round.")
                 break
 
-            # Log confidence statistics
-            confidences = [p.get("confidence", 0.8) for p in all_proposals]
-            avg_conf = sum(confidences) / len(confidences)
-            min_conf = min(confidences)
-            max_conf = max(confidences)
-            print(f"  Confidence: avg={avg_conf:.2f}, min={min_conf:.2f}, max={max_conf:.2f}")
+            self._log_round_confidence_stats(all_proposals)
 
-            # Calculate convergence using normalized names
             convergence = self.calculate_convergence_semantic(all_proposals)
             print(f"  Convergence: {convergence:.1%}")
             rounds_completed = roundnum + 1
 
-            # Store round data for transcript
             debate_rounds.append(
                 {
                     "round_num": roundnum + 1,
@@ -1023,15 +1033,16 @@ class MultiAgentDebater:
                 },
             )
 
-            # Stop if threshold reached
             if convergence >= self.convergence_threshold:
                 print("  ✅ Convergence threshold reached!")
                 break
 
-            # If not last round, generate critiques and refine proposals
             if roundnum < self.max_rounds - 1:
                 print("  Generating critiques...")
-                critiques = self.generate_critiques_with_influence(all_proposals, roundnum + 1)
+                critiques = self.generate_critiques_with_influence(
+                    all_proposals,
+                    roundnum + 1,
+                )
                 print("  Refining proposals based on peer feedback...")
                 current_proposals = await self.run_debate_round(
                     technology=technology,
@@ -1039,17 +1050,63 @@ class MultiAgentDebater:
                     critiques=critiques,
                     component_agent=component_agent,
                     deps=deps,
-                    roundnum=roundnum + 2,  # Next round number
+                    roundnum=roundnum + 2,
                 )
 
-        # Final consensus building
+        return convergence, rounds_completed, debate_rounds, current_proposals
+
+    def _flatten_proposals_for_round(
+        self,
+        current_proposals: Dict[str, List[Dict[str, Any]]],
+        roundnum: int,
+    ) -> List[Dict[str, Any]]:
+        all_proposals: List[Dict[str, Any]] = []
+        for agent_id, agent_props in current_proposals.items():
+            for prop in agent_props:
+                if isinstance(prop, dict):
+                    p = dict(prop)
+                else:
+                    p = {
+                        "agent_id": getattr(prop, "agent_id", agent_id),
+                        "component": getattr(prop, "component_name", ""),
+                        "confidence": getattr(prop, "confidence", 0.8),
+                        "reasoning": getattr(prop, "reasoning", ""),
+                        "round": getattr(prop, "round", roundnum),
+                    }
+                p.setdefault("agent_id", agent_id)
+                all_proposals.append(p)
+        return all_proposals
+
+    def _log_round_confidence_stats(
+        self,
+        all_proposals: List[Dict[str, Any]],
+    ) -> None:
+        confidences = [p.get("confidence", 0.8) for p in all_proposals]
+        avg_conf = sum(confidences) / len(confidences)
+        min_conf = min(confidences)
+        max_conf = max(confidences)
+        print(f"  Confidence: avg={avg_conf:.2f}, min={min_conf:.2f}, max={max_conf:.2f}")
+
+    def _flatten_final_proposals(
+        self,
+        current_proposals: Dict[str, List[Dict[str, Any]]],
+    ) -> List[Dict[str, Any]]:
         all_final_proposals: List[Dict[str, Any]] = []
         for agent_props in current_proposals.values():
             all_final_proposals.extend(agent_props)
+        return all_final_proposals
 
+    async def _apply_final_normalization(
+        self,
+        all_final_proposals: List[Dict[str, Any]],
+        component_agent: Any,
+        deps: Any,
+        rounds_completed: int,
+    ) -> None:
         final_component_names = [
             p.get("component") or p.get("component_name", "") for p in all_final_proposals
         ]
+
         if final_component_names:
             print("  Building final consensus with semantic normalization...")
             final_norm_map = await self.normalize_components_with_llm(
@@ -1063,8 +1120,9 @@ class MultiAgentDebater:
                 prop["normalized_component"] = norm
 
         print(f"\n🔍 Final Proposals Summary (After Round {rounds_completed}):")
-        component_counts = {}
-        component_agents = {}
+
+        component_counts: Dict[str, int] = {}
+        component_agents: Dict[str, set[str]] = {}
         for prop in all_final_proposals:
             norm = prop.get("normalized_component", prop.get("component", ""))
             agent = prop.get("agent_id", "unknown")
@@ -1089,21 +1147,6 @@ class MultiAgentDebater:
             agent = prop.get("agent_id", "unknown")
             conf = prop.get("confidence", 0.0)
             print(f"  '{norm}' - agent: {agent}, confidence: {conf:.2f}")
-
-        consensus, component_details = self.build_adaptive_consensus_semantic(  # ✅ Unpack tuple
-            all_final_proposals,
-            convergence_score=convergence,
-        )
-        print(f"  Extracted {len(consensus)} components with dynamic confidence weighting")
-
-        return {
-            "technology": technology,
-            "components": consensus,
-            "component_details": component_details,
-            "confidence": convergence,
-            "rounds": rounds_completed,
-            "debate_history": debate_rounds,
-        }
 
 
 # ============================================================================

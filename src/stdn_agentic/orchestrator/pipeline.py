@@ -32,7 +32,7 @@ from ..agents import (
     ComponentMaterialsList,
 )
 from ..data import CountryDataRepository
-from ..debate import MultiAgentDebater
+from ..debate.component_debater import MultiAgentDebater
 from ..dependencies import initialize_dependencies
 from ..models import ConfigModel
 from ..reporting import DebateReporter
@@ -222,81 +222,19 @@ class STDNOrchestrator:
         print("=" * 80)
 
         try:
-            # Phase 1: Extract components
-            if self.use_debate:
-                components_result = await self.extract_components_with_debate(tech, role, usage)
-            else:
-                components_result = await self.component_extractor.extract_components_simple(
-                    tech, usage
-                )
-
+            components_result = await self._run_component_extraction(tech, role, usage)
             if not components_result:
                 logger.error(f"No components extracted for {tech}")
                 print(f"✗ No components extracted for {tech}")
                 return None
 
-            # Import for type checking
-            from typing import cast
+            (
+                components,
+                component_objects,
+                component_confidence_map,
+            ) = self._prepare_components_and_confidence(components_result)
 
-            from ..agents.component_agent import ComponentWithConfidence
-
-            # Extract component names and preserve full objects for potential transcript use
-            if hasattr(components_result, "component_list"):
-                # components_result.component_list now contains ComponentWithConfidence objects
-                # Use cast to tell type checker what type this is
-                component_objects = cast(
-                    list[ComponentWithConfidence], components_result.component_list
-                )
-                components: list[str] = [comp.name for comp in component_objects]
-
-                # Build component confidence map for enrichment phase
-                # ✅ FIX: Normalize keys to match materials list
-                component_confidence_map: dict[str, dict[str, Any]] = {}
-                for comp in component_objects:
-                    normalized_name = comp.name.lower().strip()
-                    component_confidence_map[normalized_name] = {
-                        "confidence": comp.confidence,
-                        "reasoning": comp.reasoning,
-                    }
-
-                # Calculate and log average confidence
-                if component_objects:
-                    avg_confidence = sum(comp.confidence for comp in component_objects) / len(
-                        component_objects
-                    )
-                    print(
-                        f"✓ Extracted {len(components)} components (avg confidence: {avg_confidence:.2f})"
-                    )
-                else:
-                    print(f"✓ Extracted {len(components)} components")
-            elif isinstance(components_result, list):
-                # Handle case where result is already a list
-                if components_result and hasattr(components_result[0], "name"):
-                    component_objects = cast(list[ComponentWithConfidence], components_result)
-                    components = [comp.name for comp in component_objects]
-
-                    # ✅ FIX: Normalize keys to match materials list
-                    component_confidence_map = {
-                        comp.name.lower().strip(): {
-                            "confidence": comp.confidence,
-                            "reasoning": comp.reasoning,
-                        }
-                        for comp in component_objects
-                    }
-                else:
-                    component_objects = []
-                    components = components_result
-                    component_confidence_map = {}
-                print(f"✓ Extracted {len(components)} components")
-            else:
-                components = []
-                component_objects = []
-                component_confidence_map = {}
-                print(f"✓ Extracted {len(components)} components")
-
-            # Phase 2: Extract materials
             materials_list = await self._extract_materials_for_technology(components, tech, usage)
-
             if not materials_list or not materials_list.component_list:
                 logger.error(f"No materials extracted for {tech}")
                 print(f"✗ No materials extracted for {tech}")
@@ -304,20 +242,14 @@ class STDNOrchestrator:
 
             print(f"✓ Extracted materials for {len(materials_list.component_list)} components")
 
-            # Get transcript path AFTER materials are extracted (so transcript exists)
-            transcript_path = None
-            if self.save_transcripts and self.reporter:
-                transcripts = list(self.reporter.output_dir.glob(f"{tech}_*.txt"))
-                if transcripts:
-                    transcript_path = max(transcripts, key=lambda p: p.stat().st_mtime)
+            transcript_path = self._get_latest_transcript_path(tech)
 
-            # Phase 3: Enrich with country data (pass component_confidence_map)
             enriched_data = await self._enrich_with_country_data(
                 materials_list,
                 tech,
                 usage,
                 transcript_path=transcript_path,
-                component_confidence_map=component_confidence_map,  # ← PASS THIS
+                component_confidence_map=component_confidence_map,
             )
 
             if self.save_transcripts and self.reporter and enriched_data:
@@ -326,7 +258,7 @@ class STDNOrchestrator:
             return {
                 "technology": tech,
                 "components": components,
-                "component_objects": component_objects,  # Preserve for transcript
+                "component_objects": component_objects,
                 "materials": materials_list,
                 "enriched_data": enriched_data,
             }
@@ -335,6 +267,87 @@ class STDNOrchestrator:
             logger.error(f"Error processing technology {tech}: {e}", exc_info=True)
             print(f"✗ Error processing {tech}: {e}")
             return None
+
+    async def _run_component_extraction(
+        self,
+        tech: str,
+        role: str,
+        usage: RunUsage,
+    ):
+        if self.use_debate:
+            return await self.extract_components_with_debate(tech, role, usage)
+        return await self.component_extractor.extract_components_simple(tech, usage)
+
+    def _prepare_components_and_confidence(
+        self,
+        components_result,
+    ) -> tuple[list[str], list[Any], dict[str, Dict[str, Any]]]:
+        from typing import cast
+
+        from ..agents.component_agent import ComponentWithConfidence
+
+        if hasattr(components_result, "component_list"):
+            component_objects = cast(
+                list[ComponentWithConfidence],
+                components_result.component_list,
+            )
+            components: list[str] = [comp.name for comp in component_objects]
+
+            component_confidence_map: dict[str, Dict[str, Any]] = {}
+            for comp in component_objects:
+                normalized_name = comp.name.lower().strip()
+                component_confidence_map[normalized_name] = {
+                    "confidence": comp.confidence,
+                    "reasoning": comp.reasoning,
+                }
+
+            if component_objects:
+                avg_confidence = sum(comp.confidence for comp in component_objects) / len(
+                    component_objects
+                )
+                print(
+                    f"✓ Extracted {len(components)} components "
+                    f"(avg confidence: {avg_confidence:.2f})"
+                )
+            else:
+                print(f"✓ Extracted {len(components)} components")
+
+            return components, component_objects, component_confidence_map
+
+        if isinstance(components_result, list):
+            if components_result and hasattr(components_result[0], "name"):
+                component_objects = cast(list[ComponentWithConfidence], components_result)
+                components = [comp.name for comp in component_objects]
+                component_confidence_map = {
+                    comp.name.lower().strip(): {
+                        "confidence": comp.confidence,
+                        "reasoning": comp.reasoning,
+                    }
+                    for comp in component_objects
+                }
+            else:
+                component_objects = []
+                components = components_result
+                component_confidence_map = {}
+
+            print(f"✓ Extracted {len(components)} components")
+            return components, component_objects, component_confidence_map
+
+        components = []
+        component_objects = []
+        component_confidence_map = {}
+        print(f"✓ Extracted {len(components)} components")
+        return components, component_objects, component_confidence_map
+
+    def _get_latest_transcript_path(self, tech: str) -> Optional[Path]:
+        if not (self.save_transcripts and self.reporter):
+            return None
+
+        transcripts = list(self.reporter.output_dir.glob(f"{tech}_*.txt"))
+        if not transcripts:
+            return None
+
+        return max(transcripts, key=lambda p: p.stat().st_mtime)
 
     def _append_country_data_to_transcript(
         self, technology: str, enriched_data: list[dict[str, Any]]

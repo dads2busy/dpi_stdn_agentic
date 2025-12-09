@@ -12,35 +12,16 @@ from __future__ import annotations
 
 import logging
 from collections import defaultdict
-from dataclasses import dataclass, replace
+from dataclasses import replace
 from typing import Any, Dict, List, Optional
 
 from pydantic_ai import RunUsage
 
 from ..agents import get_country_data_agent
 from ..models import STDNDependencies
+from .material_country_models import CountryProposal
 
 logger = logging.getLogger(__name__)
-
-
-# ============================================================================
-# Data Structures
-# ============================================================================
-
-
-@dataclass
-class CountryProposal:
-    """A country production proposal from an agent."""
-
-    agent_id: str
-    country: str
-    meas_unit: str
-    amount: float
-    percentage: float
-    rank: int  # Cardinal rank (1-10)
-    round_num: int
-    confidence: float = 0.8  # ADD THIS - default for backward compatibility
-    reasoning: str = ""  # ADD THIS
 
 
 # ============================================================================
