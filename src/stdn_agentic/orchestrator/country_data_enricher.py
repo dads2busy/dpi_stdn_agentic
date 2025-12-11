@@ -138,7 +138,7 @@ class CountryDataEnricher:
                     country_data = await self.country_repo.get_country_data(
                         material=material_name,
                         src_year=getattr(self.country_repo, "src_year", 2024),
-                        meas_year=getattr(self.country_repo, "meas_year", 2025),
+                        meas_year=getattr(self.country_repo, "meas_year", 2023),
                         usage=usage,
                         use_debate=self.use_debate,
                         transcript_path=transcript_path,

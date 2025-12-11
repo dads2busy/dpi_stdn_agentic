@@ -982,10 +982,29 @@ class MultiAgentDebater:
         )
         print(f"  Extracted {len(consensus)} components with dynamic confidence weighting")
 
+        # DEBUG: inspect one detail entry to see its structure
+        if component_details:
+            first_key = next(iter(component_details))
+            first = component_details[first_key]
+            print("DEBUG first key:", first_key)
+            print("DEBUG first detail:", first)
+
+        # Filter using the effective per-component confidence from component_details
+        filtered_component_details: Dict[str, Dict[str, Any]] = {
+            name: details
+            for name, details in component_details.items()
+            if details.get("confidence", 0.0) > 0.0
+        }
+
+        # Consensus is just the keys that survived
+        filtered_consensus = list(filtered_component_details.keys())
+
+        print(f"  Kept {len(filtered_consensus)} components after dropping 0.0-confidence entries")
+
         return {
             "technology": technology,
-            "components": consensus,
-            "component_details": component_details,
+            "components": filtered_consensus,
+            "component_details": filtered_component_details,
             "confidence": convergence,
             "rounds": rounds_completed,
             "debate_history": debate_rounds,
