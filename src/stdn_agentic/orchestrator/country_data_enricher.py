@@ -134,6 +134,9 @@ class CountryDataEnricher:
                     continue
 
                 try:
+                    # Look up HS code for this material (for LLM cache key)
+                    hs_code = self.country_repo.lookup_hs_code(material_name)
+
                     # Query country data repository
                     country_data = await self.country_repo.get_country_data(
                         material=material_name,
@@ -142,6 +145,7 @@ class CountryDataEnricher:
                         usage=usage,
                         use_debate=self.use_debate,
                         transcript_path=transcript_path,
+                        hs_code=hs_code,
                     )
 
                     if country_data:

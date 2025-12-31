@@ -133,6 +133,9 @@ class STDNOrchestrator:
             deps=self.deps,
             top_n=5,
             use_llm_fallback=True,
+            enable_llm_cache=config.enable_llm_fallback_cache,
+            llm_cache_dir=config.llm_fallback_cache_dir,
+            llm_cache_ttl_hours=config.llm_fallback_cache_ttl_hours,
         )
 
         # Output file with timestamp

@@ -107,6 +107,19 @@ class ConfigModel(BaseModel):
         le=20,
         description="Number of top producing countries to include per material",
     )
+    enable_llm_fallback_cache: bool = Field(
+        default=True,
+        description="Enable persistent caching of successful LLM fallback debates",
+    )
+    llm_fallback_cache_dir: str = Field(
+        default="./data/llm_fallback_cache",
+        description="Directory path for LLM fallback cache files",
+    )
+    llm_fallback_cache_ttl_hours: int = Field(
+        default=720,
+        ge=1,
+        description="Time-to-live for LLM cache entries in hours (default: 720 = 30 days)",
+    )
     generate_country_data: bool = Field(
         default=False, description="Whether to generate country production data"
     )

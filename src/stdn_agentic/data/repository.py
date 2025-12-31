@@ -16,6 +16,7 @@ from pydantic_ai import RunUsage
 
 from ..agents import get_country_data_agent
 from ..models import STDNDependencies
+from .llm_fallback_cache import LLMFallbackCache
 from .usgs_client import USGSClient
 
 logger = logging.getLogger(__name__)
@@ -60,6 +61,9 @@ class CountryDataRepository:
         deps: STDNDependencies,
         top_n: int = 5,
         use_llm_fallback: bool = True,
+        enable_llm_cache: bool = True,
+        llm_cache_dir: str = "./data/llm_fallback_cache",
+        llm_cache_ttl_hours: int = 720,
     ):
         """
         Initialize country data repository.
@@ -69,17 +73,29 @@ class CountryDataRepository:
             deps: STDN dependencies for LLM access
             top_n: Number of top countries to return
             use_llm_fallback: Use LLM when USGS has no data
+            enable_llm_cache: Use LLM fallback cache
+            llm_cache_dir: Directory for LLM cache files
+            llm_cache_ttl_hours: Cache TTL in hours
         """
         self.database_path = database_path
         self.top_n = top_n
         self.deps = deps
         self.use_llm_fallback = use_llm_fallback
+        self.enable_llm_cache = enable_llm_cache
 
         # Initialize USGS client
         self.usgs_client = USGSClient(database_path, top_n=top_n)
 
         # Initialize LLM agent if fallback enabled
         self.country_agent = get_country_data_agent() if use_llm_fallback else None
+
+        # Initialize LLM fallback cache
+        self.llm_cache = None
+        if enable_llm_cache and use_llm_fallback:
+            self.llm_cache = LLMFallbackCache(
+                cache_dir=llm_cache_dir, ttl_hours=llm_cache_ttl_hours
+            )
+            logger.info(f"✓ LLM fallback cache enabled: {llm_cache_dir}")
 
         # Cache for material-country mappings
         self.cache: Dict[str, List[Dict]] = {}
@@ -92,15 +108,25 @@ class CountryDataRepository:
         usage: Optional[RunUsage] = None,
         use_debate: bool = False,
         transcript_path: Optional[Path] = None,
+        hs_code: Optional[str] = None,
     ) -> List[Dict]:
-        """Get country production data for a material with confidence scoring."""
+        """
+        Get country production data for a material with confidence scoring.
+
+        Query order:
+        1. Memory cache (fastest)
+        2. USGS database (high confidence)
+        3. LLM fallback cache (previously successful debates)
+        4. LLM debate (expensive, cached for future)
+        """
+        # Check memory cache
         cache_key = f"{material}_{src_year}_{meas_year}"
         if cache_key in self.cache:
-            print(f"✓ Cache hit for {material}")
+            logger.info(f"✓ Memory cache hit for {material}")
             return self.cache[cache_key]
 
-        # Try USGS database
-        print(f"Querying USGS for {material} (year {src_year}/{meas_year})")
+        # Try USGS database first
+        logger.info(f"Querying USGS for {material} ({src_year}/{meas_year})...")
         usgs_data = self.query_usgs(material, src_year, meas_year)
 
         if usgs_data:
@@ -108,14 +134,54 @@ class CountryDataRepository:
                 material, usgs_data, src_year, meas_year, cache_key, transcript_path
             )
 
-        # Fall back to LLM if enabled
-        if self.use_llm_fallback and self.country_agent:
-            return await self._process_llm_fallback(
-                material, meas_year, usage, use_debate, cache_key, transcript_path
+        # USGS has no data - check LLM fallback cache
+        if self.enable_llm_cache and self.llm_cache and hs_code:
+            logger.info(f"USGS miss - checking LLM fallback cache for {material}...")
+            cached_llm_data = self.llm_cache.get_countries(
+                hs_code=hs_code, usgs_name=material, src_year=src_year, meas_year=meas_year
             )
 
-        print(f"✗ No data found for {material}")
-        return []
+            if cached_llm_data:
+                # Cache hit! Use cached debate result
+                self.cache[cache_key] = cached_llm_data
+
+                if transcript_path:
+                    self.append_country_data_to_transcript(
+                        transcript_path, material, cached_llm_data, source="LLM Fallback Cache"
+                    )
+
+                logger.info(f"✓ LLM cache hit for {material}: {len(cached_llm_data)} countries")
+                return cached_llm_data
+
+        # No USGS, no cache - use LLM fallback
+        if not self.use_llm_fallback:
+            logger.warning(f"No USGS data for {material} and LLM fallback disabled")
+            return []
+
+        logger.info(f"Running LLM fallback for {material}...")
+        llm_data = await self._process_llm_fallback(
+            material, meas_year, usage, use_debate, cache_key, transcript_path
+        )
+
+        # Cache successful LLM result in persistent cache for future runs
+        if llm_data and self.enable_llm_cache and self.llm_cache:
+            if not hs_code:
+                hs_code = self.lookup_hs_code(material)
+
+            if hs_code:
+                avg_confidence = sum(c.get("confidence", 0.0) for c in llm_data) / len(llm_data)
+                self.llm_cache.set_countries(
+                    hs_code=hs_code,
+                    usgs_name=material,
+                    src_year=src_year,
+                    meas_year=meas_year,
+                    countries=llm_data,
+                    confidence=avg_confidence,
+                    metadata={"debate_used": use_debate, "num_countries": len(llm_data)},
+                )
+                logger.info(f"✓ Cached LLM result for future runs: {material}")
+
+        return llm_data if llm_data else []  # ← CORRECT!
 
     def _process_usgs_data(
         self,
