@@ -23,16 +23,17 @@ You can visualize the architecture as a shallow stack of layers:
 ```text
 CLI / stdn command
           ↓
-   STDN Orchestrator
- (pipeline + debate control)
+   STDNOrchestrator (pipeline.py)
           ↓
- ┌───────────────────────────┬───────────────────────────┬───────────────────────────┐
- │ Stage 1: Component Agents │ Stage 2: Materials Agents │ Stage 3: Country Repo    │
- │  – Propose components     │  – Map components →       │  – Query USGS DB         │
- │  – Optional debate        │    ontology materials     │  – Optional LLM fallback │
- └───────────────────────────┴───────────────────────────┴───────────────────────────┘
+ ┌──────────────────────┬──────────────────────┬──────────────────────┐
+ │ ComponentExtractor   │ MaterialsExtractor   │ CountryDataEnricher  │
+ │ (Stage 1)            │ (Stage 2)            │ (Stage 3)            │
+ │ • Multi-agent debate │ • Ontology enforce   │ • USGS DB queries    │
+ │ • Confidence scoring │ • Optional debate    │ • LLM fallback cache │
+ │ • Perspective prompts│ • Retry logic        │ • Null handling      │
+ └──────────────────────┴──────────────────────┴──────────────────────┘
           ↓
-   CSV outputs + transcripts
+   CSV + JSON outputs + debate transcripts
 ```
 
 **Module organization:** The codebase is structured as follows:
@@ -40,8 +41,9 @@ CLI / stdn command
 ```text
 src/stdn_agentic/
   ├── main.py                    # CLI entry point, config discovery, async orchestration
-  ├── orchestrator.py            # STDNOrchestrator class coordinating all pipeline stages
   ├── models.py                  # ConfigModel and STDNDependencies Pydantic models
+  ├── dependencies.py            # Dependency initialization and management
+  ├── utils.py                   # JSON loading, config validation, file I/O
   ├── core/
   │   ├── schemas.py             # Shared debate schemas (ComponentProposal, DebateResult, etc.)
   │   ├── base_agent.py          # Abstract base class for all agents
@@ -51,19 +53,33 @@ src/stdn_agentic/
   │   ├── materials_agent.py     # Material identification agent (MaterialsList schema)
   │   ├── country_agent.py       # Country production estimation agent
   │   └── factory.py             # Agent factory for creating configured agent instances
+  ├── orchestrator/
+  │   ├── pipeline.py            # STDNOrchestrator - main pipeline coordinator
+  │   ├── component_extractor.py # ComponentExtractor - Stage 1 logic
+  │   ├── materials_extractor.py # MaterialsExtractor - Stage 2 logic
+  │   ├── country_data_enricher.py # CountryDataEnricher - Stage 3 logic
+  │   ├── state_manager.py       # State management utilities
+  │   ├── checkpoint.py          # Checkpoint management
+  │   └── error_handler.py       # Error handling utilities
   ├── data/
   │   ├── loaders.py             # CSV and ontology loading utilities
-  │   ├── repository.py          # MaterialsRepository for USGS data access
+  │   ├── repository.py          # CountryDataRepository for USGS data access
   │   ├── usgs_client.py         # DuckDB/SQLite client for production databases
-  │   └── cache.py               # Material-country caching layer
+  │   ├── cache.py               # Material-country caching layer
+  │   └── llm_fallback_cache.py  # LLM fallback response caching
   ├── debate/
   │   ├── component_debater.py   # Multi-agent debate for components
   │   ├── component_models.py    # Component debate Pydantic models
+  │   ├── component_normalization.py  # Component name normalization
   │   ├── material_debater.py    # Multi-agent debate for materials
   │   ├── material_models.py     # Material debate Pydantic models
-  │   ├── material_country_debater.py  # Optional country data debate
-  │   └── *_normalization.py     # Text normalization for consensus matching
-  └── utils.py                   # JSON loading, config validation, file I/O
+  │   ├── material_normalization.py   # Material name normalization
+  │   ├── material_country_debater.py # Optional country data debate
+  │   └── material_country_models.py  # Country debate models
+  ├── reporting/
+  │   └── debate_reporter.py     # Debate transcript generation and saving
+  └── debate_transcripts/
+      └── results/               # Saved debate JSON/TXT files
 ```
 
 This architecture keeps the technology dependency network shallow at both the data and code levels. The orchestrator sees stages as black boxes with typed inputs and outputs (Pydantic models), agents know only their own tools and schemas, and data-access components hide details of the USGS and ontology files. That separation allows you to change models, swap data backends, or extend debate strategies without rewriting the whole system.
@@ -143,7 +159,12 @@ Configuration in STDN Agentic lives in a JSON file (by default `config.json`) an
   "materials_count_threshold": 5,
   
   "enable_checkpoints": true,
-  "checkpoint_interval": 5
+  "checkpoint_interval": 5,
+  
+  "enable_llm_fallback_cache": true,
+  "llm_fallback_cache_dir": "./cache/llm_fallback",
+  "llm_fallback_cache_ttl_hours": 168,
+  "debate_top_p": 0.0001
 }
 ```
 
@@ -192,7 +213,7 @@ Because the intermediate states are saved as structured data, you can inspect ou
 
 The component extraction stage turns a high-level technology entry (such as "Solar Panel" with a role and domain) into a list of major components that have their own supply chains, like solar cells, junction boxes, or aluminum frames. Conceptually, this stage provides the first layer of the STDN, where complex technologies are decomposed into subassemblies that are both meaningful and tractable. It is designed to capture components that can plausibly be procured, manufactured, or constrained independently.
 
-**Technical implementation:** The component agent is defined in `agents/component_agent.py` and uses Pydantic AI's `Agent` class. The agent is configured with:
+**Technical implementation:** Component extraction is handled by the `ComponentExtractor` class (defined in `orchestrator/component_extractor.py`), which manages both single-agent and multi-agent debate workflows. The underlying component agent is defined in `agents/component_agent.py` and uses Pydantic AI's `Agent` class with:
 
 - **System prompt:** `COMPONENT_SYSTEM_PROMPT` (detailed instructions on technology specification and component identification)
 - **Result type:** `ComponentList`, a Pydantic model with fields:
@@ -205,30 +226,34 @@ Each `ComponentWithConfidence` has:
 - `confidence: float` – 0.0–1.0 score
 - `reasoning: str` – justification text
 
-**Single-agent mode:** The orchestrator calls `await component_agent.run(user_prompt)` where `user_prompt` includes technology name, role, and domain. The LLM returns a structured `ComponentList` validated by Pydantic.
+**Single-agent mode:** The `ComponentExtractor` calls `await component_agent.run(user_prompt)` where `user_prompt` includes technology name, role, and domain. The LLM returns a structured `ComponentList` validated by Pydantic.
 
-**Multi-agent debate mode:** When `ENABLE_DEBATE=true`, the orchestrator invokes `debate.component_debater.ComponentDebater`, which:
-1. Creates 3 agent instances with different perspective prompts
+**Multi-agent debate mode:** When `ENABLE_DEBATE=true`, the `ComponentExtractor` coordinates multi-agent debate through:
+1. Creating 3 agent instances with different **perspective prompts**:
+   - Agent 1: "Focus on identifying major procurable subassemblies and modules"
+   - Agent 2: "Focus on structural components and physical assemblies"
+   - Agent 3: "Focus on distinguishing manufactured components from raw materials"
 2. Each agent independently proposes components (Round 0)
-3. Computes overlap and generates critiques highlighting consensus vs. isolated proposals
-4. Agents refine proposals based on critiques (Round 1, 2, …)
-5. Stops when overlap ≥ `convergence_threshold` or `max_debate_rounds` reached
-6. Merges proposals into consensus set, averaging confidence scores
+3. Computing overlap and generating critiques highlighting consensus vs. isolated proposals
+4. Agents refine proposals based on peer critiques (Round 1, 2, …)
+5. Applying **dynamic confidence scoring** weighted by peer support
+6. Stopping when overlap ≥ `convergence_threshold` or `max_debate_rounds` reached
+7. Merging proposals into consensus set with averaged confidence scores
 
-Debate transcripts are saved to `src/stdn_agentic/debate_transcripts/results/` as JSON and TXT files with timestamps.
+Debate transcripts are saved to `src/stdn_agentic/debate_transcripts/results/` as both JSON (structured) and TXT (human-readable) files with timestamps, capturing round-by-round proposals, critiques, and convergence metrics.
 
 ### Stage 2 – Materials identification
 
 The materials identification stage maps each consensus component to its underlying raw materials—metals, minerals, or compounds—using a strict ontology derived from HS codes and USGS naming conventions. Conceptually, this stage answers the question "what specific substances does this component require?" while ensuring alignment with an authoritative vocabulary. It forms the second layer of the STDN by connecting components to materials in a controlled, auditable way.
 
-**Technical implementation:** The materials agent is defined in `agents/materials_agent.py` with a system prompt that embeds the full materials ontology (loaded from `materials_hs_codes_listing` CSV, typically 650+ materials). The agent:
+**Technical implementation:** Materials extraction is handled by the `MaterialsExtractor` class (defined in `orchestrator/materials_extractor.py`), which includes **configurable retry logic** (default: 5 attempts) and optional multi-agent debate. The underlying materials agent is defined in `agents/materials_agent.py` with a system prompt that embeds the full materials ontology (loaded from `materials_hs_codes_listing` CSV, typically 650+ materials). The agent:
 
 - **Input:** Component name, technology context, full ontology list
 - **Output:** `MaterialsList` Pydantic model with:
   - `materials: List[MaterialWithConfidence]`
   - Each material has `name`, `confidence`, and `reasoning`
 
-**Ontology enforcement:** After extraction, the orchestrator filters materials:
+**Ontology enforcement:** After extraction, the `MaterialsExtractor` filters materials against the authoritative ontology:
 
 ```python
 ontology_set = set(load_materials_ontology())
@@ -240,8 +265,13 @@ for material in extracted_materials:
 
 This ensures all materials map to entries in the USGS database and HS code taxonomy.
 
-**Multi-agent debate mode:** When `ENABLE_MATERIAL_DEBATE=true`, the `debate.material_debater.MaterialDebater` runs a similar process to component debate:
-- 3 agents propose materials independently
+**Enhanced error handling:** The `MaterialsExtractor` implements:
+- **Retry logic** with exponential backoff for transient failures
+- **Fallback strategies** when extraction repeatedly fails
+- **Validation checks** to ensure extracted materials are properly formatted
+
+**Multi-agent debate mode:** When `ENABLE_MATERIAL_DEBATE=true`, the `MaterialsExtractor` coordinates debate separately from component debate:
+- 3 agents propose materials independently for each component
 - Agents critique alternatives (e.g., "2/3 agents said Aluminum, 1 said Steel—consolidate?")
 - Convergence computed on normalized material names
 - Final consensus merged from high-agreement proposals
@@ -252,7 +282,7 @@ All debate transcripts are saved with material-level reasoning chains.
 
 The country production data stage links materials to the countries that produce them, completing the shallow dependency network by adding geographic and quantitative context. Conceptually, this stage answers "who controls the supply of these materials?" and is the most directly relevant for geopolitical or risk analyses. It forms the third layer in the STDN by attaching production volumes and shares to each material.
 
-**Technical implementation:** The country repository is implemented in `data/repository.py` as `MaterialsRepository`, which:
+**Technical implementation:** Country data enrichment is handled by the `CountryDataEnricher` class (defined in `orchestrator/country_data_enricher.py`), which manages USGS queries, LLM fallback with caching, and null value handling. The underlying data repository is implemented in `data/repository.py` as `CountryDataRepository`, which:
 
 1. **Queries USGS database** (DuckDB or SQLite via `data/usgs_client.py`):
    ```python
@@ -275,16 +305,24 @@ The country production data stage links materials to the countries that produce 
    - USGS  `confidence = 0.95` (authoritative source)
    - LLM fallback: `confidence = 0.70–0.85` (estimated)
 
-**LLM fallback:** When USGS data is missing, the system invokes `agents/country_agent.py` which uses a Pydantic AI agent to estimate production distribution based on:
-- Industry reports
-- Trade statistics
-- Geographic factors (mineral deposits, refining capacity)
+**LLM fallback with caching:** When USGS data is missing, the `CountryDataEnricher` invokes `agents/country_agent.py` which uses a Pydantic AI agent to estimate production distribution. To avoid redundant API calls, responses are cached via `LLMFallbackCache` (defined in `data/llm_fallback_cache.py`):
+
+- **Cache configuration:**
+  - Directory: `llm_fallback_cache_dir` (default: `./cache/llm_fallback`)
+  - TTL: `llm_fallback_cache_ttl_hours` (default: 168 hours = 1 week)
+  - Key format: `{material}_{year}_{top_n}`
+- **Estimation based on:**
+  - Industry reports
+  - Trade statistics
+  - Geographic factors (mineral deposits, refining capacity)
 
 The agent returns a `CountryProductionList` Pydantic model with `countries: List[CountryProduction]`, each having:
 - `country: str`
 - `share_percentage: float`
 - `confidence: float`
 - `reasoning: str`
+
+Cached responses are reused across technologies and runs, significantly reducing LLM API costs and latency.
 
 **Optional country debate:** With `ENABLE_COUNTRY_DEBATE=true`, the `debate.material_country_debater.MaterialCountryDebater` can run multi-agent consensus on production estimates, useful when USGS data is sparse or contested.
 
@@ -404,11 +442,13 @@ Multi-agent debate is a core capability of STDN Agentic that improves robustness
 
 ## Output formats and artifacts
 
-The framework is designed to produce outputs that are both machine-friendly and human-auditable, reflecting its dual audience of data analysts and subject-matter experts. The primary artifact is a CSV file that lists, for each input technology, the derived components, materials, and producing countries, along with associated confidence scores and justification summaries.
+The framework is designed to produce outputs that are both machine-friendly and human-auditable, reflecting its dual audience of data analysts and subject-matter experts. The system generates three types of outputs: CSV files for tabular analysis, JSON files for API integration, and debate transcripts for auditing multi-agent reasoning.
 
 ### CSV output schema
 
-**File:** `{output_dir}/{output_csv_filename}.csv` (default: `output/stdns_output.csv`)
+**File:** `{output_dir}/{output_csv_filename}_{timestamp}.csv` 
+
+**Example:** `output/stdns_output_20250105_143215.csv`
 
 **Columns:**
 ```csv
@@ -438,6 +478,61 @@ with open(output_file, 'w', newline='', encoding='utf-8') as f:
                         ...
                     })
 ```
+
+### JSON output schema
+
+**File:** `{output_dir}/{output_csv_filename}_{timestamp}.json`
+
+**Example:** `output/stdns_output_20250105_143215.json`
+
+**Format:** Structured JSON array with the same data as CSV but preserving data types:
+
+```json
+[
+  {
+    "technology": "Solar Panel",
+    "technology_specification": "Monocrystalline silicon photovoltaic (PV) module",
+    "technology_reasoning": "Represents 85% of global production...",
+    "component": "Solar Cells",
+    "component_confidence": 0.98,
+    "component_reasoning": "Core photovoltaic element universally present",
+    "material": "Silicon",
+    "material_confidence": 0.95,
+    "material_reasoning": "Primary semiconductor material",
+    "country": "China",
+    "production_share": 79.2,
+    "country_confidence": 0.95,
+    "country_reasoning": "USGS 2024 data"
+  },
+  ...
+]
+```
+
+**Benefits:**
+- **Direct API integration:** JSON can be consumed by web services and dashboards without parsing
+- **Type preservation:** Numbers remain numeric (not strings), enabling mathematical operations
+- **Easier parsing:** Native support in JavaScript, Python, and other languages
+- **Automatic generation:** Created alongside CSV with no additional configuration
+
+**Implementation:** The orchestrator's `_save_json_output()` method automatically converts the CSV to JSON after pipeline completion:
+
+```python
+def _save_json_output(self) -> str:
+    """Convert CSV output to JSON file."""
+    with open(self.output_file, 'r', encoding='utf-8') as f:
+        reader = csv.DictReader(f)
+        data = list(reader)
+    
+    json_filename = f"{self.config.output_csv_filename}_{self.timestamp}.json"
+    json_filepath = os.path.join(self.config.output_dir, json_filename)
+    
+    with open(json_filepath, 'w', encoding='utf-8') as f:
+        json.dump(data, f, indent=2, ensure_ascii=False)
+    
+    return json_filepath
+```
+
+Both CSV and JSON files share the same timestamp, making it easy to match outputs from the same run.
 
 ### Debate transcripts
 
