@@ -15,7 +15,7 @@ Key enhancements:
 import logging
 import os
 from difflib import SequenceMatcher
-from typing import Iterator, List, Optional
+from typing import Any, List, Optional, cast
 
 from pydantic import BaseModel, ConfigDict, Field
 from pydantic_ai import Agent, ModelRetry, RunContext
@@ -392,18 +392,14 @@ def enhanced_material_match(
 # ============================================================================
 
 
-async def validate_materials(
-    ctx: RunContext[STDNDependencies],
-    materials: List[str],
-) -> List[str]:
-    """Enhanced validation with comprehensive None/empty checks."""
+def _validate_materials_input(materials: Any, ctx: RunContext[STDNDependencies]) -> None:
+    """Validate that materials input is a non-None list."""
     if materials is None:
         logger.error("validate_materials received None")
         if ctx.retry < 1:
             raise ModelRetry(
                 "Materials list is None. Please return a valid list of material names as strings.",
             )
-        return []
 
     if not isinstance(materials, list):
         logger.error("validate_materials received %s instead of list", type(materials))
@@ -413,8 +409,10 @@ async def validate_materials(
                 f"{type(materials).__name__}. "
                 "Please return a list of material name strings.",
             )
-        return []
 
+
+def _filter_valid_materials(materials: List[str]) -> List[str]:
+    """Filter out None, non-string, and empty materials."""
     valid_materials: List[str] = []
     for material in materials:
         if material is None:
@@ -425,7 +423,11 @@ async def validate_materials(
         if not stripped:
             continue
         valid_materials.append(stripped)
+    return valid_materials
 
+
+def _check_empty_materials(valid_materials: List[str], ctx: RunContext[STDNDependencies]) -> None:
+    """Check if all materials are empty after filtering."""
     if not valid_materials:
         logger.warning("All materials were None/empty after filtering")
         if ctx.retry < 1:
@@ -433,18 +435,33 @@ async def validate_materials(
                 "All provided materials were empty or invalid. "
                 "Please provide valid material name strings.",
             )
-        return []
 
+
+def _map_materials_to_ontology(
+    valid_materials: List[str],
+    ontology: List[str],
+) -> tuple[List[str], List[str]]:
+    """Map materials to ontology, returning validated and unmapped lists."""
     validated: List[str] = []
     unmapped: List[str] = []
 
     for material in valid_materials:
-        mapped = enhanced_material_match(material, ctx.deps.material_ontology_list)
-        if mapped in ctx.deps.material_ontology_list:
+        mapped = enhanced_material_match(material, ontology)
+        if mapped in ontology:
             validated.append(mapped)
         else:
             unmapped.append(material)
 
+    return validated, unmapped
+
+
+def _handle_mapping_results(
+    validated: List[str],
+    unmapped: List[str],
+    valid_materials: List[str],
+    ctx: RunContext[STDNDependencies],
+) -> List[str]:
+    """Handle the results of material mapping."""
     if validated:
         if unmapped:
             logger.info(
@@ -461,6 +478,32 @@ async def validate_materials(
         )
 
     return valid_materials if valid_materials else []
+
+
+async def validate_materials(
+    ctx: RunContext[STDNDependencies],
+    materials: Optional[List[str]],
+) -> List[str]:
+    """Enhanced validation with comprehensive None/empty checks."""
+    _validate_materials_input(materials, ctx)
+
+    if materials is None or not isinstance(materials, list):
+        return []
+
+    # Type narrowing: at this point materials is guaranteed to be List[str]
+    materials_list = cast(List[str], materials)
+    valid_materials = _filter_valid_materials(materials_list)
+    _check_empty_materials(valid_materials, ctx)
+
+    if not valid_materials:
+        return []
+
+    validated, unmapped = _map_materials_to_ontology(
+        valid_materials,
+        ctx.deps.material_ontology_list,
+    )
+
+    return _handle_mapping_results(validated, unmapped, valid_materials, ctx)
 
 
 # ============================================================================

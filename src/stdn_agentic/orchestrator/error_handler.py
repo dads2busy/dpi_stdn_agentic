@@ -157,7 +157,7 @@ class ErrorHandler:
             ... )
         """
         retries = max_retries if max_retries is not None else self.max_retries
-        last_error = None
+        last_error: Optional[Exception] = None
 
         for attempt in range(retries + 1):
             try:
@@ -177,7 +177,9 @@ class ErrorHandler:
                     )
 
         # All retries failed
-        raise last_error
+        if last_error is not None:
+            raise last_error
+        raise RuntimeError("No attempts were made")
 
     def get_error_summary(self) -> Dict[str, Any]:
         """

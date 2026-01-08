@@ -1,9 +1,10 @@
 """Quick test of agent initialization"""
+
 from stdn_agentic.agents import (
+    AgentFactory,
     get_component_agent,
-    get_materials_agent, 
     get_country_data_agent,
-    AgentFactory
+    get_materials_agent,
 )
 
 print("Testing agent initialization...")

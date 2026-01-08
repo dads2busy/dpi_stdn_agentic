@@ -17,8 +17,7 @@ import csv
 import json
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional
-
+from typing import Any, Dict, List
 
 # ============================================================================
 # Data Structures
@@ -147,9 +146,7 @@ class RunLoader:
 
             # Parse timestamp
             try:
-                timestamp = datetime.strptime(
-                    f"{date_str}_{time_str}", "%Y%m%d_%H%M%S"
-                )
+                timestamp = datetime.strptime(f"{date_str}_{time_str}", "%Y%m%d_%H%M%S")
             except ValueError:
                 # Fallback to file modification time
                 timestamp = datetime.fromtimestamp(file_path.stat().st_mtime)

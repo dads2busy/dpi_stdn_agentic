@@ -323,13 +323,13 @@ class AgentFactory:
             >>> factory.print_status()
             # Output shows caching status and cached agents
         """
-        print(f"Factory Status:")
+        print("Factory Status:")
         print(f"  Caching enabled: {self._caching_enabled}")
         print(f"  Cached agents: {self.get_cached_agent_count()}")
 
         if self._component_agent is not None:
-            print(f"    - component")
+            print("    - component")
         if self._materials_agent is not None:
-            print(f"    - materials")
+            print("    - materials")
         if self._country_agent is not None:
-            print(f"    - country")
+            print("    - country")

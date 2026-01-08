@@ -78,8 +78,8 @@ class DataLoader:
                     try:
                         col_idx = header.index(column)
                         return [row[col_idx] for row in rows if len(row) > col_idx]
-                    except ValueError:
-                        raise ValueError(f"Column '{column}' not found in CSV")
+                    except ValueError as e:
+                        raise ValueError(f"Column '{column}' not found in CSV") from e
 
                 return rows
 
