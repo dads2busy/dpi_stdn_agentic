@@ -11,16 +11,11 @@ This test suite validates:
 7. Edge cases (low convergence, single agent, empty proposals)
 """
 
-import asyncio
-from pathlib import Path
-from typing import Dict, List
-
 import pytest
 
-from stdn_agentic.agents import ComponentList, get_component_agent
+from stdn_agentic.agents import get_component_agent
 from stdn_agentic.debate import MultiAgentDebater
-from stdn_agentic.dependencies import initialize_dependencies
-from stdn_agentic.models import ConfigModel, STDNDependencies
+from stdn_agentic.models import STDNDependencies
 
 # ============================================================================
 # Fixtures
@@ -34,11 +29,10 @@ def mock_deps():
         material_ontology="Lithium, Cobalt, Nickel, Copper, Aluminum",
         material_ontology_dict={"Lithium": 1, "Cobalt": 2},
         material_ontology_list=["Lithium", "Cobalt", "Nickel", "Copper", "Aluminum"],
-        materials_top_countries_dict={},
         years_to_query=[2024, 2025],
         client=None,
         model="ollama:qwen2.5:7b",
-        topp=0.9,
+        top_p=0.9,
     )
 
 

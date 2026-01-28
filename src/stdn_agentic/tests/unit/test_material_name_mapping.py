@@ -22,7 +22,6 @@ def test_material_name_preservation():
         material_ontology=", ".join(material_list),
         material_ontology_dict={},
         material_ontology_list=material_list,
-        materials_top_countries_dict={},
         years_to_query=[2024],
         client=ollama.Client(),
         model="qwen2.5:7b",

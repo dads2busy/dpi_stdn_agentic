@@ -3,11 +3,8 @@ Test for country debate transcript integration
 """
 
 import asyncio
-import shutil
 import tempfile
 from pathlib import Path
-
-import duckdb
 
 
 async def test_country_debate_transcript():
@@ -21,8 +18,7 @@ async def test_country_debate_transcript():
     from pydantic_ai import RunUsage
 
     from stdn_agentic.data.repository import CountryDataRepository
-    from stdn_agentic.debate import MaterialCountryDebater
-    from stdn_agentic.models import ConfigModel, STDNDependencies
+    from stdn_agentic.models import STDNDependencies
 
     # Create temp directory for test
     temp_dir = Path(tempfile.mkdtemp())
@@ -60,9 +56,6 @@ async def test_country_debate_transcript():
         # Create material ontology dict
         material_ontology_dict = {mat.lower(): mat for mat in material_ontology_list}
 
-        # Load materials to countries mapping (can be empty dict for test)
-        materials_top_countries_dict = {}
-
         # Create Ollama client
         ollama_client = Client()  # ← CREATE OLLAMA CLIENT
 
@@ -72,7 +65,6 @@ async def test_country_debate_transcript():
             material_ontology="./data/hs_codes_and_usgs_names.csv",
             material_ontology_list=material_ontology_list,
             material_ontology_dict=material_ontology_dict,
-            materials_top_countries_dict=materials_top_countries_dict,
             years_to_query=[2024],
             top_p=0.0001,
             client=ollama_client,  # ← PASS OLLAMA CLIENT
