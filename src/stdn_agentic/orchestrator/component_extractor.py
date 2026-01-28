@@ -14,7 +14,9 @@ Features:
 import logging
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Optional
+
+# Import CanonicalVocab with TYPE_CHECKING to avoid circular imports
+from typing import TYPE_CHECKING, Dict, List, Optional
 
 from pydantic_ai import RunUsage
 
@@ -22,6 +24,9 @@ from ..agents import ComponentList, ComponentWithConfidence, get_component_agent
 from ..debate import MultiAgentDebater
 from ..dependencies import STDNDependencies
 from ..reporting import DebateReporter
+
+if TYPE_CHECKING:
+    from ..normalization import CanonicalVocab
 
 # Initialize logger
 logger = logging.getLogger(__name__)
@@ -43,6 +48,7 @@ class ComponentExtractor:
         reporter: Optional[DebateReporter] = None,
         timestamp: Optional[str] = None,
         debate_top_p: float = 0.0001,
+        canonical_vocab: Optional["CanonicalVocab"] = None,
     ):
         """
         Initialize component extractor.
@@ -53,6 +59,8 @@ class ComponentExtractor:
             debater: Optional MultiAgentDebater instance
             reporter: Optional DebateReporter instance
             timestamp: Optional timestamp for transcript filenames
+            debate_top_p: Top-p sampling for debate
+            canonical_vocab: Optional canonical vocabulary for component normalization
         """
         self.deps = deps
         self.component_agent = get_component_agent(model_name=model_name)
@@ -60,6 +68,7 @@ class ComponentExtractor:
         self.reporter = reporter
         self.timestamp = timestamp or datetime.now().strftime("%Y%m%d_%H%M%S")
         self.debate_top_p = debate_top_p
+        self.canonical_vocab = canonical_vocab
 
     async def extract_components_simple(
         self, technology: str, usage: RunUsage
@@ -287,6 +296,7 @@ class ComponentExtractor:
             initial_proposals=agent_proposals,
             component_agent=self.component_agent,
             deps=self.deps,
+            canonical_vocab=self.canonical_vocab,
         )
 
         if not debate_result:

@@ -6,6 +6,7 @@ This module coordinates the end-to-end STDN generation workflow:
 2. Materials identification for each component
 3. Country production data enrichment
 4. CSV output generation
+5. Component name normalization (post-processing)
 
 The orchestrator manages agents, debate systems, checkpoint management,
 and reporting for large-scale STDN generation from technology lists.
@@ -16,6 +17,7 @@ Enhanced features:
 - Adaptive consensus building based on convergence scores
 - Dynamic confidence scoring for all components
 - Detailed logging and progress reporting
+- Post-run component normalization with persistent vocabulary
 """
 
 import csv
@@ -35,6 +37,7 @@ from ..data import CountryDataRepository
 from ..debate.component_debater import MultiAgentDebater
 from ..dependencies import initialize_dependencies
 from ..models import ConfigModel
+from ..normalization.canonical_vocab import CanonicalVocab
 from ..reporting import DebateReporter
 from .component_extractor import ComponentExtractor
 from .country_data_enricher import CountryDataEnricher
@@ -58,6 +61,9 @@ class STDNOrchestrator:
         enable_debate: bool = False,
         enable_material_debate: bool = False,
         enable_country_debate: bool = False,
+        num_agents_component: int = 3,
+        num_agents_material: int = 3,
+        num_agents_country: int = 3,
         max_debate_rounds: int = 3,
         convergence_threshold: float = 0.8,
         save_transcripts: bool = True,
@@ -71,6 +77,9 @@ class STDNOrchestrator:
             enable_debate: Use multi-agent debate (True) or simple voting (False)
             enable_material_debate: Use debate for materials extraction
             enable_country_debate: Use debate for country data
+            num_agents_component: Number of agents for component extraction (default: 3)
+            num_agents_material: Number of agents for material extraction (default: 3)
+            num_agents_country: Number of agents for country data (default: 3)
             max_debate_rounds: Max debate rounds
             convergence_threshold: Convergence threshold
             save_transcripts: Save debate transcripts
@@ -83,6 +92,9 @@ class STDNOrchestrator:
         self.use_debate = enable_debate
         self.use_material_debate = enable_material_debate
         self.use_country_debate = enable_country_debate
+        self.num_agents_component = num_agents_component
+        self.num_agents_material = num_agents_material
+        self.num_agents_country = num_agents_country
         self.max_debate_rounds = max_debate_rounds
         self.convergence_threshold = convergence_threshold
         self.save_transcripts = save_transcripts
@@ -138,30 +150,46 @@ class STDNOrchestrator:
             llm_cache_ttl_hours=config.llm_fallback_cache_ttl_hours,
         )
 
-        # Output file with timestamp
+        # Output directories: raw and normalized
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         self.timestamp = timestamp  # Store for JSON output
-        output_filename = f"{config.output_csv_filename}_{timestamp}.csv"
-        self.output_file = os.path.join(config.output_dir, output_filename)
-        os.makedirs(config.output_dir, exist_ok=True)
+        debate_config_str = self._build_debate_config_string()
+        output_filename = f"{config.output_csv_filename}_{debate_config_str}_{timestamp}.csv"
 
-        # Initialize component extractor
+        # Set up output directory structure
+        self.raw_output_dir = os.path.join(config.output_dir, "raw")
+        self.normalized_output_dir = os.path.join(config.output_dir, "normalized")
+        os.makedirs(self.raw_output_dir, exist_ok=True)
+        os.makedirs(self.normalized_output_dir, exist_ok=True)
+
+        # Raw output file (written during pipeline)
+        self.output_file = os.path.join(self.raw_output_dir, output_filename)
+
+        # Normalized output file (written after pipeline)
+        self.normalized_output_file = os.path.join(self.normalized_output_dir, output_filename)
+
+        # Canonical vocabulary for component normalization (stored in data/ as reference data)
+        self.canonical_vocab = CanonicalVocab(vocab_path="data/component_canonical_vocab.json")
+
+        # Initialize component extractor (use component-specific model)
         self.component_extractor = ComponentExtractor(
             deps=self.deps,
-            model_name=self.deps.model,
+            model_name=self.deps.get_component_model(),
             debater=self.debater,
             reporter=self.reporter,
             timestamp=self.timestamp,
             debate_top_p=self.debate_top_p,
+            canonical_vocab=self.canonical_vocab,
         )
 
-        # Initialize materials extractor
+        # Initialize materials extractor (use materials-specific model)
         self.materials_extractor = MaterialsExtractor(
             deps=self.deps,
-            model_name=self.deps.model,
+            model_name=self.deps.get_materials_model(),
             reporter=self.reporter,
             timestamp=self.timestamp,
             use_debate=self.use_material_debate,
+            num_agents=self.num_agents_material,
             max_retries=5,
             debate_max_rounds=self.max_debate_rounds,
             debate_convergence_threshold=self.convergence_threshold,
@@ -174,7 +202,38 @@ class STDNOrchestrator:
             reporter=self.reporter,
             write_nulls=self.write_nulls,
             use_debate=self.use_country_debate,
+            num_agents=self.num_agents_country,
         )
+
+    def _build_debate_config_string(self) -> str:
+        """
+        Build a compact string encoding the debate configuration for each phase.
+
+        Format: {component}{material}{country} where each is:
+        - 'd{n}' for debate with n agents
+        - 'v{n}' for voting/single-agent with n agents
+
+        Examples:
+        - 'd3d3v3' = debate(3) for components, debate(3) for materials, voting(3) for country
+        - 'v1v1v1' = single agent throughout
+        - 'd3v1v3' = debate(3) for components, single for materials, voting(3) for country
+        """
+        # Component phase: d = debate enabled, v = voting/single
+        comp_prefix = "d" if self.use_debate else "v"
+        comp_agents = self.num_agents_component if self.use_debate else 1
+        comp_str = f"{comp_prefix}{comp_agents}"
+
+        # Material phase: d = debate enabled, v = voting/single
+        mat_prefix = "d" if self.use_material_debate else "v"
+        mat_agents = self.num_agents_material if self.use_material_debate else 1
+        mat_str = f"{mat_prefix}{mat_agents}"
+
+        # Country phase: v = voting (country uses voting, not iterative debate)
+        # When enabled, it's multi-agent voting; when disabled, single agent
+        country_agents = self.num_agents_country if self.use_country_debate else 1
+        country_str = f"v{country_agents}"
+
+        return f"{comp_str}{mat_str}{country_str}"
 
     async def extract_components_with_debate(
         self, technology: str, role: str, usage: RunUsage, num_agents: int = 3
@@ -278,7 +337,9 @@ class STDNOrchestrator:
         usage: RunUsage,
     ):
         if self.use_debate:
-            return await self.extract_components_with_debate(tech, role, usage)
+            return await self.extract_components_with_debate(
+                tech, role, usage, num_agents=self.num_agents_component
+            )
         return await self.component_extractor.extract_components_simple(tech, usage)
 
     def _prepare_components_and_confidence(
@@ -383,6 +444,178 @@ class STDNOrchestrator:
             json.dump(data, f, indent=2, ensure_ascii=False)
 
         return json_filepath
+
+    async def _normalize_output(self) -> str:
+        """
+        Normalize component names for all raw CSVs with the same debate configuration.
+
+        This method:
+        1. Finds all raw CSV files matching the current debate config (e.g., d3d3v3)
+        2. Extracts unique component names across ALL matching files
+        3. Normalizes unknown names via LLM and updates the vocabulary
+        4. Re-normalizes ALL matching files with the complete vocabulary
+
+        This ensures consistency across all runs with the same configuration,
+        even when new component names are discovered in later runs.
+
+        Returns:
+            Path to normalized output file for the current run
+        """
+        from glob import glob
+
+        import pandas as pd
+
+        print("\n" + "=" * 80)
+        print("Post-Processing: Component Name Normalization")
+        print("=" * 80)
+
+        # Find all raw CSV files with the same debate configuration
+        debate_config_str = self._build_debate_config_string()
+        raw_pattern = os.path.join(
+            self.raw_output_dir, f"{self.config.output_csv_filename}_{debate_config_str}_*.csv"
+        )
+        matching_files = sorted(glob(raw_pattern))
+
+        if not matching_files:
+            logger.warning(f"No files found matching pattern: {raw_pattern}")
+            return self.output_file
+
+        print(f"Found {len(matching_files)} files with config '{debate_config_str}'")
+
+        # Extract unique component names from ALL matching files
+        all_unique_components: set = set()
+        for csv_path in matching_files:
+            try:
+                df = pd.read_csv(csv_path)
+                if "component" in df.columns:
+                    components = df["component"].dropna().unique()
+                    all_unique_components.update(components)
+            except Exception as e:
+                logger.warning(f"Error reading {csv_path}: {e}")
+
+        unique_components = list(all_unique_components)
+        print(f"Found {len(unique_components)} unique component names across all files")
+
+        # Check vocab for cached mappings
+        cached, unknown = self.canonical_vocab.lookup_batch(unique_components)
+        print(f"  - {len(cached)} already in vocabulary")
+        print(f"  - {len(unknown)} need LLM normalization")
+
+        # Normalize unknown names with LLM
+        if unknown:
+            new_mappings = await self._normalize_components_with_llm(unknown)
+            self.canonical_vocab.add_mappings(new_mappings)
+            self.canonical_vocab.save()
+            print(f"  - Added {len(new_mappings)} new mappings to vocabulary")
+
+        # Build complete mapping from vocabulary (use all known mappings)
+        all_mappings = dict(self.canonical_vocab.mappings)
+
+        # Create lowercase lookup for case-insensitive matching
+        lower_mappings = {k.lower(): v for k, v in all_mappings.items()}
+
+        # Re-normalize ALL matching files
+        print(f"\nRe-normalizing {len(matching_files)} files...")
+        for csv_path in matching_files:
+            try:
+                df = pd.read_csv(csv_path)
+                if "component" not in df.columns:
+                    continue
+
+                # Apply normalization
+                original_components = df["component"].copy()
+                df["component"] = df["component"].apply(
+                    lambda x: lower_mappings.get(str(x).lower(), x) if pd.notna(x) else x
+                )
+
+                # Count changes
+                changes = (original_components != df["component"]).sum()
+
+                # Save to normalized directory
+                normalized_path = os.path.join(
+                    self.normalized_output_dir, os.path.basename(csv_path)
+                )
+                df.to_csv(normalized_path, index=False)
+                logger.info(f"  {os.path.basename(csv_path)}: {changes} components normalized")
+
+            except Exception as e:
+                logger.error(f"Error normalizing {csv_path}: {e}")
+
+        print(f"✓ Normalized outputs saved to: {self.normalized_output_dir}")
+
+        return self.normalized_output_file
+
+    async def _normalize_components_with_llm(self, unknown_names: List[str]) -> Dict[str, str]:
+        """
+        Use LLM to normalize unknown component names.
+
+        Args:
+            unknown_names: List of component names not in vocabulary
+
+        Returns:
+            Dict mapping raw names to canonical names
+        """
+        from pydantic import BaseModel, Field
+        from pydantic_ai import Agent
+
+        if not unknown_names:
+            return {}
+
+        logger.info(f"Sending {len(unknown_names)} unknown names to LLM for normalization")
+
+        class ComponentMapping(BaseModel):
+            mappings: Dict[str, str] = Field(
+                description="Dict mapping each input component name to its canonical form"
+            )
+
+        system_prompt = """You are a component name normalizer for supply chain analysis.
+
+Your task is to map raw component names to canonical forms while preserving material-relevant specificity.
+
+RULES:
+1. Consolidate naming variations to a single canonical form
+   - "Li-ion Battery", "Lithium Ion Battery", "Battery Pack (Li-ion)" → "Lithium-ion Battery"
+   - "LCD Panel", "LCD Display", "Liquid Crystal Display" → "LCD Display"
+   - "CPU", "Central Processing Unit", "Processor" → "CPU"
+
+2. PRESERVE material-relevant distinctions - these affect supply chain materials:
+   - Battery chemistry: Lithium-ion, Lead-acid, NiMH, LFP, Solid-state
+   - Display technology: OLED, LCD, LED, Mini-LED, Micro-LED
+   - Semiconductor type: Silicon, GaN, SiC when specified
+   - Memory type: DRAM, NAND Flash, NOR Flash, SRAM
+
+3. AVOID overly generic names:
+   - Do NOT use just "Battery" - specify chemistry if known
+   - Do NOT use just "Display" - specify technology if known
+   - Do NOT use just "Chip" - specify function (Memory Chip, Power IC, etc.)
+
+4. Use Title Case for canonical names (e.g., "Lithium-ion Battery", "OLED Display")
+
+5. Output must be in English only. Translate non-English names.
+
+For each input name, output the canonical form it should map to."""
+
+        names_list = "\n".join(f"- {name}" for name in unknown_names)
+        prompt = f"Normalize these component names to canonical forms:\n\n{names_list}"
+
+        agent = Agent(
+            model=self.deps.get_component_model(),
+            output_type=ComponentMapping,
+            system_prompt=system_prompt,
+        )
+
+        try:
+            result = await agent.run(prompt, deps=self.deps)
+            if result and result.output:
+                mappings = result.output.mappings
+                logger.info(f"LLM returned {len(mappings)} mappings")
+                return mappings
+        except Exception as e:
+            logger.error(f"LLM normalization failed: {e}")
+
+        # Fallback: return names as-is with basic cleanup
+        logger.warning("Falling back to basic normalization")
+        return {name: name.strip().title() for name in unknown_names}
 
     async def run_pipeline(
         self,
@@ -493,13 +726,17 @@ class STDNOrchestrator:
         print(f"STDN Generation Completed: {datetime.now()}")
         print("=" * 80)
         print(f"Successfully processed: {successful}/{len(technologies)} technologies")
-        print(f"✓ Output saved to: {self.output_file}")
+        print(f"✓ Raw output saved to: {self.output_file}")
         if self.use_debate and self.reporter:
             print(f"✓ Debate transcripts saved to: {self.reporter.output_dir}")
 
         print(f"\nUsage: {usage}")
 
+        normalized_file = None
         if successful > 0:
+            # Run component name normalization
+            normalized_file = await self._normalize_output()
+
             # Convert CSV to JSON
             json_path = self._save_json_output
             print(f"✓ JSON output written to: {json_path}")
@@ -509,6 +746,7 @@ class STDNOrchestrator:
             "failed": failed,
             "total": len(technologies),
             "output_file": self.output_file,
+            "normalized_output_file": normalized_file,
         }
 
 

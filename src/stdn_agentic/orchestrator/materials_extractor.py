@@ -53,6 +53,7 @@ class MaterialsExtractor:
         reporter: Optional[DebateReporter] = None,
         timestamp: Optional[str] = None,
         use_debate: bool = False,
+        num_agents: int = 3,
         max_retries: int = 5,
         debate_max_rounds: int = 3,
         debate_convergence_threshold: float = 0.8,
@@ -67,6 +68,7 @@ class MaterialsExtractor:
             reporter: Optional DebateReporter instance
             timestamp: Optional timestamp for transcript filenames
             use_debate: Use multi-agent debate for materials extraction
+            num_agents: Number of agents for material debate (default: 3)
             max_retries: Maximum retry attempts for extraction
             debate_max_rounds: Maximum debate rounds
             debate_convergence_threshold: Convergence threshold for debate
@@ -77,6 +79,7 @@ class MaterialsExtractor:
         self.reporter = reporter
         self.timestamp = timestamp or datetime.now().strftime("%Y%m%d_%H%M%S")
         self.use_debate = use_debate
+        self.num_agents = num_agents
         self.max_retries = max_retries
 
         # Initialize material debater if using debate
@@ -84,7 +87,7 @@ class MaterialsExtractor:
         if use_debate:
             self.material_debater = MaterialDebater(
                 deps=deps,
-                num_agents=3,
+                num_agents=num_agents,
                 max_rounds=debate_max_rounds,
                 convergence_threshold=debate_convergence_threshold,
                 debate_top_p=debate_top_p,
@@ -234,25 +237,25 @@ class MaterialsExtractor:
         valid_component_names: list[str],
         technology: str,
     ) -> str:
-        component_str = "\n".join(f"- {comp}" for comp in valid_component_names)
+        component_str = "\n".join(f"  - {comp}" for comp in valid_component_names)
 
         # Use FULL ontology for strict matching (not just 50 samples)
         ontology_str = "\n".join(f"  - {mat}" for mat in self.deps.material_ontology_list)
 
-        materials_prompt = f"""Extract RAW MATERIALS for this component of a {technology}:
+        materials_prompt = f"""Extract RAW MATERIALS for EACH component of a {technology}.
 
-        COMPONENT NAME (use EXACTLY as written, do not modify):
-        "{component_str}"
+        COMPONENTS TO ANALYZE (extract materials for EACH one separately):
+{component_str}
 
-        CRITICAL REQUIREMENT:
-        - When returning results, use the EXACT component name: "{component_str}"
+        CRITICAL REQUIREMENTS:
+        - Return a separate entry for EACH component listed above
+        - Use the EXACT component names as written above (do not modify them)
         - Do NOT add qualifiers like "(NAND Flash)", "(OLED)", or any other descriptors
-        - Do NOT rename, rephrase, or modify the component name in any way
-        - The component field in your response MUST be exactly: "{component_str}"
+        - Do NOT rename, rephrase, or modify the component names in any way
 
         MATERIAL CONSTRAINT - You MUST ONLY select materials from this exact list:
 
-        {ontology_str}
+{ontology_str}
 
         RULES:
         1. Use ONLY material names from the above list (exact matches required)
@@ -260,7 +263,6 @@ class MaterialsExtractor:
         3. Do NOT invent new materials or use brand names
         4. Do NOT use manufactured products (e.g., "EVA", "PET film") - use base materials instead
         5. If unsure, choose the closest base material from the list
-        6. Component name in response must match exactly: "{component_str}"
 
         EXAMPLES OF CORRECT USAGE:
         ✓ Use "Silicon" not "Monocrystalline silicon"
@@ -269,12 +271,10 @@ class MaterialsExtractor:
         ✓ Use "Glass" not "Borosilicate glass" (unless "Borosilicate glass" is in the list)
         ✓ Use "Copper" not "Copper wire"
 
-        COMPONENT NAME TO USE IN RESPONSE:
-        "{component_str}"
-
-        For this component, identify 2-8 key RAW MATERIALS from the list above.
-        Return a JSON response with the component field set to exactly "{component_str}"
-        and materials field containing only materials from the provided list.
+        For EACH component, identify 2-8 key RAW MATERIALS from the list above.
+        Return a JSON response with componentlist containing an entry for each component,
+        where each entry has a component field (exact name from above) and materials field
+        containing only materials from the provided list.
         """
         return materials_prompt
 

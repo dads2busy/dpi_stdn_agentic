@@ -15,7 +15,6 @@ which handles CSV writing automatically.
 import argparse
 import asyncio
 import os
-from datetime import datetime
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -99,22 +98,76 @@ def find_config_file(specified_path: str | None = None) -> str:
 # ============================================================================
 
 
-async def process_all_technologies(config: ConfigModel) -> dict:
+def _parse_bool(value: str | bool | None, default: bool) -> bool:
+    """Parse a boolean value from string, bool, or None."""
+    if value is None:
+        return default
+    if isinstance(value, bool):
+        return value
+    return value.lower() == "true"
+
+
+async def process_all_technologies(config: ConfigModel, cli_args: argparse.Namespace) -> dict:
     """Process all technologies using the enhanced orchestrator.
 
     Args:
         config: Configuration model with paths and settings
+        cli_args: Parsed command-line arguments (can override env vars)
 
     Returns:
         Dict with processing statistics
     """
+    # Get values from CLI args first, fall back to env vars, then defaults
+    # CLI args are None if not specified, so we check for that
 
-    enable_debate = os.getenv("ENABLE_DEBATE", "false").lower() == "true"
-    enable_material_debate = os.getenv("ENABLE_MATERIAL_DEBATE", "false").lower() == "true"
-    enable_country_debate = os.getenv("ENABLE_COUNTRY_DEBATE", "false").lower() == "true"
-    max_debate_rounds = int(os.getenv("MAX_DEBATE_ROUNDS", 3))
-    convergence_threshold = float(os.getenv("CONVERGENCE_THRESHOLD", 0.8))
-    save_transcripts = os.getenv("SAVE_TRANSCRIPTS", "true").lower() == "true"
+    # Debate toggles
+    if cli_args.enable_component_debate is not None:
+        enable_debate = cli_args.enable_component_debate
+    else:
+        enable_debate = os.getenv("ENABLE_COMPONENT_DEBATE", "false").lower() == "true"
+
+    if cli_args.enable_material_debate is not None:
+        enable_material_debate = cli_args.enable_material_debate
+    else:
+        enable_material_debate = os.getenv("ENABLE_MATERIAL_DEBATE", "false").lower() == "true"
+
+    if cli_args.enable_country_debate is not None:
+        enable_country_debate = cli_args.enable_country_debate
+    else:
+        enable_country_debate = os.getenv("ENABLE_COUNTRY_DEBATE", "false").lower() == "true"
+
+    # Number of agents
+    if cli_args.num_agents_component is not None:
+        num_agents_component = cli_args.num_agents_component
+    else:
+        num_agents_component = int(os.getenv("NUM_AGENTS_COMPONENT", 3))
+
+    if cli_args.num_agents_material is not None:
+        num_agents_material = cli_args.num_agents_material
+    else:
+        num_agents_material = int(os.getenv("NUM_AGENTS_MATERIAL", 3))
+
+    if cli_args.num_agents_country is not None:
+        num_agents_country = cli_args.num_agents_country
+    else:
+        num_agents_country = int(os.getenv("NUM_AGENTS_COUNTRY", 3))
+
+    # Debate parameters
+    if cli_args.max_debate_rounds is not None:
+        max_debate_rounds = cli_args.max_debate_rounds
+    else:
+        max_debate_rounds = int(os.getenv("MAX_DEBATE_ROUNDS", 3))
+
+    if cli_args.convergence_threshold is not None:
+        convergence_threshold = cli_args.convergence_threshold
+    else:
+        convergence_threshold = float(os.getenv("CONVERGENCE_THRESHOLD", 0.8))
+
+    if cli_args.save_transcripts is not None:
+        save_transcripts = cli_args.save_transcripts
+    else:
+        save_transcripts = os.getenv("SAVE_TRANSCRIPTS", "true").lower() == "true"
+
     debate_top_p = float(os.getenv("DEBATE_TOP_P", 0.0001))
 
     orchestrator = STDNOrchestrator(
@@ -122,6 +175,9 @@ async def process_all_technologies(config: ConfigModel) -> dict:
         enable_debate=enable_debate,
         enable_material_debate=enable_material_debate,
         enable_country_debate=enable_country_debate,
+        num_agents_component=num_agents_component,
+        num_agents_material=num_agents_material,
+        num_agents_country=num_agents_country,
         max_debate_rounds=max_debate_rounds,
         convergence_threshold=convergence_threshold,
         save_transcripts=save_transcripts,
@@ -175,6 +231,16 @@ async def process_all_technologies(config: ConfigModel) -> dict:
 # ============================================================================
 
 
+def _str_to_bool(value: str) -> bool:
+    """Convert string to boolean for argparse."""
+    if value.lower() in ("true", "1", "yes", "on"):
+        return True
+    elif value.lower() in ("false", "0", "no", "off"):
+        return False
+    else:
+        raise argparse.ArgumentTypeError(f"Boolean value expected, got '{value}'")
+
+
 def main():
     """
     Main entry point for the CLI application.
@@ -195,6 +261,75 @@ def main():
         type=str,
         required=False,
         help="JSON configuration file with technology list, model, and output settings",
+    )
+
+    # Debate toggle arguments
+    parser.add_argument(
+        "--enable-component-debate",
+        type=_str_to_bool,
+        default=None,
+        metavar="BOOL",
+        help="Enable multi-agent debate for component extraction (default: from .env or false)",
+    )
+    parser.add_argument(
+        "--enable-material-debate",
+        type=_str_to_bool,
+        default=None,
+        metavar="BOOL",
+        help="Enable multi-agent debate for material extraction (default: from .env or false)",
+    )
+    parser.add_argument(
+        "--enable-country-debate",
+        type=_str_to_bool,
+        default=None,
+        metavar="BOOL",
+        help="Enable multi-agent voting for country data (default: from .env or false)",
+    )
+
+    # Number of agents arguments
+    parser.add_argument(
+        "--num-agents-component",
+        type=int,
+        default=None,
+        metavar="N",
+        help="Number of agents for component debate (default: from .env or 3)",
+    )
+    parser.add_argument(
+        "--num-agents-material",
+        type=int,
+        default=None,
+        metavar="N",
+        help="Number of agents for material debate (default: from .env or 3)",
+    )
+    parser.add_argument(
+        "--num-agents-country",
+        type=int,
+        default=None,
+        metavar="N",
+        help="Number of agents for country voting (default: from .env or 3)",
+    )
+
+    # Debate parameters
+    parser.add_argument(
+        "--max-debate-rounds",
+        type=int,
+        default=None,
+        metavar="N",
+        help="Maximum number of debate rounds (default: from .env or 3)",
+    )
+    parser.add_argument(
+        "--convergence-threshold",
+        type=float,
+        default=None,
+        metavar="FLOAT",
+        help="Convergence threshold for debate (default: from .env or 0.8)",
+    )
+    parser.add_argument(
+        "--save-transcripts",
+        type=_str_to_bool,
+        default=None,
+        metavar="BOOL",
+        help="Save debate transcripts (default: from .env or true)",
     )
 
     args = parser.parse_args()
@@ -230,7 +365,7 @@ def main():
 
     # Process all technologies
     try:
-        results = asyncio.run(process_all_technologies(config))
+        results = asyncio.run(process_all_technologies(config, args))
 
         if results["successful"] == 0:
             print("\nWarning: No technologies were successfully processed.")

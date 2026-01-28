@@ -176,49 +176,82 @@ class MultiAgentDebater:
         """
         Use LLM to normalize component names semantically.
 
-        Falls back to rule-based normalization if the LLM call fails.
+        If a canonical vocabulary is available, uses it as the authoritative
+        reference for component names. Falls back to rule-based normalization
+        if the LLM call fails.
         """
 
         unique_names = list(set(component_names))
         if len(unique_names) <= 1:
             return {name: self.normalize_component_name(name) for name in unique_names}
 
+        # Check canonical vocab for existing mappings
+        mapping: Dict[str, str] = {}
+        names_needing_llm: List[str] = []
+
+        if hasattr(self, "canonical_vocab") and self.canonical_vocab is not None:
+            for name in unique_names:
+                canonical = self.canonical_vocab.lookup(name)
+                if canonical:
+                    mapping[name] = canonical
+                else:
+                    names_needing_llm.append(name)
+
+            if mapping:
+                print(f"\n📚 Found {len(mapping)} names in canonical vocabulary")
+
+            # If all names are in vocab, return early
+            if not names_needing_llm:
+                print("✓ All component names found in canonical vocabulary")
+                return mapping
+        else:
+            names_needing_llm = unique_names
+
         class ComponentMapping(BaseModel):
             mappings: Dict[str, str] = Field(description="Component name mappings")
 
-        names_list = "\n".join(f"{i + 1}. {name}" for i, name in enumerate(unique_names))
+        names_list = "\n".join(f"{i + 1}. {name}" for i, name in enumerate(names_needing_llm))
+
+        # Build canonical vocabulary reference for the prompt
+        canonical_examples = ""
+        if hasattr(self, "canonical_vocab") and self.canonical_vocab is not None:
+            # Get unique canonical names from vocab
+            canonical_names = sorted(set(self.canonical_vocab.mappings.values()))
+            if canonical_names:
+                # Show a sample of canonical names for reference
+                sample_size = min(50, len(canonical_names))
+                sample_names = canonical_names[:sample_size]
+                canonical_examples = f"""
+    EXISTING CANONICAL VOCABULARY (use these names when applicable):
+    {", ".join(sample_names)}
+    {"..." if len(canonical_names) > sample_size else ""}
+
+    IMPORTANT: When a component matches one of these canonical names, USE THE EXACT
+    canonical name from this list. This ensures consistency across runs.
+    """
+
         prompt = f"""Map duplicate/similar component names to canonical names.
 
     CRITICAL: All output must be in English only. If any input names are in other
     languages, translate them to English equivalents before mapping.
-
+    {canonical_examples}
     AVOID OVERLY GENERIC NAMES:
-    - Do NOT use vague terms like "Chip", "Module", "Component", "Part", "Unit"
-    - Use SPECIFIC names like "Memory Chip", "Power IC", "Display Module"
-    - If a component is too generic to identify, mark it as "Generic Component"
+    - Do NOT use vague terms like "Chip", "Module", "Component", "Part", "Unit" alone
+    - Use SPECIFIC names like "Memory Chip", "Power IC", "Display Module", "Lithium-ion Battery"
+    - Preserve material-relevant distinctions (battery chemistry, display technology, etc.)
 
-    NAMES:
+    NAMES TO NORMALIZE:
     {names_list}
 
     RULES:
+    - If a name matches or is similar to a canonical name above, use that canonical name
     - Treat names as the same if they differ only by spacing, prefixes/suffixes,
       or generic qualifiers like "module", "system", "unit", "assembly".
     - Treat names as different if they represent clearly different functions.
     - Use clear, standard English terminology for all canonical names.
     - Prefer specific technical terms over generic ones.
-
-    EXAMPLES:
-    - "Main Circuit Board (PCB)" → "Main Circuit Board"
-    - "PCB" → "Main Circuit Board"
-    - "Motherboard" → "Main Circuit Board"
-    - "Display Module (OLED)" → "Display Module"
-    - "OLED Display" → "Display Module"
-    - "Touch Screen" → "Display Module"
-    - "Memory (RAM)" → "Memory"
-    - "RAM" → "Memory"
-    - "Memory (RAM & Storage)" → "Memory"
-    - "Storage" → "Storage"
-    - "Flash Storage" → "Storage"
+    - Preserve battery chemistry types (Lithium-ion, Lead-acid, NiMH, etc.)
+    - Preserve display technology types (OLED, LCD, LED, etc.)
 
     Return JSON with a single field "mappings" mapping each original name
     to its canonical form.
@@ -226,26 +259,33 @@ class MultiAgentDebater:
 
         try:
             agent = Agent(
-                model=deps.model,
+                model=deps.get_component_model(),
                 output_type=ComponentMapping,
                 deps_type=type(deps),
                 system_prompt="You are a component naming expert. Normalize component names to canonical English forms. Always respond in English only.",
             )
 
             result = await agent.run(prompt, deps=deps)
-            mapping = dict(result.output.mappings)
+            llm_mapping = dict(result.output.mappings)
 
-            # Ensure complete coverage
+            # Merge LLM results with vocab-based mappings
+            for name in names_needing_llm:
+                if name in llm_mapping:
+                    mapping[name] = llm_mapping[name]
+                else:
+                    mapping[name] = self.normalize_component_name(name)
+
+            # Ensure complete coverage for all original names
             for name in unique_names:
                 mapping.setdefault(name, self.normalize_component_name(name))
 
             # ✅ DEBUG LOGGING
             print("\n🔍 LLM Normalization Results:")
-            print(f"   Input: {len(unique_names)} unique component names")
-            print(f"   Output: {len(set(mapping.values()))} normalized canonical names")
+            print(f"   Input: {len(names_needing_llm)} names needed LLM normalization")
+            print(f"   Output: {len(set(mapping.values()))} total normalized canonical names")
 
             # Group by normalized name to show what got merged
-            normalized_groups = {}
+            normalized_groups: Dict[str, List[str]] = {}
             for original, normalized in mapping.items():
                 if normalized not in normalized_groups:
                     normalized_groups[normalized] = []
@@ -269,7 +309,10 @@ class MultiAgentDebater:
         except Exception as exc:  # noqa: BLE001
             logger.warning("LLM normalization failed: %s", exc)
             print("⚠️ LLM normalization failed, using rule-based fallback")
-            return {name: self.normalize_component_name(name) for name in unique_names}
+            # Still return any vocab-based mappings we found
+            for name in names_needing_llm:
+                mapping.setdefault(name, self.normalize_component_name(name))
+            return mapping
 
     # ------------------------------------------------------------------#
     # Internal helpers for proposals
@@ -827,7 +870,7 @@ class MultiAgentDebater:
 
         # Create a specialized agent for structured debate responses
         debate_agent = Agent(
-            model=deps.model,
+            model=deps.get_component_model(),
             output_type=DebateResponse,
             deps_type=type(deps),
             system_prompt=system_prompt,
@@ -887,7 +930,9 @@ class MultiAgentDebater:
                 print(f"     - Previous proposals: {len(previous_proposals)}")
                 print(f"     - Critiques: {len(critiques)}")
 
-                result = await debate_agent.run(prompt, deps=debate_deps, model=deps.model)
+                result = await debate_agent.run(
+                    prompt, deps=debate_deps, model=deps.get_component_model()
+                )
 
                 if result and result.output and result.output.components:
                     proposals_list = []
@@ -934,10 +979,19 @@ class MultiAgentDebater:
         initial_proposals: Dict[str, List[Dict[str, Any]]],
         component_agent: Any,
         deps: Any,
+        canonical_vocab: Any = None,
     ) -> Dict[str, Any]:
         """
         Run multi-round debate with LLM-based semantic normalization and dynamic confidence.
+
+        Args:
+            technology: Technology being analyzed
+            initial_proposals: Initial proposals from agents
+            component_agent: Agent for component extraction
+            deps: Dependencies
+            canonical_vocab: Optional CanonicalVocab for consistent naming
         """
+        self.canonical_vocab = canonical_vocab
         convergence = 0.0
         rounds_completed = 0
         debate_rounds: List[Dict[str, Any]] = []

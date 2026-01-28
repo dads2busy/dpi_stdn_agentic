@@ -75,7 +75,7 @@ class MaterialDebater:
             # Simple test using component agent (already available)
             from ..agents import get_component_agent
 
-            test_agent = get_component_agent(model_name=self.deps.model)
+            test_agent = get_component_agent(model_name=self.deps.get_materials_model())
 
             # Create minimal deps for test
             from dataclasses import replace
@@ -333,7 +333,7 @@ class MaterialDebater:
     def _phase1_create_materials_agent(self):
         """Create the materials agent used for all material debate phases."""
         try:
-            agent = get_materials_agent(model_name=self.deps.model)
+            agent = get_materials_agent(model_name=self.deps.get_materials_model())
         except Exception as e:
             logger.error(f"Failed to create materials agent: {e}")
             print(f"❌ Agent creation failed: {e}")
@@ -703,7 +703,7 @@ class MaterialDebater:
         critique_text = "\n".join(f"- {c}" for c in critiques)
 
         # Get materials agent
-        agent = get_materials_agent(model_name=self.deps.model)
+        agent = get_materials_agent(model_name=self.deps.get_materials_model())
 
         # Each agent refines proposals based on critiques
         for agent_num in range(1, self.num_agents + 1):

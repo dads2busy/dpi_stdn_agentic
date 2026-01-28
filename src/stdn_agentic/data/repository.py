@@ -107,6 +107,7 @@ class CountryDataRepository:
         meas_year: int,
         usage: Optional[RunUsage] = None,
         use_debate: bool = False,
+        num_agents: int = 3,
         transcript_path: Optional[Path] = None,
         hs_code: Optional[str] = None,
     ) -> List[Dict]:
@@ -142,7 +143,13 @@ class CountryDataRepository:
             )
 
             if cached_llm_data:
-                # Cache hit! Use cached debate result
+                # Cache hit! Update reasoning to reflect it's from cache
+                for country_dict in cached_llm_data:
+                    country_dict["reasoning"] = (
+                        f"LLM fallback cache (previously computed) - "
+                        f"no USGS data available for {material}"
+                    )
+
                 self.cache[cache_key] = cached_llm_data
 
                 if transcript_path:
@@ -160,7 +167,7 @@ class CountryDataRepository:
 
         logger.info(f"Running LLM fallback for {material}...")
         llm_data = await self._process_llm_fallback(
-            material, meas_year, usage, use_debate, cache_key, transcript_path
+            material, meas_year, usage, use_debate, num_agents, cache_key, transcript_path
         )
 
         # Cache successful LLM result in persistent cache for future runs
@@ -220,6 +227,7 @@ class CountryDataRepository:
         meas_year: int,
         usage: Optional[RunUsage],
         use_debate: bool,
+        num_agents: int,
         cache_key: str,
         transcript_path: Optional[Path],
     ) -> List[Dict]:
@@ -227,7 +235,9 @@ class CountryDataRepository:
         print("No USGS data found, using LLM fallback...")
 
         if use_debate:
-            llm_data = await self.query_llm_with_debate(material, meas_year, usage)
+            llm_data = await self.query_llm_with_debate(
+                material, meas_year, usage, num_agents=num_agents
+            )
         else:
             llm_data = await self.query_llm(material, meas_year, usage)
 
@@ -488,7 +498,7 @@ class CountryDataRepository:
             result = await self.country_agent.run(
                 prompt,
                 deps=self.deps,
-                model=self.deps.model,
+                model=self.deps.get_country_model(),
             )
 
             if result and result.output:
@@ -520,6 +530,7 @@ class CountryDataRepository:
         material: str,
         year: int,
         usage: Optional[RunUsage] = None,
+        num_agents: int = 3,
     ) -> List[Dict[str, Any]]:
         """
         Query LLM with multi-agent debate for country data with confidence.
@@ -528,6 +539,7 @@ class CountryDataRepository:
             material: Material name
             year: Year for production data
             usage: Optional RunUsage tracker
+            num_agents: Number of agents for voting (default: 3)
 
         Returns:
             List of country data dicts with debate-weighted confidence and reasoning
@@ -536,7 +548,7 @@ class CountryDataRepository:
 
         debater = MaterialCountryDebater(
             deps=self.deps,
-            num_agents=3,
+            num_agents=num_agents,
             top_n_proposed=10,
             top_n_consensus=self.top_n,
             debate_top_p=0.0001,

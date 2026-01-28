@@ -60,7 +60,7 @@ async def normalize_components_with_llm(
     )
 
     mapping_agent = Agent(
-        model=deps.model,
+        model=deps.get_component_model(),
         output_type=ComponentMapping,
         system_prompt=prompt,
     )

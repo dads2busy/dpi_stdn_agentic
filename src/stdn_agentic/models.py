@@ -30,27 +30,44 @@ class STDNDependencies:
     - Material ontology data (various formats)
     - Country production data
     - Database client connections
-    - Model configuration
+    - Model configuration (default and per-agent)
 
     Attributes:
         material_ontology: Comma-separated string of material names
         material_ontology_dict: Material name to ID mapping
         material_ontology_list: List of material names for validation
-        materials_top_countries_dict: Top producer countries per material
         years_to_query: List of years for historical data queries
         client: Ollama client for LLM inference
-        model: Model identifier (e.g., "qwen2.5:7b")
+        model: Default model identifier (e.g., "qwen2.5:7b")
+        component_model: Model for component extraction (defaults to model)
+        materials_model: Model for materials extraction (defaults to model)
+        country_model: Model for country data (defaults to model)
         top_p: Top-p sampling parameter for generation
     """
 
     material_ontology: str
     material_ontology_dict: dict
     material_ontology_list: list[str]
-    materials_top_countries_dict: dict
     years_to_query: list[int]
     client: ollama.Client
     model: str
     top_p: float
+    # Per-agent models (default to self.model if not specified)
+    component_model: Optional[str] = None
+    materials_model: Optional[str] = None
+    country_model: Optional[str] = None
+
+    def get_component_model(self) -> str:
+        """Get the model to use for component extraction."""
+        return self.component_model or self.model
+
+    def get_materials_model(self) -> str:
+        """Get the model to use for materials extraction."""
+        return self.materials_model or self.model
+
+    def get_country_model(self) -> str:
+        """Get the model to use for country data."""
+        return self.country_model or self.model
 
 
 # ============================================================================
@@ -77,6 +94,23 @@ class ConfigModel(BaseModel):
     )
 
     # ========================================================================
+    # Per-Agent Model Configuration
+    # ========================================================================
+
+    component_model: Optional[str] = Field(
+        default=None,
+        description="Model for component extraction (defaults to 'model' if not set)",
+    )
+    materials_model: Optional[str] = Field(
+        default=None,
+        description="Model for materials extraction (defaults to 'model' if not set)",
+    )
+    country_model: Optional[str] = Field(
+        default=None,
+        description="Model for country data (defaults to 'model' if not set)",
+    )
+
+    # ========================================================================
     # Material Ontology Settings
     # ========================================================================
 
@@ -87,10 +121,6 @@ class ConfigModel(BaseModel):
     materials_column_name: str = Field(
         default="Elements_Compounds",
         description="Column name in HS codes file containing material names",
-    )
-    materials_top_countries_repository: str = Field(
-        default="./data/material_top_countries_granite3.1-dense.8b.json",
-        description="Path to JSON with top producing countries per material",
     )
 
     # ========================================================================

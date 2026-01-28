@@ -14,6 +14,7 @@ Key Components:
 - manager: Orchestrate the full normalization workflow
 """
 
+from stdn_agentic.normalization.canonical_vocab import CanonicalVocab
 from stdn_agentic.normalization.models import (
     ConsolidatedNormalizedSTDN,
     NormalizedComponent,
@@ -22,6 +23,7 @@ from stdn_agentic.normalization.models import (
 )
 
 __all__ = [
+    "CanonicalVocab",
     "NormalizedComponent",
     "NormalizedDependency",
     "SemanticGroup",

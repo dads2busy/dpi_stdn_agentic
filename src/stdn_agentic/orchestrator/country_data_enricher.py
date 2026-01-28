@@ -41,6 +41,7 @@ class CountryDataEnricher:
         reporter: Optional[DebateReporter] = None,
         write_nulls: bool = True,
         use_debate: bool = False,
+        num_agents: int = 3,
     ):
         """
         Initialize country data enricher.
@@ -50,11 +51,13 @@ class CountryDataEnricher:
             reporter: Optional DebateReporter instance for transcript management
             write_nulls: Whether to write records with null country data
             use_debate: Whether to use multi-agent debate for country data validation
+            num_agents: Number of agents for country data voting (default: 3)
         """
         self.country_repo = country_repo
         self.reporter = reporter
         self.write_nulls = write_nulls
         self.use_debate = use_debate
+        self.num_agents = num_agents
 
     # ========================================================================
     # Main Enrichment Logic
@@ -144,6 +147,7 @@ class CountryDataEnricher:
                         meas_year=getattr(self.country_repo, "meas_year", 2023),
                         usage=usage,
                         use_debate=self.use_debate,
+                        num_agents=self.num_agents,
                         transcript_path=transcript_path,
                         hs_code=hs_code,
                     )
