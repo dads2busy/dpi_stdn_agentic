@@ -1,0 +1,1196 @@
+# Multi-Agent Debate System for STDN Generation
+
+This document explains the complete multi-agent debate process used in the STDN (Supply Technology Dependency Network) pipeline. The system uses multiple LLM agents that propose, critique, and refine their answers to reach consensus on technology components, materials, and country production data.
+
+## Table of Contents
+
+1. [Overview](#overview)
+2. [Debate as a State Machine](#debate-as-a-state-machine)
+3. [Three-Phase Architecture](#three-phase-architecture)
+4. [Component Debate (Phase 1)](#component-debate-phase-1)
+5. [Materials Debate (Phase 2)](#materials-debate-phase-2)
+6. [Country Data Debate (Phase 3)](#country-data-debate-phase-3)
+7. [Convergence and Consensus](#convergence-and-consensus)
+8. [Complete Example](#complete-example)
+
+---
+
+## Overview
+
+The debate system improves extraction quality by having multiple AI agents independently analyze the same question, then iteratively critique and refine their proposals until they converge on a consensus answer.
+
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│                        STDN PIPELINE OVERVIEW                          │
+├─────────────────────────────────────────────────────────────────────────┤
+│                                                                         │
+│   Technology ──► Component ──► Materials ──► Country Data ──► Output   │
+│   (input)        Debate        Debate        Debate          (CSV)     │
+│                                                                         │
+│   Example:       Battery,      Lithium,      China 60%,                │
+│   "Smartphone"   Display,      Cobalt,       Chile 25%,                │
+│                  CPU...        Silicon...    Australia 8%...           │
+│                                                                         │
+└─────────────────────────────────────────────────────────────────────────┘
+```
+
+### Key Benefits
+
+- **Reduced hallucination**: Multiple agents catch each other's errors
+- **Higher confidence**: Consensus items have multiple expert "votes"
+- **Better coverage**: Different agent perspectives find more valid items
+- **Transparent reasoning**: Debate transcripts show how conclusions were reached
+
+---
+
+## Debate as a State Machine
+
+The debate process can be formally modeled as a state machine with well-defined states, transitions, and data transformations.
+
+### State Machine Diagram
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                         DEBATE STATE MACHINE                                │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│  ┌─────────────┐                                                            │
+│  │    START    │                                                            │
+│  └──────┬──────┘                                                            │
+│         │ input: technology name                                            │
+│         ▼                                                                   │
+│  ┌─────────────────────┐                                                    │
+│  │ S1: INDEPENDENT     │  Data: {agent_id: [raw proposals]}                 │
+│  │     PROPOSALS       │  Transition: Parallel LLM calls (one per agent)    │
+│  └──────────┬──────────┘                                                    │
+│             │                                                               │
+│             ▼                                                               │
+│  ┌─────────────────────┐                                                    │
+│  │ S2: NORMALIZED      │  Data: {agent_id: [proposals + normalized_name]}   │
+│  │     PROPOSALS       │  Transition: LLM semantic mapping                  │
+│  └──────────┬──────────┘                                                    │
+│             │                                                               │
+│             ▼                                                               │
+│  ┌─────────────────────┐                                                    │
+│  │ S3: CONVERGENCE     │  Data: float (0.0 to 1.0)                          │
+│  │     CALCULATED      │  Transition: Deterministic (Jaccard formula)       │
+│  └──────────┬──────────┘                                                    │
+│             │                                                               │
+│             ▼                                                               │
+│      ┌──────────────┐                                                       │
+│      │ convergence  │                                                       │
+│      │  ≥ threshold │                                                       │
+│      │  OR max_round│                                                       │
+│      └──────┬───────┘                                                       │
+│             │                                                               │
+│        Yes  │   No                                                          │
+│      ┌──────┴──────┐                                                        │
+│      │             │                                                        │
+│      ▼             ▼                                                        │
+│  ┌────────┐   ┌─────────────────────┐                                       │
+│  │ S6:    │   │ S4: CRITIQUES       │  Data: [critique strings]             │
+│  │CONSENSUS│  │     GENERATED       │  Transition: Deterministic            │
+│  │ BUILT  │   └──────────┬──────────┘  (aggregation rules)                  │
+│  └────────┘              │                                                  │
+│      │                   ▼                                                  │
+│      │            ┌─────────────────────┐                                   │
+│      │            │ S5: PROPOSALS       │  Data: {agent_id: [new proposals]}│
+│      │            │     REFINED         │  Transition: Parallel LLM calls   │
+│      │            └──────────┬──────────┘                                   │
+│      │                       │                                              │
+│      │                       │ round_num++                                  │
+│      │                       │                                              │
+│      │                       └─────────► (back to S3)                       │
+│      │                                                                      │
+│      ▼                                                                      │
+│  ┌─────────────────────┐                                                    │
+│  │      TERMINAL       │  Output: [consensus components with confidence]    │
+│  └─────────────────────┘                                                    │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
+
+### Formal State Definitions
+
+Each state in the debate process has a specific data structure and produces a well-defined output:
+
+```
+┌──────────────────────────────────────────────────────────────────────────────┐
+│  STATE                 │ DATA STRUCTURE              │ TRANSITION TYPE       │
+├──────────────────────────────────────────────────────────────────────────────┤
+│                        │                             │                       │
+│  S1: INDEPENDENT       │ proposals: Map<AgentId,     │ LLM (parallel)        │
+│      PROPOSALS         │   List<Proposal>>           │                       │
+│                        │                             │                       │
+│                        │ Proposal {                  │ Each agent calls LLM  │
+│                        │   component: string         │ independently with    │
+│                        │   confidence: float         │ same technology input │
+│                        │   reasoning: string         │                       │
+│                        │ }                           │                       │
+├──────────────────────────────────────────────────────────────────────────────┤
+│                        │                             │                       │
+│  S2: NORMALIZED        │ proposals: Map<AgentId,     │ LLM (single call)     │
+│      PROPOSALS         │   List<NormalizedProposal>> │                       │
+│                        │                             │                       │
+│                        │ NormalizedProposal {        │ LLM maps all unique   │
+│                        │   component: string         │ names to canonical    │
+│                        │   normalized_name: string   │ forms                 │
+│                        │   confidence: float         │                       │
+│                        │   reasoning: string         │                       │
+│                        │ }                           │                       │
+├──────────────────────────────────────────────────────────────────────────────┤
+│                        │                             │                       │
+│  S3: CONVERGENCE       │ convergence: float          │ Deterministic         │
+│      CALCULATED        │ (range: 0.0 to 1.0)         │                       │
+│                        │                             │ Jaccard similarity    │
+│                        │ round_num: int              │ averaged across all   │
+│                        │                             │ agent pairs           │
+├──────────────────────────────────────────────────────────────────────────────┤
+│                        │                             │                       │
+│  S4: CRITIQUES         │ critiques: List<string>     │ Deterministic         │
+│      GENERATED         │                             │                       │
+│                        │ Examples:                   │ Rule-based text       │
+│                        │ - "Strong consensus on X"   │ generation based on   │
+│                        │ - "Isolated proposal Y"     │ support counts        │
+│                        │ - "Consolidate around..."   │                       │
+├──────────────────────────────────────────────────────────────────────────────┤
+│                        │                             │                       │
+│  S5: PROPOSALS         │ proposals: Map<AgentId,     │ LLM (parallel)        │
+│      REFINED           │   List<Proposal>>           │                       │
+│                        │                             │                       │
+│                        │ Same structure as S1, but   │ Each agent receives   │
+│                        │ proposals have been updated │ same prompt with      │
+│                        │ based on critique feedback  │ critiques + all       │
+│                        │                             │ prior proposals       │
+├──────────────────────────────────────────────────────────────────────────────┤
+│                        │                             │                       │
+│  S6: CONSENSUS         │ consensus: List<Component>  │ Deterministic         │
+│      BUILT             │                             │                       │
+│                        │ Component {                 │ Scoring formula       │
+│                        │   name: string              │ with adaptive         │
+│                        │   confidence: float         │ thresholds based on   │
+│                        │   reasoning: string         │ convergence score     │
+│                        │   support_count: int        │                       │
+│                        │ }                           │                       │
+│                        │                             │                       │
+└──────────────────────────────────────────────────────────────────────────────┘
+```
+
+### Transition Functions
+
+Each state transition is implemented by a specific function:
+
+```python
+# T1: START → S1 (Independent Proposals)
+def generate_initial_proposals(technology: str, num_agents: int) -> Dict[str, List[Proposal]]:
+    """
+    Input:  technology name (string)
+    Output: Map of agent_id → list of proposals
+    Method: Parallel LLM calls, one per agent
+    """
+    proposals = {}
+    for agent_id in range(1, num_agents + 1):
+        result = await llm.run(
+            prompt=f"List primary components for {technology}",
+            system="You are a technology component expert..."
+        )
+        proposals[f"Agent{agent_id}"] = result.components
+    return proposals
+
+
+# T2: S1 → S2 (Normalize Proposals)
+def normalize_proposals(proposals: Dict[str, List[Proposal]]) -> Dict[str, List[NormalizedProposal]]:
+    """
+    Input:  Raw proposals from all agents
+    Output: Proposals with normalized component names
+    Method: Single LLM call to map variants → canonical names
+    """
+    all_names = extract_unique_names(proposals)
+    mapping = await llm.run(
+        prompt=f"Map these component names to canonical forms: {all_names}"
+    )
+    return apply_mapping(proposals, mapping)
+
+
+# T3: S2 → S3 (Calculate Convergence)
+def calculate_convergence(proposals: Dict[str, List[NormalizedProposal]]) -> float:
+    """
+    Input:  Normalized proposals from all agents
+    Output: Convergence score (0.0 to 1.0)
+    Method: Deterministic Jaccard similarity calculation
+    """
+    agent_sets = {agent: {p.normalized_name for p in props} 
+                  for agent, props in proposals.items()}
+    
+    similarities = []
+    for (a1, s1), (a2, s2) in combinations(agent_sets.items(), 2):
+        jaccard = len(s1 & s2) / len(s1 | s2) if (s1 | s2) else 0
+        similarities.append(jaccard)
+    
+    return sum(similarities) / len(similarities)
+
+
+# T4: S3 → S4 (Generate Critiques) - only if convergence < threshold
+def generate_critiques(proposals: Dict[str, List[NormalizedProposal]], 
+                       round_num: int) -> List[str]:
+    """
+    Input:  Normalized proposals, current round number
+    Output: List of critique strings
+    Method: Deterministic aggregation rules (NOT an LLM call)
+    """
+    critiques = []
+    component_support = count_support_per_component(proposals)
+    
+    for component, supporters in component_support.items():
+        support_rate = len(supporters) / num_agents
+        
+        if support_rate >= 0.67:
+            critiques.append(f"Strong consensus on '{component}'...")
+        elif support_rate <= 0.33:
+            critiques.append(f"Isolated proposal '{component}'...")
+    
+    critiques.append(get_round_guidance(round_num))
+    return critiques
+
+
+# T5: S4 → S5 (Refine Proposals)
+def refine_proposals(technology: str,
+                     previous_proposals: Dict[str, List[Proposal]],
+                     critiques: List[str],
+                     round_num: int) -> Dict[str, List[Proposal]]:
+    """
+    Input:  Previous proposals, critiques, round number
+    Output: Refined proposals from each agent
+    Method: Parallel LLM calls with critique context
+    """
+    new_proposals = {}
+    prompt_context = format_proposals(previous_proposals) + format_critiques(critiques)
+    
+    for agent_id in agents:
+        result = await llm.run(
+            prompt=f"Round {round_num}: Refine your proposals.\n{prompt_context}",
+            system="Consider peer feedback and adjust confidence..."
+        )
+        new_proposals[agent_id] = result.components
+    
+    return new_proposals
+
+
+# T6: S3 → S6 (Build Consensus) - when convergence ≥ threshold OR max rounds
+def build_consensus(proposals: Dict[str, List[NormalizedProposal]], 
+                    convergence: float) -> List[Component]:
+    """
+    Input:  Final normalized proposals, convergence score
+    Output: Consensus component list
+    Method: Deterministic scoring with adaptive thresholds
+    """
+    min_support = calculate_adaptive_threshold(convergence, num_agents)
+    
+    consensus = []
+    for component, supporters in component_support.items():
+        if len(supporters) >= min_support:
+            score = calculate_score(component, supporters, convergence)
+            consensus.append(Component(
+                name=component,
+                confidence=average_confidence(supporters),
+                support_count=len(supporters),
+                score=score
+            ))
+    
+    return sorted(consensus, key=lambda c: c.score, reverse=True)
+```
+
+### State Transition Summary
+
+| From State | To State | Condition | Transition Type |
+|------------|----------|-----------|-----------------|
+| START | S1: INDEPENDENT_PROPOSALS | Always | LLM (parallel) |
+| S1 | S2: NORMALIZED_PROPOSALS | Always | LLM (single) |
+| S2 | S3: CONVERGENCE_CALCULATED | Always | Deterministic |
+| S3 | S4: CRITIQUES_GENERATED | convergence < threshold AND round < max | Deterministic |
+| S3 | S6: CONSENSUS_BUILT | convergence ≥ threshold OR round ≥ max | Deterministic |
+| S4 | S5: PROPOSALS_REFINED | Always | LLM (parallel) |
+| S5 | S2: NORMALIZED_PROPOSALS | Always (loop) | LLM (single) |
+| S6 | TERMINAL | Always | Output |
+
+### Key Properties
+
+1. **Determinism**: States S3, S4, and S6 use deterministic transitions (no LLM randomness)
+2. **Convergence Guarantee**: The loop always terminates (max_rounds limit)
+3. **Information Preservation**: All proposals from all rounds are tracked in debate history
+4. **Monotonic Progress**: Convergence typically increases each round (but not guaranteed)
+
+---
+
+## Three-Phase Architecture
+
+Each phase uses a similar debate pattern but is optimized for its specific task:
+
+```
+┌────────────────────────────────────────────────────────────────────────────┐
+│                         DEBATE PHASES                                      │
+├────────────────────────────────────────────────────────────────────────────┤
+│                                                                            │
+│  PHASE 1: COMPONENT DEBATE                                                 │
+│  ┌─────────────────────────────────────────────────────────────────────┐   │
+│  │ Question: "What are the primary components of [Technology]?"        │   │
+│  │ Method:   Multi-round iterative debate with Jaccard convergence     │   │
+│  │ Output:   List of components with confidence scores                 │   │
+│  └─────────────────────────────────────────────────────────────────────┘   │
+│                              │                                             │
+│                              ▼                                             │
+│  PHASE 2: MATERIALS DEBATE (per component)                                 │
+│  ┌─────────────────────────────────────────────────────────────────────┐   │
+│  │ Question: "What raw materials are used in [Component]?"             │   │
+│  │ Method:   Multi-round debate with material ontology validation      │   │
+│  │ Output:   Component → Materials mapping with confidence             │   │
+│  └─────────────────────────────────────────────────────────────────────┘   │
+│                              │                                             │
+│                              ▼                                             │
+│  PHASE 3: COUNTRY DEBATE (per material)                                    │
+│  ┌─────────────────────────────────────────────────────────────────────┐   │
+│  │ Question: "Which countries produce [Material]?"                     │   │
+│  │ Method:   Single-round Borda count voting (factual data)            │   │
+│  │ Output:   Top 5 producing countries with percentages                │   │
+│  └─────────────────────────────────────────────────────────────────────┘   │
+│                                                                            │
+└────────────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## Component Debate (Phase 1)
+
+### Purpose
+
+Identify the primary manufacturing components of a technology product.
+
+### Flow Diagram
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                    COMPONENT DEBATE FLOW                                    │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│  ┌─────────────┐   ┌─────────────┐   ┌─────────────┐                       │
+│  │   Agent 1   │   │   Agent 2   │   │   Agent 3   │   ROUND 1            │
+│  │  (Expert)   │   │  (Expert)   │   │  (Expert)   │   Independent        │
+│  └──────┬──────┘   └──────┬──────┘   └──────┬──────┘   Proposals          │
+│         │                 │                 │                              │
+│         ▼                 ▼                 ▼                              │
+│  ┌─────────────────────────────────────────────────────────────────────┐   │
+│  │                    SEMANTIC NORMALIZATION                           │   │
+│  │  "Li-ion Battery" ──► "Lithium-ion Battery"                        │   │
+│  │  "Battery Pack"   ──► "Lithium-ion Battery"                        │   │
+│  │  "LCD Screen"     ──► "LCD Display"                                │   │
+│  └─────────────────────────────────────────────────────────────────────┘   │
+│                              │                                             │
+│                              ▼                                             │
+│  ┌─────────────────────────────────────────────────────────────────────┐   │
+│  │              CALCULATE CONVERGENCE (Jaccard Similarity)             │   │
+│  │                                                                     │   │
+│  │   Agent1 ∩ Agent2     Agent1 ∩ Agent3     Agent2 ∩ Agent3          │   │
+│  │   ─────────────── +   ─────────────── +   ───────────────          │   │
+│  │   Agent1 ∪ Agent2     Agent1 ∪ Agent3     Agent2 ∪ Agent3          │   │
+│  │   ─────────────────────────────────────────────────────── = 45%    │   │
+│  │                          3 (pairs)                                  │   │
+│  └─────────────────────────────────────────────────────────────────────┘   │
+│                              │                                             │
+│                              ▼                                             │
+│                    Convergence < 75%?                                      │
+│                      /            \                                        │
+│                    Yes             No                                      │
+│                     │              │                                       │
+│                     ▼              ▼                                       │
+│  ┌──────────────────────┐   ┌──────────────────────┐                      │
+│  │  GENERATE CRITIQUES  │   │   BUILD CONSENSUS    │                      │
+│  │  (See Below)         │   │   (Final Output)     │                      │
+│  └──────────┬───────────┘   └──────────────────────┘                      │
+│             │                                                              │
+│             ▼                                                              │
+│  ┌─────────────────────────────────────────────────────────────────────┐   │
+│  │                      ROUND 2, 3, ... N                              │   │
+│  │   Agents receive critiques and refine their proposals               │   │
+│  │   Process repeats until convergence ≥ 75% or max rounds reached    │   │
+│  └─────────────────────────────────────────────────────────────────────┘   │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
+
+### System Prompt (Component Agent)
+
+```
+You are an expert in technology component analysis participating in a multi-agent debate.
+
+Your task is to identify PRIMARY MANUFACTURING COMPONENTS for technologies.
+
+CRITICAL: For each component, you MUST provide:
+1. Component name
+2. Your confidence (0.0 to 1.0) that this is truly a primary component:
+   - 1.0 = Absolutely certain, universal standard
+   - 0.8-0.9 = Very confident, industry standard
+   - 0.6-0.7 = Moderately confident, common but may vary
+   - 0.4-0.5 = Uncertain, depends on implementation
+   - 0.0-0.3 = Low confidence, rarely separate
+3. Brief reasoning justifying your confidence
+
+Consider peer proposals and critiques carefully. Adjust your confidence based on:
+- Consensus among peers (higher confidence if many agree)
+- Strength of reasoning in critiques
+- Your own expertise and certainty
+```
+
+### Debate Round Prompt
+
+```
+DEBATE ROUND {round_num}
+
+Technology: {technology}
+
+PREVIOUS ROUND PROPOSALS:
+- Agent1: Lithium-ion Battery (confidence=0.95)
+- Agent1: OLED Display (confidence=0.90)
+- Agent2: Battery Pack (confidence=0.88)
+- Agent2: LCD Display (confidence=0.85)
+- Agent3: Lithium-ion Battery (confidence=0.92)
+- Agent3: Display Module (confidence=0.80)
+
+PEER CRITIQUES AND GUIDANCE:
+- Strong consensus on 'Lithium-ion Battery': 2 agents support it with average 
+  confidence 0.94. This should be preserved.
+- Isolated proposal 'LCD Display' appears only once with average confidence 
+  0.85; reconsider unless critically justified.
+- Focus on aligning on obvious shared components while dropping clearly 
+  idiosyncratic proposals.
+
+YOUR TASK:
+1. Review all peer proposals and critiques carefully
+2. For EACH component you propose, assign a confidence score (0.0-1.0)
+3. Support strong consensus candidates with high confidence
+4. Lower confidence for isolated proposals unless critically justified
+5. Provide clear reasoning for each confidence assessment
+
+Return your refined component list with confidence scores and reasoning.
+```
+
+### How Critiques Are Generated
+
+**Important clarification**: Critiques are **generated by the system**, not by individual agents critiquing each other directly. The system acts as a moderator that aggregates all proposals and produces a summary of agreement levels.
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                    CRITIQUE GENERATION PROCESS                              │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│  ROUND 1: All agents submit proposals independently                         │
+│                                                                             │
+│     Agent1: [Battery, Display, CPU, Memory]                                 │
+│     Agent2: [Battery, Display, CPU, Camera]                                 │
+│     Agent3: [Battery, Display, Memory, Speaker]                             │
+│                                                                             │
+│                              ▼                                              │
+│                                                                             │
+│  ┌───────────────────────────────────────────────────────────────────────┐  │
+│  │              SYSTEM AGGREGATES ALL PROPOSALS                          │  │
+│  │              (Deterministic Python code, NOT an LLM call)             │  │
+│  │                                                                       │  │
+│  │  Count support for each component:                                    │  │
+│  │                                                                       │  │
+│  │     Battery: 3/3 agents  ──► "Strong consensus, preserve"             │  │
+│  │     Display: 3/3 agents  ──► "Strong consensus, preserve"             │  │
+│  │     CPU:     2/3 agents  ──► (no specific critique)                   │  │
+│  │     Memory:  2/3 agents  ──► (no specific critique)                   │  │
+│  │     Camera:  1/3 agents  ──► "Isolated, reconsider"                   │  │
+│  │     Speaker: 1/3 agents  ──► "Isolated, reconsider"                   │  │
+│  └───────────────────────────────────────────────────────────────────────┘  │
+│                              ▼                                              │
+│                                                                             │
+│  ROUND 2: ALL agents receive the SAME critique summary                      │
+│           Each agent then calls the LLM to refine their own proposals       │
+│                                                                             │
+│     ┌─────────┐         ┌─────────┐         ┌─────────┐                    │
+│     │ Agent 1 │         │ Agent 2 │         │ Agent 3 │                    │
+│     │         │         │         │         │         │                    │
+│     │ Receives│         │ Receives│         │ Receives│                    │
+│     │ SAME    │         │ SAME    │         │ SAME    │                    │
+│     │ critique│         │ critique│         │ critique│                    │
+│     │ summary │         │ summary │         │ summary │                    │
+│     └────┬────┘         └────┬────┘         └────┬────┘                    │
+│          │                   │                   │                          │
+│          ▼                   ▼                   ▼                          │
+│     Refines own         Refines own         Refines own                    │
+│     proposals           proposals           proposals                       │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
+
+The critique generation is **deterministic Python code** (see `generate_critiques_with_influence` in `component_debater.py`), not an LLM call. It counts how many agents proposed each component and generates text feedback based on support levels:
+
+```python
+def generate_critiques_with_influence(proposals, round_num):
+    """
+    System-generated critiques based on aggregated proposal statistics.
+    
+    This is NOT an LLM call - it's deterministic code that:
+    1. Counts how many agents proposed each component
+    2. Calculates average confidence for each component
+    3. Generates text critiques based on support thresholds
+    """
+    critiques = []
+    
+    # Group proposals by normalized component name
+    for component_name, supporting_proposals in component_groups.items():
+        num_supporters = len(set(p.agent_id for p in supporting_proposals))
+        avg_confidence = mean(p.confidence for p in supporting_proposals)
+        support_rate = num_supporters / num_agents
+        
+        if support_rate >= 0.67:  # 2/3 majority
+            critiques.append(
+                f"Strong consensus on '{component_name}': {num_supporters} agents "
+                f"support it with average confidence {avg_confidence:.2f}. "
+                f"This should be preserved."
+            )
+        elif support_rate <= 1/num_agents:  # Only 1 agent
+            critiques.append(
+                f"Isolated proposal '{component_name}' appears only once with "
+                f"average confidence {avg_confidence:.2f}; reconsider unless "
+                f"critically justified."
+            )
+    
+    # Add round-dependent general guidance
+    if round_num == 1:
+        critiques.append(
+            "Focus on aligning on obvious shared components while dropping "
+            "clearly idiosyncratic proposals."
+        )
+    else:
+        critiques.append(
+            "Consolidate around components that have multi-agent support and "
+            "high confidence, and prune uncertain or unsupported components."
+        )
+    
+    return critiques
+```
+
+**Key insight**: The system acts like a **debate moderator** that:
+1. Collects all proposals from agents
+2. Summarizes the level of agreement on each item
+3. Provides this summary back to all agents equally
+4. Lets each agent independently decide how to refine their proposals
+
+Agents do NOT directly see or respond to each other's specific reasoning - they only see the aggregated statistics about support levels.
+
+### What Agents Do With Critique Feedback
+
+Each agent receives the **exact same prompt** containing:
+1. **Previous proposals from ALL agents** (with their confidence scores)
+2. **System-generated critiques** (consensus/isolated classifications)
+3. **Instructions** on how to incorporate the feedback
+
+Here is the actual prompt sent to each agent in Round 2+:
+
+```
+DEBATE ROUND {round_num}
+
+Technology: {technology}
+
+PREVIOUS ROUND PROPOSALS:
+- Agent1: Lithium-ion Battery (confidence=0.95)
+- Agent1: OLED Display (confidence=0.90)
+- Agent1: CPU (confidence=0.92)
+- Agent2: Battery Pack (confidence=0.88)
+- Agent2: LCD Display (confidence=0.85)
+- Agent2: CPU (confidence=0.90)
+- Agent3: Lithium-ion Battery (confidence=0.92)
+- Agent3: Display Module (confidence=0.80)
+- Agent3: Processor (confidence=0.88)
+
+PEER CRITIQUES AND GUIDANCE:
+- Strong consensus on 'Lithium-ion Battery': 2 agents support it with 
+  average confidence 0.94. This should be preserved.
+- Strong consensus on 'CPU': 3 agents support it with average confidence 
+  0.90. This should be preserved.
+- Isolated proposal 'LCD Display' appears only once with average confidence 
+  0.85; reconsider unless critically justified.
+- Consolidate around components that have multi-agent support and high 
+  confidence, and prune uncertain or unsupported components.
+
+YOUR TASK:
+1. Review all peer proposals and critiques carefully
+2. For EACH component you propose, assign a confidence score (0.0-1.0) based on:
+   - How certain you are it's a primary component
+   - Degree of peer support or opposition
+   - Strength of evidence and reasoning
+3. Support strong consensus candidates with high confidence
+4. Lower confidence for isolated proposals unless critically justified
+5. Provide clear reasoning for each confidence assessment
+
+Return your refined component list with confidence scores and reasoning.
+```
+
+**Critical point**: The LLM decides how to respond to this feedback. The system prompt instructs the agent to:
+- "Consider peer proposals and critiques carefully"
+- "Adjust your confidence based on consensus among peers"
+- "Support strong consensus candidates with high confidence"
+- "Lower confidence for isolated proposals unless critically justified"
+
+However, **there is no enforcement** - the LLM might:
+- Drop an isolated proposal it previously made (expected behavior)
+- Keep an isolated proposal if it believes it's justified (allowed)
+- Add a new component it sees other agents proposing (common)
+- Adjust confidence scores up or down based on peer support (expected)
+
+The system relies on the LLM's instruction-following capability to gradually converge. In practice, agents typically:
+1. **Adopt consensus items** they didn't previously propose
+2. **Drop isolated items** that lack peer support (unless they have strong reasoning)
+3. **Increase confidence** on items with peer support
+4. **Decrease confidence** on items with critique
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│              TYPICAL AGENT BEHAVIOR ACROSS ROUNDS                           │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│  ROUND 1 (Independent):                                                     │
+│     Agent1: [Battery, Display, CPU, Memory, NFC]                            │
+│     Agent2: [Battery, Display, CPU, Camera, GPS]                            │
+│     Agent3: [Battery, Display, Memory, Speaker, Haptic]                     │
+│                                                                             │
+│  System critique: "Battery, Display strong consensus; NFC, GPS, Speaker,    │
+│                    Haptic are isolated proposals"                           │
+│                                                                             │
+│  ROUND 2 (After seeing feedback):                                           │
+│     Agent1: [Battery, Display, CPU, Memory, Camera]  ← added Camera         │
+│             (dropped NFC, adopted Camera from Agent2)                       │
+│                                                                             │
+│     Agent2: [Battery, Display, CPU, Camera, Memory]  ← added Memory         │
+│             (dropped GPS, adopted Memory from Agent1/3)                     │
+│                                                                             │
+│     Agent3: [Battery, Display, CPU, Memory, Camera]  ← added CPU, Camera    │
+│             (dropped Speaker, Haptic; adopted CPU, Camera)                  │
+│                                                                             │
+│  Result: Convergence increased from 45% → 78%                               │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
+
+This gradual adoption of peer proposals is what drives convergence. The system measures agreement (Jaccard similarity) and stops when agents sufficiently agree.
+
+### Example Critique Output
+
+```
+CRITIQUES FOR ROUND 2:
+
+✓ Strong consensus on 'Lithium-ion Battery': 3 agents support it 
+  with average confidence 0.93. This should be preserved.
+
+✓ Strong consensus on 'CPU': 3 agents support it with average 
+  confidence 0.91. This should be preserved.
+
+⚠ Isolated proposal 'Haptic Motor' appears only once with average 
+  confidence 0.70; reconsider unless critically justified.
+
+⚠ Isolated proposal 'NFC Chip' appears only once with average 
+  confidence 0.65; reconsider unless critically justified.
+
+→ Consolidate around components that have multi-agent support and 
+  high confidence, and prune uncertain or unsupported components.
+```
+
+---
+
+## Materials Debate (Phase 2)
+
+### Purpose
+
+For each component identified in Phase 1, identify the raw materials needed for manufacturing.
+
+### Flow Diagram
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                    MATERIALS DEBATE FLOW                                    │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│  Input: Components from Phase 1                                             │
+│         ["Lithium-ion Battery", "OLED Display", "CPU", ...]                │
+│                                                                             │
+│  ┌─────────────────────────────────────────────────────────────────────┐   │
+│  │                    PHASE 1: INDEPENDENT GENERATION                  │   │
+│  │                                                                     │   │
+│  │  ┌─────────┐     ┌─────────┐     ┌─────────┐                       │   │
+│  │  │ Agent 1 │     │ Agent 2 │     │ Agent 3 │                       │   │
+│  │  │Structural│    │ Trace   │     │ Supply  │   ← Different         │   │
+│  │  │Materials │    │Elements │     │ Chain   │     Perspectives      │   │
+│  │  └────┬────┘     └────┬────┘     └────┬────┘                       │   │
+│  │       │               │               │                             │   │
+│  │       ▼               ▼               ▼                             │   │
+│  │  Battery:        Battery:        Battery:                           │   │
+│  │  - Lithium       - Lithium       - Lithium                         │   │
+│  │  - Cobalt        - Cobalt        - Cobalt                          │   │
+│  │  - Graphite      - Manganese     - Nickel                          │   │
+│  │  - Aluminum      - Nickel        - Graphite                        │   │
+│  └─────────────────────────────────────────────────────────────────────┘   │
+│                              │                                             │
+│                              ▼                                             │
+│  ┌─────────────────────────────────────────────────────────────────────┐   │
+│  │                    PHASE 2: DEBATE ROUNDS                           │   │
+│  │                                                                     │   │
+│  │  Calculate convergence (Jaccard on component-material pairs)        │   │
+│  │                                                                     │   │
+│  │  Round 1: 45% convergence                                          │   │
+│  │     │                                                               │   │
+│  │     ▼                                                               │   │
+│  │  Generate critiques:                                                │   │
+│  │  ✓ CONSENSUS: 3/3 agents agree on Lithium (avg conf: 0.95)         │   │
+│  │  ✓ CONSENSUS: 3/3 agents agree on Cobalt (avg conf: 0.92)          │   │
+│  │  ⚠ PARTIAL: 2/3 agents proposed Graphite. 1 agent proposed         │   │
+│  │    Carbon instead. Evaluate if functionally distinct.              │   │
+│  │  ❌ ISOLATED: Only 1/3 agent proposed Manganese while 2 agents     │   │
+│  │    did not. Verify if critical or too specific.                    │   │
+│  │     │                                                               │   │
+│  │     ▼                                                               │   │
+│  │  Round 2: 68% convergence                                          │   │
+│  │     │                                                               │   │
+│  │     ▼                                                               │   │
+│  │  Round 3: 82% convergence ✓ (threshold reached)                    │   │
+│  └─────────────────────────────────────────────────────────────────────┘   │
+│                              │                                             │
+│                              ▼                                             │
+│  ┌─────────────────────────────────────────────────────────────────────┐   │
+│  │                    PHASE 3: BUILD CONSENSUS                         │   │
+│  │                                                                     │   │
+│  │  Adaptive threshold based on convergence:                           │   │
+│  │  - High convergence (≥70%): Require 2/3 agent support              │   │
+│  │  - Low convergence (≤30%): Accept 1/3 agent support                │   │
+│  │                                                                     │   │
+│  │  Final Output:                                                      │   │
+│  │  ┌───────────────────────────────────────────────────────┐         │   │
+│  │  │ Lithium-ion Battery:                                  │         │   │
+│  │  │   - Lithium (conf: 0.95, support: 3/3)               │         │   │
+│  │  │   - Cobalt (conf: 0.92, support: 3/3)                │         │   │
+│  │  │   - Graphite (conf: 0.88, support: 3/3)              │         │   │
+│  │  │   - Nickel (conf: 0.85, support: 2/3)                │         │   │
+│  │  │   - Aluminum (conf: 0.80, support: 2/3)              │         │   │
+│  │  └───────────────────────────────────────────────────────┘         │   │
+│  └─────────────────────────────────────────────────────────────────────┘   │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
+
+### Materials Prompt (Phase 1)
+
+```
+Extract RAW MATERIALS (NOT components or subassemblies) for these 
+components of a Smartphone:
+- Lithium-ion Battery
+- OLED Display
+- CPU
+- Memory Chip
+- Camera Module
+
+AVAILABLE RAW MATERIALS (use exact names or common variants):
+Aluminum, Antimony, Arsenic, Barium, Beryllium, Bismuth, Boron, Cadmium, 
+Calcium, Carbon, Cerium, Cesium, Chromium, Cobalt, Copper, Dysprosium, 
+Erbium, Europium, Gadolinium, Gallium, Germanium, Glass, Gold, ...
+
+PERSPECTIVE: Focus on primary structural and functional materials.
+
+CRITICAL INSTRUCTIONS:
+- For each component, identify 2-8 key RAW MATERIALS (metals, minerals, elements)
+- Do NOT return component names, subassemblies, or finished parts
+- Return only basic materials like Aluminum, Copper, Silicon, Lithium, Glass
+- Use standard material names from the ontology
+
+Return a JSON response with 'component_list' containing 'component' and 
+'materials' fields.
+```
+
+### Materials Critique Types
+
+```
+CRITIQUES FOR ROUND 2:
+
+✓ CONSENSUS: 3/3 agents agree on Lithium (avg confidence: 0.95). 
+  Strong evidence: Essential cathode material for Li-ion chemistry
+
+⚠ PARTIAL: 2/3 agents proposed Graphite. 1 agent(s) proposed alternatives: 
+  Carbon. Evaluate if Graphite is functionally distinct or if materials 
+  can be consolidated.
+
+❌ ISOLATED: Only 1/3 agent proposed Manganese while 2 agents did not. 
+  Reasoning: Used in NMC cathode chemistry. Verify if this material is 
+  critical or too specific for Lithium-ion Battery.
+
+⚠ Lithium-ion Battery has 12 proposed materials - focus on primary/essential 
+  materials and consolidate variants.
+```
+
+---
+
+## Country Data Debate (Phase 3)
+
+### Purpose
+
+For each material, identify the top producing countries. This phase uses **single-round Borda count voting** rather than iterative debate because country production data is factual rather than analytical.
+
+### Flow Diagram
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                    COUNTRY DATA DEBATE FLOW                                 │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│  Input: Material = "Lithium", Year = 2023                                   │
+│                                                                             │
+│  ┌─────────────────────────────────────────────────────────────────────┐   │
+│  │                 PHASE 1: EXPERT PROPOSALS                           │   │
+│  │                                                                     │   │
+│  │  All 3 agents are "materials mining and production experts"         │   │
+│  │  Each proposes top 10 countries in ranked order                     │   │
+│  │                                                                     │   │
+│  │  Expert_1:              Expert_2:              Expert_3:            │   │
+│  │  1. Australia (47%)     1. Australia (52%)     1. Australia (49%)   │   │
+│  │  2. Chile (26%)         2. Chile (22%)         2. Chile (24%)       │   │
+│  │  3. China (15%)         3. China (14%)         3. China (16%)       │   │
+│  │  4. Argentina (6%)      4. Argentina (5%)      4. Argentina (5%)    │   │
+│  │  5. Zimbabwe (2%)       5. Brazil (3%)         5. Zimbabwe (3%)     │   │
+│  │  6. Brazil (1%)         6. Zimbabwe (2%)       6. Brazil (1%)       │   │
+│  │  ...                    ...                    ...                  │   │
+│  └─────────────────────────────────────────────────────────────────────┘   │
+│                              │                                             │
+│                              ▼                                             │
+│  ┌─────────────────────────────────────────────────────────────────────┐   │
+│  │                 PHASE 2: BORDA COUNT VOTING                         │   │
+│  │                                                                     │   │
+│  │  Scoring: Position 1 = 10 points, Position 2 = 9 points, etc.       │   │
+│  │                                                                     │   │
+│  │  Country      │ Expert_1 │ Expert_2 │ Expert_3 │ Total Score        │   │
+│  │  ─────────────┼──────────┼──────────┼──────────┼─────────────        │   │
+│  │  Australia    │    10    │    10    │    10    │    30              │   │
+│  │  Chile        │     9    │     9    │     9    │    27              │   │
+│  │  China        │     8    │     8    │     8    │    24              │   │
+│  │  Argentina    │     7    │     7    │     7    │    21              │   │
+│  │  Zimbabwe     │     6    │     5    │     6    │    17              │   │
+│  │  Brazil       │     5    │     6    │     5    │    16              │   │
+│  │  ...          │   ...    │   ...    │   ...    │   ...              │   │
+│  └─────────────────────────────────────────────────────────────────────┘   │
+│                              │                                             │
+│                              ▼                                             │
+│  ┌─────────────────────────────────────────────────────────────────────┐   │
+│  │                 FINAL CONSENSUS (Top 5)                             │   │
+│  │                                                                     │   │
+│  │  1. Australia: 49,400 metric tons (49.3%) - conf: 0.95             │   │
+│  │  2. Chile: 23,800 metric tons (23.8%) - conf: 0.93                 │   │
+│  │  3. China: 15,000 metric tons (15.0%) - conf: 0.91                 │   │
+│  │  4. Argentina: 5,500 metric tons (5.5%) - conf: 0.89               │   │
+│  │  5. Zimbabwe: 2,400 metric tons (2.4%) - conf: 0.85                │   │
+│  └─────────────────────────────────────────────────────────────────────┘   │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
+
+### Country Expert Prompt
+
+```
+You are a materials mining and production expert.
+
+Provide the top 10 countries that produced Lithium in 2023,
+ranked in descending order by production volume.
+
+Requirements:
+- List countries in cardinal order (1st, 2nd, 3rd, etc.)
+- Use the most recent data available (preferably 2023 or within 2-3 years)
+- Provide specific numeric production amounts with units
+- Include percentage of global production for each country
+- Use standard country names (not abbreviations)
+- Focus on major producers with significant global market share
+
+Return exactly 10 countries in order of production volume.
+```
+
+---
+
+## Convergence and Consensus
+
+### Jaccard Similarity Calculation
+
+Convergence measures how much agents agree. It's calculated as the average Jaccard similarity between all agent pairs:
+
+```
+Jaccard(A, B) = |A ∩ B| / |A ∪ B|
+
+Example:
+  Agent1 components: {Battery, Display, CPU, Memory}
+  Agent2 components: {Battery, Display, CPU, Camera}
+  Agent3 components: {Battery, Display, Memory, Camera}
+
+  Jaccard(Agent1, Agent2) = |{Battery, Display, CPU}| / |{Battery, Display, CPU, Memory, Camera}|
+                          = 3/5 = 0.60
+
+  Jaccard(Agent1, Agent3) = |{Battery, Display, Memory}| / |{Battery, Display, CPU, Memory, Camera}|
+                          = 3/5 = 0.60
+
+  Jaccard(Agent2, Agent3) = |{Battery, Display, Camera}| / |{Battery, Display, CPU, Memory, Camera}|
+                          = 3/5 = 0.60
+
+  Convergence = (0.60 + 0.60 + 0.60) / 3 = 0.60 (60%)
+```
+
+### Adaptive Consensus Thresholds
+
+The minimum support required to include a component in consensus varies based on convergence:
+
+```
+┌────────────────────────────────────────────────────────────────┐
+│              ADAPTIVE THRESHOLD CALCULATION                    │
+├────────────────────────────────────────────────────────────────┤
+│                                                                │
+│  Convergence Score        Min Support Required                 │
+│  ──────────────────       ────────────────────                 │
+│  ≥ 90%                    2/3 of agents (strict)              │
+│  70% - 90%                Linear interpolation                 │
+│  30% - 70%                Linear interpolation                 │
+│  ≤ 30%                    1/3 of agents (lenient)             │
+│                                                                │
+│  Why adaptive?                                                 │
+│  - High convergence = agents mostly agree → be strict          │
+│  - Low convergence = agents disagree → be lenient to capture  │
+│    valid components that only some agents identified           │
+│                                                                │
+└────────────────────────────────────────────────────────────────┘
+```
+
+### Consensus Scoring Formula
+
+Each component receives a score based on support and confidence:
+
+```python
+score = (
+    (1.0 - confidence_weight) * support_fraction    # How many agents agree
+    + confidence_weight * average_confidence         # Average confidence across agents
+    + peer_support_boost * (num_supporters - 1)     # Bonus for multi-agent support
+)
+
+# Default weights:
+# confidence_weight = 0.3
+# peer_support_boost = 0.15
+
+# Example:
+# "Lithium-ion Battery" supported by 3/3 agents, avg confidence 0.93
+score = (1.0 - 0.3) * 1.0 + 0.3 * 0.93 + 0.15 * 2
+      = 0.70 + 0.279 + 0.30
+      = 1.279  ← High score, will be included
+
+# "Haptic Motor" supported by 1/3 agents, confidence 0.70
+score = (1.0 - 0.3) * 0.33 + 0.3 * 0.70 + 0.15 * 0
+      = 0.231 + 0.21 + 0
+      = 0.441  ← Low score, may be excluded
+```
+
+---
+
+## Complete Example
+
+### Input
+
+Technology: **Electric Vehicle Battery**
+
+### Phase 1: Component Debate
+
+```
+================================================================================
+DEBATE: Electric Vehicle Battery
+================================================================================
+
+🔄 Semantic normalization of 15 unique components...
+✓ Normalized to 9 unique concepts
+
+ROUND 1:
+  Confidence: avg=0.82, min=0.65, max=0.95
+  Convergence: 45.2%
+  Generating critiques...
+  
+  Critiques:
+  ✓ Strong consensus on 'Battery Cell': 3 agents support it with average 
+    confidence 0.94. This should be preserved.
+  ✓ Strong consensus on 'Battery Management System': 3 agents support it 
+    with average confidence 0.91. This should be preserved.
+  ⚠ Isolated proposal 'Thermal Interface Material' appears only once with 
+    average confidence 0.72; reconsider unless critically justified.
+  
+  Refining proposals based on peer feedback...
+  ✓ Agent1: 7 components (avg conf: 0.85)
+  ✓ Agent2: 6 components (avg conf: 0.87)
+  ✓ Agent3: 7 components (avg conf: 0.84)
+
+ROUND 2:
+  Confidence: avg=0.86, min=0.72, max=0.96
+  Convergence: 68.4%
+  Generating critiques...
+  Refining proposals based on peer feedback...
+
+ROUND 3:
+  Confidence: avg=0.89, min=0.78, max=0.97
+  Convergence: 82.1%
+  ✅ Convergence threshold reached!
+
+🔍 Consensus Scoring Debug:
+   Convergence: 0.82
+   Min support required: 2/3 agents
+   Peer support boost: 0.15
+
+   Component Scoring:
+   ✓ 'Battery Cell': 3/3 agents, avg_conf=0.95, score=1.295
+   ✓ 'Battery Management System': 3/3 agents, avg_conf=0.92, score=1.261
+   ✓ 'Cooling System': 3/3 agents, avg_conf=0.88, score=1.234
+   ✓ 'Battery Pack Housing': 3/3 agents, avg_conf=0.85, score=1.210
+   ✓ 'Electrical Connectors': 2/3 agents, avg_conf=0.82, score=0.863
+   ✗ 'Thermal Interface Material': 1/3 agents, avg_conf=0.72 — EXCLUDED
+
+  Extracted 5 components with dynamic confidence weighting
+```
+
+### Phase 2: Materials Debate (for Battery Cell)
+
+```
+================================================================================
+MULTI-AGENT MATERIAL DEBATE: Electric Vehicle Battery
+Components: 5
+================================================================================
+
+✓ Material ontology: 156 materials loaded
+
+================================================================================
+PHASE 1: INDEPENDENT MATERIAL PROPOSALS - Electric Vehicle Battery
+================================================================================
+✓ Agent1 (top_p=0.0001): 28 material proposals across 5 components
+✓ Agent2 (top_p=0.0001): 31 material proposals across 5 components
+✓ Agent3 (top_p=0.0001): 27 material proposals across 5 components
+
+✓ Generated 86 total proposals from 3 agents
+
+================================================================================
+PHASE 2: DEBATE ROUNDS
+================================================================================
+Initial convergence: 52.3%
+
+Round 2...
+ROUND 2:
+  ✓ Agent1 using top_p=0.0001
+  ✓ Agent2 using top_p=0.0001
+  ✓ Agent3 using top_p=0.0001
+Convergence: 71.8%
+
+Round 3...
+ROUND 3:
+Convergence: 84.6%
+
+================================================================================
+PHASE 3: BUILDING CONSENSUS
+================================================================================
+
+🔍 Building consensus with component name enforcement...
+  Expected components: ['Battery Cell', 'Battery Management System', 
+                        'Cooling System', 'Battery Pack Housing', 
+                        'Electrical Connectors']
+  Convergence: 0.85
+  Min support required: 2/3 agents
+  ✓ Battery Cell: 8 materials
+  ✓ Battery Management System: 5 materials
+  ✓ Cooling System: 4 materials
+  ✓ Battery Pack Housing: 3 materials
+  ✓ Electrical Connectors: 4 materials
+
+Consensus: 5 components, 24 materials
+  - Battery Cell: Lithium, Cobalt, Nickel, Graphite, Manganese +3 more
+  - Battery Management System: Silicon, Copper, Gold, Tin, Tantalum
+  - Cooling System: Aluminum, Copper, Ethylene Glycol, Steel
+  - Battery Pack Housing: Aluminum, Steel, Plastic
+  - Electrical Connectors: Copper, Gold, Silver, Tin
+```
+
+### Phase 3: Country Debate (for Lithium)
+
+```
+================================================================================
+COUNTRY CONSENSUS: Lithium (2023)
+================================================================================
+
+PHASE 1: Expert Proposals
+------------------------------------------------------------
+  Expert_1 (materials mining and production expert)...
+    ✓ Proposed 10 countries
+  Expert_2 (materials mining and production expert)...
+    ✓ Proposed 10 countries
+  Expert_3 (materials mining and production expert)...
+    ✓ Proposed 10 countries
+
+✓ Final consensus: 5 countries
+  1. Australia: 49.3%
+  2. Chile: 23.8%
+  3. China: 15.0%
+  4. Argentina: 5.5%
+  5. Zimbabwe: 2.4%
+```
+
+### Final CSV Output Row
+
+```csv
+technology,component,component_confidence,component_reasoning,material,material_confidence,material_reasoning,hs_code,country,meas_unit,amount,percentage,country_confidence,country_reasoning
+Electric Vehicle Battery,Battery Cell,0.95,Essential energy storage unit,Lithium,0.95,Key cathode material,2825.20,Australia,metric tons,86000,49.3,0.95,Largest producer globally
+Electric Vehicle Battery,Battery Cell,0.95,Essential energy storage unit,Lithium,0.95,Key cathode material,2825.20,Chile,metric tons,41500,23.8,0.93,Second largest with brine operations
+...
+```
+
+---
+
+## Configuration Options
+
+The debate system can be configured via CLI or config file:
+
+```bash
+# Full debate mode (recommended for best quality)
+python -m stdn_agentic.main \
+    --enable-debate \
+    --enable-material-debate \
+    --enable-country-debate \
+    --num-agents-component 3 \
+    --num-agents-material 3 \
+    --num-agents-country 3 \
+    --max-debate-rounds 5 \
+    --convergence-threshold 0.75
+
+# No debate mode (faster, lower quality)
+python -m stdn_agentic.main  # defaults to no debate
+```
+
+### Output File Naming Convention
+
+The output filename encodes the debate configuration:
+
+```
+stdns_output_{config}_{timestamp}.csv
+
+Config format: {component}{material}{country}
+- d{n} = debate with n agents
+- v{n} = voting/single-agent with n agents
+
+Examples:
+- d3d3v3 = debate(3) for all phases
+- v1v1v1 = single agent throughout (no debate)
+- d3v1v3 = debate(3) for components, single for materials, voting(3) for country
+```
+
+---
+
+## Summary
+
+The multi-agent debate system improves STDN extraction quality through:
+
+1. **Multiple perspectives**: 3 agents independently analyze each question
+2. **Critique-driven refinement**: Agents learn from peer feedback
+3. **Convergence tracking**: Jaccard similarity measures agreement
+4. **Adaptive consensus**: Thresholds adjust based on agreement level
+5. **Confidence scoring**: Combined support + confidence determines inclusion
+6. **Transparent reasoning**: Full debate transcripts for auditability
