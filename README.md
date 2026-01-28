@@ -517,13 +517,6 @@ Configuration in STDN Agentic lives in a JSON file (by default `config.json`) an
   "years_to_query": [2024, 2023],
   "write_nulls_to_output": true,
   
-  "enable_debate": true,
-  "enable_material_debate": true,
-  "enable_country_debate": true,
-  "max_debate_rounds": 5,
-  "convergence_threshold": 0.75,
-  "debate_top_p": 0.0001,
-  
   "enable_llm_fallback_cache": true,
   "llm_fallback_cache_dir": "./cache/llm_fallback",
   "llm_fallback_cache_ttl_hours": 720,
@@ -537,20 +530,69 @@ Configuration in STDN Agentic lives in a JSON file (by default `config.json`) an
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `enable_debate` | bool | false | Enable multi-agent debate for components |
-| `enable_material_debate` | bool | false | Enable multi-agent debate for materials |
-| `enable_country_debate` | bool | true | Enable Borda voting for countries (when USGS misses) |
-| `max_debate_rounds` | int | 5 | Maximum debate iterations per stage |
-| `convergence_threshold` | float | 0.75 | Jaccard similarity threshold to stop debating |
-| `debate_top_p` | float | 0.0001 | Top-p sampling (very low for deterministic proposals) |
 | `enable_llm_fallback_cache` | bool | true | Cache LLM debate results for 30 days |
 | `llm_fallback_cache_ttl_hours` | int | 720 | Cache TTL in hours (720 = 30 days) |
 | `save_transcripts` | bool | true | Save debate JSON/TXT transcripts |
 
-### Environment Variable Overrides
+**Note:** Debate settings are configured via environment variables (see below), not in config.json.
+
+### Debate Environment Variables
+
+| Variable | Type | Default | Description |
+|----------|------|---------|-------------|
+| `ENABLE_COMPONENT_DEBATE` | bool | false | Enable multi-agent debate for components |
+| `ENABLE_MATERIAL_DEBATE` | bool | false | Enable multi-agent debate for materials |
+| `ENABLE_COUNTRY_DEBATE` | bool | false | Enable Borda voting for countries (when USGS misses) |
+| `NUM_AGENTS_COMPONENT` | int | 3 | Number of agents for component debate |
+| `NUM_AGENTS_MATERIAL` | int | 3 | Number of agents for material debate |
+| `NUM_AGENTS_COUNTRY` | int | 3 | Number of agents for country voting |
+| `MAX_DEBATE_ROUNDS` | int | 3 | Maximum debate iterations per stage |
+| `CONVERGENCE_THRESHOLD` | float | 0.8 | Jaccard similarity threshold to stop debating |
+| `DEBATE_TOP_P` | float | 0.0001 | Top-p sampling (very low for deterministic proposals) |
+| `SAVE_TRANSCRIPTS` | bool | true | Save debate JSON/TXT transcripts |
+
+### `.env` File Configuration
+
+Create a `.env` file in the project root to configure debate settings:
 
 ```bash
-export ENABLE_DEBATE=true
+# .env file example
+OLLAMA_BASE_URL=http://localhost:11434/v1
+
+# Debate toggles (per phase)
+ENABLE_COMPONENT_DEBATE=true
+ENABLE_MATERIAL_DEBATE=true
+ENABLE_COUNTRY_DEBATE=true
+
+# Number of agents per phase (only used when debate is enabled)
+NUM_AGENTS_COMPONENT=3
+NUM_AGENTS_MATERIAL=3
+NUM_AGENTS_COUNTRY=3
+
+# Debate parameters
+MAX_DEBATE_ROUNDS=3
+CONVERGENCE_THRESHOLD=0.7
+
+# Caching
+ENABLE_LLM_FALLBACK_CACHE=true
+```
+
+### Environment Variable Overrides
+
+You can also set these as shell environment variables:
+
+```bash
+# Debate toggles (per phase)
+export ENABLE_COMPONENT_DEBATE=true
+export ENABLE_MATERIAL_DEBATE=true
+export ENABLE_COUNTRY_DEBATE=true
+
+# Number of agents per phase (only used when debate is enabled)
+export NUM_AGENTS_COMPONENT=3
+export NUM_AGENTS_MATERIAL=3
+export NUM_AGENTS_COUNTRY=3
+
+# Debate parameters
 export MAX_DEBATE_ROUNDS=3
 export CONVERGENCE_THRESHOLD=0.8
 export SAVE_TRANSCRIPTS=true
@@ -584,10 +626,34 @@ uv sync
 # Install with development tools
 uv sync --group dev
 
-# (Optional) Install and start Ollama
+# Set up environment configuration
+cp .env.example .env
+# Edit .env to add your API keys and customize settings
+
+# (Optional) Install and start Ollama for local LLM inference
 ollama serve
 ollama pull qwen2.5:7b
 ```
+
+### Environment setup
+
+The `.env` file contains runtime configuration including API keys and debate settings. Copy the example file and customize it:
+
+```bash
+cp .env.example .env
+```
+
+Then edit `.env` to add your API keys:
+
+```bash
+# For Anthropic Claude models
+ANTHROPIC_API_KEY=your-anthropic-api-key-here
+
+# For OpenAI models (optional)
+# OPENAI_API_KEY=your-openai-api-key-here
+```
+
+**Important:** The `.env` file is excluded from git (via `.gitignore`) to protect your API keys. Never commit secrets to the repository.
 
 ---
 
@@ -604,7 +670,7 @@ uv run stdn --input tech_list.csv --output output.csv
 
 **Multi-agent debate mode:**
 ```bash
-export ENABLE_DEBATE=true
+export ENABLE_COMPONENT_DEBATE=true
 export MAX_DEBATE_ROUNDS=5
 export CONVERGENCE_THRESHOLD=0.75
 uv run stdn --input tech_list.csv --output output.csv
@@ -694,23 +760,78 @@ When Borda voting is used:
 ### Basic execution
 
 ```bash
-# Simple run (no debate)
-uv run stdn --input data/tech_list.csv --output results/output.csv
+# Simple run (uses .env defaults)
+uv run stdn
 
-# Enable component debate only
-ENABLE_DEBATE=true uv run stdn --input data/tech_list.csv --output results/output.csv
-
-# Enable all debates
-ENABLE_DEBATE=true ENABLE_MATERIAL_DEBATE=true ENABLE_COUNTRY_DEBATE=true \
-  uv run stdn --input data/tech_list.csv --output results/output.csv
+# With explicit config file
+uv run stdn -i config.json
 ```
+
+### Command-line arguments
+
+The pipeline supports command-line arguments that override `.env` settings:
+
+```bash
+uv run stdn [OPTIONS]
+
+Options:
+  -i, --input-file FILE           JSON configuration file
+  --enable-component-debate BOOL  Enable component debate (default: from .env)
+  --enable-material-debate BOOL   Enable material debate (default: from .env)
+  --enable-country-debate BOOL    Enable country voting (default: from .env)
+  --num-agents-component N        Agents for component debate (default: 3)
+  --num-agents-material N         Agents for material debate (default: 3)
+  --num-agents-country N          Agents for country voting (default: 3)
+  --max-debate-rounds N           Maximum debate rounds (default: 3)
+  --convergence-threshold FLOAT   Convergence threshold (default: 0.8)
+  --save-transcripts BOOL         Save debate transcripts (default: true)
+```
+
+**Examples:**
+
+```bash
+# Disable all debate (single agent mode) - fastest
+uv run stdn --enable-component-debate false --enable-material-debate false --enable-country-debate false
+
+# Enable component debate with 5 agents
+uv run stdn --enable-component-debate true --num-agents-component 5
+
+# Full debate with custom settings
+uv run stdn --enable-component-debate true --enable-material-debate true --enable-country-debate true \
+  --num-agents-component 5 --max-debate-rounds 5 --convergence-threshold 0.75
+```
+
+**Priority order:** CLI arguments > `.env` file > defaults
 
 ### Output files
 
 The pipeline generates:
-- **`output.csv`** - Main STDN output with all confidence scores and reasoning
+- **`stdns_output_{debate_config}_{timestamp}.csv`** - Main STDN output with all confidence scores and reasoning
 - **`debate_transcripts/results/`** - JSON and TXT debate transcripts (if `save_transcripts=true`)
   - Example: `solar_panel_20260122_143022.txt`, `solar_panel_20260122_143022.json`
+
+#### Output file naming convention
+
+The CSV output filename encodes the debate configuration for each of the three phases (component, material, country):
+
+**Format:** `stdns_output_{phase1}{phase2}{phase3}_{timestamp}.csv`
+
+Where each phase code is:
+- `d{n}` = debate enabled with n agents
+- `v{n}` = voting/single-agent with n agents (v1 = single agent, no debate)
+
+**Examples:**
+
+| Filename | Meaning |
+|----------|---------|
+| `stdns_output_d3d3v3_20260127_143022.csv` | Debate (3 agents) for components, debate (3 agents) for materials, voting (3 agents) for country |
+| `stdns_output_v1v1v1_20260127_143022.csv` | Single agent throughout (no debate) |
+| `stdns_output_d3v1v3_20260127_143022.csv` | Debate (3 agents) for components, single agent for materials, voting (3 agents) for country |
+| `stdns_output_d5d4v1_20260127_143022.csv` | Debate (5 agents) for components, debate (4 agents) for materials, single agent for country |
+
+**Note:** The country phase always uses `v` (voting) rather than `d` (debate) because it uses Borda voting, not iterative debate.
+
+#### Debate transcripts
 
 Transcripts include:
 - Round-by-round agent proposals
