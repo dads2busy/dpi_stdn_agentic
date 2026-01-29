@@ -1,6 +1,6 @@
 # Multi-Agent Debate Evidence Report
 
-Generated: 2026-01-29 09:01:27
+Generated: 2026-01-29 09:12:02
 
 ---
 
@@ -41,22 +41,6 @@ Of 573 isolated proposals (1/3 support):
 - 41 (7.2%) were kept after scrutiny
 
 This demonstrates that debate actively filters questionable proposals that single-agent mode would accept blindly.
-
-### Sample Isolated Proposals (potential errors caught)
-
-- `316L Stainless Steel`
-- `AISI 304 Stainless Steel`
-- `Acetic Acid`
-- `Acetic acid`
-- `Acetone`
-- `Acetonitrile`
-- `Acrylamide`
-- `Acrylate monomers`
-- `Acrylic`
-- `Acrylonitrile Butadiene Styrene (ABS) Plastic`
-- `Acrylonitrile butadiene styrene`
-- `Acrylonitrile butadiene styrene (ABS)`
-- ... and 594 more
 
 ## 2. Confidence Score Analysis
 
@@ -123,7 +107,7 @@ This suggests that multi-agent consensus leads to more reproducible results, whi
 
 ### But Are v1v1v1's 'Extra' Materials Valid?
 
-We analyzed the 109 materials unique to v1v1v1:
+Analysis of the 109 materials unique to v1v1v1:
 
 | Category | Count | Percentage |
 |----------|-------|------------|
@@ -137,27 +121,6 @@ Based on debate's 92.8% filter rate for isolated proposals:
 - v1v1v1 materials that would be scrutinized: 55
 - Expected to be filtered: ~51
 - This would reduce v1v1v1's 'extra' coverage by ~47%
-
-### Sample Questionable v1v1v1 Materials
-
-Materials v1v1v1 included but debate flagged as isolated (1/3 support):
-
-- `beryllium`
-- `carbon`
-- `ceramic`
-- `cesium`
-- `epoxy resins`
-- `fiberglass`
-- `fluorine`
-- `fused silica`
-- `gallium nitride`
-- `germanium`
-- `glass`
-- `gold`
-- `helium`
-- `indium`
-- `indium gallium arsenide`
-- ... and 40 more
 
 ### Key Insight
 

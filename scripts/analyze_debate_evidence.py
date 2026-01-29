@@ -370,20 +370,6 @@ def generate_report(
         "This demonstrates that debate actively filters questionable proposals that single-agent mode would accept blindly.\n"
     )
 
-    # Sample isolated proposals
-    all_isolated_list = []
-    for tm in transcript_metrics:
-        all_isolated_list.extend(tm.get("isolated_proposals", []))
-
-    if all_isolated_list:
-        report.append("### Sample Isolated Proposals (potential errors caught)\n")
-        for iso in sorted(set(all_isolated_list))[:12]:
-            report.append(f"- `{iso}`")
-        remaining = len(set(all_isolated_list)) - 12
-        if remaining > 0:
-            report.append(f"- ... and {remaining} more")
-        report.append("")
-
     # ==========================================================================
     # Claim 2: Confidence Analysis
     # ==========================================================================
@@ -504,7 +490,7 @@ def generate_report(
 
     report.append("### But Are v1v1v1's 'Extra' Materials Valid?\n")
     report.append(
-        f"We analyzed the {material_validity.get('only_v1_count', 0)} materials unique to v1v1v1:\n"
+        f"Analysis of the {material_validity.get('only_v1_count', 0)} materials unique to v1v1v1:\n"
     )
 
     v1_isolated_count = material_validity.get("v1_only_isolated_count", 0)
@@ -531,18 +517,6 @@ def generate_report(
     report.append(
         f"- This would reduce v1v1v1's 'extra' coverage by ~{100 * expected_filter / material_validity.get('only_v1_count', 1):.0f}%\n"
     )
-
-    # Sample questionable materials
-    v1_only_isolated = material_validity.get("v1_only_isolated", set())
-    if v1_only_isolated:
-        report.append("### Sample Questionable v1v1v1 Materials\n")
-        report.append("Materials v1v1v1 included but debate flagged as isolated (1/3 support):\n")
-        for mat in sorted(v1_only_isolated)[:15]:
-            report.append(f"- `{mat}`")
-        remaining = len(v1_only_isolated) - 15
-        if remaining > 0:
-            report.append(f"- ... and {remaining} more")
-        report.append("")
 
     report.append("### Key Insight\n")
     report.append(
