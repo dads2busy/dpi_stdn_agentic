@@ -86,6 +86,7 @@ Output filenames encode the debate configuration:
 | [PROMPTS.md](docs/PROMPTS.md) | Complete reference of all LLM prompts used in the system including agent system prompts, debate prompts, and orchestrator prompts |
 | [DEBATE_SYSTEM.md](docs/DEBATE_SYSTEM.md) | Multi-agent debate mechanism including Jaccard convergence, critique generation, and Borda voting |
 | [DEBATE_EVIDENCE_REPORT.md](docs/DEBATE_EVIDENCE_REPORT.md) | Empirical analysis comparing debate vs. single-agent mode across stability, confidence, and hallucination reduction |
+| [SAMPLE_TRANSCRIPT.md](docs/SAMPLE_TRANSCRIPT.md) | Annotated example of a complete debate transcript (Smartphone) showing all three pipeline stages |
 
 ## Project Structure
 
