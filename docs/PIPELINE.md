@@ -20,7 +20,18 @@ CLI / stdn command
  │ • Confidence scoring │   matching           │ • Multi-tier Query   │
  └──────────────────────┴──────────────────────┴──────────────────────┘
           ↓
-   CSV + JSON outputs + debate transcripts
+   Raw CSV output (output/raw/)
+          ↓
+ ┌─────────────────────────────────────────────────────────────────────┐
+ │                    Post-Processing Normalization                    │
+ ├─────────────────────────────────────────────────────────────────────┤
+ │ • Batch component name normalization across all outputs             │
+ │ • Canonical vocabulary lookup (cached mappings)                     │
+ │ • LLM semantic normalization for unknown names                      │
+ │ • Persistent vocabulary updates                                     │
+ └─────────────────────────────────────────────────────────────────────┘
+          ↓
+   Normalized CSV output (output/normalized/) + debate transcripts
 ```
 
 ## Module Organization
@@ -48,6 +59,9 @@ src/stdn_agentic/
   │   ├── usgs_client.py         # DuckDB client for USGS production data
   │   ├── cache.py               # Material-country caching layer
   │   └── llm_fallback_cache.py  # Persistent cache for LLM debate results (30-day TTL)
+  ├── normalization/
+  │   ├── canonical_vocab.py     # Persistent JSON vocabulary for component name mappings
+  │   └── models.py              # Data models for normalized components
   ├── debate/
   │   ├── component_debater.py   # Multi-agent debate orchestrator for components
   │   │                          # - Jaccard similarity convergence metric
@@ -187,6 +201,132 @@ When Borda voting is used:
 - `percentage`: Share of global production
 - `country_confidence`: Score 0.0-1.0 (0.95 for USGS, 0.75-0.80 for LLM)
 - `country_reasoning`: Data source and confidence justification
+
+---
+
+## Post-Processing Normalization
+
+After all technologies are processed and raw CSV files are written, a post-processing normalization step ensures consistent component naming across all outputs.
+
+### Purpose
+
+Different LLM runs may produce variations of the same component name:
+- "Li-ion Battery", "Lithium Ion Battery", "Battery Pack (Li-ion)" → "Lithium-ion Battery"
+- "LCD Panel", "LCD Display", "Liquid Crystal Display" → "LCD Display"
+- "CPU", "Central Processing Unit", "Processor" → "CPU"
+
+Post-processing normalization consolidates these variations to canonical forms for consistent analysis.
+
+### Process
+
+1. **Find matching outputs**: Locate all raw CSV files with the same debate configuration (e.g., all `d3d3v3_*.csv` files)
+2. **Extract unique components**: Collect all unique component names across matching files
+3. **Vocabulary lookup**: Check canonical vocabulary (`data/component_canonical_vocab.json`) for cached mappings
+4. **LLM normalization**: Send unknown names to LLM for semantic mapping
+5. **Update vocabulary**: Add new mappings to persistent vocabulary for future runs
+6. **Write normalized output**: Create normalized CSV files in `output/normalized/`
+
+### Canonical Vocabulary
+
+The canonical vocabulary is a persistent JSON cache that reduces LLM calls:
+
+```json
+{
+    "version": "1.0",
+    "mappings": {
+        "li-ion battery": "Lithium-ion Battery",
+        "lcd panel": "LCD Display",
+        "central processing unit": "CPU"
+    },
+    "metadata": {
+        "created_at": "2026-01-28T12:00:00",
+        "updated_at": "2026-01-28T12:00:00",
+        "total_mappings": 42
+    }
+}
+```
+
+**Location**: `data/component_canonical_vocab.json`
+
+### Normalization Rules
+
+The normalization preserves material-relevant distinctions:
+
+| Preserve | Examples |
+|----------|----------|
+| Battery chemistry | Lithium-ion vs Lead-acid vs NiMH vs LFP |
+| Display technology | OLED vs LCD vs LED vs Mini-LED |
+| Semiconductor type | Silicon vs GaN vs SiC |
+| Memory type | DRAM vs NAND Flash vs NOR Flash |
+
+Generic qualifiers are removed:
+- "system", "module", "unit", "assembly", "component", "subsystem", "package"
+
+### Output Directories
+
+```
+output/
+├── raw/
+│   ├── stdns_output_d3d3v3_20260128_120000.csv  ← Raw output (as extracted)
+│   └── ...
+├── normalized/
+│   ├── stdns_output_d3d3v3_20260128_120000.csv  ← Normalized output
+│   └── ...
+└── stdns_output_*.json  ← JSON serialization
+```
+
+### Standalone Normalization Script
+
+Normalization can also be run independently on existing output files:
+
+```bash
+# Normalize all raw output files
+python scripts/normalize_outputs.py --pattern "output/raw/stdns_output_*.csv"
+
+# Normalize specific config group
+python scripts/normalize_outputs.py --pattern "output/raw/stdns_output_d3d3v3_*.csv"
+
+# Dry run (preview changes)
+python scripts/normalize_outputs.py --pattern "output/raw/*.csv" --dry-run
+
+# Custom vocabulary path
+python scripts/normalize_outputs.py --pattern "output/raw/*.csv" --vocab data/my_vocab.json
+```
+
+---
+
+## Normalization Throughout the Pipeline
+
+Normalization occurs at multiple stages to ensure consistency:
+
+| Stage | What | When | How |
+|-------|------|------|-----|
+| **Component Extraction** | Component names | Before debate rounds | LLM semantic mapping of agent proposals |
+| **Component Debate** | Component names | During each round | Proposals normalized before Jaccard calculation |
+| **Materials Extraction** | Material names | During extraction | Fuzzy matching to ontology + variant mapping |
+| **Materials Debate** | Material names | During each round | Ontology matching for consistent naming |
+| **Post-Processing** | Component names | After CSV output | Batch normalization across all outputs |
+
+### Material Variant Mapping
+
+Built-in mappings for common material variations:
+
+```python
+{
+    "lithium ion": "lithium",
+    "li-ion": "lithium",
+    "rare earth elements": "rare earth",
+    "ree": "rare earth",
+    "stainless steel": "steel",
+}
+```
+
+### Component Qualifier Removal
+
+Generic qualifiers automatically stripped from component names:
+- "system", "module", "unit", "assembly", "component", "subsystem", "package", "chipset"
+
+Example: "Battery Management System Module" → "Battery Management System"
 
 ---
 
