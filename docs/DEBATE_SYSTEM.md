@@ -401,6 +401,7 @@ Identify the primary manufacturing components of a technology product.
 The following diagram illustrates the complete component debate process, from initial proposals through iterative refinement to final consensus:
 
 ```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'fontSize': '18px'}}}%%
 flowchart LR
     subgraph Round1["ROUND 1: Independent Proposals"]
         Tech[/"Technology Query"/]
