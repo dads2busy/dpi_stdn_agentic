@@ -11,7 +11,6 @@ Features:
 - Technology specification refinement
 """
 
-import logging
 from datetime import datetime
 from pathlib import Path
 
@@ -23,13 +22,13 @@ from pydantic_ai import RunUsage
 from ..agents import ComponentList, ComponentWithConfidence, get_component_agent
 from ..debate import MultiAgentDebater
 from ..dependencies import STDNDependencies
+from ..logging_config import get_logger
 from ..reporting import DebateReporter
 
 if TYPE_CHECKING:
     from ..normalization import CanonicalVocab
 
-# Initialize logger
-logger = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 
 # ============================================================================
@@ -96,16 +95,15 @@ class ComponentExtractor:
 
         except Exception as e:
             logger.error(
-                f"Error in simple component extraction for {technology}: {e}", exc_info=True
+                "Error in simple component extraction for %s: %s", technology, e, exc_info=True
             )
-            print(f"✗ Error extracting components: {e}")
             return None
 
     async def extract_components_with_debate(
         self, technology: str, role: str, usage: RunUsage, num_agents: int = 3
     ) -> Optional[ComponentList]:
         """Extract components using enhanced multi-agent debate."""
-        self._print_debate_header(technology)
+        self._log_debate_header(technology)
 
         # Collect proposals
         (
@@ -117,7 +115,6 @@ class ComponentExtractor:
 
         if not agent_proposals:
             logger.error("No proposals collected from any agent")
-            print("❌ No valid proposals from agents")
             return None
 
         # Run debate
@@ -134,8 +131,8 @@ class ComponentExtractor:
         self, technology: str, role: str, usage: RunUsage, num_agents: int
     ) -> tuple[dict, list, str, str]:
         """Collect initial proposals from multiple agents."""
-        print(f"\n📋 Collecting proposals from {num_agents} agents...")
-        print(f"🎭 Role: {role}\n")
+        logger.info("Collecting proposals from %d agents...", num_agents)
+        logger.debug("Role: %s", role)
 
         agent_proposals = {}
         agent_responses = []
@@ -162,7 +159,7 @@ class ComponentExtractor:
                     technology_specification = tech_spec
                     technology_reasoning = tech_reason
 
-                print(f"✓ {agent_id}: {len(components_data)} components proposed")
+                logger.info("%s: %d components proposed", agent_id, len(components_data))
 
         return agent_proposals, agent_responses, technology_specification, technology_reasoning
 
@@ -180,12 +177,12 @@ class ComponentExtractor:
             result = await self.component_agent.run(prompt, deps=agent_deps)
 
             if not result or not result.output:
-                logger.warning(f"No response from Agent_{agent_num}")
+                logger.warning("No response from Agent_%d", agent_num)
                 return None
 
             component_list = result.output
             if not component_list or not component_list.component_list:
-                logger.warning(f"Empty component list from Agent_{agent_num}")
+                logger.warning("Empty component list from Agent_%d", agent_num)
                 return None
 
             # Extract data
@@ -207,8 +204,7 @@ class ComponentExtractor:
             return components_data, tech_spec, tech_reason
 
         except Exception as e:
-            logger.error(f"Error in Agent_{agent_num}: {e}", exc_info=True)
-            print(f"✗ Agent_{agent_num}: Error - {e}")
+            logger.error("Error in Agent_%d: %s", agent_num, e, exc_info=True)
             return None
 
     def _get_agent_perspective(self, agent_num: int) -> str:
@@ -284,12 +280,11 @@ class ComponentExtractor:
         """Run debate to reach consensus."""
         if not self.debater:
             logger.error("Debater not initialized")
-            print("❌ Debater not initialized")
             return None
 
-        print(f"\n{'=' * 80}")
-        print("RUNNING MULTI-AGENT DEBATE")
-        print(f"{'=' * 80}\n")
+        logger.info("=" * 60)
+        logger.info("RUNNING MULTI-AGENT DEBATE")
+        logger.info("=" * 60)
 
         debate_result = await self.debater.run_debate(
             technology=technology,
@@ -301,7 +296,6 @@ class ComponentExtractor:
 
         if not debate_result:
             logger.error("Debate failed to produce result")
-            print("❌ Debate failed")
             return None
 
         return debate_result
@@ -322,7 +316,7 @@ class ComponentExtractor:
         tech_spec = debate_result.get("technology_specification", tech_spec)
         tech_reasoning = debate_result.get("technology_reasoning", tech_reasoning)
 
-        self._print_consensus(tech_spec, final_component_names, component_details)
+        self._log_consensus(tech_spec, final_component_names, component_details)
 
         # Save transcript
         if self.reporter:
@@ -330,15 +324,14 @@ class ComponentExtractor:
                 technology, agent_responses, debate_result
             )
             if transcript_path:
-                print(f"\n📄 Debate transcript saved to: {transcript_path}")
+                logger.info("Debate transcript saved to: %s", transcript_path)
 
         # Create components
         final_components = self._build_components(final_component_names, component_details)
 
-        print(f"✓ Created {len(final_components)} ComponentWithConfidence objects")
-        print("\n🔍 ComponentList names (what will be saved):")
+        logger.info("Created %d ComponentWithConfidence objects", len(final_components))
         for comp in final_components:
-            print(f"   - {comp.name} (confidence: {comp.confidence:.2f})")
+            logger.debug("  %s (confidence: %.2f)", comp.name, comp.confidence)
 
         return ComponentList(
             componentlist=final_components,
@@ -360,7 +353,7 @@ class ComponentExtractor:
                     )
                 )
             else:
-                print(f"  ⚠️ No details found for '{norm_name}', using fallback")
+                logger.warning("No details found for '%s', using fallback", norm_name)
                 components.append(
                     ComponentWithConfidence(
                         name=norm_name.title(),
@@ -370,23 +363,23 @@ class ComponentExtractor:
                 )
         return components
 
-    def _print_debate_header(self, technology: str) -> None:
-        """Print debate header."""
-        print(f"\n{'=' * 80}")
-        print(f"DEBATE-BASED COMPONENT EXTRACTION: {technology}")
-        print(f"{'=' * 80}\n")
+    def _log_debate_header(self, technology: str) -> None:
+        """Log debate header."""
+        logger.info("=" * 60)
+        logger.info("DEBATE-BASED COMPONENT EXTRACTION: %s", technology)
+        logger.info("=" * 60)
 
-    def _print_consensus(self, tech_spec: str, names: list, details: dict) -> None:
-        """Print consensus results."""
-        print(f"\n{'=' * 80}")
-        print("CONSENSUS REACHED")
-        print(f"{'=' * 80}\n")
-        print(f"Technology Specification: {tech_spec}\n")
-        print(f"Final Components ({len(names)}):")
+    def _log_consensus(self, tech_spec: str, names: list, details: dict) -> None:
+        """Log consensus results."""
+        logger.info("=" * 60)
+        logger.info("CONSENSUS REACHED")
+        logger.info("=" * 60)
+        logger.info("Technology Specification: %s", tech_spec)
+        logger.info("Final Components (%d):", len(names))
         for i, comp_name in enumerate(names, 1):
             detail = details.get(comp_name, {})
             conf = detail.get("confidence", 0.0)
-            print(f"  {i}. {comp_name} (confidence: {conf:.2f})")
+            logger.info("  %d. %s (confidence: %.2f)", i, comp_name, conf)
 
     def _save_debate_transcript(
         self, technology: str, agent_responses: List[Dict], debate_result: Dict
@@ -415,10 +408,10 @@ class ComponentExtractor:
             technology_specification = debate_result.get("technology_specification", technology)
             technology_reasoning = debate_result.get("technology_reasoning", "")
 
-            # Debug prints
-            print(f"✓ Passing to reporter - Tech spec: {technology_specification}")
-            print(
-                f"✓ Passing to reporter - Tech reasoning: {technology_reasoning[:100] if technology_reasoning else 'None'}..."
+            logger.debug("Passing to reporter - Tech spec: %s", technology_specification)
+            logger.debug(
+                "Passing to reporter - Tech reasoning: %s...",
+                technology_reasoning[:100] if technology_reasoning else "None",
             )
 
             # Build final consensus dict with proper metadata
@@ -455,5 +448,5 @@ class ComponentExtractor:
             return filepath
 
         except Exception as e:
-            logger.error(f"Error saving debate transcript: {e}", exc_info=True)
+            logger.error("Error saving debate transcript: %s", e, exc_info=True)
             return None

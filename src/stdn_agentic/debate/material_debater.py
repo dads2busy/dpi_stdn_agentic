@@ -13,18 +13,18 @@ other's proposals, and converge on consensus through iterative refinement.
 from __future__ import annotations
 
 import asyncio
-import logging
 from collections import defaultdict
 from typing import Any
 
 from pydantic_ai import RunUsage
 
 from ..agents import get_materials_agent
+from ..logging_config import get_logger
 from ..models import STDNDependencies
 from .material_models import MaterialDebateRound, MaterialProposal
 from .material_normalization import normalize_component_name, normalize_material_name
 
-logger = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 
 class MaterialDebater:
@@ -69,8 +69,7 @@ class MaterialDebater:
     async def _check_ollama_health(self) -> bool:
         """Check if Ollama is responsive before starting debate."""
         try:
-            logger.info("Checking Ollama health...")
-            print("  Testing Ollama connection...")
+            logger.debug("Checking Ollama health...")
 
             # Simple test using component agent (already available)
             from ..agents import get_component_agent
@@ -88,17 +87,14 @@ class MaterialDebater:
             )
 
             if result and result.output:
-                logger.info("✓ Ollama health check passed")
-                print("  ✓ Ollama is responsive")
+                logger.debug("Ollama health check passed")
                 return True
             else:
-                logger.warning("⚠️  Ollama returned empty result")
-                print("  ⚠️  Ollama returned empty result")
+                logger.warning("Ollama returned empty result")
                 return False
 
         except Exception as e:
-            logger.error(f"❌ Ollama health check failed: {e}")
-            print(f"  ❌ Connection failed: {e}")
+            logger.error("Ollama health check failed: %s", e)
             return False
 
     async def phase1_independent_generation(
@@ -112,9 +108,9 @@ class MaterialDebater:
         Validates inputs and dependencies, builds an ontology-aware prompt,
         then runs all agents once to obtain initial `MaterialProposal`s.
         """
-        print("=" * 60)
-        print(f"PHASE 1: INDEPENDENT MATERIAL PROPOSALS - {technology}")
-        print("=" * 60)
+        logger.info("=" * 60)
+        logger.info("PHASE 1: INDEPENDENT MATERIAL PROPOSALS - %s", technology)
+        logger.info("=" * 60)
 
         valid_components = self._phase1_validate_inputs(componentlist, technology)
         if not valid_components:
@@ -141,12 +137,13 @@ class MaterialDebater:
         )
 
         if not agent_proposals:
-            logger.error(f"No agent proposals generated for {technology}")
-            print("❌ No agent proposals generated")
+            logger.error("No agent proposals generated for %s", technology)
         else:
             total_proposals = sum(len(props) for props in agent_proposals.values())
-            print(
-                f"\n✓ Generated {total_proposals} total proposals from {len(agent_proposals)} agents"
+            logger.info(
+                "Generated %d total proposals from %d agents",
+                total_proposals,
+                len(agent_proposals),
             )
 
         return agent_proposals
@@ -162,10 +159,11 @@ class MaterialDebater:
         for p in proposals:
             comp_mat_counts[p.normalizedcomponent] += 1
 
-        print(
-            f"✓ {agent_id} (top_p={self.debate_top_p}): "
-            f"{len(proposals)} material proposals across "
-            f"{len(comp_mat_counts)} components"
+        logger.info(
+            "%s: %d material proposals across %d components",
+            agent_id,
+            len(proposals),
+            len(comp_mat_counts),
         )
 
     async def _phase1_run_agent_with_retries(
@@ -196,7 +194,7 @@ class MaterialDebater:
                         await asyncio.sleep(2)
                         continue
                     else:
-                        print(f"{agent_id}: Failed - no valid proposals")
+                        logger.warning("%s: Failed - no valid proposals", agent_id)
                         break
 
                 return proposals
@@ -213,16 +211,22 @@ class MaterialDebater:
                 if is_transient and attempt < max_retries - 1:
                     wait_time = (attempt + 1) * 3
                     logger.warning(
-                        f"{agent_id} transient error (attempt {attempt + 1}/{max_retries}): {e}"
+                        "%s transient error (attempt %d/%d): %s",
+                        agent_id,
+                        attempt + 1,
+                        max_retries,
+                        e,
                     )
-                    print(f"  ⚠️  {agent_id}: Retry in {wait_time}s...")
                     await asyncio.sleep(wait_time)
                     continue
                 else:
                     logger.error(
-                        f"Error in {agent_id} proposal for {technology}: {e}", exc_info=True
+                        "Error in %s proposal for %s: %s",
+                        agent_id,
+                        technology,
+                        e,
+                        exc_info=True,
                     )
-                    print(f"  ✗ {agent_id}: Failed to generate proposal")
                     break
 
         # Ensure a list is always returned
@@ -250,8 +254,7 @@ class MaterialDebater:
 
             component_str = "\n".join(f"- {comp}" for comp in valid_components)
             if not component_str or len(component_str.strip()) < 3:
-                logger.error(f"{agent_id}: Failed to build component string")
-                print(f"{agent_id}: Skipping - invalid component string")
+                logger.error("%s: Failed to build component string", agent_id)
                 continue
 
             prompt = (
@@ -282,25 +285,21 @@ class MaterialDebater:
     def _phase1_validate_inputs(self, componentlist: list[str], technology: str) -> list[str]:
         """Filter and validate the component list and technology name."""
         if not componentlist or len(componentlist) == 0:
-            logger.error(f"Empty component list for {technology}")
-            print("❌ No components provided")
+            logger.error("Empty component list for %s", technology)
             return []
 
         if not technology or not technology.strip():
             logger.error("Empty technology name")
-            print("❌ Technology name is empty")
             return []
 
         valid_components = [c for c in componentlist if c and c.strip()]
         if not valid_components:
-            logger.error(f"All components are None/empty for {technology}")
-            print("❌ All components are None or empty")
+            logger.error("All components are None/empty for %s", technology)
             return []
 
         if len(valid_components) < len(componentlist):
             filtered_count = len(componentlist) - len(valid_components)
-            logger.warning(f"Filtered out {filtered_count} None/empty components")
-            print(f"⚠️  Filtered out {filtered_count} invalid components")
+            logger.warning("Filtered out %d None/empty components", filtered_count)
 
         return valid_components
 
@@ -308,12 +307,10 @@ class MaterialDebater:
         """Ensure model and material ontology are available before starting."""
         if not self.deps or not self.deps.model:
             logger.error("Invalid dependencies - no model configured")
-            print("❌ No model configured in dependencies")
             return False
 
         if not self.deps.material_ontology_list or len(self.deps.material_ontology_list) == 0:
             logger.error("Material ontology is empty")
-            print("❌ Material ontology not loaded")
             return False
 
         return True
@@ -325,7 +322,6 @@ class MaterialDebater:
 
         if not ontology_str or len(ontology_str.strip()) < 10:
             logger.error("Ontology string is empty or too short")
-            print("❌ Failed to build ontology string")
             return None
 
         return ontology_str
@@ -335,8 +331,7 @@ class MaterialDebater:
         try:
             agent = get_materials_agent(model_name=self.deps.get_materials_model())
         except Exception as e:
-            logger.error(f"Failed to create materials agent: {e}")
-            print(f"❌ Agent creation failed: {e}")
+            logger.error("Failed to create materials agent: %s", e)
             return None
         return agent
 
@@ -356,20 +351,18 @@ class MaterialDebater:
     def _phase1_validate_prompt(self, agent_id: str, prompt: str) -> bool:
         """Sanity-check prompts for common issues before sending to the LLM."""
         if not prompt or len(prompt.strip()) < 50:
-            logger.error(f"{agent_id}: Invalid prompt (too short or empty)")
-            print(f"{agent_id}: Skipping - prompt too short")
+            logger.error("%s: Invalid prompt (too short or empty)", agent_id)
             return False
 
         if "None" in prompt or "<nil>" in prompt or "null" in prompt:
-            logger.error(f"{agent_id}: Prompt contains None/null values")
-            logger.debug(f"Problematic prompt snippet: {prompt[:300]}")
-            print(f"{agent_id}: Skipping - prompt contains None values")
+            logger.error("%s: Prompt contains None/null values", agent_id)
+            logger.debug("Problematic prompt snippet: %s", prompt[:300])
             return False
 
         if "\n\n\n\n" in prompt or "  \n  \n" in prompt:
-            logger.warning(f"{agent_id}: Prompt has excessive whitespace")
+            logger.warning("%s: Prompt has excessive whitespace", agent_id)
 
-        logger.debug(f"{agent_id}: Prompt preview: {prompt[:200]}...")
+        logger.debug("%s: Prompt preview: %s...", agent_id, prompt[:200])
         return True
 
     def _phase1_extract_proposals(
@@ -378,40 +371,39 @@ class MaterialDebater:
         result,
     ) -> list[MaterialProposal]:
         if not result:
-            logger.warning(f"{agent_id}: Agent returned None result")
+            logger.warning("%s: Agent returned None result", agent_id)
             return []
 
         if not result.output:
-            logger.warning(f"{agent_id}: Result has no output")
+            logger.warning("%s: Result has no output", agent_id)
             return []
 
         if not hasattr(result.output, "component_list"):
-            logger.error(f"{agent_id}: Output missing 'component_list' field")
-            print(f"{agent_id}: Failed - invalid output structure")
+            logger.error("%s: Output missing 'component_list' field", agent_id)
             return []
 
         if not result.output.component_list:
-            logger.warning(f"{agent_id}: component_list is empty")
+            logger.warning("%s: component_list is empty", agent_id)
             return []
 
         proposals: list[MaterialProposal] = []
 
         for cm in result.output.component_list:
             if not hasattr(cm, "component") or not cm.component:
-                logger.warning(f"{agent_id}: Skipping component with no name")
+                logger.warning("%s: Skipping component with no name", agent_id)
                 continue
 
             comp_norm = normalize_component_name(cm.component)
 
             if not hasattr(cm, "raw_materials") or not cm.raw_materials:
-                logger.warning(f"{agent_id}: Component '{cm.component}' has no materials")
+                logger.warning("%s: Component '%s' has no materials", agent_id, cm.component)
                 continue
 
             for material in cm.raw_materials:
                 material_name = material.name if hasattr(material, "name") else str(material)
 
                 if not material_name or not material_name.strip():
-                    logger.warning(f"{agent_id}: Skipping empty material for {cm.component}")
+                    logger.warning("%s: Skipping empty material for %s", agent_id, cm.component)
                     continue
 
                 material_confidence = (
@@ -609,7 +601,7 @@ class MaterialDebater:
 
                 debate_deps = replace(self.deps, top_p=self.debate_top_p)
 
-                print(f"  🔍 {agent_id} using top_p={self.debate_top_p}")
+                logger.debug("%s using top_p=%s", agent_id, self.debate_top_p)
 
                 result = await agent.run(prompt, deps=debate_deps)
 
@@ -666,15 +658,23 @@ class MaterialDebater:
                 if is_transient and attempt < max_retries - 1:
                     wait_time = (attempt + 1) * 3
                     logger.warning(
-                        f"{agent_id} round {round_num} transient error "
-                        f"(attempt {attempt + 1}/{max_retries}): {e}"
+                        "%s round %d transient error (attempt %d/%d): %s",
+                        agent_id,
+                        round_num,
+                        attempt + 1,
+                        max_retries,
+                        e,
                     )
-                    print(f"{agent_id}: Retry in {wait_time}s...")
                     await asyncio.sleep(wait_time)
                     continue
                 else:
-                    logger.error(f"Error in {agent_id} round {round_num} for {technology}: {e}")
-                    print(f"{agent_id}: Failed to generate proposal")
+                    logger.error(
+                        "Error in %s round %d for %s: %s",
+                        agent_id,
+                        round_num,
+                        technology,
+                        e,
+                    )
                     break
 
         if not success:
@@ -690,7 +690,7 @@ class MaterialDebater:
         usage: RunUsage | None = None,
     ) -> dict[str, list[MaterialProposal]]:
         """Run one refinement round for all agents using previous critiques."""
-        print(f"\nROUND {round_num}:")
+        logger.info("Round %d:", round_num)
 
         refined_proposals: dict[str, list[MaterialProposal]] = {}
 
@@ -736,8 +736,8 @@ class MaterialDebater:
 
         component_lookup = {comp.lower().strip(): comp for comp in expected_components}
 
-        print("\n🔍 Building consensus with component name enforcement...")
-        print(f"  Expected components: {expected_components}")
+        logger.debug("Building consensus with component name enforcement...")
+        logger.debug("  Expected components: %s", expected_components)
 
         def find_correct_component_name(comp_name: str) -> str:
             """Find the correct component name from expected components."""
@@ -776,8 +776,8 @@ class MaterialDebater:
 
         min_support = max(1, int(round(min_support_frac * max(self.num_agents, 1))))
 
-        print(f"  Convergence: {convergence_score:.2f}")
-        print(f"  Min support required: {min_support}/{self.num_agents} agents")
+        logger.debug("  Convergence: %.2f", convergence_score)
+        logger.debug("  Min support required: %d/%d agents", min_support, self.num_agents)
 
         consensus: dict[str, list[dict[str, Any]]] = {}
         self._build_component_consensus(consensus, comp_mat_support, min_support)
@@ -826,7 +826,7 @@ class MaterialDebater:
 
             if component_materials:
                 consensus[comp_norm] = component_materials
-                print(f"  ✓ {comp_norm}: {len(component_materials)} materials")
+                logger.debug("  %s: %d materials", comp_norm, len(component_materials))
 
     async def run_full_debate(
         self,
@@ -835,19 +835,19 @@ class MaterialDebater:
         usage: RunUsage | None = None,
     ) -> dict[str, Any]:
         """Run the full three-phase material debate and return consensus output."""
-        print(f"\n{'=' * 60}")
-        print(f"MULTI-AGENT MATERIAL DEBATE: {technology}")
-        print(f"Components: {len(componentlist)}")
-        print(f"{'=' * 60}")
+        logger.info("=" * 60)
+        logger.info("MULTI-AGENT MATERIAL DEBATE: %s", technology)
+        logger.info("Components: %d", len(componentlist))
+        logger.info("=" * 60)
 
-        # ✅ CREATE NORMALIZED-TO-ORIGINAL MAPPING FROM ONTOLOGY
+        # Create normalized-to-original mapping from ontology
         # Build once at start, use throughout consensus building
         self.material_name_map = {}
         for original_name in self.deps.material_ontology_list:
             normalized = normalize_material_name(original_name)
             self.material_name_map[normalized] = original_name
 
-        print(f"✓ Material ontology: {len(self.material_name_map)} materials loaded")
+        logger.debug("Material ontology: %d materials loaded", len(self.material_name_map))
 
         # Phase 1: Independent generation
         initial_proposals = await self.phase1_independent_generation(
@@ -862,22 +862,22 @@ class MaterialDebater:
         all_proposals = [p for props in current_proposals.values() for p in props]
 
         # Phase 2: Debate rounds
-        print(f"\n{'=' * 60}")
-        print("PHASE 2: DEBATE ROUNDS")
-        print(f"{'=' * 60}")
+        logger.info("=" * 60)
+        logger.info("PHASE 2: DEBATE ROUNDS")
+        logger.info("=" * 60)
 
         rounds_completed = 1
         convergence = self.calculate_convergence(all_proposals)
-        print(f"Initial convergence: {convergence:.1%}")
+        logger.info("Initial convergence: %.1f%%", convergence * 100)
 
         self.debate_history = []
 
         for round_num in range(2, self.max_rounds + 1):
             if convergence >= self.convergence_threshold:
-                print("Convergence threshold reached!")
+                logger.info("Convergence threshold reached!")
                 break
 
-            print(f"\nRound {round_num}...")
+            logger.info("Round %d/%d...", round_num, self.max_rounds)
 
             # Generate critiques
             critiques = self.generate_critiques_with_influence(all_proposals, round_num)
@@ -889,7 +889,7 @@ class MaterialDebater:
 
             all_proposals = [p for props in current_proposals.values() for p in props]
             convergence = self.calculate_convergence(all_proposals)
-            print(f"Convergence: {convergence:.1%}")
+            logger.info("  Convergence: %.1f%%", convergence * 100)
 
             # Store round data
             consensus_so_far = self.build_adaptive_consensus(
@@ -909,9 +909,9 @@ class MaterialDebater:
             rounds_completed = round_num
 
         # Phase 3: Build consensus
-        print(f"\n{'=' * 60}")
-        print("PHASE 3: BUILDING CONSENSUS")
-        print(f"{'=' * 60}")
+        logger.info("=" * 60)
+        logger.info("PHASE 3: BUILDING CONSENSUS")
+        logger.info("=" * 60)
 
         consensus = self.build_adaptive_consensus(
             all_proposals,
@@ -940,12 +940,18 @@ class MaterialDebater:
             consensus_names[comp] = material_names
 
         total_materials = sum(len(mats) for mats in consensus_names.values())
-        print(f"Consensus: {len(consensus_names)} components, {total_materials} materials")
+        logger.info(
+            "Consensus: %d components, %d materials",
+            len(consensus_names),
+            total_materials,
+        )
 
         for comp, mats in consensus_names.items():
-            print(
-                f"  - {comp}: {', '.join(mats[:5])}"
-                + (f" +{len(mats) - 5} more" if len(mats) > 5 else "")
+            logger.debug(
+                "  %s: %s%s",
+                comp,
+                ", ".join(mats[:5]),
+                f" +{len(mats) - 5} more" if len(mats) > 5 else "",
             )
 
         # Return consensus with full dict structure (includes confidence)

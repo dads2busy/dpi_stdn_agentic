@@ -22,7 +22,6 @@ Enhanced features:
 
 import csv
 import json
-import logging
 import os
 from datetime import datetime
 from pathlib import Path
@@ -36,6 +35,7 @@ from ..agents import (
 from ..data import CountryDataRepository
 from ..debate.component_debater import MultiAgentDebater
 from ..dependencies import initialize_dependencies
+from ..logging_config import get_logger
 from ..models import ConfigModel
 from ..normalization.canonical_vocab import CanonicalVocab
 from ..reporting import DebateReporter
@@ -43,8 +43,7 @@ from .component_extractor import ComponentExtractor
 from .country_data_enricher import CountryDataEnricher
 from .materials_extractor import MaterialsExtractor
 
-# Initialize logger
-logger = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 
 # ============================================================================
@@ -126,8 +125,7 @@ class STDNOrchestrator:
                 project_root / "src" / "stdn_agentic" / "debate_transcripts" / "results"
             )
 
-            print("\n[STDNOrchestrator] Debate transcripts will be saved to:")
-            print(f"  {transcript_dir.resolve()}")
+            logger.info("Debate transcripts will be saved to: %s", transcript_dir.resolve())
 
             self.reporter = DebateReporter(output_dir=str(transcript_dir))
         else:
@@ -279,15 +277,14 @@ class STDNOrchestrator:
         use_material_debate: bool = False,
     ) -> Optional[Dict[str, Any]]:
         """Process a single technology through the complete STDN pipeline."""
-        print("=" * 80)
-        print(f"Processing: {tech}")
-        print("=" * 80)
+        logger.info("=" * 60)
+        logger.info("Processing: %s", tech)
+        logger.info("=" * 60)
 
         try:
             components_result = await self._run_component_extraction(tech, role, usage)
             if not components_result:
-                logger.error(f"No components extracted for {tech}")
-                print(f"✗ No components extracted for {tech}")
+                logger.error("No components extracted for %s", tech)
                 return None
 
             (
@@ -298,11 +295,10 @@ class STDNOrchestrator:
 
             materials_list = await self._extract_materials_for_technology(components, tech, usage)
             if not materials_list or not materials_list.component_list:
-                logger.error(f"No materials extracted for {tech}")
-                print(f"✗ No materials extracted for {tech}")
+                logger.error("No materials extracted for %s", tech)
                 return None
 
-            print(f"✓ Extracted materials for {len(materials_list.component_list)} components")
+            logger.info("Extracted materials for %d components", len(materials_list.component_list))
 
             transcript_path = self._get_latest_transcript_path(tech)
 
@@ -326,8 +322,7 @@ class STDNOrchestrator:
             }
 
         except Exception as e:
-            logger.error(f"Error processing technology {tech}: {e}", exc_info=True)
-            print(f"✗ Error processing {tech}: {e}")
+            logger.error("Error processing technology %s: %s", tech, e, exc_info=True)
             return None
 
     async def _run_component_extraction(
@@ -369,12 +364,13 @@ class STDNOrchestrator:
                 avg_confidence = sum(comp.confidence for comp in component_objects) / len(
                     component_objects
                 )
-                print(
-                    f"✓ Extracted {len(components)} components "
-                    f"(avg confidence: {avg_confidence:.2f})"
+                logger.info(
+                    "Extracted %d components (avg confidence: %.2f)",
+                    len(components),
+                    avg_confidence,
                 )
             else:
-                print(f"✓ Extracted {len(components)} components")
+                logger.info("Extracted %d components", len(components))
 
             return components, component_objects, component_confidence_map
 
@@ -394,13 +390,13 @@ class STDNOrchestrator:
                 components = components_result
                 component_confidence_map = {}
 
-            print(f"✓ Extracted {len(components)} components")
+            logger.info("Extracted %d components", len(components))
             return components, component_objects, component_confidence_map
 
         components = []
         component_objects = []
         component_confidence_map = {}
-        print(f"✓ Extracted {len(components)} components")
+        logger.info("Extracted %d components", len(components))
         return components, component_objects, component_confidence_map
 
     def _get_latest_transcript_path(self, tech: str) -> Optional[Path]:
@@ -465,9 +461,9 @@ class STDNOrchestrator:
 
         import pandas as pd
 
-        print("\n" + "=" * 80)
-        print("Post-Processing: Component Name Normalization")
-        print("=" * 80)
+        logger.info("=" * 60)
+        logger.info("Post-Processing: Component Name Normalization")
+        logger.info("=" * 60)
 
         # Find all raw CSV files with the same debate configuration
         debate_config_str = self._build_debate_config_string()
@@ -477,10 +473,10 @@ class STDNOrchestrator:
         matching_files = sorted(glob(raw_pattern))
 
         if not matching_files:
-            logger.warning(f"No files found matching pattern: {raw_pattern}")
+            logger.warning("No files found matching pattern: %s", raw_pattern)
             return self.output_file
 
-        print(f"Found {len(matching_files)} files with config '{debate_config_str}'")
+        logger.info("Found %d files with config '%s'", len(matching_files), debate_config_str)
 
         # Extract unique component names from ALL matching files
         all_unique_components: set = set()
@@ -494,19 +490,19 @@ class STDNOrchestrator:
                 logger.warning(f"Error reading {csv_path}: {e}")
 
         unique_components = list(all_unique_components)
-        print(f"Found {len(unique_components)} unique component names across all files")
+        logger.info("Found %d unique component names across all files", len(unique_components))
 
         # Check vocab for cached mappings
         cached, unknown = self.canonical_vocab.lookup_batch(unique_components)
-        print(f"  - {len(cached)} already in vocabulary")
-        print(f"  - {len(unknown)} need LLM normalization")
+        logger.info("  %d already in vocabulary", len(cached))
+        logger.info("  %d need LLM normalization", len(unknown))
 
         # Normalize unknown names with LLM
         if unknown:
             new_mappings = await self._normalize_components_with_llm(unknown)
             self.canonical_vocab.add_mappings(new_mappings)
             self.canonical_vocab.save()
-            print(f"  - Added {len(new_mappings)} new mappings to vocabulary")
+            logger.info("  Added %d new mappings to vocabulary", len(new_mappings))
 
         # Build complete mapping from vocabulary (use all known mappings)
         all_mappings = dict(self.canonical_vocab.mappings)
@@ -515,7 +511,7 @@ class STDNOrchestrator:
         lower_mappings = {k.lower(): v for k, v in all_mappings.items()}
 
         # Re-normalize ALL matching files
-        print(f"\nRe-normalizing {len(matching_files)} files...")
+        logger.info("Re-normalizing %d files...", len(matching_files))
         for csv_path in matching_files:
             try:
                 df = pd.read_csv(csv_path)
@@ -539,9 +535,9 @@ class STDNOrchestrator:
                 logger.info(f"  {os.path.basename(csv_path)}: {changes} components normalized")
 
             except Exception as e:
-                logger.error(f"Error normalizing {csv_path}: {e}")
+                logger.error("Error normalizing %s: %s", csv_path, e)
 
-        print(f"✓ Normalized outputs saved to: {self.normalized_output_dir}")
+        logger.info("Normalized outputs saved to: %s", self.normalized_output_dir)
 
         return self.normalized_output_file
 
@@ -561,7 +557,7 @@ class STDNOrchestrator:
         if not unknown_names:
             return {}
 
-        logger.info(f"Sending {len(unknown_names)} unknown names to LLM for normalization")
+        logger.info("Sending %d unknown names to LLM for normalization", len(unknown_names))
 
         class ComponentMapping(BaseModel):
             mappings: Dict[str, str] = Field(
@@ -608,10 +604,10 @@ For each input name, output the canonical form it should map to."""
             result = await agent.run(prompt, deps=self.deps)
             if result and result.output:
                 mappings = result.output.mappings
-                logger.info(f"LLM returned {len(mappings)} mappings")
+                logger.info("LLM returned %d mappings", len(mappings))
                 return mappings
         except Exception as e:
-            logger.error(f"LLM normalization failed: {e}")
+            logger.error("LLM normalization failed: %s", e)
 
         # Fallback: return names as-is with basic cleanup
         logger.warning("Falling back to basic normalization")
@@ -640,15 +636,15 @@ For each input name, output the canonical form it should map to."""
 
         usage = RunUsage()
 
-        print("=" * 80)
-        print(f"STDN Generation Started: {datetime.now()}")
-        print("=" * 80)
+        logger.info("=" * 60)
+        logger.info("STDN Generation Started: %s", datetime.now())
+        logger.info("=" * 60)
         if self.use_debate:
-            print("✓ Multi-agent debate ENABLED")
-            print(f"  Max rounds: {self.max_debate_rounds}")
-            print(f"  Convergence threshold: {self.convergence_threshold}")
-            print(f"  Save transcripts: {self.save_transcripts}")
-        print(f"✓ {len(technologies)} technologies from {self.config.tech_list_path}")
+            logger.info("Multi-agent debate ENABLED")
+            logger.info("  Max rounds: %d", self.max_debate_rounds)
+            logger.info("  Convergence threshold: %.2f", self.convergence_threshold)
+            logger.info("  Save transcripts: %s", self.save_transcripts)
+        logger.info("%d technologies from %s", len(technologies), self.config.tech_list_path)
 
         successful = 0
         failed = 0
@@ -715,22 +711,22 @@ For each input name, output the canonical form it should map to."""
                     for row in result["enriched_data"]:
                         writer.writerow(row)
 
-                print(f"✓ Output written to {self.output_file}")
-                print(f"✓ Successfully processed: {tech}")
+                logger.info("Output written to %s", self.output_file)
+                logger.info("Successfully processed: %s", tech)
                 successful += 1
             else:
-                print(f"✗ Failed to process: {tech}")
+                logger.warning("Failed to process: %s", tech)
                 failed += 1
 
-        print("=" * 80)
-        print(f"STDN Generation Completed: {datetime.now()}")
-        print("=" * 80)
-        print(f"Successfully processed: {successful}/{len(technologies)} technologies")
-        print(f"✓ Raw output saved to: {self.output_file}")
+        logger.info("=" * 60)
+        logger.info("STDN Generation Completed: %s", datetime.now())
+        logger.info("=" * 60)
+        logger.info("Successfully processed: %d/%d technologies", successful, len(technologies))
+        logger.info("Raw output saved to: %s", self.output_file)
         if self.use_debate and self.reporter:
-            print(f"✓ Debate transcripts saved to: {self.reporter.output_dir}")
+            logger.info("Debate transcripts saved to: %s", self.reporter.output_dir)
 
-        print(f"\nUsage: {usage}")
+        logger.debug("Usage: %s", usage)
 
         normalized_file = None
         if successful > 0:
@@ -739,7 +735,7 @@ For each input name, output the canonical form it should map to."""
 
             # Convert CSV to JSON
             json_path = self._save_json_output
-            print(f"✓ JSON output written to: {json_path}")
+            logger.info("JSON output written to: %s", json_path)
 
         return {
             "successful": successful,

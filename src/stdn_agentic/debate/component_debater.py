@@ -15,13 +15,13 @@ Key enhancements:
 
 from __future__ import annotations
 
-import logging
 from collections import defaultdict
 from typing import Any, Dict, List, Tuple
 
 from pydantic import BaseModel, Field
 from pydantic_ai import Agent
 
+from ..logging_config import get_logger
 from .component_models import (
     AgentProposal,
     ComponentWithConfidence,
@@ -33,7 +33,7 @@ from .component_normalization import (
     normalize_components_with_llm,
 )
 
-logger = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 
 # ============================================================================
@@ -101,8 +101,9 @@ class MultiAgentDebater:
             p.get("component") or p.get("component_name", "") for p in all_proposals
         ]
 
-        print(
-            f"\n🔄 Semantic normalization of {len(set(all_component_names))} unique components..."
+        logger.info(
+            "Semantic normalization of %d unique components...",
+            len(set(all_component_names)),
         )
 
         normalization_map = await normalize_components_with_llm(
@@ -111,7 +112,7 @@ class MultiAgentDebater:
             deps,
         )
 
-        print(f"✓ Normalized to {len(set(normalization_map.values()))} unique concepts\n")
+        logger.info("Normalized to %d unique concepts", len(set(normalization_map.values())))
 
         normalized_proposals: Dict[str, List[Dict[str, Any]]] = {}
         for agent_id, agent_props in initial_proposals.items():
@@ -198,11 +199,11 @@ class MultiAgentDebater:
                     names_needing_llm.append(name)
 
             if mapping:
-                print(f"\n📚 Found {len(mapping)} names in canonical vocabulary")
+                logger.info("Found %d names in canonical vocabulary", len(mapping))
 
             # If all names are in vocab, return early
             if not names_needing_llm:
-                print("✓ All component names found in canonical vocabulary")
+                logger.info("All component names found in canonical vocabulary")
                 return mapping
         else:
             names_needing_llm = unique_names
@@ -279,10 +280,12 @@ class MultiAgentDebater:
             for name in unique_names:
                 mapping.setdefault(name, self.normalize_component_name(name))
 
-            # ✅ DEBUG LOGGING
-            print("\n🔍 LLM Normalization Results:")
-            print(f"   Input: {len(names_needing_llm)} names needed LLM normalization")
-            print(f"   Output: {len(set(mapping.values()))} total normalized canonical names")
+            # Log normalization results
+            logger.debug(
+                "LLM Normalization: %d inputs -> %d canonical names",
+                len(names_needing_llm),
+                len(set(mapping.values())),
+            )
 
             # Group by normalized name to show what got merged
             normalized_groups: Dict[str, List[str]] = {}
@@ -291,24 +294,20 @@ class MultiAgentDebater:
                     normalized_groups[normalized] = []
                 normalized_groups[normalized].append(original)
 
-            print("\n   Normalization Mappings:")
             for normalized, originals in sorted(normalized_groups.items()):
                 if len(originals) > 1:
-                    # Show merged components
-                    print(f"   ✓ '{normalized}' ← merged from {len(originals)} variants:")
-                    for orig in originals:
-                        print(f"      - '{orig}'")
-                else:
-                    # No change
-                    if originals[0] != normalized:
-                        print(f"   → '{originals[0]}' → '{normalized}'")
+                    logger.debug(
+                        "  '%s' <- merged from %d variants: %s",
+                        normalized,
+                        len(originals),
+                        originals,
+                    )
 
             logger.info("✓ LLM normalization produced %d unique names", len(set(mapping.values())))
             return mapping
 
         except Exception as exc:  # noqa: BLE001
-            logger.warning("LLM normalization failed: %s", exc)
-            print("⚠️ LLM normalization failed, using rule-based fallback")
+            logger.warning("LLM normalization failed, using rule-based fallback: %s", exc)
             # Still return any vocab-based mappings we found
             for name in names_needing_llm:
                 mapping.setdefault(name, self.normalize_component_name(name))
@@ -731,8 +730,11 @@ class MultiAgentDebater:
             if support >= min_support and avg_conf >= MIN_CONFIDENCE:
                 scores[norm_name] = score
             elif support >= min_support:
-                print(
-                    f"   ⚠️ Excluded '{norm_name}': confidence {avg_conf:.2f} below {MIN_CONFIDENCE}"
+                logger.debug(
+                    "Excluded '%s': confidence %.2f below %.2f",
+                    norm_name,
+                    avg_conf,
+                    MIN_CONFIDENCE,
                 )
 
         return scores
@@ -746,11 +748,10 @@ class MultiAgentDebater:
         norm_to_agents: Dict[str, set[str]],
         scores: Dict[str, float],
     ) -> None:
-        print("\n🔍 Consensus Scoring Debug:")
-        print(f"   Convergence: {convergence_score:.2f}")
-        print(f"   Min support required: {min_support}/{num_agents} agents")
-        print(f"   Peer support boost: {self.peer_support_boost}")
-        print("\n   Component Scoring:")
+        logger.debug("Consensus Scoring:")
+        logger.debug("  Convergence: %.2f", convergence_score)
+        logger.debug("  Min support required: %d/%d agents", min_support, num_agents)
+        logger.debug("  Peer support boost: %.2f", self.peer_support_boost)
 
         all_norms = sorted(norm_to_confidences.keys())
         for norm_name in all_norms:
@@ -760,14 +761,21 @@ class MultiAgentDebater:
 
             if norm_name in scores:
                 score = scores[norm_name]
-                print(
-                    f"   ✓ '{norm_name}': {support}/{num_agents} agents, "
-                    f"avg_conf={avg_conf:.2f}, score={score:.3f}"
+                logger.debug(
+                    "  [INCLUDED] '%s': %d/%d agents, avg_conf=%.2f, score=%.3f",
+                    norm_name,
+                    support,
+                    num_agents,
+                    avg_conf,
+                    score,
                 )
             else:
-                print(
-                    f"   ✗ '{norm_name}': {support}/{num_agents} agents, "
-                    f"avg_conf={avg_conf:.2f} — EXCLUDED (below min_support)"
+                logger.debug(
+                    "  [EXCLUDED] '%s': %d/%d agents, avg_conf=%.2f",
+                    norm_name,
+                    support,
+                    num_agents,
+                    avg_conf,
                 )
 
     def _build_component_details(
@@ -907,11 +915,10 @@ class MultiAgentDebater:
             # Validate final prompt before sending to LLM
             if not prompt or not prompt.strip() or len(prompt) < 100:
                 logger.error(
-                    f"Invalid prompt for {agent_id} in round {roundnum}: "
-                    f"prompt too short or empty (length={len(prompt) if prompt else 0})"
-                )
-                print(
-                    f"  ❌ Skipping {agent_id}: invalid prompt (length={len(prompt) if prompt else 0})"
+                    "Invalid prompt for %s in round %d: prompt too short (length=%d)",
+                    agent_id,
+                    roundnum,
+                    len(prompt) if prompt else 0,
                 )
                 # Fall back to previous proposals for this agent
                 prev_for_agent = [
@@ -924,11 +931,14 @@ class MultiAgentDebater:
                 # Use very low Top-P for deterministic, focused refinements
                 debate_deps = replace(deps, top_p=self.debate_top_p)
 
-                # Debug output to trace what's being sent
-                print(f"  🔍 {agent_id} calling LLM with:")
-                print(f"     - Prompt length: {len(prompt)} chars")
-                print(f"     - Previous proposals: {len(previous_proposals)}")
-                print(f"     - Critiques: {len(critiques)}")
+                # Log what's being sent
+                logger.debug(
+                    "%s calling LLM: prompt=%d chars, prev_proposals=%d, critiques=%d",
+                    agent_id,
+                    len(prompt),
+                    len(previous_proposals),
+                    len(critiques),
+                )
 
                 result = await debate_agent.run(
                     prompt, deps=debate_deps, model=deps.get_component_model()
@@ -951,20 +961,18 @@ class MultiAgentDebater:
                     # Log confidence distribution for monitoring
                     avg_conf = sum(p["confidence"] for p in proposals_list) / len(proposals_list)
                     logger.info(
-                        f"Round {roundnum} - {agent_id}: {len(proposals_list)} components, "
-                        f"avg confidence={avg_conf:.2f}"
-                    )
-                    print(
-                        f"  ✓ {agent_id}: {len(proposals_list)} components (avg conf: {avg_conf:.2f})"
+                        "Round %d - %s: %d components, avg confidence=%.2f",
+                        roundnum,
+                        agent_id,
+                        len(proposals_list),
+                        avg_conf,
                     )
                 else:
-                    logger.warning(f"No components returned from {agent_id} in round {roundnum}")
-                    print(f"  ⚠️ {agent_id}: No components returned")
+                    logger.warning("No components returned from %s in round %d", agent_id, roundnum)
                     new_proposals[agent_id] = []
 
             except Exception as exc:  # noqa: BLE001
-                logger.error("Error in debate round %s for %s: %s", roundnum, agent_id, exc)
-                print(f"  ❌ Error in {agent_id}: {exc}")
+                logger.error("Error in debate round %d for %s: %s", roundnum, agent_id, exc)
                 # Fall back to previous proposals for this agent, if any
                 prev_for_agent = [
                     p for p in previous_proposals if self._get_prop_value(p, "agent_id") == agent_id
@@ -996,9 +1004,9 @@ class MultiAgentDebater:
         rounds_completed = 0
         debate_rounds: List[Dict[str, Any]] = []
 
-        print("=" * 80)
-        print(f"DEBATE: {technology}")
-        print("=" * 80)
+        logger.info("=" * 60)
+        logger.info("COMPONENT DEBATE: %s", technology)
+        logger.info("=" * 60)
 
         current_proposals = await self._normalize_initial_proposals(
             initial_proposals,
@@ -1034,14 +1042,7 @@ class MultiAgentDebater:
             all_final_proposals,
             convergence_score=convergence,
         )
-        print(f"  Extracted {len(consensus)} components with dynamic confidence weighting")
-
-        # DEBUG: inspect one detail entry to see its structure
-        if component_details:
-            first_key = next(iter(component_details))
-            first = component_details[first_key]
-            print("DEBUG first key:", first_key)
-            print("DEBUG first detail:", first)
+        logger.info("Extracted %d components with dynamic confidence weighting", len(consensus))
 
         # Filter using the effective per-component confidence from component_details
         filtered_component_details: Dict[str, Dict[str, Any]] = {
@@ -1053,7 +1054,10 @@ class MultiAgentDebater:
         # Consensus is just the keys that survived
         filtered_consensus = list(filtered_component_details.keys())
 
-        print(f"  Kept {len(filtered_consensus)} components after dropping 0.0-confidence entries")
+        logger.info(
+            "Kept %d components after filtering low-confidence entries",
+            len(filtered_consensus),
+        )
 
         return {
             "technology": technology,
@@ -1080,7 +1084,7 @@ class MultiAgentDebater:
         Dict[str, List[Dict[str, Any]]],
     ]:
         for roundnum in range(self.max_rounds):
-            print(f"ROUND {roundnum + 1}:")
+            logger.info("Round %d/%d:", roundnum + 1, self.max_rounds)
 
             all_proposals = self._flatten_proposals_for_round(
                 current_proposals,
@@ -1088,13 +1092,13 @@ class MultiAgentDebater:
             )
 
             if not all_proposals:
-                print("  ⚠ No proposals available for this round.")
+                logger.warning("No proposals available for round %d", roundnum + 1)
                 break
 
             self._log_round_confidence_stats(all_proposals)
 
             convergence = self.calculate_convergence_semantic(all_proposals)
-            print(f"  Convergence: {convergence:.1%}")
+            logger.info("  Convergence: %.1f%%", convergence * 100)
             rounds_completed = roundnum + 1
 
             debate_rounds.append(
@@ -1107,16 +1111,16 @@ class MultiAgentDebater:
             )
 
             if convergence >= self.convergence_threshold:
-                print("  ✅ Convergence threshold reached!")
+                logger.info("  Convergence threshold reached!")
                 break
 
             if roundnum < self.max_rounds - 1:
-                print("  Generating critiques...")
+                logger.debug("  Generating critiques...")
                 critiques = self.generate_critiques_with_influence(
                     all_proposals,
                     roundnum + 1,
                 )
-                print("  Refining proposals based on peer feedback...")
+                logger.debug("  Refining proposals based on peer feedback...")
                 current_proposals = await self.run_debate_round(
                     technology=technology,
                     previous_proposals=all_proposals,
@@ -1158,7 +1162,7 @@ class MultiAgentDebater:
         avg_conf = sum(confidences) / len(confidences)
         min_conf = min(confidences)
         max_conf = max(confidences)
-        print(f"  Confidence: avg={avg_conf:.2f}, min={min_conf:.2f}, max={max_conf:.2f}")
+        logger.debug("  Confidence: avg=%.2f, min=%.2f, max=%.2f", avg_conf, min_conf, max_conf)
 
     def _flatten_final_proposals(
         self,
@@ -1181,7 +1185,7 @@ class MultiAgentDebater:
         ]
 
         if final_component_names:
-            print("  Building final consensus with semantic normalization...")
+            logger.debug("Building final consensus with semantic normalization...")
             final_norm_map = await self.normalize_components_with_llm(
                 final_component_names,
                 component_agent,
@@ -1192,7 +1196,7 @@ class MultiAgentDebater:
                 norm = final_norm_map.get(original, original)
                 prop["normalized_component"] = norm
 
-        print(f"\n🔍 Final Proposals Summary (After Round {rounds_completed}):")
+        logger.debug("Final Proposals Summary (After Round %d):", rounds_completed)
 
         component_counts: Dict[str, int] = {}
         component_agents: Dict[str, set[str]] = {}
@@ -1207,19 +1211,17 @@ class MultiAgentDebater:
             component_counts[norm] += 1
             component_agents[norm].add(agent)
 
-        print("   Components proposed by agents:")
         for name in sorted(component_counts.keys()):
             agent_count = len(component_agents[name])
             total_count = component_counts[name]
             agents = ", ".join(sorted(component_agents[name]))
-            print(f"   - '{name}': {agent_count}/3 agents ({total_count} proposals) [{agents}]")
-
-        print("\n🔍 All final proposals before consensus:")
-        for prop in all_final_proposals:
-            norm = prop.get("normalized_component", prop.get("component", ""))
-            agent = prop.get("agent_id", "unknown")
-            conf = prop.get("confidence", 0.0)
-            print(f"  '{norm}' - agent: {agent}, confidence: {conf:.2f}")
+            logger.debug(
+                "  '%s': %d/3 agents (%d proposals) [%s]",
+                name,
+                agent_count,
+                total_count,
+                agents,
+            )
 
 
 # ============================================================================

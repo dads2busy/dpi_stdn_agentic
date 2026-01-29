@@ -14,7 +14,6 @@ Features:
 
 import asyncio
 import json
-import logging
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Optional
@@ -32,10 +31,10 @@ from ..agents.materials_agent import MaterialWithConfidence
 from ..debate import MaterialDebater
 from ..debate.material_normalization import normalize_material_name
 from ..dependencies import STDNDependencies
+from ..logging_config import get_logger
 from ..reporting import DebateReporter
 
-# Initialize logger
-logger = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 
 # ============================================================================
@@ -110,8 +109,7 @@ class MaterialsExtractor:
         """
         # Check component list exists
         if not componentlist or not hasattr(componentlist, "component_list"):
-            logger.warning(f"No components to extract materials from for {technology}")
-            print("🔍 No components to extract materials from")
+            logger.warning("No components to extract materials from for %s", technology)
             return (False, None, "No components")
 
         components = componentlist.component_list
@@ -123,14 +121,12 @@ class MaterialsExtractor:
         ]
 
         if not valid_component_names:
-            logger.warning(f"All components were null/empty for {technology}")
-            print("🔍 All components were null/empty")
+            logger.warning("All components were null/empty for %s", technology)
             return (False, None, "All components null/empty")
 
         # Check ontology availability
         if not self.deps.material_ontology_list or len(self.deps.material_ontology_list) == 0:
-            logger.error(f"Material ontology is empty - cannot extract materials for {technology}")
-            print("❌ Material ontology is empty!")
+            logger.error("Material ontology is empty - cannot extract materials for %s", technology)
             return (False, None, "Ontology empty")
 
         return (True, valid_component_names, None)
@@ -163,9 +159,10 @@ class MaterialsExtractor:
         materials_prompt = self._build_materials_prompt(valid_component_names, technology)
 
         logger.info(
-            f"Extracting materials for {len(valid_component_names)} components of {technology}"
+            "Extracting materials for %d components of %s",
+            len(valid_component_names),
+            technology,
         )
-        print(f"Extracting materials for {len(valid_component_names)} components...")
 
         result = await self._run_materials_agent_with_retries(materials_prompt)
         if not result or not result.output:
@@ -184,14 +181,14 @@ class MaterialsExtractor:
         filtered_count = self._filter_materials_not_in_ontology(materials_list, ontology_set)
 
         if filtered_count > 0:
-            print(f"  ℹ️ Filtered {filtered_count} materials not in ontology")
+            logger.info("Filtered %d materials not in ontology", filtered_count)
 
         num_materials = sum(len(cm.raw_materials) for cm in materials_list.component_list)
         logger.info(
-            f"Extracted {num_materials} materials for "
-            f"{len(materials_list.component_list)} components"
+            "Extracted %d materials for %d components",
+            num_materials,
+            len(materials_list.component_list),
         )
-        print(f"Extracted materials for {len(materials_list.component_list)} components")
 
         # Accumulate usage
         if hasattr(result, "usage") and result.usage():
@@ -222,12 +219,15 @@ class MaterialsExtractor:
                 if is_transient and attempt < self.max_retries - 1:
                     wait_time = (attempt + 1) * 2  # 2s, 4s, 6s
                     logger.warning(
-                        f"Transient error (attempt {attempt + 1}/{self.max_retries}): {e}"
+                        "Transient error (attempt %d/%d): %s",
+                        attempt + 1,
+                        self.max_retries,
+                        e,
                     )
                     await asyncio.sleep(wait_time)
                     continue
 
-                logger.error(f"Error extracting materials: {e}", exc_info=True)
+                logger.error("Error extracting materials: %s", e, exc_info=True)
                 return None
 
         return None
@@ -295,17 +295,17 @@ class MaterialsExtractor:
 
                 if matched:
                     logger.warning(
-                        f"LLM changed component name from '{matched}' to '{comp_mat.component}', "
-                        "correcting..."
+                        "LLM changed component name from '%s' to '%s', correcting...",
+                        matched,
+                        comp_mat.component,
                     )
-                    print(f"  ⚠️ Correcting component name: '{comp_mat.component}' → '{matched}'")
                     comp_mat.component = matched
                 else:
                     logger.warning(
-                        f"Unknown component '{comp_mat.component}' not in expected list: "
-                        f"{valid_component_names}"
+                        "Unknown component '%s' not in expected list: %s",
+                        comp_mat.component,
+                        valid_component_names,
                     )
-                    print(f"  ⚠️ Unknown component: '{comp_mat.component}'")
 
     def _filter_materials_not_in_ontology(
         self,
@@ -321,10 +321,10 @@ class MaterialsExtractor:
                     filtered_materials.append(mat)
                 else:
                     logger.warning(
-                        f"Material '{mat.name}' for component '{comp_mat.component}' "
-                        f"not in ontology, filtering out"
+                        "Material '%s' for component '%s' not in ontology, filtering out",
+                        mat.name,
+                        comp_mat.component,
                     )
-                    print(f"  ⚠️ Filtered out '{mat.name}' (not in ontology)")
                     filtered_count += 1
             comp_mat.raw_materials = filtered_materials
 
@@ -353,10 +353,9 @@ class MaterialsExtractor:
         """
         if not self.material_debater:
             logger.error("Material debater not initialized but debate was requested")
-            print("❌ Material debater not initialized")
             return None
 
-        print("Using multi-agent debate for materials...")
+        logger.info("Using multi-agent debate for materials...")
 
         debate_result = await self.material_debater.run_full_debate(components, technology, usage)
 
@@ -386,9 +385,10 @@ class MaterialsExtractor:
             )
 
         total_materials = sum(len(cm.raw_materials) for cm in materials_list.component_list)
-        print(
-            f"\n✓ Final result: {len(materials_list.component_list)} components, "
-            f"{total_materials} materials"
+        logger.info(
+            "Final result: %d components, %d materials",
+            len(materials_list.component_list),
+            total_materials,
         )
 
         return materials_list
@@ -477,9 +477,9 @@ class MaterialsExtractor:
         materials_list_items: list[ComponentMaterials],
     ) -> None:
         """Fix component names and filter invalid materials in-place."""
-        print("\n🔍 Validating component names...")
-        print(f"  Expected components: {components}")
-        print(f"  Materials list has {len(materials_list_items)} items")
+        logger.debug("Validating component names...")
+        logger.debug("  Expected components: %s", components)
+        logger.debug("  Materials list has %d items", len(materials_list_items))
 
         component_lookup = {comp.lower().strip(): comp for comp in components}
 
@@ -487,21 +487,24 @@ class MaterialsExtractor:
             comp_lower = comp_mat.component.lower().strip()
             base_name_lower = comp_lower.split("(")[0].strip()
 
-            print(f"  [{i}] Component from debate: '{comp_mat.component}'")
-            print(f"      Base name (lowercase): '{base_name_lower}'")
+            logger.debug("  [%d] Component from debate: '%s'", i, comp_mat.component)
 
             if comp_lower in component_lookup:
                 expected = component_lookup[comp_lower]
                 if comp_mat.component != expected:
-                    print(
-                        f"    ⚠️ Case mismatch - correcting: '{comp_mat.component}' → '{expected}'"
+                    logger.debug(
+                        "    Case mismatch - correcting: '%s' -> '%s'",
+                        comp_mat.component,
+                        expected,
                     )
                     comp_mat.component = expected
-                else:
-                    print("    ✓ Component name matches expected input")
             elif base_name_lower in component_lookup:
                 expected = component_lookup[base_name_lower]
-                print(f"    ⚠️ Qualifier added - correcting: '{comp_mat.component}' → '{expected}'")
+                logger.debug(
+                    "    Qualifier added - correcting: '%s' -> '%s'",
+                    comp_mat.component,
+                    expected,
+                )
                 comp_mat.component = expected
             else:
                 logger.warning(
@@ -509,38 +512,33 @@ class MaterialsExtractor:
                     comp_mat.component,
                     components,
                 )
-                print("    ❌ Unknown component - no match found!")
-                print(f"       Available: {list(component_lookup.keys())}")
 
-        print("\n🔍 Filtering materials against ontology...")
+        logger.debug("Filtering materials against ontology...")
         ontology_set = set(self.deps.material_ontology_list)
-        print(f"  Ontology has {len(ontology_set)} materials")
+        logger.debug("  Ontology has %d materials", len(ontology_set))
 
         filtered_count = 0
 
         for comp_mat in materials_list_items:
-            print(f"\n  Checking materials for '{comp_mat.component}':")
             valid_materials = []
 
             for mat in comp_mat.raw_materials:
                 if mat.name in ontology_set:
                     valid_materials.append(mat)
-                    print(f"    ✓ '{mat.name}' - valid (in ontology)")
                 else:
                     logger.warning(
                         "Rejecting invalid material '%s' for '%s' (not in ontology)",
                         mat.name,
                         comp_mat.component,
                     )
-                    print(f"    ✗ '{mat.name}' - NOT IN ONTOLOGY, filtering out")
                     filtered_count += 1
 
             comp_mat.raw_materials = valid_materials
 
         if filtered_count > 0:
-            print(f"\n  ℹ️ Total filtered: {filtered_count} invalid materials")
+            logger.info("Total filtered: %d invalid materials", filtered_count)
         else:
-            print("\n  ✓ All materials validated successfully")
+            logger.debug("All materials validated successfully")
 
     # ========================================================================
     # Main Entry Point
@@ -722,11 +720,15 @@ class MaterialsExtractor:
         consensus: dict[str, list[dict]],
     ) -> None:
         """Append material debate results to existing component transcript."""
-        print(f"🔍 DEBUG: Attempting to save material transcript for {technology}")
-        print(f"🔍 DEBUG: Components: {len(components)}, Consensus: {len(consensus)}")
+        logger.debug(
+            "Attempting to save material transcript for %s: %d components, %d consensus items",
+            technology,
+            len(components),
+            len(consensus),
+        )
 
         if not self.reporter:
-            print("❌ Reporter is None, cannot save transcript")
+            logger.warning("Reporter is None, cannot save transcript")
             return
 
         try:
@@ -739,16 +741,15 @@ class MaterialsExtractor:
             component_transcripts = list(output_dir.glob(f"{tech_filename}_*.txt"))
             component_transcripts = [f for f in component_transcripts if "_materials" not in f.name]
 
-            print(f"🔍 DEBUG: Looking for: {tech_filename}_*.txt")
-            print(f"🔍 DEBUG: Found {len(component_transcripts)} component transcripts")
+            logger.debug("Looking for: %s_*.txt", tech_filename)
+            logger.debug("Found %d component transcripts", len(component_transcripts))
 
             if not component_transcripts:
-                logger.warning(f"No component transcript found for {technology}")
-                print(f"❌ No component transcript found in {output_dir}")
+                logger.warning("No component transcript found for %s", technology)
                 return
 
             filepath = max(component_transcripts, key=lambda p: p.stat().st_mtime)
-            print(f"🔍 DEBUG: Will append to: {filepath.name}")
+            logger.debug("Will append to: %s", filepath.name)
 
             # Build and write content
             materials_content = self._build_material_transcript_content(
@@ -764,14 +765,10 @@ class MaterialsExtractor:
             if json_path.exists():
                 self._update_material_json(json_path, debate_history, consensus)
 
-            print(f"✓ Appended material debate to: {filepath.name}")
+            logger.info("Appended material debate to: %s", filepath.name)
 
         except Exception as e:
-            logger.error(f"Error appending material debate transcript: {e}", exc_info=True)
-            print(f"❌ EXCEPTION appending materials transcript: {type(e).__name__}: {e}")
-            import traceback
-
-            traceback.print_exc()
+            logger.error("Error appending material debate transcript: %s", e, exc_info=True)
 
     def _update_material_json(
         self,

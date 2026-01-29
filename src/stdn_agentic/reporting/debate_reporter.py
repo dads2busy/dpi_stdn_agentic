@@ -17,6 +17,10 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List
 
+from .transcript_models import (
+    TRANSCRIPT_WIDTH,
+)
+
 
 class DebateReporter:
     """
@@ -29,15 +33,6 @@ class DebateReporter:
 
     Attributes:
         output_dir: Directory where transcripts are saved
-
-    Example:
-        >>> reporter = DebateReporter(output_dir="./debate_transcripts")
-        >>> filepath = reporter.save_debate_transcript(
-        ...     technology="smartphone",
-        ...     agent_responses=agent_data,
-        ...     debate_history=rounds,
-        ...     final_consensus=consensus
-        ... )
     """
 
     def __init__(self, output_dir: str = "./debate_transcripts"):
@@ -83,13 +78,13 @@ class DebateReporter:
                 filepath, technology, agent_responses, debate_history, final_consensus
             )
         else:
-            self._save_text_transcript(
+            self._save_text_transcript_v2(
                 filepath, technology, agent_responses, debate_history, final_consensus
             )
 
         return filepath
 
-    def _save_text_transcript(
+    def _save_text_transcript_v2(
         self,
         filepath: Path,
         technology: str,
@@ -97,98 +92,253 @@ class DebateReporter:
         debate_history: List[Dict[str, Any]],
         final_consensus: Dict[str, Any],
     ):
-        """Save debate as formatted text file"""
+        """Save debate as formatted text file (new improved format)."""
         with open(filepath, "w") as f:
-            # Header
-            f.write("=" * 80 + "\n")
-            f.write(f"MULTI-AGENT DEBATE TRANSCRIPT: {technology}\n")
-            f.write(f"Generated: {datetime.now().isoformat()}\n")
-            f.write("=" * 80 + "\n\n")
+            # ===== HEADER =====
+            f.write("=" * TRANSCRIPT_WIDTH + "\n")
+            f.write(f"STDN ANALYSIS: {technology}\n")
+            f.write(f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+            f.write("=" * TRANSCRIPT_WIDTH + "\n")
 
-            # ✅ ADD TECHNOLOGY SPECIFICATION SECTION
+            # ===== LEGEND =====
+            f.write("\nLEGEND\n")
+            f.write("-" * TRANSCRIPT_WIDTH + "\n")
+            f.write("Support Levels:\n")
+            f.write("  [C] CONSENSUS  - All agents agree (3/3)\n")
+            f.write("  [M] MAJORITY   - Majority agrees (2/3)\n")
+            f.write("  [I] ISOLATED   - Single agent only (1/3)\n")
+            f.write("\nConfidence Scale: 0.0-1.0 (higher = more certain)\n")
+            f.write("  0.9-1.0: High certainty - universal/essential\n")
+            f.write("  0.7-0.9: Confident - industry standard\n")
+            f.write("  0.5-0.7: Moderate - common but varies\n")
+            f.write("  <0.5:    Low - optional or uncertain\n")
+
+            # ===== TECHNOLOGY SPECIFICATION =====
             tech_spec = final_consensus.get("technology_specification", technology)
             tech_reasoning = final_consensus.get("technology_reasoning", "")
 
-            if tech_spec != technology or tech_reasoning:
-                f.write("TECHNOLOGY SPECIFICATION:\n")
-                f.write("-" * 80 + "\n")
-                f.write(f"User Query: {technology}\n")
-                f.write(f"Analyzed Technology: {tech_spec}\n")
-                if tech_reasoning:
-                    f.write(f"\nReasoning: {tech_reasoning}\n")
-                f.write("-" * 80 + "\n\n")
+            f.write("\n" + "=" * TRANSCRIPT_WIDTH + "\n")
+            f.write("TECHNOLOGY SPECIFICATION\n")
+            f.write("=" * TRANSCRIPT_WIDTH + "\n\n")
+            f.write(f"Query: {technology}\n")
+            f.write(f"Specification: {tech_spec}\n")
+            if tech_reasoning:
+                f.write(f"\nReasoning: {tech_reasoning}\n")
 
-            # Phase 1: Initial Proposals
-            f.write("PHASE 1: INDEPENDENT COMPONENT EXTRACTION\n")
-            f.write("-" * 80 + "\n\n")
+            # ===== STAGE 1: COMPONENT EXTRACTION =====
+            f.write("\n" + "=" * TRANSCRIPT_WIDTH + "\n")
+            f.write("STAGE 1: COMPONENT EXTRACTION\n")
+            f.write("=" * TRANSCRIPT_WIDTH + "\n")
 
-            for idx, round_data in enumerate(agent_responses):
-                agent_id = round_data.get("agent_id", f"Agent_{idx + 1}")
-                components = round_data.get("components", [])
+            # Get number of agents
+            num_agents = len(agent_responses) if agent_responses else 3
 
-                f.write(f"{agent_id}:\n")
-                f.write(f"  Role: {round_data.get('persona', 'Unknown')}\n")
-                f.write(f"  Proposed Components ({len(components)}):\n")
+            # Round 1: Initial Proposals
+            f.write("\nROUND 1: Independent Proposals\n")
+            f.write("-" * TRANSCRIPT_WIDTH + "\n")
 
+            for idx, response in enumerate(agent_responses):
+                agent_id = response.get("agent_id", f"Agent_{idx + 1}")
+                role = response.get("persona", response.get("role", "Expert"))
+                components = response.get("components", [])
+
+                f.write(f"\n{agent_id} ({role}):\n")
                 for comp in components:
                     if isinstance(comp, dict):
-                        name = comp.get("name", comp.get("component", comp))
-                        confidence = comp.get("confidence", "N/A")
+                        name = comp.get("name", comp.get("component", str(comp)))
+                        confidence = comp.get("confidence", 0.0)
                         reasoning = comp.get("reasoning", "")
-                        f.write(f"    - {name} (confidence: {confidence})\n")
+                        f.write(f"  • {name} ({confidence:.2f})")
                         if reasoning:
-                            f.write(f"      Reasoning: {reasoning}\n")
+                            # Truncate long reasoning
+                            short_reason = (
+                                reasoning[:60] + "..." if len(reasoning) > 60 else reasoning
+                            )
+                            f.write(f" - {short_reason}")
+                        f.write("\n")
                     else:
-                        f.write(f"    - {comp}\n")
-                f.write("\n")
+                        f.write(f"  • {comp}\n")
 
-            # Phase 2: Debate Rounds
+            # Compute initial support analysis
+            if agent_responses:
+                initial_support = self._compute_support_analysis(agent_responses, num_agents)
+                f.write(self._format_support_analysis(initial_support, num_agents, "Initial"))
+
+            # Subsequent rounds
             if debate_history:
-                f.write("\n" + "=" * 80 + "\n")
-                f.write("PHASE 2: DEBATE ROUNDS\n")
-                f.write("=" * 80 + "\n\n")
-
                 for round_data in debate_history:
                     round_num = round_data.get("round_num", 0)
                     convergence = round_data.get("convergence", 0.0)
+                    proposals = round_data.get("proposals", {})
 
-                    f.write(f"ROUND {round_num}:\n")
-                    f.write(f"  Convergence: {convergence:.1%}\n")
+                    # Skip round 1 as we already showed initial proposals
+                    if round_num <= 1:
+                        continue
+
+                    threshold = 0.75  # Default threshold
+                    threshold_reached = convergence >= threshold
+
                     f.write(
-                        f"  Status: {'✓ Threshold reached' if convergence >= 0.51 else '→ Continuing debate'}\n"
+                        f"\nROUND {round_num}: {'Consensus Reached' if threshold_reached else 'Refinement'}\n"
                     )
-                    f.write("\n")
+                    f.write("-" * TRANSCRIPT_WIDTH + "\n")
+                    f.write(f"Convergence: {convergence:.1%}")
+                    if threshold_reached:
+                        f.write(" ✓ (threshold reached)\n")
+                    else:
+                        f.write(f" (threshold: {threshold:.0%})\n")
 
-            # Phase 3: Final Consensus
-            f.write("\n" + "=" * 80 + "\n")
-            f.write("PHASE 3: FINAL CONSENSUS\n")
-            f.write("=" * 80 + "\n\n")
+                    # Show critiques if available
+                    critiques = round_data.get("critiques", [])
+                    if critiques:
+                        f.write("\nCritiques:\n")
+                        for critique in critiques[:5]:  # Limit to 5
+                            if isinstance(critique, dict):
+                                f.write(f"  {critique.get('text', str(critique))}\n")
+                            else:
+                                f.write(f"  {critique}\n")
+
+                    # Show round support analysis
+                    if proposals:
+                        round_support = self._compute_support_from_proposals(proposals, num_agents)
+                        f.write(
+                            self._format_support_analysis(
+                                round_support, num_agents, f"Round {round_num}"
+                            )
+                        )
+
+            # ===== FINAL CONSENSUS =====
+            f.write("\n" + "=" * TRANSCRIPT_WIDTH + "\n")
+            f.write("FINAL CONSENSUS: Components\n")
+            f.write("=" * TRANSCRIPT_WIDTH + "\n\n")
 
             if isinstance(final_consensus, dict):
                 consensus_comps = final_consensus.get("components", [])
-                num_rounds = final_consensus.get("rounds", 0)
-                confidence = final_consensus.get("confidence", 0.0)
+                num_rounds = final_consensus.get(
+                    "rounds", len(debate_history) if debate_history else 1
+                )
+                overall_confidence = final_consensus.get("confidence", 0.0)
             else:
                 consensus_comps = final_consensus if isinstance(final_consensus, list) else []
-                num_rounds = 0
-                confidence = 0.0
+                num_rounds = 1
+                overall_confidence = 0.0
 
-            f.write(f"Total Debate Rounds: {num_rounds}\n")
-            f.write(f"Overall Consensus Confidence: {confidence:.2f}\n\n")
-            f.write(f"Final Consensus Components ({len(consensus_comps)}):\n")
+            f.write(f"Rounds Completed: {num_rounds}\n")
+            f.write(f"Final Convergence: {overall_confidence:.1%}\n")
+            f.write(f"Components Selected: {len(consensus_comps)}\n\n")
 
-            for comp in consensus_comps:
+            for i, comp in enumerate(consensus_comps, 1):
                 if isinstance(comp, dict):
-                    name = comp.get("name", comp.get("component", comp))
-                    comp_confidence = comp.get("confidence", "N/A")
-                    f.write(f"  ✓ {name} (confidence: {comp_confidence})\n")
+                    name = comp.get("name", comp.get("component", str(comp)))
+                    confidence = comp.get("confidence", 0.0)
+                    f.write(f"  {i}. {name} ({confidence:.2f})\n")
                 else:
-                    f.write(f"  ✓ {comp}\n")
+                    f.write(f"  {i}. {comp}\n")
 
-            # Footer
-            f.write("\n" + "=" * 80 + "\n")
-            f.write("END OF DEBATE TRANSCRIPT\n")
-            f.write("=" * 80 + "\n")
+            # ===== FOOTER =====
+            f.write("\n" + "=" * TRANSCRIPT_WIDTH + "\n")
+            f.write("END OF COMPONENT EXTRACTION\n")
+            f.write("=" * TRANSCRIPT_WIDTH + "\n")
+
+    def _compute_support_analysis(
+        self, agent_responses: List[Dict[str, Any]], num_agents: int
+    ) -> Dict[str, Dict]:
+        """Compute support levels for components across agents."""
+        component_support = {}
+
+        for response in agent_responses:
+            agent_id = response.get("agent_id", "Unknown")
+            components = response.get("components", [])
+
+            for comp in components:
+                if isinstance(comp, dict):
+                    name = comp.get("name", comp.get("component", str(comp))).lower()
+                    confidence = comp.get("confidence", 0.0)
+                else:
+                    name = str(comp).lower()
+                    confidence = 0.5
+
+                if name not in component_support:
+                    component_support[name] = {
+                        "display_name": comp.get("name", str(comp))
+                        if isinstance(comp, dict)
+                        else str(comp),
+                        "agents": [],
+                        "confidences": [],
+                    }
+                component_support[name]["agents"].append(agent_id)
+                component_support[name]["confidences"].append(confidence)
+
+        return component_support
+
+    def _compute_support_from_proposals(
+        self, proposals: Dict[str, List], num_agents: int
+    ) -> Dict[str, Dict]:
+        """Compute support levels from round proposals."""
+        component_support = {}
+
+        for agent_id, items in proposals.items():
+            for item in items:
+                if isinstance(item, dict):
+                    name = item.get("component", item.get("name", str(item))).lower()
+                    confidence = item.get("confidence", 0.0)
+                    display_name = item.get("component", item.get("name", str(item)))
+                else:
+                    name = str(item).lower()
+                    confidence = 0.5
+                    display_name = str(item)
+
+                if name not in component_support:
+                    component_support[name] = {
+                        "display_name": display_name,
+                        "agents": [],
+                        "confidences": [],
+                    }
+                component_support[name]["agents"].append(agent_id)
+                component_support[name]["confidences"].append(confidence)
+
+        return component_support
+
+    def _format_support_analysis(
+        self, support: Dict[str, Dict], num_agents: int, label: str
+    ) -> str:
+        """Format support analysis as readable text."""
+        lines = [f"\n{label} Support Analysis:\n"]
+
+        consensus = []
+        majority = []
+        isolated = []
+
+        for name, data in support.items():
+            count = len(data["agents"])
+            avg_conf = (
+                sum(data["confidences"]) / len(data["confidences"]) if data["confidences"] else 0
+            )
+            display = data["display_name"]
+
+            if count == num_agents:
+                consensus.append((display, avg_conf, count))
+            elif count > num_agents / 2:
+                majority.append((display, avg_conf, count))
+            else:
+                isolated.append((display, avg_conf, count))
+
+        if consensus:
+            lines.append(f"  [C] Consensus ({len(consensus)} items):\n")
+            for name, conf, count in sorted(consensus, key=lambda x: -x[1])[:5]:
+                lines.append(f"      • {name} ({conf:.2f})\n")
+
+        if majority:
+            lines.append(f"  [M] Majority ({len(majority)} items):\n")
+            for name, conf, count in sorted(majority, key=lambda x: -x[1])[:5]:
+                lines.append(f"      • {name} ({conf:.2f}) - {count}/{num_agents} agents\n")
+
+        if isolated:
+            lines.append(f"  [I] Isolated ({len(isolated)} items):\n")
+            for name, conf, count in sorted(isolated, key=lambda x: -x[1])[:3]:
+                lines.append(f"      • {name} ({conf:.2f}) - needs peer support\n")
+
+        return "".join(lines)
 
     def _save_json_transcript(
         self,
@@ -198,21 +348,57 @@ class DebateReporter:
         debate_history: List[Dict[str, Any]],
         final_consensus: Dict[str, Any],
     ):
-        """Save debate as JSON file"""
+        """Save debate as JSON file with enhanced schema."""
+        # Extract tech spec info
+        tech_spec = technology
+        tech_reasoning = ""
+
+        if agent_responses and len(agent_responses) > 0:
+            first_response = agent_responses[0]
+            tech_spec = first_response.get("technology_specification", technology)
+            tech_reasoning = first_response.get("technology_reasoning", "")
+
+        if isinstance(final_consensus, dict):
+            tech_spec = final_consensus.get("technology_specification", tech_spec)
+            tech_reasoning = final_consensus.get("technology_reasoning", tech_reasoning)
+
         transcript = {
-            "technology": technology,
-            "technology_specification": final_consensus.get(
-                "technology_specification", technology
-            ),  # ✅ ADD
-            "technology_reasoning": final_consensus.get("technology_reasoning", ""),  # ✅ ADD
-            "timestamp": datetime.now().isoformat(),
-            "phase1_initial_proposals": agent_responses,
-            "phase2_debate_rounds": debate_history,
-            "phase3_final_consensus": final_consensus,
+            "version": "2.0",
+            "metadata": {
+                "technology": technology,
+                "technology_specification": tech_spec,
+                "technology_reasoning": tech_reasoning,
+                "timestamp": datetime.now().isoformat(),
+                "format_version": "2.0",
+            },
+            "config": {
+                "num_agents": len(agent_responses) if agent_responses else 3,
+                "max_rounds": len(debate_history) if debate_history else 3,
+            },
+            "component_stage": {
+                "phase1_initial_proposals": agent_responses,
+                "phase2_debate_rounds": debate_history,
+                "phase3_final_consensus": final_consensus,
+            },
         }
 
         with open(filepath, "w") as f:
             json.dump(transcript, f, indent=2, default=str)
+
+    # Legacy method for backwards compatibility
+    def _save_text_transcript(
+        self,
+        filepath: Path,
+        technology: str,
+        agent_responses: List[Dict[str, Any]],
+        debate_history: List[Dict[str, Any]],
+        final_consensus: Dict[str, Any],
+    ):
+        """Save debate as formatted text file (legacy format)."""
+        # Redirect to new format
+        self._save_text_transcript_v2(
+            filepath, technology, agent_responses, debate_history, final_consensus
+        )
 
 
 # ============================================================================

@@ -13,7 +13,6 @@ Features:
 - Comprehensive error handling and logging
 """
 
-import logging
 from pathlib import Path
 from typing import Any, Optional
 
@@ -21,10 +20,10 @@ from pydantic_ai import RunUsage
 
 from ..agents import ComponentMaterialsList
 from ..data import CountryDataRepository
+from ..logging_config import get_logger
 from ..reporting import DebateReporter
 
-# Initialize logger
-logger = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 
 # ============================================================================
@@ -247,11 +246,11 @@ class CountryDataEnricher:
             enriched_ List of enriched data records
         """
         if not self.reporter:
-            print("❌ Reporter is None, cannot append country data")
+            logger.warning("Reporter is None, cannot append country data")
             return
 
         if not enriched_data:
-            print("⚠️ No enriched data to append")
+            logger.warning("No enriched data to append")
             return
 
         try:
@@ -264,8 +263,7 @@ class CountryDataEnricher:
             transcripts = list(output_dir.glob(f"{tech_filename}_*.txt"))
 
             if not transcripts:
-                logger.warning(f"No transcript found for {technology}")
-                print(f"⚠️ No transcript found for {technology}")
+                logger.warning("No transcript found for %s", technology)
                 return
 
             # Get most recent transcript
@@ -354,8 +352,7 @@ class CountryDataEnricher:
                 f.write("".join(content))
                 f.flush()
 
-            print(f"✓ Appended country data to: {filepath.name}")
+            logger.info("Appended country data to: %s", filepath.name)
 
         except Exception as e:
-            logger.error(f"Error appending country data to transcript: {e}", exc_info=True)
-            print(f"❌ Error appending country  {e}")
+            logger.error("Error appending country data to transcript: %s", e, exc_info=True)
