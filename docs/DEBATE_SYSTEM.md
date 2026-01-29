@@ -402,7 +402,7 @@ The following diagram illustrates the complete component debate process, from in
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'fontSize': '18px'}}}%%
-flowchart LR
+flowchart TB
     subgraph Round1["ROUND 1: Independent Proposals"]
         Tech[/"Technology Query"/]
         A1[("Agent 1")]
