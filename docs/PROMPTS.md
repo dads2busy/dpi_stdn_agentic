@@ -293,28 +293,24 @@ If data is unavailable, outdated, or highly uncertain:
 
 **File:** `src/stdn_agentic/debate/component_debater.py`
 
-System prompt for agents participating in component debate.
+System prompt for agents participating in component debate. This prompt emphasizes **SELECTION** from existing candidates rather than invention of new components.
 
 ```
-You are an expert in technology component analysis participating in a multi-agent debate.
+You are an expert participating in a multi-agent debate to reach consensus on technology components.
 
-Your task is to identify PRIMARY MANUFACTURING COMPONENTS for technologies.
+CRITICAL RULES:
+1. You MUST ONLY select from the CANDIDATE COMPONENTS list provided
+2. Do NOT invent new component names - use the EXACT names from the list
+3. Your job is to decide which components to INCLUDE and with what CONFIDENCE
+4. Adjust confidence based on peer support and critique feedback
 
-CRITICAL: For each component, you MUST provide:
-1. Component name
-2. Your confidence (0.0 to 1.0) that this is truly a primary component:
-   - 1.0 = Absolutely certain, universal standard
-   - 0.8-0.9 = Very confident, industry standard
-   - 0.6-0.7 = Moderately confident, common but may vary
-   - 0.4-0.5 = Uncertain, depends on implementation
-   - 0.0-0.3 = Low confidence, rarely separate
-3. Brief reasoning justifying your confidence
-
-Consider peer proposals and critiques carefully. Adjust your confidence based on:
-- Consensus among peers (higher confidence if many agree)
-- Strength of reasoning in critiques
-- Your own expertise and certainty
+For each component you include, provide:
+- The EXACT component name from the candidate list
+- Your confidence (0.0-1.0) that it should be included
+- Brief reasoning for your confidence level
 ```
+
+**Key design decision:** The system prompt explicitly constrains agents to SELECT from existing proposals rather than invent new ones. This prevents component name drift across debate rounds.
 
 ---
 
@@ -322,37 +318,53 @@ Consider peer proposals and critiques carefully. Adjust your confidence based on
 
 **File:** `src/stdn_agentic/debate/component_debater.py`
 
-Dynamic prompt for each debate round with peer context.
+Dynamic prompt for each debate round. Agents are presented with a **candidate list** of all components proposed in the previous round and must select which to include.
 
 ```
-DEBATE ROUND {round_num}
+DEBATE ROUND {round_num} - COMPONENT SELECTION
 
 Technology: {technology}
 
-PREVIOUS ROUND PROPOSALS:
+CANDIDATE COMPONENTS (you MUST select from this list):
+{component_list}
+
+PREVIOUS ROUND - AGENT SELECTIONS:
 {prev_context}
 
 PEER CRITIQUES AND GUIDANCE:
 {critique_text}
 
 YOUR TASK:
-1. Review all peer proposals and critiques carefully
-2. For EACH component you propose, assign a confidence score (0.0-1.0) based on:
-   - How certain you are it's a primary component
-   - Degree of peer support or opposition
-   - Strength of evidence and reasoning
-3. Support strong consensus candidates with high confidence
-4. Lower confidence for isolated proposals unless critically justified
-5. Provide clear reasoning for each confidence assessment
+1. Review the candidate components and peer feedback
+2. SELECT which components from the list above should be included
+3. For each selected component:
+   - Use the EXACT name from the candidate list
+   - Assign confidence (0.0-1.0) based on:
+     * Peer support (higher if multiple agents selected it)
+     * Critique feedback (adjust based on critiques)
+     * Your assessment of its importance as a primary component
+   - Provide brief reasoning
 
-Return your refined component list with confidence scores and reasoning.
+IMPORTANT: Only include components you believe should be in the final consensus.
+Components with low peer support should have lower confidence unless critically justified.
 ```
 
 **Dynamic variables:**
-- `{round_num}`: Current debate round
+- `{round_num}`: Current debate round (2, 3, etc.)
 - `{technology}`: Technology being analyzed
-- `{prev_context}`: Previous round proposals from all agents
-- `{critique_text}`: Generated critiques from convergence analysis
+- `{component_list}`: Numbered list of all unique components from previous round with initial confidence scores
+- `{prev_context}`: Previous round selections grouped by agent
+- `{critique_text}`: Generated critiques highlighting consensus/isolated items
+
+**Key design decisions:**
+
+1. **Candidate list presentation**: All unique components from the previous round are presented as a numbered list. This provides a closed set for selection.
+
+2. **Exact name matching**: Agents are instructed to use EXACT names from the list. A fuzzy matching function (`_match_to_existing_component`) maps any variations back to the original names.
+
+3. **Selection vs. invention**: The prompt explicitly frames the task as "SELECT which components" rather than "propose components", preventing drift to generic names like "display" or "battery".
+
+4. **Consistent agent IDs**: The debate uses consistent `Agent_1`, `Agent_2`, `Agent_3` IDs across all rounds to enable proper tracking of proposals and support levels.
 
 ---
 

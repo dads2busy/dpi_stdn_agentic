@@ -37,6 +37,9 @@ STDN Agentic uses four specialized agents, each with distinct responsibilities a
 4. **Dual-Mode Operation**:
    - **Single-agent**: Direct LLM inference → components
    - **Multi-agent debate**: 3 agents with different perspectives, Jaccard convergence metric
+     - **Round 1**: Independent proposals with full component generation
+     - **Subsequent rounds**: Selection-based refinement from candidate list (agents cannot invent new components)
+     - **Name preservation**: Fuzzy matching ensures component names stay consistent across rounds
 
 ### Input Schema
 

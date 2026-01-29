@@ -109,12 +109,17 @@ uv run stdn --input tech_list.csv --output output.csv
 ### Debate Process
 
 When debate is enabled:
-1. Three agents with different perspectives independently propose components
-2. Proposals are normalized using **LLM semantic normalization**
-3. Jaccard convergence is calculated
-4. Agents generate critiques highlighting consensus vs. isolated proposals
-5. Process iterates until convergence ≥ threshold or max rounds reached
-6. Final confidence scores are adjusted based on peer support
+1. **Round 1 (Initial Proposals)**: Three agents with different perspectives independently propose components
+2. **LLM Normalization**: Proposals are normalized using LLM semantic normalization to map variations to canonical names
+3. **Convergence Check**: Jaccard convergence is calculated across agent proposals
+4. **Critique Generation**: System generates critiques highlighting:
+   - CONSENSUS items (all agents agree)
+   - MAJORITY items (2/3 agents agree)
+   - ISOLATED items (only 1 agent proposed)
+5. **Subsequent Rounds (Selection-Based)**: Agents are presented with a **candidate list** of all unique components from the previous round and must **SELECT** which to include (not propose new ones)
+6. **Name Preservation**: A fuzzy matching function ensures LLM responses map back to original component names
+7. **Iteration**: Process repeats until convergence ≥ threshold or max rounds reached
+8. **Final Scoring**: Confidence scores are adjusted based on peer support levels
 
 ### LLM Semantic Normalization
 
