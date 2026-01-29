@@ -402,34 +402,38 @@ The following diagram illustrates the complete component debate process, from in
 
 ```mermaid
 flowchart LR
-    subgraph Round1["ROUND 1"]
-        direction TB
-        Tech[/"Technology Query"/] --> Agents
-        subgraph Agents[" "]
-            A1[("Agent 1")] & A2[("Agent 2")] & A3[("Agent 3")]
-        end
+    subgraph Round1["ROUND 1: Independent Proposals"]
+        Tech[/"Technology Query"/]
+        A1[("Agent 1")]
+        A2[("Agent 2")]
+        A3[("Agent 3")]
+        Tech --> A1
+        Tech --> A2
+        Tech --> A3
     end
     
-    Agents --> |"Proposals"| Collect["Collect & Normalize"]
+    A1 --> Collect["Collect & Normalize"]
+    A2 --> Collect
+    A3 --> Collect
     Collect --> Calc["Convergence Check"]
     
-    Calc --> Check{{"≥ Threshold?"}}
-    Check --> |"Yes"| Output[/"Final Components"/]
-    Check --> |"No"| Critique["Generate Critiques"]
+    Calc --> Check{"Converged?"}
+    Check -->|"Yes"| Output[/"Final Components"/]
+    Check -->|"No"| Critique["Generate Critiques"]
     
     subgraph Loop["ROUNDS 2+: Refinement"]
-        direction TB
         Critique --> Forward["Forward Proposals + Critiques"]
-        Forward --> Refine
-        subgraph Refine[" "]
-            R1[("Agent 1")] & R2[("Agent 2")] & R3[("Agent 3")]
-        end
+        Forward --> R1[("Agent 1")]
+        Forward --> R2[("Agent 2")]
+        Forward --> R3[("Agent 3")]
     end
     
-    Refine --> |"Refined"| Calc2["Convergence Check"]
-    Calc2 --> Check2{{"≥ Threshold or Max Rounds?"}}
-    Check2 --> |"No"| Critique
-    Check2 --> |"Yes"| Output
+    R1 --> Calc2["Convergence Check"]
+    R2 --> Calc2
+    R3 --> Calc2
+    Calc2 --> Check2{"Done?"}
+    Check2 -->|"No"| Critique
+    Check2 -->|"Yes"| Output
 ```
 
 **Key aspects of the component debate process:**
