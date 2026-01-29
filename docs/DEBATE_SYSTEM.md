@@ -396,7 +396,73 @@ Each phase uses a similar debate pattern but is optimized for its specific task:
 
 Identify the primary manufacturing components of a technology product.
 
-### Flow Diagram
+### Overall Process Diagram
+
+The following diagram illustrates the complete component debate process, from initial proposals through iterative refinement to final consensus:
+
+```mermaid
+flowchart TB
+    subgraph Round1["ROUND 1: Independent Proposals"]
+        A1[("Agent 1")]
+        A2[("Agent 2")]
+        A3[("Agent 3")]
+    end
+    
+    Tech[/"Technology Query"/] --> A1
+    Tech --> A2
+    Tech --> A3
+    
+    A1 --> |"Proposals + Confidence"| Collect["Collect All Proposals"]
+    A2 --> |"Proposals + Confidence"| Collect
+    A3 --> |"Proposals + Confidence"| Collect
+    
+    Collect --> Normalize["Normalize Names
+    (LLM Semantic Mapping)"]
+    Normalize --> Calc["Calculate Convergence
+    (Jaccard Similarity)"]
+    
+    Calc --> Check{{"Convergence ≥ Threshold?"}}
+    
+    Check --> |"Yes"| Consensus["Build Final Consensus"]
+    Check --> |"No"| Critique["Generate Critiques
+    • Consensus items: preserve
+    • Isolated items: reconsider"]
+    
+    subgraph Loop["ROUNDS 2+: Refinement Cycle"]
+        Critique --> Forward["Forward to Agents:
+        • Original Proposals
+        • Peer Critiques"]
+        
+        Forward --> R1[("Agent 1 Reconsider")]
+        Forward --> R2[("Agent 2 Reconsider")]
+        Forward --> R3[("Agent 3 Reconsider")]
+        
+        R1 --> |"Refined Proposals"| Collect2["Collect Refined Proposals"]
+        R2 --> |"Refined Proposals"| Collect2
+        R3 --> |"Refined Proposals"| Collect2
+    end
+    
+    Collect2 --> Calc2["Calculate Convergence"]
+    Calc2 --> Check2{{"Convergence ≥ Threshold
+    OR Max Rounds?"}}
+    
+    Check2 --> |"No"| Critique
+    Check2 --> |"Yes"| Consensus
+    
+    Consensus --> Output[/"Final Components
+    with Confidence Scores"/]
+```
+
+**Key aspects of the component debate process:**
+
+1. **Round 1 (Independent)**: Each agent independently proposes components based on the technology query, without seeing other agents' proposals
+2. **Normalization**: LLM semantic mapping ensures variants like "Li-ion Battery" and "Lithium Ion Battery" are recognized as the same component
+3. **Convergence Check**: Jaccard similarity measures agreement across all agent pairs
+4. **Critique Generation**: The system (not agents) generates feedback highlighting consensus items to preserve and isolated items to reconsider
+5. **Refinement Loop**: In rounds 2+, agents receive critiques plus all prior proposals and must select from a candidate list (not invent new names)
+6. **Termination**: Loop exits when convergence threshold is met OR maximum rounds reached
+
+### Detailed Flow Diagram
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
