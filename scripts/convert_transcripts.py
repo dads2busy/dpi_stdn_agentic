@@ -222,6 +222,166 @@ def convert_transcript(transcript: Dict[str, Any]) -> Dict[str, Any]:
     return v2_transcript
 
 
+def regenerate_txt_transcript(transcript: Dict[str, Any], txt_path: Path) -> bool:
+    """Regenerate the TXT transcript file from converted JSON."""
+    try:
+        TRANSCRIPT_WIDTH = 80
+
+        with open(txt_path, "w") as f:
+            metadata = transcript.get("metadata", {})
+            technology = metadata.get("technology", "Unknown")
+            tech_spec = metadata.get("technology_specification", technology)
+            tech_reasoning = metadata.get("technology_reasoning", "")
+            timestamp = metadata.get("timestamp", "")
+
+            config = transcript.get("config", {})
+            num_agents = config.get("num_agents", 3)
+
+            component_stage = transcript.get("component_stage", {})
+            agent_responses = component_stage.get("phase1_initial_proposals", [])
+            debate_history = component_stage.get("phase2_debate_rounds", [])
+            final_consensus = component_stage.get("phase3_final_consensus", {})
+
+            # ===== HEADER =====
+            f.write("=" * TRANSCRIPT_WIDTH + "\n")
+            f.write(f"STDN ANALYSIS: {technology}\n")
+            f.write(f"Generated: {timestamp}\n")
+            f.write("Format: v2.0 (converted)\n")
+            f.write("=" * TRANSCRIPT_WIDTH + "\n")
+
+            # ===== LEGEND =====
+            f.write("\nLEGEND\n")
+            f.write("-" * TRANSCRIPT_WIDTH + "\n")
+            f.write("Support Levels:\n")
+            f.write("  [C] CONSENSUS  - All agents agree (3/3)\n")
+            f.write("  [M] MAJORITY   - Majority agrees (2/3)\n")
+            f.write("  [I] ISOLATED   - Single agent only (1/3)\n")
+            f.write("\nConfidence Scale: 0.0-1.0 (higher = more certain)\n")
+
+            # ===== TECHNOLOGY SPECIFICATION =====
+            f.write("\n" + "=" * TRANSCRIPT_WIDTH + "\n")
+            f.write("TECHNOLOGY SPECIFICATION\n")
+            f.write("=" * TRANSCRIPT_WIDTH + "\n\n")
+            f.write(f"Query: {technology}\n")
+            f.write(f"Specification: {tech_spec}\n")
+            if tech_reasoning:
+                f.write(f"\nReasoning: {tech_reasoning}\n")
+
+            # ===== STAGE 1: COMPONENT EXTRACTION =====
+            f.write("\n" + "=" * TRANSCRIPT_WIDTH + "\n")
+            f.write("STAGE 1: COMPONENT EXTRACTION\n")
+            f.write("=" * TRANSCRIPT_WIDTH + "\n")
+
+            # Round 1: Initial Proposals
+            f.write("\nROUND 1: Independent Proposals\n")
+            f.write("-" * TRANSCRIPT_WIDTH + "\n")
+
+            for idx, response in enumerate(agent_responses):
+                agent_id = response.get("agent_id", f"Agent_{idx + 1}")
+                components = response.get("components", [])
+
+                f.write(f"\n{agent_id}:\n")
+                for comp in components[:8]:  # Limit display
+                    if isinstance(comp, dict):
+                        name = comp.get("name", comp.get("component", str(comp)))
+                        confidence = comp.get("confidence", 0.0)
+                        f.write(f"  - {name} ({confidence:.2f})\n")
+                    else:
+                        f.write(f"  - {comp}\n")
+                if len(components) > 8:
+                    f.write(f"  ... and {len(components) - 8} more\n")
+
+            # Subsequent rounds with enhanced data
+            for round_data in debate_history:
+                round_num = round_data.get("round_num", 0)
+                if round_num <= 1:
+                    continue
+
+                convergence = round_data.get("convergence", 0.0)
+                threshold = round_data.get("threshold", 0.75)
+                threshold_reached = round_data.get("threshold_reached", False)
+
+                f.write(
+                    f"\nROUND {round_num}: {'Consensus Reached' if threshold_reached else 'Refinement'}\n"
+                )
+                f.write("-" * TRANSCRIPT_WIDTH + "\n")
+                f.write(f"Convergence: {convergence:.1%}")
+                if threshold_reached:
+                    f.write(" (threshold reached)\n")
+                else:
+                    f.write(f" (threshold: {threshold:.0%})\n")
+
+                # Show changes from previous round
+                changes = round_data.get("changes_from_previous")
+                if changes:
+                    added = changes.get("items_added", [])
+                    removed = changes.get("items_removed", [])
+                    if added or removed:
+                        f.write("\nChanges from Previous Round:\n")
+                        if added:
+                            f.write(f"  + Added: {', '.join(added[:5])}")
+                            if len(added) > 5:
+                                f.write(f" (+{len(added) - 5} more)")
+                            f.write("\n")
+                        if removed:
+                            f.write(f"  - Removed: {', '.join(removed[:5])}")
+                            if len(removed) > 5:
+                                f.write(f" (+{len(removed) - 5} more)")
+                            f.write("\n")
+
+                # Show support analysis
+                support = round_data.get("support_analysis", {})
+                if support:
+                    f.write("\nSupport Analysis:\n")
+                    consensus = support.get("consensus", [])
+                    majority = support.get("majority", [])
+                    isolated = support.get("isolated", [])
+
+                    if consensus:
+                        f.write(f"  [C] Consensus ({len(consensus)} items)\n")
+                    if majority:
+                        f.write(f"  [M] Majority ({len(majority)} items)\n")
+                    if isolated:
+                        f.write(f"  [I] Isolated ({len(isolated)} items) - need peer support\n")
+
+            # ===== FINAL CONSENSUS =====
+            f.write("\n" + "=" * TRANSCRIPT_WIDTH + "\n")
+            f.write("FINAL CONSENSUS: Components\n")
+            f.write("=" * TRANSCRIPT_WIDTH + "\n\n")
+
+            if isinstance(final_consensus, dict):
+                consensus_comps = final_consensus.get("components", [])
+                num_rounds = final_consensus.get("rounds", len(debate_history))
+                overall_confidence = final_consensus.get("confidence", 0.0)
+            else:
+                consensus_comps = final_consensus if isinstance(final_consensus, list) else []
+                num_rounds = len(debate_history)
+                overall_confidence = 0.0
+
+            f.write(f"Rounds Completed: {num_rounds}\n")
+            f.write(f"Final Convergence: {overall_confidence:.1%}\n")
+            f.write(f"Components Selected: {len(consensus_comps)}\n\n")
+
+            for i, comp in enumerate(consensus_comps, 1):
+                if isinstance(comp, dict):
+                    name = comp.get("name", comp.get("component", str(comp)))
+                    confidence = comp.get("confidence", 0.0)
+                    f.write(f"  {i}. {name} ({confidence:.2f})\n")
+                else:
+                    f.write(f"  {i}. {comp}\n")
+
+            # ===== FOOTER =====
+            f.write("\n" + "=" * TRANSCRIPT_WIDTH + "\n")
+            f.write("END OF TRANSCRIPT (v2.0 format)\n")
+            f.write("=" * TRANSCRIPT_WIDTH + "\n")
+
+        return True
+
+    except Exception as e:
+        print(f"  WARNING: Could not regenerate TXT: {e}")
+        return False
+
+
 def process_file(input_path: Path, output_path: Path, dry_run: bool = False) -> bool:
     """Process a single transcript file."""
     print(f"Processing: {input_path.name}")
@@ -240,7 +400,13 @@ def process_file(input_path: Path, output_path: Path, dry_run: bool = False) -> 
         with open(output_path, "w") as f:
             json.dump(converted, f, indent=2, default=str)
 
-        print(f"  Converted: {output_path}")
+        print(f"  Converted JSON: {output_path}")
+
+        # Also regenerate the TXT file with the new format
+        txt_path = output_path.with_suffix(".txt")
+        if regenerate_txt_transcript(converted, txt_path):
+            print(f"  Regenerated TXT: {txt_path}")
+
         return True
 
     except json.JSONDecodeError as e:
