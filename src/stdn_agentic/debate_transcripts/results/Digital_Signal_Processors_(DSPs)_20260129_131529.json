@@ -1,0 +1,1512 @@
+{
+  "version": "2.0",
+  "metadata": {
+    "technology": "Digital Signal Processors (DSPs)",
+    "technology_specification": "Digital Signal Processors (DSPs)",
+    "technology_reasoning": "",
+    "timestamp": "2026-01-29T13:59:03.707123",
+    "format_version": "2.0"
+  },
+  "config": {
+    "num_agents": 3,
+    "max_rounds": 2
+  },
+  "component_stage": {
+    "phase1_initial_proposals": [
+      {
+        "agent_id": "Agent_1",
+        "components": [
+          {
+            "name": "DSP Die/Chip",
+            "confidence": 0.98,
+            "reasoning": "Core silicon integrated circuit containing the DSP architecture, universally present and manufactured separately before packaging, with distinct supply chains from semiconductor foundries."
+          },
+          {
+            "name": "Package/Encapsulation (BGA/QFP/LGA)",
+            "confidence": 0.95,
+            "reasoning": "Physical housing that protects the DSP die and provides external electrical connections, manufactured separately by assembly and test facilities with specialized packaging supply chains."
+          },
+          {
+            "name": "Lead Frame or Substrate",
+            "confidence": 0.92,
+            "reasoning": "Internal connection structure that bonds the DSP die to external pins, manufactured by specialized suppliers and varies between package types (lead frame for QFP, substrate for BGA)."
+          },
+          {
+            "name": "Heat Sink/Thermal Management Component",
+            "confidence": 0.85,
+            "reasoning": "Thermal dissipation component for high-performance DSPs, manufactured separately and essential for maintaining operating temperatures in demanding applications."
+          },
+          {
+            "name": "Decoupling Capacitor Array",
+            "confidence": 0.88,
+            "reasoning": "Power supply filtering components typically supplied as part of DSP reference designs, manufactured separately and critical for stable DSP operation in high-frequency applications."
+          },
+          {
+            "name": "Crystal Oscillator/Clock Generator",
+            "confidence": 0.9,
+            "reasoning": "Timing reference component manufactured by specialized crystal/oscillator suppliers, essential for DSP synchronization and typically procured as complete assemblies."
+          },
+          {
+            "name": "Development/Evaluation Board",
+            "confidence": 0.75,
+            "reasoning": "Complete PCB assembly with DSP and supporting components for development and testing, manufactured by DSP vendors or third parties as distinct products with separate supply chains."
+          },
+          {
+            "name": "Programming/Debug Interface Module",
+            "confidence": 0.7,
+            "reasoning": "Hardware interface for DSP programming and debugging (JTAG/SWD adapters), manufactured separately by tool vendors and essential for DSP development workflows."
+          }
+        ],
+        "technology_specification": "Digital Signal Processor (DSP) integrated circuit with specialized architecture optimized for real-time digital signal processing operations",
+        "technology_reasoning": "DSPs represent the dominant form of specialized microprocessors designed for high-speed mathematical operations on digital signals, with over 70% market share in applications requiring real-time signal processing like telecommunications, audio processing, and control systems as of 2024."
+      },
+      {
+        "agent_id": "Agent_2",
+        "components": [
+          {
+            "name": "Silicon Die (DSP Core)",
+            "confidence": 0.98,
+            "reasoning": "The actual semiconductor die containing the DSP architecture is the fundamental component, manufactured separately in wafer fabs and procured as a distinct item before packaging."
+          },
+          {
+            "name": "IC Package/Encapsulation",
+            "confidence": 0.95,
+            "reasoning": "The protective housing (BGA, QFP, or similar) that encases the silicon die is a separate manufactured component with its own supply chain, typically ceramic or plastic materials."
+          },
+          {
+            "name": "Bond Wires",
+            "confidence": 0.9,
+            "reasoning": "Ultra-fine wires connecting the silicon die to the package leads are distinct manufactured items with specialized suppliers, typically gold or aluminum wire assemblies."
+          },
+          {
+            "name": "Lead Frame",
+            "confidence": 0.88,
+            "reasoning": "The metal framework providing electrical connections from internal die to external pins is a separately manufactured precision component with dedicated suppliers."
+          },
+          {
+            "name": "Thermal Interface Material/Heat Spreader",
+            "confidence": 0.75,
+            "reasoning": "High-performance DSPs often include integrated thermal management components like copper heat spreaders or thermal pads as separate procurable assemblies."
+          },
+          {
+            "name": "Package Substrate",
+            "confidence": 0.85,
+            "reasoning": "Advanced packaging uses multi-layer substrates for electrical routing and mechanical support, manufactured as distinct components by specialized suppliers before assembly."
+          },
+          {
+            "name": "Solder Balls/Bumps (for BGA packages)",
+            "confidence": 0.82,
+            "reasoning": "Pre-formed solder connections for surface-mount packages are manufactured items procured from specialized suppliers, essential for electrical and mechanical connection."
+          },
+          {
+            "name": "Die Attach Material",
+            "confidence": 0.7,
+            "reasoning": "Specialized adhesives or solders for mounting the silicon die to the package substrate are manufactured products with specific thermal and electrical properties."
+          }
+        ],
+        "technology_specification": "Integrated Circuit Digital Signal Processor (DSP) chip with dedicated hardware architecture for real-time signal processing applications",
+        "technology_reasoning": "DSP integrated circuits represent the dominant form of digital signal processors, accounting for over 90% of the market due to their optimized hardware architecture for mathematical operations like FFTs and filtering, with dedicated multiply-accumulate units and parallel processing capabilities essential for real-time audio, video, and communications applications."
+      },
+      {
+        "agent_id": "Agent_3",
+        "components": [
+          {
+            "name": "DSP Die/Chip",
+            "confidence": 0.98,
+            "reasoning": "The core silicon integrated circuit containing the digital signal processing architecture, universally present and procured as a manufactured semiconductor component from foundries."
+          },
+          {
+            "name": "IC Package/Housing",
+            "confidence": 0.95,
+            "reasoning": "Protective enclosure for the DSP die, typically BGA, QFP, or other standard package formats, manufactured separately from the silicon and assembled during packaging process."
+          },
+          {
+            "name": "Heat Sink/Thermal Interface",
+            "confidence": 0.85,
+            "reasoning": "Thermal management component for high-performance DSPs, often procured separately and attached during system assembly, though not required for all DSP implementations."
+          },
+          {
+            "name": "Crystal Oscillator/Clock Generator",
+            "confidence": 0.9,
+            "reasoning": "External timing reference component essential for DSP operation, typically procured as a separate manufactured crystal or oscillator module with specific frequency requirements."
+          },
+          {
+            "name": "Decoupling Capacitor Array",
+            "confidence": 0.88,
+            "reasoning": "Power filtering components manufactured as discrete capacitors, essential for stable DSP operation and typically procured in arrays or sets for power supply decoupling."
+          },
+          {
+            "name": "External Memory Modules (RAM/Flash)",
+            "confidence": 0.92,
+            "reasoning": "Separate memory components for program storage and data buffering, manufactured as distinct ICs and procured independently from specialized memory suppliers."
+          },
+          {
+            "name": "Analog-to-Digital Converter (ADC)",
+            "confidence": 0.8,
+            "reasoning": "Interface component for converting analog signals to digital format, often integrated but frequently procured as separate high-precision components for demanding applications."
+          },
+          {
+            "name": "Digital-to-Analog Converter (DAC)",
+            "confidence": 0.8,
+            "reasoning": "Output interface component for converting processed digital signals back to analog, commonly separate components in audio and instrumentation applications."
+          },
+          {
+            "name": "Power Management Unit (PMU)",
+            "confidence": 0.83,
+            "reasoning": "Voltage regulation and power distribution component, often procured as separate power management ICs to provide multiple voltage rails required by DSPs."
+          },
+          {
+            "name": "Input/Output Interface Circuitry",
+            "confidence": 0.75,
+            "reasoning": "Buffer and driver circuits for signal conditioning, may be discrete components or integrated modules depending on application requirements and signal integrity needs."
+          }
+        ],
+        "technology_specification": "High-performance Digital Signal Processor (DSP) integrated circuit with specialized architecture for real-time signal processing applications",
+        "technology_reasoning": "Modern DSPs are specialized microprocessors optimized for digital signal processing tasks, representing the dominant architecture for applications requiring real-time mathematical computations on digitized signals, with over 80% market adoption in telecommunications, audio processing, and control systems as of 2024."
+      }
+    ],
+    "phase2_debate_rounds": [
+      {
+        "round_num": 1,
+        "convergence": 0.2467948717948718,
+        "threshold": 0.7,
+        "threshold_reached": false,
+        "proposals": {
+          "Agent_1": [
+            {
+              "name": "DSP Die/Chip",
+              "confidence": 0.98,
+              "reasoning": "Core silicon integrated circuit containing the DSP architecture, universally present and manufactured separately before packaging, with distinct supply chains from semiconductor foundries.",
+              "component": "DSP Die/Chip",
+              "normalized_component": "dsp core die"
+            },
+            {
+              "name": "Package/Encapsulation (BGA/QFP/LGA)",
+              "confidence": 0.95,
+              "reasoning": "Physical housing that protects the DSP die and provides external electrical connections, manufactured separately by assembly and test facilities with specialized packaging supply chains.",
+              "component": "Package/Encapsulation (BGA/QFP/LGA)",
+              "normalized_component": "ic"
+            },
+            {
+              "name": "Lead Frame or Substrate",
+              "confidence": 0.92,
+              "reasoning": "Internal connection structure that bonds the DSP die to external pins, manufactured by specialized suppliers and varies between package types (lead frame for QFP, substrate for BGA).",
+              "component": "Lead Frame or Substrate",
+              "normalized_component": "lead frame"
+            },
+            {
+              "name": "Heat Sink/Thermal Management Component",
+              "confidence": 0.85,
+              "reasoning": "Thermal dissipation component for high-performance DSPs, manufactured separately and essential for maintaining operating temperatures in demanding applications.",
+              "component": "Heat Sink/Thermal Management Component",
+              "normalized_component": "heat sink"
+            },
+            {
+              "name": "Decoupling Capacitor Array",
+              "confidence": 0.88,
+              "reasoning": "Power supply filtering components typically supplied as part of DSP reference designs, manufactured separately and critical for stable DSP operation in high-frequency applications.",
+              "component": "Decoupling Capacitor Array",
+              "normalized_component": "decoupling capacitor array"
+            },
+            {
+              "name": "Crystal Oscillator/Clock Generator",
+              "confidence": 0.9,
+              "reasoning": "Timing reference component manufactured by specialized crystal/oscillator suppliers, essential for DSP synchronization and typically procured as complete assemblies.",
+              "component": "Crystal Oscillator/Clock Generator",
+              "normalized_component": "crystal oscillator"
+            },
+            {
+              "name": "Development/Evaluation Board",
+              "confidence": 0.75,
+              "reasoning": "Complete PCB assembly with DSP and supporting components for development and testing, manufactured by DSP vendors or third parties as distinct products with separate supply chains.",
+              "component": "Development/Evaluation Board",
+              "normalized_component": "development board"
+            },
+            {
+              "name": "Programming/Debug Interface Module",
+              "confidence": 0.7,
+              "reasoning": "Hardware interface for DSP programming and debugging (JTAG/SWD adapters), manufactured separately by tool vendors and essential for DSP development workflows.",
+              "component": "Programming/Debug Interface Module",
+              "normalized_component": "programming interface"
+            }
+          ],
+          "Agent_2": [
+            {
+              "name": "Silicon Die (DSP Core)",
+              "confidence": 0.98,
+              "reasoning": "The actual semiconductor die containing the DSP architecture is the fundamental component, manufactured separately in wafer fabs and procured as a distinct item before packaging.",
+              "component": "Silicon Die (DSP Core)",
+              "normalized_component": "dsp core die"
+            },
+            {
+              "name": "IC Package/Encapsulation",
+              "confidence": 0.95,
+              "reasoning": "The protective housing (BGA, QFP, or similar) that encases the silicon die is a separate manufactured component with its own supply chain, typically ceramic or plastic materials.",
+              "component": "IC Package/Encapsulation",
+              "normalized_component": "ic"
+            },
+            {
+              "name": "Bond Wires",
+              "confidence": 0.9,
+              "reasoning": "Ultra-fine wires connecting the silicon die to the package leads are distinct manufactured items with specialized suppliers, typically gold or aluminum wire assemblies.",
+              "component": "Bond Wires",
+              "normalized_component": "bond wires"
+            },
+            {
+              "name": "Lead Frame",
+              "confidence": 0.88,
+              "reasoning": "The metal framework providing electrical connections from internal die to external pins is a separately manufactured precision component with dedicated suppliers.",
+              "component": "Lead Frame",
+              "normalized_component": "lead frame"
+            },
+            {
+              "name": "Thermal Interface Material/Heat Spreader",
+              "confidence": 0.75,
+              "reasoning": "High-performance DSPs often include integrated thermal management components like copper heat spreaders or thermal pads as separate procurable assemblies.",
+              "component": "Thermal Interface Material/Heat Spreader",
+              "normalized_component": "thermal interface material"
+            },
+            {
+              "name": "Package Substrate",
+              "confidence": 0.85,
+              "reasoning": "Advanced packaging uses multi-layer substrates for electrical routing and mechanical support, manufactured as distinct components by specialized suppliers before assembly.",
+              "component": "Package Substrate",
+              "normalized_component": "package substrate"
+            },
+            {
+              "name": "Solder Balls/Bumps (for BGA packages)",
+              "confidence": 0.82,
+              "reasoning": "Pre-formed solder connections for surface-mount packages are manufactured items procured from specialized suppliers, essential for electrical and mechanical connection.",
+              "component": "Solder Balls/Bumps (for BGA packages)",
+              "normalized_component": "solder balls"
+            },
+            {
+              "name": "Die Attach Material",
+              "confidence": 0.7,
+              "reasoning": "Specialized adhesives or solders for mounting the silicon die to the package substrate are manufactured products with specific thermal and electrical properties.",
+              "component": "Die Attach Material",
+              "normalized_component": "die attach material"
+            }
+          ],
+          "Agent_3": [
+            {
+              "name": "DSP Die/Chip",
+              "confidence": 0.98,
+              "reasoning": "The core silicon integrated circuit containing the digital signal processing architecture, universally present and procured as a manufactured semiconductor component from foundries.",
+              "component": "DSP Die/Chip",
+              "normalized_component": "dsp core die"
+            },
+            {
+              "name": "IC Package/Housing",
+              "confidence": 0.95,
+              "reasoning": "Protective enclosure for the DSP die, typically BGA, QFP, or other standard package formats, manufactured separately from the silicon and assembled during packaging process.",
+              "component": "IC Package/Housing",
+              "normalized_component": "ic"
+            },
+            {
+              "name": "Heat Sink/Thermal Interface",
+              "confidence": 0.85,
+              "reasoning": "Thermal management component for high-performance DSPs, often procured separately and attached during system assembly, though not required for all DSP implementations.",
+              "component": "Heat Sink/Thermal Interface",
+              "normalized_component": "heat sink"
+            },
+            {
+              "name": "Crystal Oscillator/Clock Generator",
+              "confidence": 0.9,
+              "reasoning": "External timing reference component essential for DSP operation, typically procured as a separate manufactured crystal or oscillator module with specific frequency requirements.",
+              "component": "Crystal Oscillator/Clock Generator",
+              "normalized_component": "crystal oscillator"
+            },
+            {
+              "name": "Decoupling Capacitor Array",
+              "confidence": 0.88,
+              "reasoning": "Power filtering components manufactured as discrete capacitors, essential for stable DSP operation and typically procured in arrays or sets for power supply decoupling.",
+              "component": "Decoupling Capacitor Array",
+              "normalized_component": "decoupling capacitor array"
+            },
+            {
+              "name": "External Memory Modules (RAM/Flash)",
+              "confidence": 0.92,
+              "reasoning": "Separate memory components for program storage and data buffering, manufactured as distinct ICs and procured independently from specialized memory suppliers.",
+              "component": "External Memory Modules (RAM/Flash)",
+              "normalized_component": "external memory modules"
+            },
+            {
+              "name": "Analog-to-Digital Converter (ADC)",
+              "confidence": 0.8,
+              "reasoning": "Interface component for converting analog signals to digital format, often integrated but frequently procured as separate high-precision components for demanding applications.",
+              "component": "Analog-to-Digital Converter (ADC)",
+              "normalized_component": "adc"
+            },
+            {
+              "name": "Digital-to-Analog Converter (DAC)",
+              "confidence": 0.8,
+              "reasoning": "Output interface component for converting processed digital signals back to analog, commonly separate components in audio and instrumentation applications.",
+              "component": "Digital-to-Analog Converter (DAC)",
+              "normalized_component": "dac"
+            },
+            {
+              "name": "Power Management Unit (PMU)",
+              "confidence": 0.83,
+              "reasoning": "Voltage regulation and power distribution component, often procured as separate power management ICs to provide multiple voltage rails required by DSPs.",
+              "component": "Power Management Unit (PMU)",
+              "normalized_component": "power management"
+            },
+            {
+              "name": "Input/Output Interface Circuitry",
+              "confidence": 0.75,
+              "reasoning": "Buffer and driver circuits for signal conditioning, may be discrete components or integrated modules depending on application requirements and signal integrity needs.",
+              "component": "Input/Output Interface Circuitry",
+              "normalized_component": "i/o interface circuitry"
+            }
+          ]
+        },
+        "rounds_completed": 1,
+        "support_analysis": {
+          "consensus": [
+            "dsp core die",
+            "ic"
+          ],
+          "majority": [
+            "lead frame",
+            "heat sink",
+            "decoupling capacitor array",
+            "crystal oscillator"
+          ],
+          "isolated": [
+            "development board",
+            "programming interface",
+            "bond wires",
+            "thermal interface material",
+            "package substrate",
+            "solder balls",
+            "die attach material",
+            "external memory modules",
+            "adc",
+            "dac",
+            "power management",
+            "i/o interface circuitry"
+          ]
+        },
+        "critiques": [
+          {
+            "item_name": "dsp core die",
+            "normalized_name": "dsp core die",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.98,
+            "critique_text": "Strong consensus on 'dsp core die': all 3 agents support with avg confidence 0.98. Preserve this component."
+          },
+          {
+            "item_name": "ic",
+            "normalized_name": "ic",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.9499999999999998,
+            "critique_text": "Strong consensus on 'ic': all 3 agents support with avg confidence 0.95. Preserve this component."
+          },
+          {
+            "item_name": "lead frame",
+            "normalized_name": "lead frame",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_3"
+            ],
+            "avg_confidence": 0.9,
+            "critique_text": "Majority support for 'lead frame': 2/3 agents agree (conf: 0.90). Consider strengthening consensus."
+          },
+          {
+            "item_name": "heat sink",
+            "normalized_name": "heat sink",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2"
+            ],
+            "avg_confidence": 0.85,
+            "critique_text": "Majority support for 'heat sink': 2/3 agents agree (conf: 0.85). Consider strengthening consensus."
+          },
+          {
+            "item_name": "decoupling capacitor array",
+            "normalized_name": "decoupling capacitor array",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2"
+            ],
+            "avg_confidence": 0.88,
+            "critique_text": "Majority support for 'decoupling capacitor array': 2/3 agents agree (conf: 0.88). Consider strengthening consensus."
+          },
+          {
+            "item_name": "crystal oscillator",
+            "normalized_name": "crystal oscillator",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2"
+            ],
+            "avg_confidence": 0.9,
+            "critique_text": "Majority support for 'crystal oscillator': 2/3 agents agree (conf: 0.90). Consider strengthening consensus."
+          },
+          {
+            "item_name": "development board",
+            "normalized_name": "development board",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_3",
+              "Agent_2"
+            ],
+            "avg_confidence": 0.75,
+            "critique_text": "Isolated proposal 'development board' from 1 agent(s) (conf: 0.75). Requires justification or peer validation."
+          },
+          {
+            "item_name": "programming interface",
+            "normalized_name": "programming interface",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_3",
+              "Agent_2"
+            ],
+            "avg_confidence": 0.7,
+            "critique_text": "Isolated proposal 'programming interface' from 1 agent(s) (conf: 0.70). Requires justification or peer validation."
+          },
+          {
+            "item_name": "bond wires",
+            "normalized_name": "bond wires",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_3",
+              "Agent_1"
+            ],
+            "avg_confidence": 0.9,
+            "critique_text": "Isolated proposal 'bond wires' from 1 agent(s) (conf: 0.90). Requires justification or peer validation."
+          },
+          {
+            "item_name": "thermal interface material",
+            "normalized_name": "thermal interface material",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_3",
+              "Agent_1"
+            ],
+            "avg_confidence": 0.75,
+            "critique_text": "Isolated proposal 'thermal interface material' from 1 agent(s) (conf: 0.75). Requires justification or peer validation."
+          },
+          {
+            "item_name": "package substrate",
+            "normalized_name": "package substrate",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_3",
+              "Agent_1"
+            ],
+            "avg_confidence": 0.85,
+            "critique_text": "Isolated proposal 'package substrate' from 1 agent(s) (conf: 0.85). Requires justification or peer validation."
+          },
+          {
+            "item_name": "solder balls",
+            "normalized_name": "solder balls",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_3",
+              "Agent_1"
+            ],
+            "avg_confidence": 0.82,
+            "critique_text": "Isolated proposal 'solder balls' from 1 agent(s) (conf: 0.82). Requires justification or peer validation."
+          },
+          {
+            "item_name": "die attach material",
+            "normalized_name": "die attach material",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_3",
+              "Agent_1"
+            ],
+            "avg_confidence": 0.7,
+            "critique_text": "Isolated proposal 'die attach material' from 1 agent(s) (conf: 0.70). Requires justification or peer validation."
+          },
+          {
+            "item_name": "external memory modules",
+            "normalized_name": "external memory modules",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_3"
+            ],
+            "opposing_agents": [
+              "Agent_1",
+              "Agent_2"
+            ],
+            "avg_confidence": 0.92,
+            "critique_text": "Isolated proposal 'external memory modules' from 1 agent(s) (conf: 0.92). Requires justification or peer validation."
+          },
+          {
+            "item_name": "adc",
+            "normalized_name": "adc",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_3"
+            ],
+            "opposing_agents": [
+              "Agent_1",
+              "Agent_2"
+            ],
+            "avg_confidence": 0.8,
+            "critique_text": "Isolated proposal 'adc' from 1 agent(s) (conf: 0.80). Requires justification or peer validation."
+          },
+          {
+            "item_name": "dac",
+            "normalized_name": "dac",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_3"
+            ],
+            "opposing_agents": [
+              "Agent_1",
+              "Agent_2"
+            ],
+            "avg_confidence": 0.8,
+            "critique_text": "Isolated proposal 'dac' from 1 agent(s) (conf: 0.80). Requires justification or peer validation."
+          },
+          {
+            "item_name": "power management",
+            "normalized_name": "power management",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_3"
+            ],
+            "opposing_agents": [
+              "Agent_1",
+              "Agent_2"
+            ],
+            "avg_confidence": 0.83,
+            "critique_text": "Isolated proposal 'power management' from 1 agent(s) (conf: 0.83). Requires justification or peer validation."
+          },
+          {
+            "item_name": "i/o interface circuitry",
+            "normalized_name": "i/o interface circuitry",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_3"
+            ],
+            "opposing_agents": [
+              "Agent_1",
+              "Agent_2"
+            ],
+            "avg_confidence": 0.75,
+            "critique_text": "Isolated proposal 'i/o interface circuitry' from 1 agent(s) (conf: 0.75). Requires justification or peer validation."
+          }
+        ],
+        "changes_from_previous": null
+      },
+      {
+        "round_num": 2,
+        "convergence": 0.9259259259259259,
+        "threshold": 0.7,
+        "threshold_reached": true,
+        "proposals": {
+          "Agent_1": [
+            {
+              "agent_id": "Agent_1",
+              "component": "DSP Die/Chip",
+              "confidence": 0.98,
+              "reasoning": "Strong consensus from 3 agents with 0.98 average confidence. This is the core processing element of any DSP.",
+              "round": 2,
+              "normalized_component": "Digital Signal Processor"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Package/Encapsulation (BGA/QFP/LGA)",
+              "confidence": 0.95,
+              "reasoning": "Strong consensus from 3 agents with 0.95 average confidence. Essential for protecting and interfacing the DSP die.",
+              "round": 2,
+              "normalized_component": "IC Package"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Lead Frame or Substrate",
+              "confidence": 0.9,
+              "reasoning": "Strong consensus from 2 agents with 0.90 average confidence. Critical structural component for die mounting and electrical connections.",
+              "round": 2,
+              "normalized_component": "IC Substrate"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Heat Sink/Thermal Management Component",
+              "confidence": 0.85,
+              "reasoning": "Strong consensus from 2 agents with 0.85 average confidence. Essential for managing heat dissipation in DSP operations.",
+              "round": 2,
+              "normalized_component": "Heat Sink"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Decoupling Capacitor Array",
+              "confidence": 0.88,
+              "reasoning": "Strong consensus from 2 agents with 0.88 average confidence. Critical for power supply noise filtering and stable operation.",
+              "round": 2,
+              "normalized_component": "Capacitor Array"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Crystal Oscillator/Clock Generator",
+              "confidence": 0.9,
+              "reasoning": "Strong consensus from 2 agents with 0.90 average confidence. Essential timing reference for DSP synchronous operations.",
+              "round": 2,
+              "normalized_component": "Clock Generator"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "External Memory Modules (RAM/Flash)",
+              "confidence": 0.85,
+              "reasoning": "Only one agent selected but with high confidence (0.92). DSPs typically require external memory for program/data storage, making this a critical component despite limited peer support.",
+              "round": 2,
+              "normalized_component": "Memory Module"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Power Management Unit (PMU)",
+              "confidence": 0.75,
+              "reasoning": "Only one agent selected with 0.83 confidence. Modern DSPs require sophisticated power management, but reducing confidence due to limited peer support.",
+              "round": 2,
+              "normalized_component": "Power Management IC"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Bond Wires",
+              "confidence": 0.7,
+              "reasoning": "Only one agent selected but fundamental for die-to-package electrical connections. Reducing confidence due to isolation but maintaining inclusion for completeness.",
+              "round": 2,
+              "normalized_component": "Bond Wires"
+            }
+          ],
+          "Agent_2": [
+            {
+              "agent_id": "Agent_2",
+              "component": "DSP Die/Chip",
+              "confidence": 0.98,
+              "reasoning": "Strong consensus with 3 agents supporting at 0.98 average confidence. This is the fundamental core component of any DSP.",
+              "round": 2,
+              "normalized_component": "Digital Signal Processor"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Package/Encapsulation (BGA/QFP/LGA)",
+              "confidence": 0.95,
+              "reasoning": "Strong consensus with 3 agents supporting at 0.95 average confidence. Essential for protecting and interfacing the DSP die.",
+              "round": 2,
+              "normalized_component": "IC Package"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Lead Frame or Substrate",
+              "confidence": 0.9,
+              "reasoning": "Strong consensus with 2 agents supporting at 0.90 average confidence. Critical structural component for IC packaging.",
+              "round": 2,
+              "normalized_component": "IC Substrate"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Heat Sink/Thermal Management Component",
+              "confidence": 0.85,
+              "reasoning": "Strong consensus with 2 agents supporting at 0.85 average confidence. Essential for DSP thermal management under heavy processing loads.",
+              "round": 2,
+              "normalized_component": "Heat Sink"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Decoupling Capacitor Array",
+              "confidence": 0.88,
+              "reasoning": "Strong consensus with 2 agents supporting at 0.88 average confidence. Critical for power supply noise filtering and stability.",
+              "round": 2,
+              "normalized_component": "Capacitor Array"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Crystal Oscillator/Clock Generator",
+              "confidence": 0.9,
+              "reasoning": "Strong consensus with 2 agents supporting at 0.90 average confidence. Fundamental for providing stable timing reference for DSP operations.",
+              "round": 2,
+              "normalized_component": "Clock Generator"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Bond Wires",
+              "confidence": 0.85,
+              "reasoning": "Single agent support but high confidence (0.90). Critical component for electrical connection between die and package leads, lowering confidence due to lack of peer support.",
+              "round": 2,
+              "normalized_component": "Bond Wires"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "External Memory Modules (RAM/Flash)",
+              "confidence": 0.85,
+              "reasoning": "Single agent support but very high confidence (0.92). DSPs often require external memory for program storage and data buffering, but lowering confidence due to isolation.",
+              "round": 2,
+              "normalized_component": "Memory Module"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Power Management Unit (PMU)",
+              "confidence": 0.75,
+              "reasoning": "Single agent support with 0.83 confidence. Important for voltage regulation in DSP systems, but lowering confidence due to lack of peer validation.",
+              "round": 2,
+              "normalized_component": "Power Management IC"
+            }
+          ],
+          "Agent_3": [
+            {
+              "agent_id": "Agent_3",
+              "component": "DSP Die/Chip",
+              "confidence": 0.98,
+              "reasoning": "Strong consensus across all 3 agents with highest confidence. This is the fundamental processing core of any DSP system.",
+              "round": 2,
+              "normalized_component": "Digital Signal Processor"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Package/Encapsulation (BGA/QFP/LGA)",
+              "confidence": 0.95,
+              "reasoning": "Strong consensus on IC packaging (multiple variations selected). Essential for protecting the die and providing electrical connections.",
+              "round": 2,
+              "normalized_component": "IC Package"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Lead Frame or Substrate",
+              "confidence": 0.9,
+              "reasoning": "Strong consensus with 2 agents supporting. Critical for electrical connectivity and mechanical support within the package.",
+              "round": 2,
+              "normalized_component": "IC Substrate"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Heat Sink/Thermal Management Component",
+              "confidence": 0.85,
+              "reasoning": "Strong consensus with 2 agents supporting. Essential for managing thermal dissipation in DSP operations.",
+              "round": 2,
+              "normalized_component": "Heat Sink"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Crystal Oscillator/Clock Generator",
+              "confidence": 0.9,
+              "reasoning": "Strong consensus with 2 agents supporting. Fundamental for providing precise timing signals required for DSP operations.",
+              "round": 2,
+              "normalized_component": "Clock Generator"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Decoupling Capacitor Array",
+              "confidence": 0.88,
+              "reasoning": "Strong consensus with 2 agents supporting. Critical for power supply noise filtering and stable operation.",
+              "round": 2,
+              "normalized_component": "Capacitor Array"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "External Memory Modules (RAM/Flash)",
+              "confidence": 0.85,
+              "reasoning": "Despite being selected by only one agent, modern DSPs require external memory for program storage and data buffering. Reducing confidence due to lack of peer support but maintaining inclusion due to functional necessity.",
+              "round": 2,
+              "normalized_component": "Memory Module"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Power Management Unit (PMU)",
+              "confidence": 0.75,
+              "reasoning": "Though selected by only one agent, DSPs require sophisticated power management for multiple voltage domains. Reducing confidence due to isolated support but including for system completeness.",
+              "round": 2,
+              "normalized_component": "Power Management IC"
+            }
+          ]
+        },
+        "rounds_completed": 2,
+        "support_analysis": {
+          "consensus": [
+            "dsp die/chip",
+            "package/encapsulation (bga/qfp/lga)",
+            "lead frame or substrate",
+            "heat sink/thermal management",
+            "decoupling capacitor array",
+            "crystal oscillator/clock generator",
+            "external memory modules (ram/flash)",
+            "power management unit (pmu)"
+          ],
+          "majority": [
+            "bond wires"
+          ],
+          "isolated": []
+        },
+        "critiques": [
+          {
+            "item_name": "DSP Die/Chip",
+            "normalized_name": "dsp die/chip",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.98,
+            "critique_text": "Strong consensus on 'DSP Die/Chip': all 3 agents support with avg confidence 0.98. Preserve this component."
+          },
+          {
+            "item_name": "Package/Encapsulation (BGA/QFP/LGA)",
+            "normalized_name": "package/encapsulation (bga/qfp/lga)",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.9499999999999998,
+            "critique_text": "Strong consensus on 'Package/Encapsulation (BGA/QFP/LGA)': all 3 agents support with avg confidence 0.95. Preserve this component."
+          },
+          {
+            "item_name": "Lead Frame or Substrate",
+            "normalized_name": "lead frame or substrate",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.9,
+            "critique_text": "Strong consensus on 'Lead Frame or Substrate': all 3 agents support with avg confidence 0.90. Preserve this component."
+          },
+          {
+            "item_name": "Heat Sink/Thermal Management Component",
+            "normalized_name": "heat sink/thermal management",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.85,
+            "critique_text": "Strong consensus on 'Heat Sink/Thermal Management Component': all 3 agents support with avg confidence 0.85. Preserve this component."
+          },
+          {
+            "item_name": "Decoupling Capacitor Array",
+            "normalized_name": "decoupling capacitor array",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.88,
+            "critique_text": "Strong consensus on 'Decoupling Capacitor Array': all 3 agents support with avg confidence 0.88. Preserve this component."
+          },
+          {
+            "item_name": "Crystal Oscillator/Clock Generator",
+            "normalized_name": "crystal oscillator/clock generator",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.9,
+            "critique_text": "Strong consensus on 'Crystal Oscillator/Clock Generator': all 3 agents support with avg confidence 0.90. Preserve this component."
+          },
+          {
+            "item_name": "External Memory Modules (RAM/Flash)",
+            "normalized_name": "external memory modules (ram/flash)",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.85,
+            "critique_text": "Strong consensus on 'External Memory Modules (RAM/Flash)': all 3 agents support with avg confidence 0.85. Preserve this component."
+          },
+          {
+            "item_name": "Power Management Unit (PMU)",
+            "normalized_name": "power management unit (pmu)",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.75,
+            "critique_text": "Strong consensus on 'Power Management Unit (PMU)': all 3 agents support with avg confidence 0.75. Preserve this component."
+          },
+          {
+            "item_name": "Bond Wires",
+            "normalized_name": "bond wires",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_3"
+            ],
+            "avg_confidence": 0.7749999999999999,
+            "critique_text": "Majority support for 'Bond Wires': 2/3 agents agree (conf: 0.77). Consider strengthening consensus."
+          }
+        ],
+        "changes_from_previous": {
+          "items_added": [
+            "crystal oscillator/clock generator",
+            "dsp die/chip",
+            "power management unit (pmu)",
+            "heat sink/thermal management",
+            "package/encapsulation (bga/qfp/lga)",
+            "lead frame or substrate",
+            "external memory modules (ram/flash)"
+          ],
+          "items_removed": [
+            "crystal oscillator",
+            "die attach material",
+            "development board",
+            "programming interface",
+            "thermal interface material",
+            "external memory modules",
+            "heat sink",
+            "solder balls",
+            "package substrate",
+            "lead frame",
+            "i/o interface circuitry",
+            "dsp core die",
+            "power management",
+            "dac",
+            "ic",
+            "adc"
+          ],
+          "confidence_changes": {
+            "bond wires": {
+              "from": 0.9,
+              "to": 0.7749999999999999
+            }
+          }
+        }
+      }
+    ],
+    "phase3_final_consensus": {
+      "technology": "Digital Signal Processors (DSPs)",
+      "technology_specification": "Digital Signal Processors (DSPs)",
+      "technology_reasoning": "",
+      "components": [
+        "Digital Signal Processor",
+        "Ic Package",
+        "Ic Substrate",
+        "Clock Generator",
+        "Capacitor Array",
+        "Heat Sink",
+        "Memory Module",
+        "Power Management Ic",
+        "Bond Wires"
+      ],
+      "confidence": 0.9259259259259259,
+      "rounds": 2,
+      "convergence_score": 0.9259259259259259
+    }
+  },
+  "materials_debate": {
+    "debate_rounds": [
+      {
+        "round_number": 2,
+        "convergence_score": 0.49920634920634926,
+        "num_critiques": 9
+      },
+      {
+        "round_number": 3,
+        "convergence_score": 0.37870370370370376,
+        "num_critiques": 9
+      }
+    ],
+    "final_consensus": {
+      "components": 9,
+      "unique_materials": 24,
+      "total_assignments": 59,
+      "materials_by_component": {
+        "Digital Signal Processor": [
+          {
+            "name": "Aluminum",
+            "confidence": 0.9499999999999998,
+            "reasoning": "Round 3 refinement with peer support: 2",
+            "score": 1.285,
+            "support": 3
+          },
+          {
+            "name": "Arsenic",
+            "confidence": 0.95,
+            "reasoning": "Round 3 refinement with peer support: 2",
+            "score": 0.9016666666666666,
+            "support": 2
+          },
+          {
+            "name": "Silicon",
+            "confidence": 0.8999999999999999,
+            "reasoning": "Round 3 refinement with peer support: 2",
+            "score": 0.8866666666666666,
+            "support": 2
+          },
+          {
+            "name": "Boron",
+            "confidence": 0.85,
+            "reasoning": "Round 3 refinement with peer support: 1",
+            "score": 0.8716666666666667,
+            "support": 2
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.7749999999999999,
+            "reasoning": "Round 3 refinement with peer support: 1",
+            "score": 0.8491666666666666,
+            "support": 2
+          },
+          {
+            "name": "Antimony",
+            "confidence": 0.7,
+            "reasoning": "Round 3 refinement with peer support: 0",
+            "score": 0.4433333333333333,
+            "support": 1
+          },
+          {
+            "name": "Phosphorus",
+            "confidence": 0.7,
+            "reasoning": "Round 3 refinement with peer support: 0",
+            "score": 0.4433333333333333,
+            "support": 1
+          },
+          {
+            "name": "Silicon dioxide",
+            "confidence": 0.7,
+            "reasoning": "Round 3 refinement with peer support: 0",
+            "score": 0.4433333333333333,
+            "support": 1
+          }
+        ],
+        "Ic Package": [
+          {
+            "name": "Aluminum",
+            "confidence": 0.9499999999999998,
+            "reasoning": "Round 3 refinement with peer support: 2",
+            "score": 1.285,
+            "support": 3
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.7749999999999999,
+            "reasoning": "Round 3 refinement with peer support: 1",
+            "score": 0.8491666666666666,
+            "support": 2
+          },
+          {
+            "name": "Gold",
+            "confidence": 0.7,
+            "reasoning": "Round 3 refinement with peer support: 0",
+            "score": 0.8266666666666667,
+            "support": 2
+          },
+          {
+            "name": "Silver",
+            "confidence": 0.7,
+            "reasoning": "Round 3 refinement with peer support: 0",
+            "score": 0.8266666666666667,
+            "support": 2
+          },
+          {
+            "name": "Borosilicate glass",
+            "confidence": 0.7,
+            "reasoning": "Round 3 refinement with peer support: 0",
+            "score": 0.4433333333333333,
+            "support": 1
+          },
+          {
+            "name": "Epoxy resin",
+            "confidence": 0.7,
+            "reasoning": "Round 3 refinement with peer support: 0",
+            "score": 0.4433333333333333,
+            "support": 1
+          },
+          {
+            "name": "Plastic",
+            "confidence": 0.7,
+            "reasoning": "Round 3 refinement with peer support: 0",
+            "score": 0.4433333333333333,
+            "support": 1
+          }
+        ],
+        "Ic Substrate": [
+          {
+            "name": "Aluminum oxide",
+            "confidence": 0.9499999999999998,
+            "reasoning": "Round 3 refinement with peer support: 2",
+            "score": 1.285,
+            "support": 3
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.8999999999999999,
+            "reasoning": "Round 3 refinement with peer support: 2",
+            "score": 0.8866666666666666,
+            "support": 2
+          },
+          {
+            "name": "Silicon",
+            "confidence": 0.85,
+            "reasoning": "Round 3 refinement with peer support: 1",
+            "score": 0.8716666666666667,
+            "support": 2
+          },
+          {
+            "name": "Aluminum nitride",
+            "confidence": 0.95,
+            "reasoning": "Round 3 refinement with peer support: 2",
+            "score": 0.5183333333333333,
+            "support": 1
+          },
+          {
+            "name": "Borosilicate glass",
+            "confidence": 0.95,
+            "reasoning": "Round 3 refinement with peer support: 2",
+            "score": 0.5183333333333333,
+            "support": 1
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.85,
+            "reasoning": "Round 3 refinement with peer support: 1",
+            "score": 0.4883333333333333,
+            "support": 1
+          },
+          {
+            "name": "Silicon dioxide",
+            "confidence": 0.7,
+            "reasoning": "Round 3 refinement with peer support: 0",
+            "score": 0.4433333333333333,
+            "support": 1
+          },
+          {
+            "name": "Polyimide",
+            "confidence": 0.7,
+            "reasoning": "Round 3 refinement with peer support: 0",
+            "score": 0.4433333333333333,
+            "support": 1
+          }
+        ],
+        "Clock Generator": [
+          {
+            "name": "Aluminum",
+            "confidence": 0.9499999999999998,
+            "reasoning": "Round 3 refinement with peer support: 2",
+            "score": 1.285,
+            "support": 3
+          },
+          {
+            "name": "Silicon",
+            "confidence": 0.8999999999999999,
+            "reasoning": "Round 3 refinement with peer support: 2",
+            "score": 0.8866666666666666,
+            "support": 2
+          },
+          {
+            "name": "Quartz",
+            "confidence": 0.7,
+            "reasoning": "Round 3 refinement with peer support: 0",
+            "score": 0.8266666666666667,
+            "support": 2
+          },
+          {
+            "name": "Aluminum oxide",
+            "confidence": 0.85,
+            "reasoning": "Round 3 refinement with peer support: 1",
+            "score": 0.4883333333333333,
+            "support": 1
+          },
+          {
+            "name": "Arsenic",
+            "confidence": 0.7,
+            "reasoning": "Round 3 refinement with peer support: 0",
+            "score": 0.4433333333333333,
+            "support": 1
+          },
+          {
+            "name": "Silver",
+            "confidence": 0.7,
+            "reasoning": "Round 3 refinement with peer support: 0",
+            "score": 0.4433333333333333,
+            "support": 1
+          },
+          {
+            "name": "Gold",
+            "confidence": 0.7,
+            "reasoning": "Round 3 refinement with peer support: 0",
+            "score": 0.4433333333333333,
+            "support": 1
+          }
+        ],
+        "Capacitor Array": [
+          {
+            "name": "Barium titanate",
+            "confidence": 0.9499999999999998,
+            "reasoning": "Round 3 refinement with peer support: 2",
+            "score": 1.285,
+            "support": 3
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.9499999999999998,
+            "reasoning": "Round 3 refinement with peer support: 2",
+            "score": 1.285,
+            "support": 3
+          },
+          {
+            "name": "Silver",
+            "confidence": 0.7,
+            "reasoning": "Round 3 refinement with peer support: 0",
+            "score": 0.8266666666666667,
+            "support": 2
+          },
+          {
+            "name": "Tantalum",
+            "confidence": 0.7,
+            "reasoning": "Round 3 refinement with peer support: 0",
+            "score": 0.8266666666666667,
+            "support": 2
+          },
+          {
+            "name": "Aluminum oxide",
+            "confidence": 0.95,
+            "reasoning": "Round 3 refinement with peer support: 2",
+            "score": 0.5183333333333333,
+            "support": 1
+          },
+          {
+            "name": "Palladium",
+            "confidence": 0.7,
+            "reasoning": "Round 3 refinement with peer support: 0",
+            "score": 0.4433333333333333,
+            "support": 1
+          }
+        ],
+        "Heat Sink": [
+          {
+            "name": "Aluminum",
+            "confidence": 0.9499999999999998,
+            "reasoning": "Round 3 refinement with peer support: 2",
+            "score": 1.285,
+            "support": 3
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.7749999999999999,
+            "reasoning": "Round 3 refinement with peer support: 1",
+            "score": 0.8491666666666666,
+            "support": 2
+          },
+          {
+            "name": "Thermal interface material",
+            "confidence": 0.7,
+            "reasoning": "Round 3 refinement with peer support: 0",
+            "score": 0.8266666666666667,
+            "support": 2
+          },
+          {
+            "name": "Aluminum nitride",
+            "confidence": 0.95,
+            "reasoning": "Round 3 refinement with peer support: 2",
+            "score": 0.5183333333333333,
+            "support": 1
+          }
+        ],
+        "Memory Module": [
+          {
+            "name": "Aluminum",
+            "confidence": 0.9499999999999998,
+            "reasoning": "Round 3 refinement with peer support: 2",
+            "score": 1.285,
+            "support": 3
+          },
+          {
+            "name": "Silicon",
+            "confidence": 0.8999999999999999,
+            "reasoning": "Round 3 refinement with peer support: 2",
+            "score": 0.8866666666666666,
+            "support": 2
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.7749999999999999,
+            "reasoning": "Round 3 refinement with peer support: 1",
+            "score": 0.8491666666666666,
+            "support": 2
+          },
+          {
+            "name": "Aluminum oxide",
+            "confidence": 0.85,
+            "reasoning": "Round 3 refinement with peer support: 1",
+            "score": 0.4883333333333333,
+            "support": 1
+          },
+          {
+            "name": "Arsenic",
+            "confidence": 0.85,
+            "reasoning": "Round 3 refinement with peer support: 1",
+            "score": 0.4883333333333333,
+            "support": 1
+          },
+          {
+            "name": "Boron",
+            "confidence": 0.7,
+            "reasoning": "Round 3 refinement with peer support: 0",
+            "score": 0.4433333333333333,
+            "support": 1
+          },
+          {
+            "name": "Gold",
+            "confidence": 0.7,
+            "reasoning": "Round 3 refinement with peer support: 0",
+            "score": 0.4433333333333333,
+            "support": 1
+          },
+          {
+            "name": "Fiberglass",
+            "confidence": 0.7,
+            "reasoning": "Round 3 refinement with peer support: 0",
+            "score": 0.4433333333333333,
+            "support": 1
+          }
+        ],
+        "Power Management Ic": [
+          {
+            "name": "Aluminum",
+            "confidence": 0.9499999999999998,
+            "reasoning": "Round 3 refinement with peer support: 2",
+            "score": 1.285,
+            "support": 3
+          },
+          {
+            "name": "Silicon",
+            "confidence": 0.8999999999999999,
+            "reasoning": "Round 3 refinement with peer support: 2",
+            "score": 0.8866666666666666,
+            "support": 2
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.7749999999999999,
+            "reasoning": "Round 3 refinement with peer support: 1",
+            "score": 0.8491666666666666,
+            "support": 2
+          },
+          {
+            "name": "Gallium arsenide",
+            "confidence": 0.7,
+            "reasoning": "Round 3 refinement with peer support: 0",
+            "score": 0.8266666666666667,
+            "support": 2
+          },
+          {
+            "name": "Arsenic",
+            "confidence": 0.95,
+            "reasoning": "Round 3 refinement with peer support: 2",
+            "score": 0.5183333333333333,
+            "support": 1
+          },
+          {
+            "name": "Aluminum oxide",
+            "confidence": 0.85,
+            "reasoning": "Round 3 refinement with peer support: 1",
+            "score": 0.4883333333333333,
+            "support": 1
+          },
+          {
+            "name": "Indium",
+            "confidence": 0.7,
+            "reasoning": "Round 3 refinement with peer support: 0",
+            "score": 0.4433333333333333,
+            "support": 1
+          }
+        ],
+        "Bond Wires": [
+          {
+            "name": "Aluminum",
+            "confidence": 0.9499999999999998,
+            "reasoning": "Round 3 refinement with peer support: 2",
+            "score": 1.285,
+            "support": 3
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.7749999999999999,
+            "reasoning": "Round 3 refinement with peer support: 1",
+            "score": 0.8491666666666666,
+            "support": 2
+          },
+          {
+            "name": "Gold",
+            "confidence": 0.7,
+            "reasoning": "Round 3 refinement with peer support: 0",
+            "score": 0.8266666666666667,
+            "support": 2
+          },
+          {
+            "name": "Silver",
+            "confidence": 0.7,
+            "reasoning": "Round 3 refinement with peer support: 0",
+            "score": 0.8266666666666667,
+            "support": 2
+          }
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,835 @@
+{
+  "version": "2.0",
+  "metadata": {
+    "technology": "Bioreactor",
+    "technology_specification": "Bioreactor",
+    "technology_reasoning": "",
+    "timestamp": "2026-01-29T17:04:18.618002",
+    "format_version": "2.0"
+  },
+  "config": {
+    "num_agents": 3,
+    "max_rounds": 1
+  },
+  "component_stage": {
+    "phase1_initial_proposals": [
+      {
+        "agent_id": "Agent_1",
+        "components": [
+          {
+            "name": "Vessel Assembly (Stainless Steel Tank)",
+            "confidence": 0.98,
+            "reasoning": "Core structural component that defines the bioreactor, always procured as a fabricated pressure vessel from specialized manufacturers with distinct supply chain and regulatory requirements."
+          },
+          {
+            "name": "Agitation System (Impeller and Drive Unit)",
+            "confidence": 0.95,
+            "reasoning": "Essential mechanical mixing component, typically procured as complete assembly including motor, gearbox, and impeller shaft from specialized agitation equipment suppliers."
+          },
+          {
+            "name": "Aeration System (Sparger Assembly)",
+            "confidence": 0.92,
+            "reasoning": "Critical for oxygen delivery in aerobic fermentation, manufactured as specialized perforated or sintered assemblies with specific bubble size characteristics from dedicated suppliers."
+          },
+          {
+            "name": "Control System (PLC/DCS Module)",
+            "confidence": 0.9,
+            "reasoning": "Automated process control hardware and software platform, procured as integrated system from industrial automation suppliers with bioreactor-specific programming and interfaces."
+          },
+          {
+            "name": "Temperature Control System (Jacket/Coils)",
+            "confidence": 0.88,
+            "reasoning": "Heat exchange system for precise temperature regulation, typically integrated during vessel fabrication but sourced from specialized thermal management suppliers with distinct supply chain."
+          },
+          {
+            "name": "pH and DO Probe Assembly",
+            "confidence": 0.92,
+            "reasoning": "Critical analytical sensors for process monitoring, manufactured by specialized analytical instrument companies with unique supply chains for electrochemical sensor technology."
+          },
+          {
+            "name": "Foam Control System (Antifoam Addition Unit)",
+            "confidence": 0.75,
+            "reasoning": "Automated antifoam dosing system, common in industrial bioreactors but sometimes manual in smaller systems, procured from process equipment suppliers."
+          },
+          {
+            "name": "Harvest/Sampling Port Assembly",
+            "confidence": 0.85,
+            "reasoning": "Sterile sampling and product removal interfaces, manufactured as specialized sanitary fittings by bioprocess equipment suppliers with stringent contamination control requirements."
+          },
+          {
+            "name": "CIP/SIP System (Cleaning-in-Place Module)",
+            "confidence": 0.88,
+            "reasoning": "Integrated cleaning and sterilization system essential for cGMP compliance, procured as complete module from sanitary process equipment manufacturers with validated cleaning cycles."
+          },
+          {
+            "name": "Exhaust Gas Filtration System",
+            "confidence": 0.82,
+            "reasoning": "Sterile air filtration for gas outlet streams, typically HEPA filter assemblies procured from specialized bioprocess filtration suppliers to maintain sterility and containment."
+          }
+        ],
+        "technology_specification": "Stirred-tank bioreactor (STR) for mammalian cell culture production",
+        "technology_reasoning": "Stirred-tank bioreactors represent approximately 70-80% of commercial biopharmaceutical production globally, being the industry standard for monoclonal antibody, vaccine, and therapeutic protein manufacturing due to proven scalability, process control capabilities, and regulatory acceptance."
+      },
+      {
+        "agent_id": "Agent_2",
+        "components": [
+          {
+            "name": "Vessel Assembly (Stainless Steel Tank)",
+            "confidence": 0.98,
+            "reasoning": "Core containment structure that is always procured as a complete fabricated unit from specialized manufacturers, with distinct supply chain for high-grade stainless steel vessels meeting pharmaceutical standards."
+          },
+          {
+            "name": "Impeller System (Agitator Assembly)",
+            "confidence": 0.95,
+            "reasoning": "Critical mixing component procured as complete mechanical assembly including shaft, impeller blades, and drive coupling, manufactured by specialized agitation equipment suppliers."
+          },
+          {
+            "name": "Process Control System (PLC/HMI)",
+            "confidence": 0.92,
+            "reasoning": "Integrated automation platform controlling temperature, pH, dissolved oxygen, and other parameters, typically supplied as complete hardware/software package by control system vendors."
+          },
+          {
+            "name": "Sparger Assembly (Gas Distribution System)",
+            "confidence": 0.9,
+            "reasoning": "Specialized component for introducing sterile air/oxygen into the culture, manufactured as complete assembly with specific pore structures and sterilization compatibility."
+          },
+          {
+            "name": "Heat Exchanger (Jacket or Internal Coils)",
+            "confidence": 0.88,
+            "reasoning": "Temperature control component typically procured as fabricated unit, either integrated jacket system or internal coil assembly from specialized thermal equipment manufacturers."
+          },
+          {
+            "name": "Sensor Package (pH, DO, Temperature Probes)",
+            "confidence": 0.85,
+            "reasoning": "Critical monitoring instruments procured as complete assemblies from analytical instrument suppliers, each probe representing a distinct manufactured product with separate calibration and maintenance requirements."
+          },
+          {
+            "name": "Sterilization System (Steam-in-Place/CIP)",
+            "confidence": 0.83,
+            "reasoning": "Essential sterilization infrastructure including steam distribution manifolds, spray balls, and associated piping, typically procured as engineered system from specialized sanitary equipment suppliers."
+          },
+          {
+            "name": "Air Filtration System (HEPA/Sterile Filters)",
+            "confidence": 0.8,
+            "reasoning": "Critical sterile air supply component including filter housings and cartridges, procured from filtration specialists as complete assemblies with validated performance specifications."
+          },
+          {
+            "name": "Foam Control System (Mechanical Foam Breaker)",
+            "confidence": 0.75,
+            "reasoning": "Specialized mechanical assembly for foam management in bioprocesses, manufactured as complete unit though not present in all bioreactor designs depending on process requirements."
+          },
+          {
+            "name": "Sampling System (Aseptic Sampling Ports)",
+            "confidence": 0.78,
+            "reasoning": "Sterile sampling infrastructure including valves, ports, and associated hardware, procured as specialized assemblies from sanitary valve manufacturers to maintain process sterility."
+          }
+        ],
+        "technology_specification": "Stirred-tank bioreactor (STR) with stainless steel construction and automated control systems",
+        "technology_reasoning": "Stirred-tank bioreactors represent approximately 70-80% of industrial bioprocessing applications as of 2024, serving as the industry standard for pharmaceutical manufacturing due to their proven scalability, regulatory acceptance, and well-established supply chains for both microbial and mammalian cell culture processes."
+      },
+      {
+        "agent_id": "Agent_3",
+        "components": [
+          {
+            "name": "Vessel Assembly (stainless steel)",
+            "confidence": 0.98,
+            "reasoning": "Core structural component housing the biological process, always procured as fabricated assembly with specific geometry, ports, and surface finish requirements."
+          },
+          {
+            "name": "Agitation System (impeller and drive shaft)",
+            "confidence": 0.95,
+            "reasoning": "Essential mechanical mixing assembly with precision-engineered impellers, typically procured as complete unit with specific design for mixing performance and sterility."
+          },
+          {
+            "name": "Motor Drive Unit",
+            "confidence": 0.92,
+            "reasoning": "Variable-speed motor with gearbox for agitation control, procured as integrated assembly with specific torque and speed requirements for bioprocessing applications."
+          },
+          {
+            "name": "Process Control System (PLC/DCS)",
+            "confidence": 0.9,
+            "reasoning": "Dedicated automation and control hardware with bioreactor-specific software, purchased as complete system from process control suppliers."
+          },
+          {
+            "name": "Sparger Assembly",
+            "confidence": 0.88,
+            "reasoning": "Gas distribution system for aeration, manufactured as precision component with specific bubble size and distribution characteristics, critical for aerobic processes."
+          },
+          {
+            "name": "Heat Exchanger/Jacket System",
+            "confidence": 0.85,
+            "reasoning": "Temperature control system integrated into vessel design, procured as engineered assembly for precise thermal management of biological processes."
+          },
+          {
+            "name": "Sensor Package (pH, DO, temperature)",
+            "confidence": 0.9,
+            "reasoning": "Critical monitoring instrumentation procured as specialized sensors designed for sterile bioprocessing environments, essential for process control."
+          },
+          {
+            "name": "Foam Control System",
+            "confidence": 0.75,
+            "reasoning": "Anti-foam addition system with mechanical foam breaker or chemical dosing, common in most designs but sometimes integrated differently or omitted."
+          },
+          {
+            "name": "Sampling System",
+            "confidence": 0.8,
+            "reasoning": "Sterile sampling ports and associated valving for process monitoring, standard component but design varies significantly between applications."
+          },
+          {
+            "name": "CIP/SIP System Components",
+            "confidence": 0.85,
+            "reasoning": "Clean-in-place and steam-in-place hardware including spray balls and specialized valving, essential for pharmaceutical applications and procured as engineered assemblies."
+          }
+        ],
+        "technology_specification": "Stirred-tank bioreactor (STR) with stainless steel vessel for microbial or mammalian cell culture applications",
+        "technology_reasoning": "Stirred-tank bioreactors represent approximately 70-80% of industrial bioprocessing applications as of 2024, being the most versatile and widely adopted design for pharmaceutical production, supporting both microbial fermentation and mammalian cell culture with proven scalability from laboratory to production scale."
+      }
+    ],
+    "phase2_debate_rounds": [
+      {
+        "round_num": 1,
+        "convergence": 0.8181818181818182,
+        "threshold": 0.7,
+        "threshold_reached": true,
+        "proposals": {
+          "Agent_1": [
+            {
+              "name": "Vessel Assembly (Stainless Steel Tank)",
+              "confidence": 0.98,
+              "reasoning": "Core structural component that defines the bioreactor, always procured as a fabricated pressure vessel from specialized manufacturers with distinct supply chain and regulatory requirements.",
+              "component": "Vessel Assembly (Stainless Steel Tank)",
+              "normalized_component": "Stainless Steel Vessel Assembly"
+            },
+            {
+              "name": "Agitation System (Impeller and Drive Unit)",
+              "confidence": 0.95,
+              "reasoning": "Essential mechanical mixing component, typically procured as complete assembly including motor, gearbox, and impeller shaft from specialized agitation equipment suppliers.",
+              "component": "Agitation System (Impeller and Drive Unit)",
+              "normalized_component": "Agitation System"
+            },
+            {
+              "name": "Aeration System (Sparger Assembly)",
+              "confidence": 0.92,
+              "reasoning": "Critical for oxygen delivery in aerobic fermentation, manufactured as specialized perforated or sintered assemblies with specific bubble size characteristics from dedicated suppliers.",
+              "component": "Aeration System (Sparger Assembly)",
+              "normalized_component": "Aeration System"
+            },
+            {
+              "name": "Control System (PLC/DCS Module)",
+              "confidence": 0.9,
+              "reasoning": "Automated process control hardware and software platform, procured as integrated system from industrial automation suppliers with bioreactor-specific programming and interfaces.",
+              "component": "Control System (PLC/DCS Module)",
+              "normalized_component": "Process Control System"
+            },
+            {
+              "name": "Temperature Control System (Jacket/Coils)",
+              "confidence": 0.88,
+              "reasoning": "Heat exchange system for precise temperature regulation, typically integrated during vessel fabrication but sourced from specialized thermal management suppliers with distinct supply chain.",
+              "component": "Temperature Control System (Jacket/Coils)",
+              "normalized_component": "Temperature Control System"
+            },
+            {
+              "name": "pH and DO Probe Assembly",
+              "confidence": 0.92,
+              "reasoning": "Critical analytical sensors for process monitoring, manufactured by specialized analytical instrument companies with unique supply chains for electrochemical sensor technology.",
+              "component": "pH and DO Probe Assembly",
+              "normalized_component": "Sensor Assembly"
+            },
+            {
+              "name": "Foam Control System (Antifoam Addition Unit)",
+              "confidence": 0.75,
+              "reasoning": "Automated antifoam dosing system, common in industrial bioreactors but sometimes manual in smaller systems, procured from process equipment suppliers.",
+              "component": "Foam Control System (Antifoam Addition Unit)",
+              "normalized_component": "Foam Control System"
+            },
+            {
+              "name": "Harvest/Sampling Port Assembly",
+              "confidence": 0.85,
+              "reasoning": "Sterile sampling and product removal interfaces, manufactured as specialized sanitary fittings by bioprocess equipment suppliers with stringent contamination control requirements.",
+              "component": "Harvest/Sampling Port Assembly",
+              "normalized_component": "Sampling Port Assembly"
+            },
+            {
+              "name": "CIP/SIP System (Cleaning-in-Place Module)",
+              "confidence": 0.88,
+              "reasoning": "Integrated cleaning and sterilization system essential for cGMP compliance, procured as complete module from sanitary process equipment manufacturers with validated cleaning cycles.",
+              "component": "CIP/SIP System (Cleaning-in-Place Module)",
+              "normalized_component": "Cleaning-in-Place System"
+            },
+            {
+              "name": "Exhaust Gas Filtration System",
+              "confidence": 0.82,
+              "reasoning": "Sterile air filtration for gas outlet streams, typically HEPA filter assemblies procured from specialized bioprocess filtration suppliers to maintain sterility and containment.",
+              "component": "Exhaust Gas Filtration System",
+              "normalized_component": "Exhaust Gas Filtration System"
+            }
+          ],
+          "Agent_2": [
+            {
+              "name": "Vessel Assembly (Stainless Steel Tank)",
+              "confidence": 0.98,
+              "reasoning": "Core containment structure that is always procured as a complete fabricated unit from specialized manufacturers, with distinct supply chain for high-grade stainless steel vessels meeting pharmaceutical standards.",
+              "component": "Vessel Assembly (Stainless Steel Tank)",
+              "normalized_component": "Stainless Steel Vessel Assembly"
+            },
+            {
+              "name": "Impeller System (Agitator Assembly)",
+              "confidence": 0.95,
+              "reasoning": "Critical mixing component procured as complete mechanical assembly including shaft, impeller blades, and drive coupling, manufactured by specialized agitation equipment suppliers.",
+              "component": "Impeller System (Agitator Assembly)",
+              "normalized_component": "Agitation System"
+            },
+            {
+              "name": "Process Control System (PLC/HMI)",
+              "confidence": 0.92,
+              "reasoning": "Integrated automation platform controlling temperature, pH, dissolved oxygen, and other parameters, typically supplied as complete hardware/software package by control system vendors.",
+              "component": "Process Control System (PLC/HMI)",
+              "normalized_component": "Process Control System"
+            },
+            {
+              "name": "Sparger Assembly (Gas Distribution System)",
+              "confidence": 0.9,
+              "reasoning": "Specialized component for introducing sterile air/oxygen into the culture, manufactured as complete assembly with specific pore structures and sterilization compatibility.",
+              "component": "Sparger Assembly (Gas Distribution System)",
+              "normalized_component": "Sparger Assembly"
+            },
+            {
+              "name": "Heat Exchanger (Jacket or Internal Coils)",
+              "confidence": 0.88,
+              "reasoning": "Temperature control component typically procured as fabricated unit, either integrated jacket system or internal coil assembly from specialized thermal equipment manufacturers.",
+              "component": "Heat Exchanger (Jacket or Internal Coils)",
+              "normalized_component": "Heat Exchanger System"
+            },
+            {
+              "name": "Sensor Package (pH, DO, Temperature Probes)",
+              "confidence": 0.85,
+              "reasoning": "Critical monitoring instruments procured as complete assemblies from analytical instrument suppliers, each probe representing a distinct manufactured product with separate calibration and maintenance requirements.",
+              "component": "Sensor Package (pH, DO, Temperature Probes)",
+              "normalized_component": "Sensor Assembly"
+            },
+            {
+              "name": "Sterilization System (Steam-in-Place/CIP)",
+              "confidence": 0.83,
+              "reasoning": "Essential sterilization infrastructure including steam distribution manifolds, spray balls, and associated piping, typically procured as engineered system from specialized sanitary equipment suppliers.",
+              "component": "Sterilization System (Steam-in-Place/CIP)",
+              "normalized_component": "Sterilization System"
+            },
+            {
+              "name": "Air Filtration System (HEPA/Sterile Filters)",
+              "confidence": 0.8,
+              "reasoning": "Critical sterile air supply component including filter housings and cartridges, procured from filtration specialists as complete assemblies with validated performance specifications.",
+              "component": "Air Filtration System (HEPA/Sterile Filters)",
+              "normalized_component": "Air Filtration System"
+            },
+            {
+              "name": "Foam Control System (Mechanical Foam Breaker)",
+              "confidence": 0.75,
+              "reasoning": "Specialized mechanical assembly for foam management in bioprocesses, manufactured as complete unit though not present in all bioreactor designs depending on process requirements.",
+              "component": "Foam Control System (Mechanical Foam Breaker)",
+              "normalized_component": "Foam Control System"
+            },
+            {
+              "name": "Sampling System (Aseptic Sampling Ports)",
+              "confidence": 0.78,
+              "reasoning": "Sterile sampling infrastructure including valves, ports, and associated hardware, procured as specialized assemblies from sanitary valve manufacturers to maintain process sterility.",
+              "component": "Sampling System (Aseptic Sampling Ports)",
+              "normalized_component": "Sampling Port Assembly"
+            }
+          ],
+          "Agent_3": [
+            {
+              "name": "Vessel Assembly (stainless steel)",
+              "confidence": 0.98,
+              "reasoning": "Core structural component housing the biological process, always procured as fabricated assembly with specific geometry, ports, and surface finish requirements.",
+              "component": "Vessel Assembly (stainless steel)",
+              "normalized_component": "Stainless Steel Vessel Assembly"
+            },
+            {
+              "name": "Agitation System (impeller and drive shaft)",
+              "confidence": 0.95,
+              "reasoning": "Essential mechanical mixing assembly with precision-engineered impellers, typically procured as complete unit with specific design for mixing performance and sterility.",
+              "component": "Agitation System (impeller and drive shaft)",
+              "normalized_component": "Agitation System"
+            },
+            {
+              "name": "Motor Drive Unit",
+              "confidence": 0.92,
+              "reasoning": "Variable-speed motor with gearbox for agitation control, procured as integrated assembly with specific torque and speed requirements for bioprocessing applications.",
+              "component": "Motor Drive Unit",
+              "normalized_component": "Motor Drive System"
+            },
+            {
+              "name": "Process Control System (PLC/DCS)",
+              "confidence": 0.9,
+              "reasoning": "Dedicated automation and control hardware with bioreactor-specific software, purchased as complete system from process control suppliers.",
+              "component": "Process Control System (PLC/DCS)",
+              "normalized_component": "Process Control System"
+            },
+            {
+              "name": "Sparger Assembly",
+              "confidence": 0.88,
+              "reasoning": "Gas distribution system for aeration, manufactured as precision component with specific bubble size and distribution characteristics, critical for aerobic processes.",
+              "component": "Sparger Assembly",
+              "normalized_component": "Sparger Assembly"
+            },
+            {
+              "name": "Heat Exchanger/Jacket System",
+              "confidence": 0.85,
+              "reasoning": "Temperature control system integrated into vessel design, procured as engineered assembly for precise thermal management of biological processes.",
+              "component": "Heat Exchanger/Jacket System",
+              "normalized_component": "Heat Exchanger System"
+            },
+            {
+              "name": "Sensor Package (pH, DO, temperature)",
+              "confidence": 0.9,
+              "reasoning": "Critical monitoring instrumentation procured as specialized sensors designed for sterile bioprocessing environments, essential for process control.",
+              "component": "Sensor Package (pH, DO, temperature)",
+              "normalized_component": "Sensor Assembly"
+            },
+            {
+              "name": "Foam Control System",
+              "confidence": 0.75,
+              "reasoning": "Anti-foam addition system with mechanical foam breaker or chemical dosing, common in most designs but sometimes integrated differently or omitted.",
+              "component": "Foam Control System",
+              "normalized_component": "Foam Control System"
+            },
+            {
+              "name": "Sampling System",
+              "confidence": 0.8,
+              "reasoning": "Sterile sampling ports and associated valving for process monitoring, standard component but design varies significantly between applications.",
+              "component": "Sampling System",
+              "normalized_component": "Sampling System"
+            },
+            {
+              "name": "CIP/SIP System Components",
+              "confidence": 0.85,
+              "reasoning": "Clean-in-place and steam-in-place hardware including spray balls and specialized valving, essential for pharmaceutical applications and procured as engineered assemblies.",
+              "component": "CIP/SIP System Components",
+              "normalized_component": "Cleaning-in-Place System"
+            }
+          ]
+        },
+        "rounds_completed": 1,
+        "support_analysis": {
+          "consensus": [
+            "stainless steel vessel",
+            "agitation",
+            "gas distribution",
+            "process control",
+            "temperature control",
+            "process sensor",
+            "foam control",
+            "aseptic sampling",
+            "cip/sip"
+          ],
+          "majority": [],
+          "isolated": [
+            "exhaust gas filtration",
+            "sterile air filtration",
+            "motor drive"
+          ]
+        },
+        "critiques": [
+          {
+            "item_name": "stainless steel vessel",
+            "normalized_name": "stainless steel vessel",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_1",
+              "Agent_3"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.98,
+            "critique_text": "Strong consensus on 'stainless steel vessel': all 3 agents support with avg confidence 0.98. Preserve this component."
+          },
+          {
+            "item_name": "agitation",
+            "normalized_name": "agitation",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_1",
+              "Agent_3"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.9499999999999998,
+            "critique_text": "Strong consensus on 'agitation': all 3 agents support with avg confidence 0.95. Preserve this component."
+          },
+          {
+            "item_name": "gas distribution",
+            "normalized_name": "gas distribution",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_1",
+              "Agent_3"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.9,
+            "critique_text": "Strong consensus on 'gas distribution': all 3 agents support with avg confidence 0.90. Preserve this component."
+          },
+          {
+            "item_name": "process control",
+            "normalized_name": "process control",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_1",
+              "Agent_3"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.9066666666666667,
+            "critique_text": "Strong consensus on 'process control': all 3 agents support with avg confidence 0.91. Preserve this component."
+          },
+          {
+            "item_name": "temperature control",
+            "normalized_name": "temperature control",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_1",
+              "Agent_3"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.87,
+            "critique_text": "Strong consensus on 'temperature control': all 3 agents support with avg confidence 0.87. Preserve this component."
+          },
+          {
+            "item_name": "process sensor",
+            "normalized_name": "process sensor",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_1",
+              "Agent_3"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.89,
+            "critique_text": "Strong consensus on 'process sensor': all 3 agents support with avg confidence 0.89. Preserve this component."
+          },
+          {
+            "item_name": "foam control",
+            "normalized_name": "foam control",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_1",
+              "Agent_3"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.75,
+            "critique_text": "Strong consensus on 'foam control': all 3 agents support with avg confidence 0.75. Preserve this component."
+          },
+          {
+            "item_name": "aseptic sampling",
+            "normalized_name": "aseptic sampling",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_1",
+              "Agent_3"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.81,
+            "critique_text": "Strong consensus on 'aseptic sampling': all 3 agents support with avg confidence 0.81. Preserve this component."
+          },
+          {
+            "item_name": "cip/sip",
+            "normalized_name": "cip/sip",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_1",
+              "Agent_3"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.8533333333333334,
+            "critique_text": "Strong consensus on 'cip/sip': all 3 agents support with avg confidence 0.85. Preserve this component."
+          },
+          {
+            "item_name": "exhaust gas filtration",
+            "normalized_name": "exhaust gas filtration",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2",
+              "Agent_3"
+            ],
+            "avg_confidence": 0.82,
+            "critique_text": "Isolated proposal 'exhaust gas filtration' from 1 agent(s) (conf: 0.82). Requires justification or peer validation."
+          },
+          {
+            "item_name": "sterile air filtration",
+            "normalized_name": "sterile air filtration",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_1",
+              "Agent_3"
+            ],
+            "avg_confidence": 0.8,
+            "critique_text": "Isolated proposal 'sterile air filtration' from 1 agent(s) (conf: 0.80). Requires justification or peer validation."
+          },
+          {
+            "item_name": "motor drive",
+            "normalized_name": "motor drive",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_3"
+            ],
+            "opposing_agents": [
+              "Agent_1",
+              "Agent_2"
+            ],
+            "avg_confidence": 0.92,
+            "critique_text": "Isolated proposal 'motor drive' from 1 agent(s) (conf: 0.92). Requires justification or peer validation."
+          }
+        ],
+        "changes_from_previous": null
+      }
+    ],
+    "phase3_final_consensus": {
+      "technology": "Bioreactor",
+      "technology_specification": "Bioreactor",
+      "technology_reasoning": "",
+      "components": [
+        "Stainless Steel Vessel Assembly",
+        "Agitation System",
+        "Aeration System",
+        "Motor Drive System",
+        "Process Control System",
+        "Sensor Assembly",
+        "Sparger Assembly",
+        "Temperature Control System",
+        "Cleaning-in-place System",
+        "Heat Exchanger System",
+        "Sterilization System",
+        "Exhaust Gas Filtration System",
+        "Sampling Port Assembly",
+        "Air Filtration System",
+        "Sampling System",
+        "Foam Control System"
+      ],
+      "confidence": 0.8181818181818182,
+      "rounds": 1,
+      "convergence_score": 0.8181818181818182
+    }
+  },
+  "materials_debate": {
+    "debate_rounds": [
+      {
+        "round_number": 2,
+        "convergence_score": 0.642361111111111,
+        "num_critiques": 16
+      },
+      {
+        "round_number": 3,
+        "convergence_score": 0.5833333333333331,
+        "num_critiques": 16
+      }
+    ],
+    "final_consensus": {
+      "components": 15,
+      "unique_materials": 6,
+      "total_assignments": 23,
+      "materials_by_component": {
+        "Stainless Steel Vessel Assembly": [
+          {
+            "name": "Aluminum",
+            "confidence": 0.9499999999999998,
+            "reasoning": "Round 3 refinement with peer support: 2",
+            "score": 1.285,
+            "support": 3
+          },
+          {
+            "name": "Aluminum oxide",
+            "confidence": 0.8999999999999999,
+            "reasoning": "Round 3 refinement with peer support: 2",
+            "score": 0.8866666666666666,
+            "support": 2
+          }
+        ],
+        "Agitation System": [
+          {
+            "name": "Aluminum",
+            "confidence": 0.9499999999999998,
+            "reasoning": "Round 3 refinement with peer support: 2",
+            "score": 1.285,
+            "support": 3
+          }
+        ],
+        "Aeration System": [
+          {
+            "name": "Aluminum",
+            "confidence": 0.9499999999999998,
+            "reasoning": "Round 3 refinement with peer support: 2",
+            "score": 1.285,
+            "support": 3
+          },
+          {
+            "name": "Argon",
+            "confidence": 0.9499999999999998,
+            "reasoning": "Round 3 refinement with peer support: 2",
+            "score": 1.285,
+            "support": 3
+          }
+        ],
+        "Motor Drive System": [
+          {
+            "name": "Aluminum",
+            "confidence": 0.9499999999999998,
+            "reasoning": "Round 3 refinement with peer support: 2",
+            "score": 1.285,
+            "support": 3
+          }
+        ],
+        "Process Control System": [
+          {
+            "name": "Aluminum",
+            "confidence": 0.9499999999999998,
+            "reasoning": "Round 3 refinement with peer support: 2",
+            "score": 1.285,
+            "support": 3
+          },
+          {
+            "name": "Aluminum gallium arsenide",
+            "confidence": 0.85,
+            "reasoning": "Round 3 refinement with peer support: 1",
+            "score": 0.8716666666666667,
+            "support": 2
+          }
+        ],
+        "Sensor Assembly": [
+          {
+            "name": "Aluminum",
+            "confidence": 0.9499999999999998,
+            "reasoning": "Round 3 refinement with peer support: 2",
+            "score": 1.285,
+            "support": 3
+          },
+          {
+            "name": "Aluminum oxide",
+            "confidence": 0.8833333333333333,
+            "reasoning": "Round 3 refinement with peer support: 2",
+            "score": 1.265,
+            "support": 3
+          }
+        ],
+        "Sparger Assembly": [
+          {
+            "name": "Aluminum",
+            "confidence": 0.9499999999999998,
+            "reasoning": "Round 3 refinement with peer support: 2",
+            "score": 1.285,
+            "support": 3
+          },
+          {
+            "name": "Aluminum oxide",
+            "confidence": 0.8999999999999999,
+            "reasoning": "Round 3 refinement with peer support: 2",
+            "score": 0.8866666666666666,
+            "support": 2
+          }
+        ],
+        "Temperature Control System": [
+          {
+            "name": "Aluminum",
+            "confidence": 0.9499999999999998,
+            "reasoning": "Round 3 refinement with peer support: 2",
+            "score": 1.285,
+            "support": 3
+          }
+        ],
+        "cleaning in place": [
+          {
+            "name": "Aluminum",
+            "confidence": 0.9499999999999998,
+            "reasoning": "Round 3 refinement with peer support: 2",
+            "score": 1.285,
+            "support": 3
+          },
+          {
+            "name": "Acetic acid",
+            "confidence": 0.8833333333333333,
+            "reasoning": "Round 3 refinement with peer support: 2",
+            "score": 1.265,
+            "support": 3
+          }
+        ],
+        "Heat Exchanger System": [
+          {
+            "name": "Aluminum",
+            "confidence": 0.9499999999999998,
+            "reasoning": "Round 3 refinement with peer support: 2",
+            "score": 1.285,
+            "support": 3
+          }
+        ],
+        "Sterilization System": [
+          {
+            "name": "Aluminum",
+            "confidence": 0.9499999999999998,
+            "reasoning": "Round 3 refinement with peer support: 2",
+            "score": 1.285,
+            "support": 3
+          },
+          {
+            "name": "Aluminum oxide",
+            "confidence": 0.8999999999999999,
+            "reasoning": "Round 3 refinement with peer support: 2",
+            "score": 0.8866666666666666,
+            "support": 2
+          }
+        ],
+        "Exhaust Gas Filtration System": [
+          {
+            "name": "Aluminum",
+            "confidence": 0.9499999999999998,
+            "reasoning": "Round 3 refinement with peer support: 2",
+            "score": 1.285,
+            "support": 3
+          }
+        ],
+        "Sampling Port Assembly": [
+          {
+            "name": "Aluminum",
+            "confidence": 0.9499999999999998,
+            "reasoning": "Round 3 refinement with peer support: 2",
+            "score": 2.4349999999999996,
+            "support": 6
+          },
+          {
+            "name": "Borosilicate glass",
+            "confidence": 0.85,
+            "reasoning": "Round 3 refinement with peer support: 1",
+            "score": 0.8716666666666667,
+            "support": 2
+          }
+        ],
+        "Air Filtration System": [
+          {
+            "name": "Aluminum",
+            "confidence": 0.9499999999999998,
+            "reasoning": "Round 3 refinement with peer support: 2",
+            "score": 1.285,
+            "support": 3
+          }
+        ],
+        "Foam Control System": [
+          {
+            "name": "Aluminum",
+            "confidence": 0.9499999999999998,
+            "reasoning": "Round 3 refinement with peer support: 2",
+            "score": 1.285,
+            "support": 3
+          }
+        ]
+      }
+    }
+  }
+}
