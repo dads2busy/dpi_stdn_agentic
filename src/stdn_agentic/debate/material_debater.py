@@ -1168,4 +1168,5 @@ class MaterialDebater:
             "convergence": convergence,
             "rounds": rounds_completed,
             "technology": technology,
+            "initial_proposals": initial_proposals,  # Phase 1 proposals by agent
         }

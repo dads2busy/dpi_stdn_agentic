@@ -377,11 +377,13 @@ class MaterialsExtractor:
 
         # Save material debate transcript if enabled
         if self.reporter:
+            initial_proposals = debate_result.get("initial_proposals", {})
             self._save_material_debate_transcript(
                 technology,
                 components,
                 self.material_debater.debate_history,
                 consensus,
+                initial_proposals,
             )
 
         total_materials = sum(len(cm.raw_materials) for cm in materials_list.component_list)
@@ -599,6 +601,7 @@ class MaterialsExtractor:
         components: list,  # Can accept ComponentWithConfidence or str
         debate_history: list,
         consensus: dict[str, list[dict]],  # list[dict] with name, confidence, reasoning
+        initial_proposals: dict[str, list] | None = None,
     ) -> str:
         """Build the materials debate transcript content with confidence and reasoning."""
         content: list[str] = []
@@ -609,6 +612,7 @@ class MaterialsExtractor:
         content.append("=" * 80 + "\n\n")
 
         self._append_material_transcript_components_section(content, components)
+        self._append_material_transcript_initial_proposals_section(content, initial_proposals)
         self._append_material_transcript_debate_rounds_section(content, debate_history)
         self._append_material_transcript_final_consensus_section(content, consensus)
 
@@ -693,12 +697,48 @@ class MaterialsExtractor:
         for comp in components:
             # Handle both ComponentWithConfidence objects and strings
             if hasattr(comp, "name"):
-                content.append(f"  - {comp.name} (confidence: {comp.confidence:.2f})\n")
-                if hasattr(comp, "reasoning") and comp.reasoning:
-                    content.append(f"    → {comp.reasoning}\n")
+                content.append(f"  - {comp.name}\n")
             else:
                 content.append(f"  - {comp}\n")
         content.append("\n")
+
+    def _append_material_transcript_initial_proposals_section(
+        self,
+        content: list[str],
+        initial_proposals: dict[str, list] | None,
+    ) -> None:
+        """Add initial material proposals from each agent (Phase 1)."""
+        if not initial_proposals:
+            return
+
+        content.append("=" * 80 + "\n")
+        content.append("PHASE 1: INITIAL MATERIAL PROPOSALS\n")
+        content.append("=" * 80 + "\n\n")
+
+        for agent_id, proposals in sorted(initial_proposals.items()):
+            content.append(f"{agent_id}:\n")
+            content.append("-" * 40 + "\n")
+
+            # Group proposals by component
+            by_component: dict[str, list] = {}
+            for prop in proposals:
+                comp = (
+                    prop.normalizedcomponent if hasattr(prop, "normalizedcomponent") else "Unknown"
+                )
+                if comp not in by_component:
+                    by_component[comp] = []
+                by_component[comp].append(prop)
+
+            for comp, comp_proposals in sorted(by_component.items()):
+                content.append(f"  {comp}:\n")
+                for prop in comp_proposals[:5]:  # Limit to 5 per component
+                    mat_name = prop.material if hasattr(prop, "material") else str(prop)
+                    confidence = prop.confidence if hasattr(prop, "confidence") else 0.0
+                    content.append(f"    - {mat_name} ({confidence:.2f})\n")
+                if len(comp_proposals) > 5:
+                    content.append(f"    ... and {len(comp_proposals) - 5} more\n")
+
+            content.append("\n")
 
     def _append_material_transcript_debate_rounds_section(
         self,
@@ -778,6 +818,7 @@ class MaterialsExtractor:
         components: list,  # Can be strings or ComponentWithConfidence
         debate_history: list,
         consensus: dict[str, list[dict]],
+        initial_proposals: dict[str, list] | None = None,
     ) -> None:
         """Append material debate results to existing component transcript."""
         logger.debug(
@@ -813,7 +854,7 @@ class MaterialsExtractor:
 
             # Build and write content
             materials_content = self._build_material_transcript_content(
-                components, debate_history, consensus
+                components, debate_history, consensus, initial_proposals
             )
 
             with open(filepath, "a", encoding="utf-8") as f:
