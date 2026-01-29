@@ -2,6 +2,18 @@
 
 This document catalogs all LLM prompts used in the STDN Agentic system, organized by module and function.
 
+## Overview
+
+The system uses **11 distinct prompt types** across four categories:
+
+| Category | Count | Purpose |
+|----------|-------|---------|
+| Agent System Prompts | 3 | Define agent personas and capabilities |
+| Debate Prompts | 6 | Multi-agent debate, critique, and refinement |
+| Orchestrator Prompts | 2 | Pipeline coordination and extraction |
+
+---
+
 ## Prompt Flow Summary
 
 The following diagram shows how prompts are used across the three-stage pipeline:
@@ -44,18 +56,6 @@ The following diagram shows how prompts are used across the three-stage pipeline
 │    Country Borda Voting Prompt (per-expert)                             │
 └─────────────────────────────────────────────────────────────────────────┘
 ```
-
----
-
-## Overview
-
-The system uses **11 distinct prompt types** across four categories:
-
-| Category | Count | Purpose |
-|----------|-------|---------|
-| Agent System Prompts | 3 | Define agent personas and capabilities |
-| Debate Prompts | 6 | Multi-agent debate, critique, and refinement |
-| Orchestrator Prompts | 2 | Pipeline coordination and extraction |
 
 ---
 
