@@ -16,8 +16,9 @@ CLI / stdn command
  │ • 3 Debating Agents  │ • 3 Debating Agents  │ • USGS Database      │
  │ • Jaccard-based      │ • Jaccard-based      │ • LLM Fallback       │
  │   convergence        │   convergence        │ • Borda Voting       │
- │ • LLM normalization  │ • Material ontology  │ • 30-day Cache       │
- │ • Confidence scoring │   matching           │ • Multi-tier Query   │
+ │ • LLM normalization  │ • Rule-based         │ • 30-day Cache       │
+ │ • Confidence scoring │   normalization      │ • Multi-tier Query   │
+ │                      │ • Ontology matching  │                      │
  └──────────────────────┴──────────────────────┴──────────────────────┘
           ↓
    Raw CSV output (output/raw/)
