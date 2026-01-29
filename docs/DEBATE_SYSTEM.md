@@ -6,7 +6,7 @@ This document explains the complete multi-agent debate process used in the STDN 
 
 1. [Overview](#overview)
 2. [Debate as a State Machine](#debate-as-a-state-machine)
-3. [Three-Phase Architecture](#three-phase-architecture)
+3. [Three-Phases of Debate](#three-phases-of-debate)
 4. [Component Debate (Phase 1)](#component-debate-phase-1)
 5. [Materials Debate (Phase 2)](#materials-debate-phase-2)
 6. [Country Data Debate (Phase 3)](#country-data-debate-phase-3)
