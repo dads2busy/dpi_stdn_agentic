@@ -175,8 +175,11 @@ class DebateReporter:
                     if round_num <= 1:
                         continue
 
-                    threshold = 0.75  # Default threshold
-                    threshold_reached = convergence >= threshold
+                    # Use enhanced data if available, otherwise fall back to defaults
+                    threshold = round_data.get("threshold", 0.75)
+                    threshold_reached = round_data.get(
+                        "threshold_reached", convergence >= threshold
+                    )
 
                     f.write(
                         f"\nROUND {round_num}: {'Consensus Reached' if threshold_reached else 'Refinement'}\n"
@@ -188,18 +191,83 @@ class DebateReporter:
                     else:
                         f.write(f" (threshold: {threshold:.0%})\n")
 
-                    # Show critiques if available
-                    critiques = round_data.get("critiques", [])
-                    if critiques:
-                        f.write("\nCritiques:\n")
-                        for critique in critiques[:5]:  # Limit to 5
-                            if isinstance(critique, dict):
-                                f.write(f"  {critique.get('text', str(critique))}\n")
-                            else:
-                                f.write(f"  {critique}\n")
+                    # Show changes from previous round if available
+                    changes = round_data.get("changes_from_previous")
+                    if changes:
+                        added = changes.get("items_added", [])
+                        removed = changes.get("items_removed", [])
+                        conf_changes = changes.get("confidence_changes", {})
 
-                    # Show round support analysis
-                    if proposals:
+                        if added or removed or conf_changes:
+                            f.write("\nChanges from Previous Round:\n")
+                            if added:
+                                f.write(f"  + Added: {', '.join(added[:5])}")
+                                if len(added) > 5:
+                                    f.write(f" (+{len(added) - 5} more)")
+                                f.write("\n")
+                            if removed:
+                                f.write(f"  - Removed: {', '.join(removed[:5])}")
+                                if len(removed) > 5:
+                                    f.write(f" (+{len(removed) - 5} more)")
+                                f.write("\n")
+                            if conf_changes:
+                                f.write(f"  ~ Confidence changes: {len(conf_changes)} items\n")
+
+                    # Show structured critiques if available (new format)
+                    structured_critiques = round_data.get("critiques", [])
+                    if structured_critiques and isinstance(structured_critiques, list):
+                        # Check if it's the new structured format
+                        if structured_critiques and isinstance(structured_critiques[0], dict):
+                            f.write("\nKey Critiques:\n")
+                            # Group by support level for cleaner output
+                            consensus_critiques = [
+                                c
+                                for c in structured_critiques
+                                if c.get("support_level") == "consensus"
+                            ]
+                            isolated_critiques = [
+                                c
+                                for c in structured_critiques
+                                if c.get("support_level") == "isolated"
+                            ]
+
+                            # Show consensus items (abbreviated)
+                            if consensus_critiques:
+                                f.write(
+                                    f"  [C] {len(consensus_critiques)} items have full consensus\n"
+                                )
+
+                            # Show isolated items (these need attention)
+                            for critique in isolated_critiques[:3]:
+                                item_name = critique.get("item_name", "Unknown")
+                                avg_conf = critique.get("avg_confidence", 0.0)
+                                f.write(
+                                    f"  [I] {item_name} (conf: {avg_conf:.2f}) - needs peer support\n"
+                                )
+
+                            if len(isolated_critiques) > 3:
+                                f.write(
+                                    f"      ... and {len(isolated_critiques) - 3} more isolated items\n"
+                                )
+                        else:
+                            # Legacy format - show as before
+                            f.write("\nCritiques:\n")
+                            for critique in structured_critiques[:5]:
+                                if isinstance(critique, dict):
+                                    f.write(f"  {critique.get('critique_text', str(critique))}\n")
+                                else:
+                                    f.write(f"  {critique}\n")
+
+                    # Use enhanced support analysis if available
+                    support_analysis = round_data.get("support_analysis")
+                    if support_analysis:
+                        f.write(
+                            self._format_enhanced_support_analysis(
+                                support_analysis, num_agents, f"Round {round_num}"
+                            )
+                        )
+                    elif proposals:
+                        # Fall back to computing from proposals
                         round_support = self._compute_support_from_proposals(proposals, num_agents)
                         f.write(
                             self._format_support_analysis(
@@ -337,6 +405,39 @@ class DebateReporter:
             lines.append(f"  [I] Isolated ({len(isolated)} items):\n")
             for name, conf, count in sorted(isolated, key=lambda x: -x[1])[:3]:
                 lines.append(f"      • {name} ({conf:.2f}) - needs peer support\n")
+
+        return "".join(lines)
+
+    def _format_enhanced_support_analysis(
+        self, support_analysis: Dict[str, Any], num_agents: int, label: str
+    ) -> str:
+        """Format enhanced support analysis from debate code (new format)."""
+        lines = [f"\n{label} Support Analysis:\n"]
+
+        consensus = support_analysis.get("consensus", [])
+        majority = support_analysis.get("majority", [])
+        isolated = support_analysis.get("isolated", [])
+
+        if consensus:
+            lines.append(f"  [C] Consensus ({len(consensus)} items):\n")
+            for item in consensus[:5]:
+                lines.append(f"      • {item}\n")
+            if len(consensus) > 5:
+                lines.append(f"      ... and {len(consensus) - 5} more\n")
+
+        if majority:
+            lines.append(f"  [M] Majority ({len(majority)} items):\n")
+            for item in majority[:5]:
+                lines.append(f"      • {item} - partial agreement\n")
+            if len(majority) > 5:
+                lines.append(f"      ... and {len(majority) - 5} more\n")
+
+        if isolated:
+            lines.append(f"  [I] Isolated ({len(isolated)} items):\n")
+            for item in isolated[:3]:
+                lines.append(f"      • {item} - needs peer support\n")
+            if len(isolated) > 3:
+                lines.append(f"      ... and {len(isolated) - 3} more\n")
 
         return "".join(lines)
 

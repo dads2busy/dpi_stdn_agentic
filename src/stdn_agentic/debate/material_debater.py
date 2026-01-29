@@ -483,6 +483,191 @@ class MaterialDebater:
 
         return total_similarity, num_comparisons
 
+    def compute_support_analysis(
+        self,
+        proposals: list[MaterialProposal],
+    ) -> dict[str, Any]:
+        """
+        Compute support level analysis for material proposals.
+
+        Categorizes each component-material pair by support level:
+        - CONSENSUS: All agents agree (3/3)
+        - MAJORITY: Majority agrees (2/3)
+        - ISOLATED: Single agent only (1/3)
+
+        Returns:
+            Dict with per-component support analysis including 'consensus', 'majority', 'isolated'
+        """
+        # Group by component and material
+        comp_mat_support: dict[str, dict[str, list[MaterialProposal]]] = defaultdict(
+            lambda: defaultdict(list)
+        )
+
+        for prop in proposals:
+            comp_mat_support[prop.normalizedcomponent][prop.normalizedmaterial].append(prop)
+
+        result: dict[str, Any] = {}
+
+        for comp, mat_support in comp_mat_support.items():
+            consensus_items = []
+            majority_items = []
+            isolated_items = []
+            details = {}
+
+            for mat_norm, props in mat_support.items():
+                support_count = len(props)
+                support_rate = support_count / self.num_agents
+                avg_conf = sum(p.confidence for p in props) / len(props)
+
+                # Get supporting agent IDs
+                supporting_agents = list(set(p.agentid for p in props))
+
+                item_detail = {
+                    "name": props[0].material,
+                    "normalized_name": mat_norm,
+                    "support_count": support_count,
+                    "total_agents": self.num_agents,
+                    "supporting_agents": supporting_agents,
+                    "avg_confidence": avg_conf,
+                    "reasoning": props[0].reasoning if props else "",
+                }
+
+                if support_rate >= 0.67:  # 2/3 or more
+                    item_detail["support_level"] = "consensus"
+                    consensus_items.append(mat_norm)
+                elif support_rate >= 0.33:  # 1/3 to 2/3
+                    item_detail["support_level"] = "majority"
+                    majority_items.append(mat_norm)
+                else:
+                    item_detail["support_level"] = "isolated"
+                    isolated_items.append(mat_norm)
+
+                details[mat_norm] = item_detail
+
+            result[comp] = {
+                "consensus": consensus_items,
+                "majority": majority_items,
+                "isolated": isolated_items,
+                "details": details,
+            }
+
+        return result
+
+    def compute_round_changes(
+        self,
+        current_proposals: list[MaterialProposal],
+        previous_proposals: list[MaterialProposal],
+    ) -> dict[str, Any]:
+        """
+        Compute what changed between two rounds for materials.
+
+        Returns:
+            Dict with per-component 'materials_added', 'materials_removed', and 'confidence_changes'
+        """
+
+        def get_comp_materials(
+            proposals: list[MaterialProposal],
+        ) -> dict[str, dict[str, float]]:
+            """Extract materials by component with avg confidence."""
+            comp_mats: dict[str, dict[str, list[float]]] = defaultdict(lambda: defaultdict(list))
+            for prop in proposals:
+                comp_mats[prop.normalizedcomponent][prop.normalizedmaterial].append(prop.confidence)
+
+            return {
+                comp: {mat: sum(confs) / len(confs) for mat, confs in mats.items()}
+                for comp, mats in comp_mats.items()
+            }
+
+        current = get_comp_materials(current_proposals)
+        previous = get_comp_materials(previous_proposals) if previous_proposals else {}
+
+        changes: dict[str, Any] = {}
+
+        # Get all components from both rounds
+        all_components = set(current.keys()) | set(previous.keys())
+
+        for comp in all_components:
+            current_mats = set(current.get(comp, {}).keys())
+            previous_mats = set(previous.get(comp, {}).keys())
+
+            added = list(current_mats - previous_mats)
+            removed = list(previous_mats - current_mats)
+
+            # Track confidence changes for materials in both rounds
+            conf_changes = {}
+            for mat in current_mats & previous_mats:
+                old_conf = previous[comp][mat]
+                new_conf = current[comp][mat]
+                if abs(new_conf - old_conf) > 0.05:
+                    conf_changes[mat] = {"from": old_conf, "to": new_conf}
+
+            if added or removed or conf_changes:
+                changes[comp] = {
+                    "materials_added": added,
+                    "materials_removed": removed,
+                    "confidence_changes": conf_changes,
+                }
+
+        return changes
+
+    def generate_structured_critiques(
+        self,
+        proposals: list[MaterialProposal],
+        round_num: int,
+    ) -> list[dict[str, Any]]:
+        """
+        Generate structured critique objects for transcript recording.
+
+        Returns a list of critique dicts with support analysis data.
+        """
+        support_analysis = self.compute_support_analysis(proposals)
+        critiques = []
+
+        all_agents = set(p.agentid for p in proposals)
+
+        for comp, analysis in support_analysis.items():
+            for mat_norm, detail in analysis["details"].items():
+                supporting = set(detail["supporting_agents"])
+                opposing = list(all_agents - supporting)
+
+                support_level = detail["support_level"]
+                avg_conf = detail["avg_confidence"]
+
+                # Generate critique text based on support level
+                if support_level == "consensus":
+                    critique_text = (
+                        f"Strong consensus on '{detail['name']}' for {comp}: "
+                        f"{detail['support_count']}/{self.num_agents} agents agree "
+                        f"(avg conf: {avg_conf:.2f}). Preserve this material."
+                    )
+                elif support_level == "majority":
+                    critique_text = (
+                        f"Majority support for '{detail['name']}' for {comp}: "
+                        f"{detail['support_count']}/{self.num_agents} agents "
+                        f"(conf: {avg_conf:.2f}). Consider strengthening consensus."
+                    )
+                else:
+                    critique_text = (
+                        f"Isolated proposal '{detail['name']}' for {comp} from "
+                        f"{detail['support_count']} agent(s) (conf: {avg_conf:.2f}). "
+                        f"Requires justification or peer validation."
+                    )
+
+                critiques.append(
+                    {
+                        "component": comp,
+                        "material_name": detail["name"],
+                        "normalized_name": mat_norm,
+                        "support_level": support_level,
+                        "supporting_agents": detail["supporting_agents"],
+                        "opposing_agents": opposing,
+                        "avg_confidence": avg_conf,
+                        "critique_text": critique_text,
+                    }
+                )
+
+        return critiques
+
     def generate_critiques_with_influence(
         self,
         proposals: list[MaterialProposal],
@@ -871,16 +1056,32 @@ class MaterialDebater:
         logger.info("Initial convergence: %.1f%%", convergence * 100)
 
         self.debate_history = []
+        previous_proposals: list[MaterialProposal] = []
 
         for round_num in range(2, self.max_rounds + 1):
-            if convergence >= self.convergence_threshold:
+            threshold_reached = convergence >= self.convergence_threshold
+            if threshold_reached:
                 logger.info("Convergence threshold reached!")
                 break
 
             logger.info("Round %d/%d...", round_num, self.max_rounds)
 
-            # Generate critiques
+            # Generate critiques (dict format for prompts)
             critiques = self.generate_critiques_with_influence(all_proposals, round_num)
+
+            # Generate structured critiques for transcript
+            structured_critiques = self.generate_structured_critiques(all_proposals, round_num)
+
+            # Compute support analysis for this round
+            support_analysis = self.compute_support_analysis(all_proposals)
+
+            # Compute changes from previous round
+            round_changes = None
+            if previous_proposals:
+                round_changes = self.compute_round_changes(all_proposals, previous_proposals)
+
+            # Store current proposals before refinement
+            previous_proposals = all_proposals.copy()
 
             # Refine proposals
             current_proposals = await self.run_debate_round(
@@ -891,7 +1092,7 @@ class MaterialDebater:
             convergence = self.calculate_convergence(all_proposals)
             logger.info("  Convergence: %.1f%%", convergence * 100)
 
-            # Store round data
+            # Store round data with enhanced information
             consensus_so_far = self.build_adaptive_consensus(
                 all_proposals,
                 convergence,
@@ -904,6 +1105,13 @@ class MaterialDebater:
                 convergencescore=convergence,
                 consensussofar=consensus_so_far,
             )
+            # Add enhanced data as attributes
+            debate_round.support_analysis = support_analysis  # type: ignore[attr-defined]
+            debate_round.structured_critiques = structured_critiques  # type: ignore[attr-defined]
+            debate_round.changes_from_previous = round_changes  # type: ignore[attr-defined]
+            debate_round.threshold = self.convergence_threshold  # type: ignore[attr-defined]
+            debate_round.threshold_reached = threshold_reached  # type: ignore[attr-defined]
+
             self.debate_history.append(debate_round)
 
             rounds_completed = round_num

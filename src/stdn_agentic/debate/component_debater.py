@@ -1083,6 +1083,8 @@ class MultiAgentDebater:
         List[Dict[str, Any]],
         Dict[str, List[Dict[str, Any]]],
     ]:
+        previous_proposals: List[Dict[str, Any]] = []
+
         for roundnum in range(self.max_rounds):
             logger.info("Round %d/%d:", roundnum + 1, self.max_rounds)
 
@@ -1098,19 +1100,41 @@ class MultiAgentDebater:
             self._log_round_confidence_stats(all_proposals)
 
             convergence = self.calculate_convergence_semantic(all_proposals)
+            threshold_reached = convergence >= self.convergence_threshold
             logger.info("  Convergence: %.1f%%", convergence * 100)
             rounds_completed = roundnum + 1
 
-            debate_rounds.append(
-                {
-                    "round_num": roundnum + 1,
-                    "convergence": convergence,
-                    "proposals": current_proposals.copy(),
-                    "rounds_completed": rounds_completed,
-                },
-            )
+            # Compute support analysis for this round
+            support_analysis = self.compute_support_analysis(all_proposals)
 
-            if convergence >= self.convergence_threshold:
+            # Compute changes from previous round
+            round_changes = None
+            if previous_proposals:
+                round_changes = self.compute_round_changes(all_proposals, previous_proposals)
+
+            # Generate structured critiques
+            structured_critiques = self.generate_structured_critiques(all_proposals, roundnum + 1)
+
+            # Build enhanced round data
+            round_data = {
+                "round_num": roundnum + 1,
+                "convergence": convergence,
+                "threshold": self.convergence_threshold,
+                "threshold_reached": threshold_reached,
+                "proposals": current_proposals.copy(),
+                "rounds_completed": rounds_completed,
+                # New enhanced data
+                "support_analysis": {
+                    "consensus": support_analysis["consensus"],
+                    "majority": support_analysis["majority"],
+                    "isolated": support_analysis["isolated"],
+                },
+                "critiques": structured_critiques,
+                "changes_from_previous": round_changes,
+            }
+            debate_rounds.append(round_data)
+
+            if threshold_reached:
                 logger.info("  Convergence threshold reached!")
                 break
 
@@ -1121,6 +1145,10 @@ class MultiAgentDebater:
                     roundnum + 1,
                 )
                 logger.debug("  Refining proposals based on peer feedback...")
+
+                # Store current proposals for next round comparison
+                previous_proposals = all_proposals.copy()
+
                 current_proposals = await self.run_debate_round(
                     technology=technology,
                     previous_proposals=all_proposals,
@@ -1163,6 +1191,206 @@ class MultiAgentDebater:
         min_conf = min(confidences)
         max_conf = max(confidences)
         logger.debug("  Confidence: avg=%.2f, min=%.2f, max=%.2f", avg_conf, min_conf, max_conf)
+
+    def compute_support_analysis(
+        self,
+        proposals: List[Dict[str, Any]],
+        num_agents: int = 3,
+    ) -> Dict[str, Any]:
+        """
+        Compute support level analysis for proposals.
+
+        Categorizes each component by support level:
+        - CONSENSUS: All agents agree (3/3)
+        - MAJORITY: Majority agrees (2/3)
+        - ISOLATED: Single agent only (1/3)
+
+        Returns:
+            Dict with 'consensus', 'majority', 'isolated' lists and 'details' dict
+        """
+        # Group components by normalized name
+        comp_support: Dict[str, Dict[str, Any]] = {}
+
+        for prop in proposals:
+            agent_id = self._get_prop_value(prop, "agent_id", "unknown")
+            name = (
+                self._get_prop_value(prop, "normalized_component")
+                or self._get_prop_value(prop, "component")
+                or self._get_prop_value(prop, "component_name")
+                or ""
+            )
+            confidence = float(self._get_prop_value(prop, "confidence", 0.8))
+            reasoning = self._get_prop_value(prop, "reasoning", "")
+
+            if not name:
+                continue
+
+            norm = self.normalize_component_name(name)
+            if norm not in comp_support:
+                comp_support[norm] = {
+                    "display_name": name,
+                    "agents": set(),
+                    "confidences": [],
+                    "reasonings": [],
+                }
+            comp_support[norm]["agents"].add(agent_id)
+            comp_support[norm]["confidences"].append(confidence)
+            comp_support[norm]["reasonings"].append(reasoning)
+
+        # Categorize by support level
+        consensus_items = []
+        majority_items = []
+        isolated_items = []
+        details = {}
+
+        for norm_name, data in comp_support.items():
+            support_count = len(data["agents"])
+            avg_conf = sum(data["confidences"]) / len(data["confidences"])
+
+            item_detail = {
+                "name": data["display_name"],
+                "normalized_name": norm_name,
+                "support_count": support_count,
+                "total_agents": num_agents,
+                "supporting_agents": list(data["agents"]),
+                "avg_confidence": avg_conf,
+                "reasoning": data["reasonings"][0] if data["reasonings"] else "",
+            }
+
+            if support_count == num_agents:
+                item_detail["support_level"] = "consensus"
+                consensus_items.append(norm_name)
+            elif support_count > num_agents / 2:
+                item_detail["support_level"] = "majority"
+                majority_items.append(norm_name)
+            else:
+                item_detail["support_level"] = "isolated"
+                isolated_items.append(norm_name)
+
+            details[norm_name] = item_detail
+
+        return {
+            "consensus": consensus_items,
+            "majority": majority_items,
+            "isolated": isolated_items,
+            "details": details,
+        }
+
+    def compute_round_changes(
+        self,
+        current_proposals: List[Dict[str, Any]],
+        previous_proposals: List[Dict[str, Any]],
+    ) -> Dict[str, Any]:
+        """
+        Compute what changed between two rounds.
+
+        Returns:
+            Dict with 'items_added', 'items_removed', and 'confidence_changes'
+        """
+
+        def get_components(proposals: List[Dict[str, Any]]) -> Dict[str, float]:
+            """Extract normalized components and their avg confidence."""
+            comp_conf: Dict[str, List[float]] = {}
+            for prop in proposals:
+                name = (
+                    self._get_prop_value(prop, "normalized_component")
+                    or self._get_prop_value(prop, "component")
+                    or ""
+                )
+                if not name:
+                    continue
+                norm = self.normalize_component_name(name)
+                confidence = float(self._get_prop_value(prop, "confidence", 0.8))
+                if norm not in comp_conf:
+                    comp_conf[norm] = []
+                comp_conf[norm].append(confidence)
+
+            return {k: sum(v) / len(v) for k, v in comp_conf.items()}
+
+        current_comps = get_components(current_proposals)
+        previous_comps = get_components(previous_proposals) if previous_proposals else {}
+
+        current_set = set(current_comps.keys())
+        previous_set = set(previous_comps.keys())
+
+        items_added = list(current_set - previous_set)
+        items_removed = list(previous_set - current_set)
+
+        # Track confidence changes for items in both rounds
+        confidence_changes = {}
+        for comp in current_set & previous_set:
+            old_conf = previous_comps[comp]
+            new_conf = current_comps[comp]
+            if abs(new_conf - old_conf) > 0.05:  # Only track significant changes
+                confidence_changes[comp] = {"from": old_conf, "to": new_conf}
+
+        return {
+            "items_added": items_added,
+            "items_removed": items_removed,
+            "confidence_changes": confidence_changes,
+        }
+
+    def generate_structured_critiques(
+        self,
+        proposals: List[Dict[str, Any]],
+        round_num: int,
+        num_agents: int = 3,
+    ) -> List[Dict[str, Any]]:
+        """
+        Generate structured critique objects for transcript recording.
+
+        Returns a list of critique dicts with:
+        - item_name: Component being critiqued
+        - support_level: 'consensus', 'majority', or 'isolated'
+        - supporting_agents: List of agent IDs that support
+        - opposing_agents: List of agent IDs that don't support
+        - avg_confidence: Average confidence across supporters
+        - critique_text: Human-readable critique
+        """
+        support_analysis = self.compute_support_analysis(proposals, num_agents)
+        critiques = []
+
+        all_agents = set()
+        for prop in proposals:
+            all_agents.add(self._get_prop_value(prop, "agent_id", "unknown"))
+
+        for norm_name, detail in support_analysis["details"].items():
+            supporting = set(detail["supporting_agents"])
+            opposing = list(all_agents - supporting)
+
+            support_level = detail["support_level"]
+            avg_conf = detail["avg_confidence"]
+
+            # Generate critique text based on support level
+            if support_level == "consensus":
+                critique_text = (
+                    f"Strong consensus on '{detail['name']}': all {num_agents} agents "
+                    f"support with avg confidence {avg_conf:.2f}. Preserve this component."
+                )
+            elif support_level == "majority":
+                critique_text = (
+                    f"Majority support for '{detail['name']}': {detail['support_count']}/{num_agents} "
+                    f"agents agree (conf: {avg_conf:.2f}). Consider strengthening consensus."
+                )
+            else:
+                critique_text = (
+                    f"Isolated proposal '{detail['name']}' from {detail['support_count']} agent(s) "
+                    f"(conf: {avg_conf:.2f}). Requires justification or peer validation."
+                )
+
+            critiques.append(
+                {
+                    "item_name": detail["name"],
+                    "normalized_name": norm_name,
+                    "support_level": support_level,
+                    "supporting_agents": detail["supporting_agents"],
+                    "opposing_agents": opposing,
+                    "avg_confidence": avg_conf,
+                    "critique_text": critique_text,
+                }
+            )
+
+        return critiques
 
     def _flatten_final_proposals(
         self,
