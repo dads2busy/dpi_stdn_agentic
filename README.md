@@ -83,6 +83,7 @@ Output filenames encode the debate configuration:
 | [AGENTS.md](docs/AGENTS.md) | Detailed documentation of the agent system including Component, Materials, and Country agents with their schemas and confidence scoring |
 | [CONFIGURATION.md](docs/CONFIGURATION.md) | Complete configuration guide including JSON config, environment variables, and installation instructions |
 | [PIPELINE.md](docs/PIPELINE.md) | Pipeline stages documentation with module organization, execution modes, and troubleshooting |
+| [PROMPTS.md](docs/PROMPTS.md) | Complete reference of all LLM prompts used in the system including agent system prompts, debate prompts, and orchestrator prompts |
 | [DEBATE_SYSTEM.md](docs/DEBATE_SYSTEM.md) | Multi-agent debate mechanism including Jaccard convergence, critique generation, and Borda voting |
 | [DEBATE_EVIDENCE_REPORT.md](docs/DEBATE_EVIDENCE_REPORT.md) | Empirical analysis comparing debate vs. single-agent mode across stability, confidence, and hallucination reduction |
 
