@@ -303,9 +303,9 @@ Normalization occurs at multiple stages to ensure consistency:
 |-------|------|------|-----|
 | **Component Extraction** | Component names | Before debate rounds | LLM semantic mapping of agent proposals |
 | **Component Debate** | Component names | During each round | Proposals normalized before Jaccard calculation |
-| **Materials Extraction** | Material names | During extraction | Fuzzy matching to ontology + variant mapping |
-| **Materials Debate** | Material names | During each round | Ontology matching for consistent naming |
-| **Post-Processing** | Component names | After CSV output | Batch normalization across all outputs |
+| **Materials Extraction** | Component + material names | During extraction | Rule-based normalization + variant mapping |
+| **Materials Debate** | Component + material names | During each round | Rule-based normalization + ontology matching |
+| **Post-Processing** | Component names | After CSV output | Batch LLM normalization across all outputs |
 
 ### Material Variant Mapping
 
