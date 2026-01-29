@@ -353,7 +353,7 @@ Each state in the debate process has a specific data structure and produces a we
 
 ---
 
-## Three-Phase Architecture
+## Three-Phases of Debate
 
 Each phase uses a similar debate pattern but is optimized for its specific task:
 
