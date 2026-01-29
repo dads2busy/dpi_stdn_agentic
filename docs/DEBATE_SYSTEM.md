@@ -446,6 +446,10 @@ flowchart TB
 5. **Refinement Loop**: In rounds 2+, agents receive critiques plus all prior proposals and must select from a candidate list (not invent new names)
 6. **Termination**: Loop exits when convergence threshold is met OR maximum rounds reached
 
+**Why Semantic Normalization is Essential for Multi-Agent Debate:**
+
+In a single-agent (non-debate) approach, component naming inconsistency is not a problem—the one agent uses whatever names it chooses, and those names flow directly to subsequent pipeline stages. However, in a multi-agent debate system, we must compare proposals across independent agents to measure convergence and build consensus. Without normalization, agents proposing semantically identical components with different surface names (e.g., "Li-ion Battery" vs "Lithium Ion Battery" vs "Battery Pack") would appear to disagree, artificially deflating convergence scores and preventing consensus on components that all agents actually recognize. Post-processing semantic normalization solves this by mapping variant names to canonical forms *after* agents propose independently, preserving each agent's natural terminology while enabling accurate agreement measurement. This is a cost unique to debate-based architectures: the overhead of normalization is the price paid for the benefits of multi-perspective validation and reduced hallucination that debate provides.
+
 ### Detailed Flow Diagram
 
 ```
