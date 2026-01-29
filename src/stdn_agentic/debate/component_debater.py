@@ -97,8 +97,10 @@ class MultiAgentDebater:
         if not all_proposals:
             return initial_proposals
 
+        # Get component names - check both "name" and "component" fields
         all_component_names = [
-            p.get("component") or p.get("component_name", "") for p in all_proposals
+            p.get("name") or p.get("component") or p.get("component_name", "")
+            for p in all_proposals
         ]
 
         logger.info(
@@ -129,7 +131,11 @@ class MultiAgentDebater:
                         "round": getattr(prop, "round", 1),
                     }
 
-                original = p.get("component", "")
+                # Get original name from either "name" or "component" field
+                original = p.get("name") or p.get("component", "")
+                # Ensure "component" field is set for downstream processing
+                if "component" not in p and "name" in p:
+                    p["component"] = p["name"]
                 normalized = normalization_map.get(original, normalize_component_name(original))
                 p["normalized_component"] = normalized
                 updated.append(p)
@@ -323,7 +329,11 @@ class MultiAgentDebater:
         if isinstance(prop, AgentProposal):
             return getattr(prop, key, default)
         if isinstance(prop, dict):
-            return prop.get(key, default)
+            value = prop.get(key, default)
+            # Special handling: if looking for "component", also check "name"
+            if value is None and key == "component":
+                value = prop.get("name", default)
+            return value
         return default
 
     # ------------------------------------------------------------------#
@@ -830,49 +840,75 @@ class MultiAgentDebater:
         """
         Run a single debate round with critique feedback and dynamic confidence scoring.
 
+        IMPORTANT: This method constrains agents to SELECT from existing proposed
+        components rather than inventing new ones. The debate is about reaching
+        consensus on WHICH components to include and with what confidence.
+
         Returns:
             Dict mapping agent_id -> list of proposal dicts with confidence scores.
         """
         from dataclasses import replace
 
-        # Build context from previous proposals
-        prev_context = "\n".join(
-            f"- {self._get_prop_value(p, 'agent_id', 'unknown')}: "
-            f"{self._get_prop_value(p, 'component') or self._get_prop_value(p, 'component_name', '')} "
-            f"(confidence={self._get_prop_value(p, 'confidence', 0.8):.2f})"
-            for p in previous_proposals
+        # Collect all unique component names from previous proposals
+        unique_components: Dict[str, Dict[str, Any]] = {}
+        for p in previous_proposals:
+            comp_name = self._get_prop_value(p, "component") or self._get_prop_value(
+                p, "component_name", ""
+            )
+            if comp_name and comp_name not in unique_components:
+                unique_components[comp_name] = {
+                    "name": comp_name,
+                    "reasoning": self._get_prop_value(p, "reasoning", ""),
+                    "confidence": self._get_prop_value(p, "confidence", 0.8),
+                }
+
+        # Build a numbered list of candidate components
+        component_list = "\n".join(
+            f"  {i + 1}. {comp['name']} (initial confidence: {comp['confidence']:.2f})"
+            for i, comp in enumerate(unique_components.values())
         )
-        critique_text = "\n".join(critiques)
+
+        # Build context from previous proposals grouped by agent
+        agent_proposals: Dict[str, List[str]] = {}
+        for p in previous_proposals:
+            agent_id = self._get_prop_value(p, "agent_id", "unknown")
+            comp_name = self._get_prop_value(p, "component") or self._get_prop_value(
+                p, "component_name", ""
+            )
+            conf = self._get_prop_value(p, "confidence", 0.8)
+            if agent_id not in agent_proposals:
+                agent_proposals[agent_id] = []
+            agent_proposals[agent_id].append(f"{comp_name} ({conf:.2f})")
+
+        prev_context = "\n".join(
+            f"  {agent_id}: {', '.join(comps)}"
+            for agent_id, comps in sorted(agent_proposals.items())
+        )
+
+        critique_text = "\n".join(f"  - {c}" for c in critiques)
 
         # Validate that we have content to send to LLM
-        if not prev_context or not prev_context.strip():
-            prev_context = "No previous proposals available."
-            logger.warning(f"Round {roundnum}: No previous proposals, using fallback text")
+        if not component_list or not component_list.strip():
+            logger.warning(f"Round {roundnum}: No components available for debate")
+            return {}
 
         if not critique_text or not critique_text.strip():
-            critique_text = "Focus on reaching consensus on essential components."
-            logger.warning(f"Round {roundnum}: No critiques, using fallback text")
+            critique_text = "  - Focus on reaching consensus on essential components."
 
-        # Enhanced system prompt that emphasizes confidence scoring
-        system_prompt = """You are an expert in technology component analysis participating in a multi-agent debate.
+        # System prompt that emphasizes SELECTION not invention
+        system_prompt = """You are an expert participating in a multi-agent debate to reach consensus on technology components.
 
-    Your task is to identify PRIMARY MANUFACTURING COMPONENTS for technologies.
+CRITICAL RULES:
+1. You MUST ONLY select from the CANDIDATE COMPONENTS list provided
+2. Do NOT invent new component names - use the EXACT names from the list
+3. Your job is to decide which components to INCLUDE and with what CONFIDENCE
+4. Adjust confidence based on peer support and critique feedback
 
-    CRITICAL: For each component, you MUST provide:
-    1. Component name
-    2. Your confidence (0.0 to 1.0) that this is truly a primary component:
-       - 1.0 = Absolutely certain, universal standard
-       - 0.8-0.9 = Very confident, industry standard
-       - 0.6-0.7 = Moderately confident, common but may vary
-       - 0.4-0.5 = Uncertain, depends on implementation
-       - 0.0-0.3 = Low confidence, rarely separate
-    3. Brief reasoning justifying your confidence
-
-    Consider peer proposals and critiques carefully. Adjust your confidence based on:
-    - Consensus among peers (higher confidence if many agree)
-    - Strength of reasoning in critiques
-    - Your own expertise and certainty
-    """
+For each component you include, provide:
+- The EXACT component name from the candidate list
+- Your confidence (0.0-1.0) that it should be included
+- Brief reasoning for your confidence level
+"""
 
         new_proposals: Dict[str, List[Dict[str, Any]]] = {}
 
@@ -884,59 +920,56 @@ class MultiAgentDebater:
             system_prompt=system_prompt,
         )
 
-        # Use 3 agents with simple persona labels
-        for agent_num in range(1, 4):
-            agent_id = f"Agent{agent_num}"
+        # Get the original agent IDs from the proposals to maintain consistency
+        original_agent_ids = sorted(
+            set(self._get_prop_value(p, "agent_id", "unknown") for p in previous_proposals)
+        )
+
+        # Use the same number of agents as in initial proposals
+        num_agents = max(len(original_agent_ids), 3)
+
+        for agent_num in range(1, num_agents + 1):
+            # Use consistent agent ID format (with underscore to match initial proposals)
+            agent_id = f"Agent_{agent_num}"
 
             # Build the debate prompt
-            prompt = f"""DEBATE ROUND {roundnum}
+            prompt = f"""DEBATE ROUND {roundnum} - COMPONENT SELECTION
 
-    Technology: {technology}
+Technology: {technology}
 
-    PREVIOUS ROUND PROPOSALS:
-    {prev_context}
+CANDIDATE COMPONENTS (you MUST select from this list):
+{component_list}
 
-    PEER CRITIQUES AND GUIDANCE:
-    {critique_text}
+PREVIOUS ROUND - AGENT SELECTIONS:
+{prev_context}
 
-    YOUR TASK:
-    1. Review all peer proposals and critiques carefully
-    2. For EACH component you propose, assign a confidence score (0.0-1.0) based on:
-       - How certain you are it's a primary component
-       - Degree of peer support or opposition
-       - Strength of evidence and reasoning
-    3. Support strong consensus candidates with high confidence
-    4. Lower confidence for isolated proposals unless critically justified
-    5. Provide clear reasoning for each confidence assessment
+PEER CRITIQUES AND GUIDANCE:
+{critique_text}
 
-    Return your refined component list with confidence scores and reasoning.
-    """
+YOUR TASK:
+1. Review the candidate components and peer feedback
+2. SELECT which components from the list above should be included
+3. For each selected component:
+   - Use the EXACT name from the candidate list
+   - Assign confidence (0.0-1.0) based on:
+     * Peer support (higher if multiple agents selected it)
+     * Critique feedback (adjust based on critiques)
+     * Your assessment of its importance as a primary component
+   - Provide brief reasoning
 
-            # Validate final prompt before sending to LLM
-            if not prompt or not prompt.strip() or len(prompt) < 100:
-                logger.error(
-                    "Invalid prompt for %s in round %d: prompt too short (length=%d)",
-                    agent_id,
-                    roundnum,
-                    len(prompt) if prompt else 0,
-                )
-                # Fall back to previous proposals for this agent
-                prev_for_agent = [
-                    p for p in previous_proposals if self._get_prop_value(p, "agent_id") == agent_id
-                ]
-                new_proposals[agent_id] = prev_for_agent
-                continue  # Skip to next agent
+IMPORTANT: Only include components you believe should be in the final consensus.
+Components with low peer support should have lower confidence unless critically justified.
+"""
 
             try:
                 # Use very low Top-P for deterministic, focused refinements
                 debate_deps = replace(deps, top_p=self.debate_top_p)
 
-                # Log what's being sent
                 logger.debug(
-                    "%s calling LLM: prompt=%d chars, prev_proposals=%d, critiques=%d",
+                    "%s calling LLM: prompt=%d chars, candidates=%d, critiques=%d",
                     agent_id,
                     len(prompt),
-                    len(previous_proposals),
+                    len(unique_components),
                     len(critiques),
                 )
 
@@ -947,21 +980,24 @@ class MultiAgentDebater:
                 if result and result.output and result.output.components:
                     proposals_list = []
                     for comp in result.output.components:
+                        # Try to match to an existing component name
+                        matched_name = self._match_to_existing_component(
+                            comp.name, unique_components
+                        )
                         proposals_list.append(
                             {
                                 "agent_id": agent_id,
-                                "component": comp.name,
-                                "confidence": comp.confidence,  # LLM-provided confidence
+                                "component": matched_name,
+                                "confidence": comp.confidence,
                                 "reasoning": comp.reasoning,
                                 "round": roundnum,
                             }
                         )
                     new_proposals[agent_id] = proposals_list
 
-                    # Log confidence distribution for monitoring
                     avg_conf = sum(p["confidence"] for p in proposals_list) / len(proposals_list)
                     logger.info(
-                        "Round %d - %s: %d components, avg confidence=%.2f",
+                        "Round %d - %s: %d components selected, avg confidence=%.2f",
                         roundnum,
                         agent_id,
                         len(proposals_list),
@@ -980,6 +1016,41 @@ class MultiAgentDebater:
                 new_proposals[agent_id] = prev_for_agent
 
         return new_proposals
+
+    def _match_to_existing_component(
+        self,
+        proposed_name: str,
+        existing_components: Dict[str, Dict[str, Any]],
+    ) -> str:
+        """
+        Match a proposed component name to an existing one.
+
+        Uses exact match first, then normalized match, then fuzzy match.
+        Returns the best matching existing name, or the proposed name if no match.
+        """
+        # Exact match
+        if proposed_name in existing_components:
+            return proposed_name
+
+        # Normalized match
+        proposed_norm = self.normalize_component_name(proposed_name)
+        for existing_name in existing_components:
+            if self.normalize_component_name(existing_name) == proposed_norm:
+                return existing_name
+
+        # Fuzzy match - check if proposed name is contained in or contains existing
+        proposed_lower = proposed_name.lower()
+        for existing_name in existing_components:
+            existing_lower = existing_name.lower()
+            if proposed_lower in existing_lower or existing_lower in proposed_lower:
+                return existing_name
+
+        # No match found - return proposed name but log warning
+        logger.warning(
+            "LLM proposed '%s' which doesn't match any existing component",
+            proposed_name,
+        )
+        return proposed_name
 
     async def run_debate(
         self,
