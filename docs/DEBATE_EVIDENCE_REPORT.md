@@ -1,6 +1,6 @@
 # Multi-Agent Debate Evidence Report
 
-Generated: 2026-01-29 09:12:02
+Generated: 2026-01-29 18:10:15
 
 ---
 
@@ -14,8 +14,8 @@ This report analyzes 5 runs each of:
 
 | Claim | Evidence | Verdict |
 |-------|----------|---------|
-| Reduced Hallucination | 1995 isolated proposals flagged | **Supported** |
-| Output Stability | 12.9% more stable (Jaccard) | **Supported** |
+| Reduced Hallucination | 2000 isolated proposals flagged | **Supported** |
+| Output Stability | 55.1% more stable (Jaccard) | **Supported** |
 | Honest Uncertainty | Debate identifies low-confidence items | **Supported** |
 | Coverage Quality | 50% of v1v1v1 'extra' materials questionable | **Debate wins** |
 
@@ -29,16 +29,16 @@ During debate, each material proposal is evaluated by all 3 agents. Items with l
 
 | Support Level | Count | Description |
 |---------------|-------|-------------|
-| 1/3 agents (isolated) | **1995** | Flagged for reconsideration |
-| 2/3 agents (partial) | 618 | Majority but not full consensus |
-| 3/3 agents (consensus) | 532 | Full agreement |
+| 1/3 agents (isolated) | **2000** | Flagged for reconsideration |
+| 2/3 agents (partial) | 615 | Majority but not full consensus |
+| 3/3 agents (consensus) | 531 | Full agreement |
 
 ### Debate Filtering Effectiveness
 
 Of 573 isolated proposals (1/3 support):
 
-- **532 (92.8%)** were filtered out after reconsideration
-- 41 (7.2%) were kept after scrutiny
+- **533 (93.0%)** were filtered out after reconsideration
+- 40 (7.0%) were kept after scrutiny
 
 This demonstrates that debate actively filters questionable proposals that single-agent mode would accept blindly.
 
@@ -52,14 +52,14 @@ This demonstrates that debate actively filters questionable proposals that singl
 
 | Metric | d3d3v3 (Debate) | v1v1v1 (No Debate) |
 |--------|-----------------|-------------------|
-| Mean Confidence | 0.841 | 0.883 |
-| Items with 0.0 confidence | 615 (5.0%) | 0 (0.0%) |
+| Mean Confidence | 0.846 | 0.883 |
+| Items with 0.0 confidence | 515 (4.2%) | 0 (0.0%) |
 | Min Confidence | 0.000 | 0.600 |
-| Std Deviation | 0.204 | 0.076 |
+| Std Deviation | 0.190 | 0.076 |
 
 ### The 0.0 Confidence Items
 
-d3d3v3 has **615 items (5.0%)** with 0.0 confidence. These represent components where debate **failed to reach consensus**:
+d3d3v3 has **515 items (4.2%)** with 0.0 confidence. These represent components where debate **failed to reach consensus**:
 
 - Component names contain '/' indicating concatenated agent proposals
 - Examples: 'Battery Cell Pack/Li Ion Battery Modules/Housing Enclosure...'
@@ -71,8 +71,8 @@ v1v1v1 has **0 items** with 0.0 confidence because a single agent always 'agrees
 
 | Metric | d3d3v3 (Debate) | v1v1v1 (No Debate) |
 |--------|-----------------|-------------------|
-| Mean (excluding 0.0) | **0.8852** | **0.8827** |
-| Difference | 0.29% | - |
+| Mean (excluding 0.0) | **0.8831** | **0.8827** |
+| Difference | 0.04% | - |
 
 ### Key Insight
 
@@ -88,11 +88,11 @@ Jaccard similarity measures overlap between component sets. Higher values = more
 
 | Metric | d3d3v3 (Debate) | v1v1v1 (No Debate) |
 |--------|-----------------|-------------------|
-| Avg Jaccard Similarity | **0.357** | 0.317 |
-| Min Jaccard | 0.000 | 0.000 |
-| Max Jaccard | 0.889 | 1.000 |
+| Avg Jaccard Similarity | **0.491** | 0.317 |
+| Min Jaccard | 0.118 | 0.000 |
+| Max Jaccard | 1.000 | 1.000 |
 
-**Finding**: Debate outputs are **12.9% more stable** across runs.
+**Finding**: Debate outputs are **55.1% more stable** across runs.
 
 This suggests that multi-agent consensus leads to more reproducible results, while single-agent outputs vary more due to stochastic LLM behavior.
 
@@ -102,25 +102,25 @@ This suggests that multi-agent consensus leads to more reproducible results, whi
 
 | Metric | d3d3v3 (Debate) | v1v1v1 (No Debate) |
 |--------|-----------------|-------------------|
-| Unique Materials | 44 | 133 |
-| 'Extra' Materials | - | +109 |
+| Unique Materials | 43 | 133 |
+| 'Extra' Materials | - | +102 |
 
 ### But Are v1v1v1's 'Extra' Materials Valid?
 
-Analysis of the 109 materials unique to v1v1v1:
+Analysis of the 102 materials unique to v1v1v1:
 
 | Category | Count | Percentage |
 |----------|-------|------------|
-| Flagged as isolated (1/3 support) in debates | **55** | **50.5%** |
-| Not in debate transcripts (different tech samples) | 54 | 49.5% |
+| Flagged as isolated (1/3 support) in debates | **51** | **50.0%** |
+| Not in debate transcripts (different tech samples) | 51 | 50.0% |
 
 ### Projected Impact
 
 Based on debate's 92.8% filter rate for isolated proposals:
 
-- v1v1v1 materials that would be scrutinized: 55
-- Expected to be filtered: ~51
-- This would reduce v1v1v1's 'extra' coverage by ~47%
+- v1v1v1 materials that would be scrutinized: 51
+- Expected to be filtered: ~47
+- This would reduce v1v1v1's 'extra' coverage by ~46%
 
 ### Key Insight
 
@@ -132,33 +132,33 @@ How agents converge over debate rounds:
 
 | Metric | Value |
 |--------|-------|
-| Average initial convergence | 0.0% |
-| Average final convergence | 48.5% |
-| Average rounds to converge | 3.1 |
-| Convergence improvement | +48.5% |
+| Average initial convergence | 18.8% |
+| Average final convergence | 52.6% |
+| Average rounds to converge | 3.0 |
+| Convergence improvement | +33.8% |
 
 ## Conclusions
 
 Based on analysis of 5 runs each of d3d3v3 (debate) and v1v1v1 (no debate):
 
 ### 1. Reduced Hallucination: **SUPPORTED**
-- 1995 isolated proposals (1/3 support) were identified during debate
+- 2000 isolated proposals (1/3 support) were identified during debate
 - 92.8% of these were filtered out after reconsideration
 - Single-agent mode has no mechanism to catch such errors
 
 ### 2. Confidence Scores: **NUANCED**
 - v1v1v1 shows higher raw confidence (0.883 vs 0.841)
-- However, d3d3v3 has 615 items with 0.0 confidence (debate failures)
-- Excluding these: d3d3v3 (0.8852) ≈ v1v1v1 (0.8827)
+- However, d3d3v3 has 515 items with 0.0 confidence (debate failures)
+- Excluding these: d3d3v3 (0.8831) ≈ v1v1v1 (0.8827)
 - **Key insight**: Debate honestly identifies uncertainty; single-agent is overconfident
 
 ### 3. Output Stability: **SUPPORTED**
-- Debate outputs are 12.9% more consistent across runs
-- Jaccard similarity: d3d3v3 (0.357) > v1v1v1 (0.317)
+- Debate outputs are 55.1% more consistent across runs
+- Jaccard similarity: d3d3v3 (0.491) > v1v1v1 (0.317)
 - Multi-agent consensus reduces stochastic variation
 
 ### 4. Coverage Quality: **DEBATE WINS**
-- v1v1v1 found 89 more unique materials
+- v1v1v1 found 90 more unique materials
 - But 50% of v1v1v1's 'extra' materials were flagged as questionable
 - Debate's 'lower' coverage is actually higher-quality coverage
 
