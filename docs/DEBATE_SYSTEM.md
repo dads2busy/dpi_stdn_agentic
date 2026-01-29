@@ -401,56 +401,35 @@ Identify the primary manufacturing components of a technology product.
 The following diagram illustrates the complete component debate process, from initial proposals through iterative refinement to final consensus:
 
 ```mermaid
-flowchart TB
-    subgraph Round1["ROUND 1: Independent Proposals"]
-        A1[("Agent 1")]
-        A2[("Agent 2")]
-        A3[("Agent 3")]
+flowchart LR
+    subgraph Round1["ROUND 1"]
+        direction TB
+        Tech[/"Technology Query"/] --> Agents
+        subgraph Agents[" "]
+            A1[("Agent 1")] & A2[("Agent 2")] & A3[("Agent 3")]
+        end
     end
     
-    Tech[/"Technology Query"/] --> A1
-    Tech --> A2
-    Tech --> A3
+    Agents --> |"Proposals"| Collect["Collect & Normalize"]
+    Collect --> Calc["Convergence Check"]
     
-    A1 --> |"Proposals + Confidence"| Collect["Collect All Proposals"]
-    A2 --> |"Proposals + Confidence"| Collect
-    A3 --> |"Proposals + Confidence"| Collect
+    Calc --> Check{{"≥ Threshold?"}}
+    Check --> |"Yes"| Output[/"Final Components"/]
+    Check --> |"No"| Critique["Generate Critiques"]
     
-    Collect --> Normalize["Normalize Names
-    (LLM Semantic Mapping)"]
-    Normalize --> Calc["Calculate Convergence
-    (Jaccard Similarity)"]
-    
-    Calc --> Check{{"Convergence ≥ Threshold?"}}
-    
-    Check --> |"Yes"| Consensus["Build Final Consensus"]
-    Check --> |"No"| Critique["Generate Critiques
-    • Consensus items: preserve
-    • Isolated items: reconsider"]
-    
-    subgraph Loop["ROUNDS 2+: Refinement Cycle"]
-        Critique --> Forward["Forward to Agents:
-        • Original Proposals
-        • Peer Critiques"]
-        
-        Forward --> R1[("Agent 1 Reconsider")]
-        Forward --> R2[("Agent 2 Reconsider")]
-        Forward --> R3[("Agent 3 Reconsider")]
-        
-        R1 --> |"Refined Proposals"| Collect2["Collect Refined Proposals"]
-        R2 --> |"Refined Proposals"| Collect2
-        R3 --> |"Refined Proposals"| Collect2
+    subgraph Loop["ROUNDS 2+: Refinement"]
+        direction TB
+        Critique --> Forward["Forward Proposals + Critiques"]
+        Forward --> Refine
+        subgraph Refine[" "]
+            R1[("Agent 1")] & R2[("Agent 2")] & R3[("Agent 3")]
+        end
     end
     
-    Collect2 --> Calc2["Calculate Convergence"]
-    Calc2 --> Check2{{"Convergence ≥ Threshold
-    OR Max Rounds?"}}
-    
+    Refine --> |"Refined"| Calc2["Convergence Check"]
+    Calc2 --> Check2{{"≥ Threshold or Max Rounds?"}}
     Check2 --> |"No"| Critique
-    Check2 --> |"Yes"| Consensus
-    
-    Consensus --> Output[/"Final Components
-    with Confidence Scores"/]
+    Check2 --> |"Yes"| Output
 ```
 
 **Key aspects of the component debate process:**
