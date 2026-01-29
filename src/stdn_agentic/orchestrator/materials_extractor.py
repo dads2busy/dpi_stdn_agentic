@@ -618,6 +618,70 @@ class MaterialsExtractor:
 
         return "".join(content)
 
+    def _format_material_critiques(self, critiques: Any) -> list[str]:
+        """Format material critiques into readable text lines.
+
+        Handles both old dict format (component -> material -> critique list)
+        and new structured list format.
+        """
+        formatted = []
+
+        # Handle new structured critique format (list of dicts)
+        if isinstance(critiques, list):
+            for critique in critiques:
+                if isinstance(critique, dict):
+                    # New format: structured critique dict
+                    support_level = critique.get("support_level", "unknown")
+                    material = critique.get("material_name", critique.get("item_name", "Unknown"))
+                    component = critique.get("component", "")
+                    avg_conf = critique.get("avg_confidence", 0.0)
+
+                    if support_level == "consensus":
+                        prefix = "[C]"
+                    elif support_level == "majority":
+                        prefix = "[M]"
+                    else:
+                        prefix = "[I]"
+
+                    if component:
+                        formatted.append(
+                            f"{prefix} {material} for {component} (conf: {avg_conf:.2f})"
+                        )
+                    else:
+                        formatted.append(f"{prefix} {material} (conf: {avg_conf:.2f})")
+                else:
+                    # Plain string critique
+                    formatted.append(str(critique))
+            return formatted
+
+        # Handle old dict format (component -> material -> critique strings)
+        if isinstance(critiques, dict):
+            for component, mat_critiques in critiques.items():
+                if isinstance(mat_critiques, dict):
+                    for material, critique_list in mat_critiques.items():
+                        if material.startswith("_"):
+                            continue  # Skip meta fields like _component_level
+                        if isinstance(critique_list, list):
+                            for critique_text in critique_list:
+                                # Extract key info from critique text
+                                if "CONSENSUS" in str(critique_text):
+                                    formatted.append(f"[C] {material}: consensus reached")
+                                elif "PARTIAL" in str(critique_text):
+                                    formatted.append(f"[M] {material}: partial support")
+                                elif "ISOLATED" in str(critique_text):
+                                    formatted.append(f"[I] {material}: needs peer support")
+                                else:
+                                    # Truncate long critiques
+                                    text = str(critique_text)[:80]
+                                    formatted.append(f"    {material}: {text}")
+                        else:
+                            formatted.append(f"    {material}: {critique_list}")
+                elif isinstance(mat_critiques, list):
+                    for critique in mat_critiques:
+                        formatted.append(str(critique)[:100])
+
+        return formatted
+
     def _append_material_transcript_components_section(
         self,
         content: list[str],
@@ -650,18 +714,14 @@ class MaterialsExtractor:
             content.append(f"  Convergence: {round_data.convergencescore:.1%}\n")
 
             if round_data.critiques:
-                content.append(f"  Critiques ({len(round_data.critiques)} total):\n")
-                critique_list = (
-                    list(round_data.critiques.values())
-                    if isinstance(round_data.critiques, dict)
-                    else round_data.critiques
-                )
-
-                # Show first 3 critiques
-                for critique in critique_list[:3]:
-                    content.append(f"    - {critique}\n")
-                if len(critique_list) > 3:
-                    content.append(f"    ... and {len(critique_list) - 3} more\n")
+                # Format critiques properly - handle both old dict format and new list format
+                formatted_critiques = self._format_material_critiques(round_data.critiques)
+                if formatted_critiques:
+                    content.append(f"  Critiques ({len(formatted_critiques)} items):\n")
+                    for critique_text in formatted_critiques[:5]:
+                        content.append(f"    {critique_text}\n")
+                    if len(formatted_critiques) > 5:
+                        content.append(f"    ... and {len(formatted_critiques) - 5} more\n")
 
             if round_data.consensussofar:
                 content.append(f"  Consensus materials: {len(round_data.consensussofar)}\n")
