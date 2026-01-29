@@ -110,11 +110,21 @@ uv run stdn --input tech_list.csv --output output.csv
 
 When debate is enabled:
 1. Three agents with different perspectives independently propose components
-2. Proposals are normalized using LLM semantic mapping
+2. Proposals are normalized using **LLM semantic normalization**
 3. Jaccard convergence is calculated
 4. Agents generate critiques highlighting consensus vs. isolated proposals
 5. Process iterates until convergence ≥ threshold or max rounds reached
 6. Final confidence scores are adjusted based on peer support
+
+### LLM Semantic Normalization
+
+Component names are normalized by sending them to an LLM that understands semantic equivalence. This allows the system to recognize that different names refer to the same component:
+
+- "Li-ion Battery", "Lithium Ion Battery Pack", "Battery (Lithium)" → "Lithium-ion Battery"
+- "CPU", "Central Processing Unit", "Processor Chip" → "CPU"
+- "LCD Panel", "Liquid Crystal Display" → "LCD Display"
+
+The LLM maps all variations to a single canonical name, enabling accurate Jaccard similarity calculation even when agents use different terminology. Falls back to rule-based normalization (qualifier removal) if the LLM call fails.
 
 ### Output Columns
 
@@ -145,17 +155,26 @@ uv run stdn --input tech_list.csv --output output.csv
 
 When debate is enabled for materials:
 1. Three agents independently propose raw materials for each component
-2. Material names are mapped to canonical forms using fuzzy ontology matching
+2. Names are normalized using **rule-based normalization** and matched against the ontology
 3. Jaccard convergence is calculated per component
 4. Similar debate, critique, and refinement rounds occur
 5. Materials with low peer support may be downweighted or removed
 
-### Material Variant Mapping
+### Rule-Based Normalization
 
-Material variant mapping automatically normalizes:
-- "lithium-ion" → "Lithium"
-- "stainless steel" → "Steel"
-- Chemical symbols: "Li", "Co" → Full names
+Unlike Stage 1's LLM-based approach, materials normalization uses deterministic string transformations:
+
+1. **Qualifier removal**: Generic suffixes like "module", "system", "unit", "assembly" are stripped
+   - "Battery Management System Module" → "Battery Management System"
+
+2. **Variant mapping**: Hardcoded lookup table maps common variations:
+   - "lithium-ion", "li-ion" → "lithium"
+   - "rare earth elements", "ree" → "rare earth"
+   - "stainless steel" → "steel"
+
+3. **Ontology matching**: Material names are matched against a predefined list of valid materials from USGS commodity classifications
+
+This approach is faster than LLM calls and sufficient for materials because the ontology provides a constrained vocabulary. Component names have more variation and require semantic understanding.
 
 ### Output Columns
 
