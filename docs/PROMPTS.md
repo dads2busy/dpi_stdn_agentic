@@ -2,6 +2,51 @@
 
 This document catalogs all LLM prompts used in the STDN Agentic system, organized by module and function.
 
+## Prompt Flow Summary
+
+The following diagram shows how prompts are used across the three-stage pipeline:
+
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│                         STAGE 1: COMPONENTS                              │
+├─────────────────────────────────────────────────────────────────────────┤
+│  Component Agent System Prompt                                           │
+│         ↓                                                                │
+│  Component Extraction Agent Prompt (per-agent, with role/perspective)   │
+│         ↓                                                                │
+│  [If debate enabled]                                                     │
+│    Component Debate System Prompt                                        │
+│         ↓                                                                │
+│    Component Debate Round Prompt (iterative)                            │
+│         ↓                                                                │
+│    Component Normalization Prompt (LLM-based)                           │
+└─────────────────────────────────────────────────────────────────────────┘
+         ↓
+┌─────────────────────────────────────────────────────────────────────────┐
+│                         STAGE 2: MATERIALS                               │
+├─────────────────────────────────────────────────────────────────────────┤
+│  Materials Agent System Prompt                                           │
+│         ↓                                                                │
+│  Materials Extraction Prompt (ontology-constrained)                     │
+│         ↓                                                                │
+│  [If debate enabled]                                                     │
+│    Material Debate Phase 1 Prompt (per-agent, with perspective)         │
+│         ↓                                                                │
+│    Material Debate Refinement Prompt (iterative)                        │
+└─────────────────────────────────────────────────────────────────────────┘
+         ↓
+┌─────────────────────────────────────────────────────────────────────────┐
+│                         STAGE 3: COUNTRIES                               │
+├─────────────────────────────────────────────────────────────────────────┤
+│  Country Agent System Prompt                                             │
+│         ↓                                                                │
+│  [If USGS miss + debate enabled]                                        │
+│    Country Borda Voting Prompt (per-expert)                             │
+└─────────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
 ## Overview
 
 The system uses **11 distinct prompt types** across four categories:
@@ -571,46 +616,3 @@ Material prompts enforce strict ontology matching:
 - Materials must come from predefined USGS-aligned list
 - No synonyms, abbreviations, or variations allowed
 - Closest base material when uncertain
-
----
-
-## 5. Prompt Flow Summary
-
-```
-┌─────────────────────────────────────────────────────────────────────────┐
-│                         STAGE 1: COMPONENTS                              │
-├─────────────────────────────────────────────────────────────────────────┤
-│  Component Agent System Prompt                                           │
-│         ↓                                                                │
-│  Component Extraction Agent Prompt (per-agent, with role/perspective)   │
-│         ↓                                                                │
-│  [If debate enabled]                                                     │
-│    Component Debate System Prompt                                        │
-│         ↓                                                                │
-│    Component Debate Round Prompt (iterative)                            │
-│         ↓                                                                │
-│    Component Normalization Prompt (LLM-based)                           │
-└─────────────────────────────────────────────────────────────────────────┘
-         ↓
-┌─────────────────────────────────────────────────────────────────────────┐
-│                         STAGE 2: MATERIALS                               │
-├─────────────────────────────────────────────────────────────────────────┤
-│  Materials Agent System Prompt                                           │
-│         ↓                                                                │
-│  Materials Extraction Prompt (ontology-constrained)                     │
-│         ↓                                                                │
-│  [If debate enabled]                                                     │
-│    Material Debate Phase 1 Prompt (per-agent, with perspective)         │
-│         ↓                                                                │
-│    Material Debate Refinement Prompt (iterative)                        │
-└─────────────────────────────────────────────────────────────────────────┘
-         ↓
-┌─────────────────────────────────────────────────────────────────────────┐
-│                         STAGE 3: COUNTRIES                               │
-├─────────────────────────────────────────────────────────────────────────┤
-│  Country Agent System Prompt                                             │
-│         ↓                                                                │
-│  [If USGS miss + debate enabled]                                        │
-│    Country Borda Voting Prompt (per-expert)                             │
-└─────────────────────────────────────────────────────────────────────────┘
-```
