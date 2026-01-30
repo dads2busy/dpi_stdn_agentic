@@ -126,7 +126,57 @@ Based on debate's 92.8% filter rate for isolated proposals:
 
 > **v1v1v1's apparent 'better coverage' is misleading.** Approximately half of its 'extra' materials were flagged as questionable (isolated proposals) in debate transcripts. These would likely have been filtered if debate had been used.
 
-## 5. Debate Convergence Analysis
+## 5. Canonical Vocabulary and Material-Specific Component Names
+
+### The Problem with Over-Generalization
+
+When normalizing component names to canonical forms, there is a risk of over-consolidation that loses material-relevant information. For example, consolidating all battery types to simply "Battery" would be problematic because:
+
+- **Lithium-ion batteries** use lithium, cobalt, nickel, graphite, and manganese
+- **Lead-acid batteries** use lead and sulfuric acid
+- **Nickel-metal hydride (NiMH) batteries** use nickel and rare earth elements
+
+If these are merged into a single "Battery" canonical name, the downstream material extraction becomes ambiguous or incorrect. The system cannot accurately determine which materials are used without knowing the specific battery chemistry.
+
+### Material-Aware Canonicalization
+
+The canonical vocabulary system is designed to **preserve material-relevant distinctions**. The LLM normalization prompt explicitly instructs:
+
+> - Preserve material-relevant distinctions (battery chemistry, display technology, etc.)
+> - Preserve battery chemistry types (Lithium-ion, Lead-acid, NiMH, etc.)
+> - Preserve display technology types (OLED, LCD, LED, etc.)
+
+This ensures that:
+
+| Raw Variants | Canonical Form | NOT Consolidated To |
+|--------------|----------------|---------------------|
+| "Li-ion Battery", "Lithium Ion Battery Pack" | "Lithium-ion Battery" | "Battery" |
+| "Lead-Acid Battery", "Lead Acid Cell" | "Lead-Acid Battery" | "Battery" |
+| "OLED Display", "OLED Screen Panel" | "OLED Display" | "Display" |
+| "LCD Panel", "LCD Display Module" | "LCD Display" | "Display" |
+
+### Why This Matters for STDN Accuracy
+
+The Supply Technology Decomposition Network (STDN) traces materials from components back to producing countries. If component names are too generic:
+
+1. **Material ambiguity**: "Battery" could mean any of dozens of chemistries with completely different material requirements
+2. **False supply chain mappings**: Lithium supply chains would incorrectly appear for lead-acid batteries
+3. **Risk assessment errors**: Critical material dependencies would be masked or misattributed
+
+By maintaining material-specific canonical names, the system ensures that:
+- Material extraction is targeted to the correct component variant
+- Supply chain analysis reflects actual material dependencies
+- Cross-run comparisons remain meaningful (same canonical name = same materials)
+
+### Vocabulary Growth and Consistency
+
+The canonical vocabulary (`data/component_canonical_vocab.json`) grows over time as new component names are encountered. Once a mapping is established (e.g., "Li-ion Battery" → "Lithium-ion Battery"), it is reused in all future runs, ensuring:
+
+- **Consistency**: The same component always gets the same canonical name
+- **Efficiency**: Reduced LLM calls for previously seen names
+- **Auditability**: The vocabulary file can be reviewed to verify appropriate distinctions are preserved
+
+## 6. Debate Convergence Analysis
 
 How agents converge over debate rounds:
 
