@@ -1,0 +1,1360 @@
+{
+  "version": "2.0",
+  "metadata": {
+    "technology": "Digital Signal Processors (DSPs)",
+    "technology_specification": "Digital Signal Processors (DSPs)",
+    "technology_reasoning": "",
+    "timestamp": "2026-01-30T12:22:57.503318",
+    "format_version": "2.0"
+  },
+  "config": {
+    "num_agents": 3,
+    "max_rounds": 3
+  },
+  "component_stage": {
+    "phase1_initial_proposals": [
+      {
+        "agent_id": "Agent_1",
+        "components": [
+          {
+            "name": "DSP Core Silicon Die",
+            "confidence": 0.98,
+            "reasoning": "The fundamental semiconductor die containing the DSP processor core, manufactured by specialized foundries and always procured as a distinct component with complex supply chain requirements."
+          },
+          {
+            "name": "IC Package Substrate",
+            "confidence": 0.95,
+            "reasoning": "Specialized substrate providing electrical connections between silicon die and external pins, typically ceramic or organic substrate procured from packaging suppliers with distinct manufacturing processes."
+          },
+          {
+            "name": "Bond Wire Assembly",
+            "confidence": 0.9,
+            "reasoning": "Gold or aluminum wire connections linking die pads to package leads, manufactured and assembled by specialized wire bonding suppliers as a critical interconnection component."
+          },
+          {
+            "name": "Package Encapsulation Compound",
+            "confidence": 0.88,
+            "reasoning": "Specialized epoxy molding compound providing protection and mechanical integrity, sourced from chemical suppliers with specific thermal and electrical properties for semiconductor applications."
+          },
+          {
+            "name": "Heat Spreader/Thermal Interface",
+            "confidence": 0.85,
+            "reasoning": "Thermal management component often integrated into package, typically copper or aluminum assembly procured from thermal solution suppliers for high-performance DSP applications."
+          },
+          {
+            "name": "External Crystal Oscillator",
+            "confidence": 0.82,
+            "reasoning": "Precision timing reference component providing clock signal, typically procured as separate component from frequency control suppliers, though some DSPs use internal oscillators."
+          },
+          {
+            "name": "Power Management IC (PMIC)",
+            "confidence": 0.78,
+            "reasoning": "Voltage regulation and power conditioning circuit, often separate component for complex DSP systems requiring multiple voltage rails, sourced from power semiconductor suppliers."
+          },
+          {
+            "name": "External Memory Interface (DDR/SRAM)",
+            "confidence": 0.75,
+            "reasoning": "High-speed memory components for program and data storage, typically procured separately from memory suppliers, though some DSPs integrate sufficient on-chip memory."
+          },
+          {
+            "name": "Analog Front-End (AFE) Module",
+            "confidence": 0.7,
+            "reasoning": "Signal conditioning circuitry for ADC/DAC functions, often separate component in mixed-signal applications, procured from analog semiconductor suppliers with specialized performance requirements."
+          }
+        ],
+        "technology_specification": "Digital Signal Processor (DSP) integrated circuit on system-on-chip (SoC) or discrete DSP chip with specialized architecture for real-time signal processing applications",
+        "technology_reasoning": "Modern DSPs are primarily implemented as either dedicated DSP chips or integrated into SoCs, representing over 80% of the DSP market as of 2024, with specialized architectures optimized for multiply-accumulate operations and real-time processing requirements in telecommunications, audio, and industrial control applications."
+      },
+      {
+        "agent_id": "Agent_2",
+        "components": [
+          {
+            "name": "Semiconductor Die (DSP Core)",
+            "confidence": 0.98,
+            "reasoning": "The actual silicon chip containing the DSP processor, manufactured by foundries and always present as the core functional element."
+          },
+          {
+            "name": "IC Package/Enclosure",
+            "confidence": 0.95,
+            "reasoning": "Protective housing for the semiconductor die, typically ceramic or plastic package (BGA, QFP, etc.) manufactured separately from the die."
+          },
+          {
+            "name": "Bond Wires",
+            "confidence": 0.9,
+            "reasoning": "Gold or aluminum wires connecting the die to package leads, manufactured as separate components and assembled during packaging."
+          },
+          {
+            "name": "Lead Frame",
+            "confidence": 0.85,
+            "reasoning": "Metal framework providing electrical connections from die to external pins, manufactured separately for most package types."
+          },
+          {
+            "name": "Die Attach Material",
+            "confidence": 0.8,
+            "reasoning": "Adhesive or solder material securing die to package substrate, procured as manufactured material though borderline consumable."
+          },
+          {
+            "name": "Package Substrate",
+            "confidence": 0.75,
+            "reasoning": "Circuit board or ceramic base within package for advanced packages like BGA, manufactured separately for complex DSP packages."
+          },
+          {
+            "name": "Thermal Interface Material",
+            "confidence": 0.7,
+            "reasoning": "Heat conduction material between die and package for high-performance DSPs, procured as manufactured thermal pad or compound."
+          },
+          {
+            "name": "Package Lid/Heat Spreader",
+            "confidence": 0.65,
+            "reasoning": "Metal cover for thermal management in high-power DSPs, manufactured separately though not present in all package types."
+          }
+        ],
+        "technology_specification": "High-performance digital signal processor integrated circuit with embedded memory and peripherals",
+        "technology_reasoning": "Modern DSPs are predominantly single-chip solutions that integrate processing cores, memory, and I/O peripherals on a single silicon die, representing over 90% of the DSP market for applications ranging from telecommunications to automotive systems."
+      },
+      {
+        "agent_id": "Agent_3",
+        "components": [
+          {
+            "name": "DSP Silicon Die",
+            "confidence": 0.98,
+            "reasoning": "The actual semiconductor chip containing the digital signal processing cores, manufactured by specialized foundries and represents the core functional component that defines the DSP."
+          },
+          {
+            "name": "Package Substrate (BGA/QFP)",
+            "confidence": 0.95,
+            "reasoning": "The ceramic or organic substrate that houses the silicon die and provides electrical routing, manufactured separately by packaging companies with distinct supply chains."
+          },
+          {
+            "name": "Die Attach Material/Adhesive",
+            "confidence": 0.85,
+            "reasoning": "Specialized thermally conductive adhesive or solder that bonds the silicon die to the package substrate, procured as engineered material from specialized suppliers."
+          },
+          {
+            "name": "Bond Wires (Gold/Copper)",
+            "confidence": 0.9,
+            "reasoning": "Ultra-fine wires that provide electrical connections between the die and package substrate, manufactured to precise specifications and procured from wire bonding suppliers."
+          },
+          {
+            "name": "Encapsulation Compound (Mold Compound)",
+            "confidence": 0.88,
+            "reasoning": "Protective polymer material that encapsulates the die and wire bonds, manufactured by specialty chemical companies with specific thermal and electrical properties."
+          },
+          {
+            "name": "Solder Balls (for BGA packages)",
+            "confidence": 0.85,
+            "reasoning": "Precisely sized solder spheres that form the electrical and mechanical interface to the circuit board, manufactured separately and attached during packaging."
+          },
+          {
+            "name": "Lead Frame (for QFP packages)",
+            "confidence": 0.8,
+            "reasoning": "Metal frame structure that provides external leads for QFP packages, stamped and plated by specialized suppliers before integration into the package."
+          },
+          {
+            "name": "Heat Spreader/Thermal Interface",
+            "confidence": 0.75,
+            "reasoning": "Metal component for heat dissipation in high-performance DSPs, manufactured separately and integrated during packaging for thermal management."
+          }
+        ],
+        "technology_specification": "Digital Signal Processor (DSP) integrated circuit chip in Ball Grid Array (BGA) or Quad Flat Package (QFP) format",
+        "technology_reasoning": "DSP chips represent the core technology for digital signal processing applications, with BGA and QFP being the dominant packaging formats for high-performance DSPs due to their superior electrical performance, thermal characteristics, and pin density required for complex signal processing operations."
+      }
+    ],
+    "phase2_debate_rounds": [
+      {
+        "round_num": 1,
+        "convergence": 0.44145299145299144,
+        "threshold": 0.7,
+        "threshold_reached": false,
+        "proposals": {
+          "Agent_1": [
+            {
+              "name": "DSP Core Silicon Die",
+              "confidence": 0.98,
+              "reasoning": "The fundamental semiconductor die containing the DSP processor core, manufactured by specialized foundries and always procured as a distinct component with complex supply chain requirements.",
+              "component": "DSP Core Silicon Die",
+              "normalized_component": "dsp silicon die"
+            },
+            {
+              "name": "IC Package Substrate",
+              "confidence": 0.95,
+              "reasoning": "Specialized substrate providing electrical connections between silicon die and external pins, typically ceramic or organic substrate procured from packaging suppliers with distinct manufacturing processes.",
+              "component": "IC Package Substrate",
+              "normalized_component": "package substrate"
+            },
+            {
+              "name": "Bond Wire Assembly",
+              "confidence": 0.9,
+              "reasoning": "Gold or aluminum wire connections linking die pads to package leads, manufactured and assembled by specialized wire bonding suppliers as a critical interconnection component.",
+              "component": "Bond Wire Assembly",
+              "normalized_component": "bond wires"
+            },
+            {
+              "name": "Package Encapsulation Compound",
+              "confidence": 0.88,
+              "reasoning": "Specialized epoxy molding compound providing protection and mechanical integrity, sourced from chemical suppliers with specific thermal and electrical properties for semiconductor applications.",
+              "component": "Package Encapsulation Compound",
+              "normalized_component": "encapsulation compound"
+            },
+            {
+              "name": "Heat Spreader/Thermal Interface",
+              "confidence": 0.85,
+              "reasoning": "Thermal management component often integrated into package, typically copper or aluminum assembly procured from thermal solution suppliers for high-performance DSP applications.",
+              "component": "Heat Spreader/Thermal Interface",
+              "normalized_component": "heat spreader"
+            },
+            {
+              "name": "External Crystal Oscillator",
+              "confidence": 0.82,
+              "reasoning": "Precision timing reference component providing clock signal, typically procured as separate component from frequency control suppliers, though some DSPs use internal oscillators.",
+              "component": "External Crystal Oscillator",
+              "normalized_component": "crystal oscillator"
+            },
+            {
+              "name": "Power Management IC (PMIC)",
+              "confidence": 0.78,
+              "reasoning": "Voltage regulation and power conditioning circuit, often separate component for complex DSP systems requiring multiple voltage rails, sourced from power semiconductor suppliers.",
+              "component": "Power Management IC (PMIC)",
+              "normalized_component": "power management ic"
+            },
+            {
+              "name": "External Memory Interface (DDR/SRAM)",
+              "confidence": 0.75,
+              "reasoning": "High-speed memory components for program and data storage, typically procured separately from memory suppliers, though some DSPs integrate sufficient on-chip memory.",
+              "component": "External Memory Interface (DDR/SRAM)",
+              "normalized_component": "external memory interface"
+            },
+            {
+              "name": "Analog Front-End (AFE) Module",
+              "confidence": 0.7,
+              "reasoning": "Signal conditioning circuitry for ADC/DAC functions, often separate component in mixed-signal applications, procured from analog semiconductor suppliers with specialized performance requirements.",
+              "component": "Analog Front-End (AFE) Module",
+              "normalized_component": "analog front end"
+            }
+          ],
+          "Agent_2": [
+            {
+              "name": "Semiconductor Die (DSP Core)",
+              "confidence": 0.98,
+              "reasoning": "The actual silicon chip containing the DSP processor, manufactured by foundries and always present as the core functional element.",
+              "component": "Semiconductor Die (DSP Core)",
+              "normalized_component": "dsp silicon die"
+            },
+            {
+              "name": "IC Package/Enclosure",
+              "confidence": 0.95,
+              "reasoning": "Protective housing for the semiconductor die, typically ceramic or plastic package (BGA, QFP, etc.) manufactured separately from the die.",
+              "component": "IC Package/Enclosure",
+              "normalized_component": "ic"
+            },
+            {
+              "name": "Bond Wires",
+              "confidence": 0.9,
+              "reasoning": "Gold or aluminum wires connecting the die to package leads, manufactured as separate components and assembled during packaging.",
+              "component": "Bond Wires",
+              "normalized_component": "bond wires"
+            },
+            {
+              "name": "Lead Frame",
+              "confidence": 0.85,
+              "reasoning": "Metal framework providing electrical connections from die to external pins, manufactured separately for most package types.",
+              "component": "Lead Frame",
+              "normalized_component": "lead frame"
+            },
+            {
+              "name": "Die Attach Material",
+              "confidence": 0.8,
+              "reasoning": "Adhesive or solder material securing die to package substrate, procured as manufactured material though borderline consumable.",
+              "component": "Die Attach Material",
+              "normalized_component": "die attach material"
+            },
+            {
+              "name": "Package Substrate",
+              "confidence": 0.75,
+              "reasoning": "Circuit board or ceramic base within package for advanced packages like BGA, manufactured separately for complex DSP packages.",
+              "component": "Package Substrate",
+              "normalized_component": "package substrate"
+            },
+            {
+              "name": "Thermal Interface Material",
+              "confidence": 0.7,
+              "reasoning": "Heat conduction material between die and package for high-performance DSPs, procured as manufactured thermal pad or compound.",
+              "component": "Thermal Interface Material",
+              "normalized_component": "thermal interface material"
+            },
+            {
+              "name": "Package Lid/Heat Spreader",
+              "confidence": 0.65,
+              "reasoning": "Metal cover for thermal management in high-power DSPs, manufactured separately though not present in all package types.",
+              "component": "Package Lid/Heat Spreader",
+              "normalized_component": "heat spreader"
+            }
+          ],
+          "Agent_3": [
+            {
+              "name": "DSP Silicon Die",
+              "confidence": 0.98,
+              "reasoning": "The actual semiconductor chip containing the digital signal processing cores, manufactured by specialized foundries and represents the core functional component that defines the DSP.",
+              "component": "DSP Silicon Die",
+              "normalized_component": "dsp silicon die"
+            },
+            {
+              "name": "Package Substrate (BGA/QFP)",
+              "confidence": 0.95,
+              "reasoning": "The ceramic or organic substrate that houses the silicon die and provides electrical routing, manufactured separately by packaging companies with distinct supply chains.",
+              "component": "Package Substrate (BGA/QFP)",
+              "normalized_component": "package substrate"
+            },
+            {
+              "name": "Die Attach Material/Adhesive",
+              "confidence": 0.85,
+              "reasoning": "Specialized thermally conductive adhesive or solder that bonds the silicon die to the package substrate, procured as engineered material from specialized suppliers.",
+              "component": "Die Attach Material/Adhesive",
+              "normalized_component": "die attach material"
+            },
+            {
+              "name": "Bond Wires (Gold/Copper)",
+              "confidence": 0.9,
+              "reasoning": "Ultra-fine wires that provide electrical connections between the die and package substrate, manufactured to precise specifications and procured from wire bonding suppliers.",
+              "component": "Bond Wires (Gold/Copper)",
+              "normalized_component": "bond wires"
+            },
+            {
+              "name": "Encapsulation Compound (Mold Compound)",
+              "confidence": 0.88,
+              "reasoning": "Protective polymer material that encapsulates the die and wire bonds, manufactured by specialty chemical companies with specific thermal and electrical properties.",
+              "component": "Encapsulation Compound (Mold Compound)",
+              "normalized_component": "encapsulation compound"
+            },
+            {
+              "name": "Solder Balls (for BGA packages)",
+              "confidence": 0.85,
+              "reasoning": "Precisely sized solder spheres that form the electrical and mechanical interface to the circuit board, manufactured separately and attached during packaging.",
+              "component": "Solder Balls (for BGA packages)",
+              "normalized_component": "solder balls"
+            },
+            {
+              "name": "Lead Frame (for QFP packages)",
+              "confidence": 0.8,
+              "reasoning": "Metal frame structure that provides external leads for QFP packages, stamped and plated by specialized suppliers before integration into the package.",
+              "component": "Lead Frame (for QFP packages)",
+              "normalized_component": "lead frame"
+            },
+            {
+              "name": "Heat Spreader/Thermal Interface",
+              "confidence": 0.75,
+              "reasoning": "Metal component for heat dissipation in high-performance DSPs, manufactured separately and integrated during packaging for thermal management.",
+              "component": "Heat Spreader/Thermal Interface",
+              "normalized_component": "heat spreader"
+            }
+          ]
+        },
+        "rounds_completed": 1,
+        "support_analysis": {
+          "consensus": [
+            "dsp silicon die",
+            "package substrate",
+            "bond wires",
+            "heat spreader"
+          ],
+          "majority": [
+            "encapsulation compound",
+            "lead frame",
+            "die attach material"
+          ],
+          "isolated": [
+            "crystal oscillator",
+            "power management ic",
+            "external memory interface",
+            "analog front end",
+            "ic",
+            "thermal interface material",
+            "solder balls"
+          ]
+        },
+        "critiques": [
+          {
+            "item_name": "dsp silicon die",
+            "normalized_name": "dsp silicon die",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.98,
+            "critique_text": "Strong consensus on 'dsp silicon die': all 3 agents support with avg confidence 0.98. Preserve this component."
+          },
+          {
+            "item_name": "package substrate",
+            "normalized_name": "package substrate",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.8833333333333333,
+            "critique_text": "Strong consensus on 'package substrate': all 3 agents support with avg confidence 0.88. Preserve this component."
+          },
+          {
+            "item_name": "bond wires",
+            "normalized_name": "bond wires",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.9,
+            "critique_text": "Strong consensus on 'bond wires': all 3 agents support with avg confidence 0.90. Preserve this component."
+          },
+          {
+            "item_name": "encapsulation compound",
+            "normalized_name": "encapsulation compound",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2"
+            ],
+            "avg_confidence": 0.88,
+            "critique_text": "Majority support for 'encapsulation compound': 2/3 agents agree (conf: 0.88). Consider strengthening consensus."
+          },
+          {
+            "item_name": "heat spreader",
+            "normalized_name": "heat spreader",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.75,
+            "critique_text": "Strong consensus on 'heat spreader': all 3 agents support with avg confidence 0.75. Preserve this component."
+          },
+          {
+            "item_name": "crystal oscillator",
+            "normalized_name": "crystal oscillator",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_3",
+              "Agent_2"
+            ],
+            "avg_confidence": 0.82,
+            "critique_text": "Isolated proposal 'crystal oscillator' from 1 agent(s) (conf: 0.82). Requires justification or peer validation."
+          },
+          {
+            "item_name": "power management ic",
+            "normalized_name": "power management ic",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_3",
+              "Agent_2"
+            ],
+            "avg_confidence": 0.78,
+            "critique_text": "Isolated proposal 'power management ic' from 1 agent(s) (conf: 0.78). Requires justification or peer validation."
+          },
+          {
+            "item_name": "external memory interface",
+            "normalized_name": "external memory interface",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_3",
+              "Agent_2"
+            ],
+            "avg_confidence": 0.75,
+            "critique_text": "Isolated proposal 'external memory interface' from 1 agent(s) (conf: 0.75). Requires justification or peer validation."
+          },
+          {
+            "item_name": "analog front end",
+            "normalized_name": "analog front end",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_3",
+              "Agent_2"
+            ],
+            "avg_confidence": 0.7,
+            "critique_text": "Isolated proposal 'analog front end' from 1 agent(s) (conf: 0.70). Requires justification or peer validation."
+          },
+          {
+            "item_name": "ic",
+            "normalized_name": "ic",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_3",
+              "Agent_1"
+            ],
+            "avg_confidence": 0.95,
+            "critique_text": "Isolated proposal 'ic' from 1 agent(s) (conf: 0.95). Requires justification or peer validation."
+          },
+          {
+            "item_name": "lead frame",
+            "normalized_name": "lead frame",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_1"
+            ],
+            "avg_confidence": 0.825,
+            "critique_text": "Majority support for 'lead frame': 2/3 agents agree (conf: 0.82). Consider strengthening consensus."
+          },
+          {
+            "item_name": "die attach material",
+            "normalized_name": "die attach material",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_1"
+            ],
+            "avg_confidence": 0.825,
+            "critique_text": "Majority support for 'die attach material': 2/3 agents agree (conf: 0.82). Consider strengthening consensus."
+          },
+          {
+            "item_name": "thermal interface material",
+            "normalized_name": "thermal interface material",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_3",
+              "Agent_1"
+            ],
+            "avg_confidence": 0.7,
+            "critique_text": "Isolated proposal 'thermal interface material' from 1 agent(s) (conf: 0.70). Requires justification or peer validation."
+          },
+          {
+            "item_name": "solder balls",
+            "normalized_name": "solder balls",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_3"
+            ],
+            "opposing_agents": [
+              "Agent_1",
+              "Agent_2"
+            ],
+            "avg_confidence": 0.85,
+            "critique_text": "Isolated proposal 'solder balls' from 1 agent(s) (conf: 0.85). Requires justification or peer validation."
+          }
+        ],
+        "changes_from_previous": null
+      },
+      {
+        "round_num": 2,
+        "convergence": 0.42857142857142855,
+        "threshold": 0.7,
+        "threshold_reached": false,
+        "proposals": {
+          "Agent_1": [
+            {
+              "agent_id": "Agent_1",
+              "component": "DSP Silicon Die",
+              "confidence": 0.98,
+              "reasoning": "Universal consensus across all agents - this is the fundamental component that defines a DSP",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Package Substrate (BGA/QFP)",
+              "confidence": 0.95,
+              "reasoning": "Strong consensus with average 0.88 confidence - essential for electrical connections and mechanical support",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Bond Wires (Gold/Copper)",
+              "confidence": 0.9,
+              "reasoning": "Universal support with 0.90 average confidence - critical for die-to-package electrical connections",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Encapsulation Compound (Mold Compound)",
+              "confidence": 0.88,
+              "reasoning": "Strong support from 2 agents - essential for protecting the die from environmental factors",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Die Attach Material/Adhesive",
+              "confidence": 0.82,
+              "reasoning": "Supported by 2 agents with strong confidence - necessary for mechanically securing die to package",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Lead Frame (for QFP packages)",
+              "confidence": 0.8,
+              "reasoning": "Supported by 2 agents - important structural component for QFP package types",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Heat Spreader/Thermal Interface",
+              "confidence": 0.75,
+              "reasoning": "Consensus across agents with 0.75 average - important for thermal management in DSP applications",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Solder Balls (for BGA packages)",
+              "confidence": 0.7,
+              "reasoning": "Lower confidence due to single agent support, but essential for BGA package connectivity",
+              "round": 2
+            }
+          ],
+          "Agent_2": [
+            {
+              "agent_id": "Agent_2",
+              "component": "DSP Silicon Die",
+              "confidence": 0.98,
+              "reasoning": "Strong consensus across all agents (average 0.98) - this is the fundamental computing element of any DSP",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Package Substrate (BGA/QFP)",
+              "confidence": 0.95,
+              "reasoning": "Strong consensus across all agents (average 0.88) - essential for electrical connections and mechanical support",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Bond Wires (Gold/Copper)",
+              "confidence": 0.9,
+              "reasoning": "Strong consensus across all agents (average 0.90) - critical for electrical connectivity between die and package",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Encapsulation Compound (Mold Compound)",
+              "confidence": 0.88,
+              "reasoning": "Strong consensus from 2 agents (average 0.88) - essential for protection from environmental factors",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Die Attach Material/Adhesive",
+              "confidence": 0.85,
+              "reasoning": "Strong consensus from 2 agents (average 0.82) - critical for mechanical and thermal bonding of die to package",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Heat Spreader/Thermal Interface",
+              "confidence": 0.8,
+              "reasoning": "Strong consensus across all agents (average 0.75) - important for thermal management in DSP applications",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Lead Frame (for QFP packages)",
+              "confidence": 0.75,
+              "reasoning": "Strong consensus from 2 agents (average 0.82) - essential structural element for QFP package types",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Solder Balls (for BGA packages)",
+              "confidence": 0.7,
+              "reasoning": "Selected by 1 agent but critical for BGA package connectivity - essential for surface mount applications",
+              "round": 2
+            }
+          ],
+          "Agent_3": [
+            {
+              "agent_id": "Agent_3",
+              "component": "DSP Core Silicon Die",
+              "confidence": 0.98,
+              "reasoning": "Universal consensus across all agents - the fundamental computing element",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "IC Package Substrate",
+              "confidence": 0.95,
+              "reasoning": "Strong consensus with high confidence - essential structural foundation",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Bond Wire Assembly",
+              "confidence": 0.9,
+              "reasoning": "Universal agreement for electrical connections between die and package",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Package Encapsulation Compound",
+              "confidence": 0.88,
+              "reasoning": "Strong peer support for protection and structural integrity",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Heat Spreader/Thermal Interface",
+              "confidence": 0.85,
+              "reasoning": "Consensus across agents for thermal management - critical for DSP performance",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Die Attach Material",
+              "confidence": 0.82,
+              "reasoning": "Two agents selected this - essential for die mounting and thermal path",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Lead Frame",
+              "confidence": 0.82,
+              "reasoning": "Two agents selected this - important structural component for certain package types",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Solder Balls (for BGA packages)",
+              "confidence": 0.75,
+              "reasoning": "Single agent but critical for BGA mounting - reducing confidence due to limited support",
+              "round": 2
+            }
+          ]
+        },
+        "rounds_completed": 2,
+        "support_analysis": {
+          "consensus": [
+            "heat spreader/thermal interface",
+            "solder balls (for bga packages)"
+          ],
+          "majority": [
+            "dsp silicon die",
+            "package substrate (bga/qfp)",
+            "bond wires (gold/copper)",
+            "encapsulation compound (mold compound)",
+            "die attach material/adhesive",
+            "lead frame (for qfp packages)"
+          ],
+          "isolated": [
+            "dsp core silicon die",
+            "ic package substrate",
+            "bond wire",
+            "package encapsulation compound",
+            "die attach material",
+            "lead frame"
+          ]
+        },
+        "critiques": [
+          {
+            "item_name": "DSP Silicon Die",
+            "normalized_name": "dsp silicon die",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_3"
+            ],
+            "avg_confidence": 0.98,
+            "critique_text": "Majority support for 'DSP Silicon Die': 2/3 agents agree (conf: 0.98). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Package Substrate (BGA/QFP)",
+            "normalized_name": "package substrate (bga/qfp)",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_3"
+            ],
+            "avg_confidence": 0.95,
+            "critique_text": "Majority support for 'Package Substrate (BGA/QFP)': 2/3 agents agree (conf: 0.95). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Bond Wires (Gold/Copper)",
+            "normalized_name": "bond wires (gold/copper)",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_3"
+            ],
+            "avg_confidence": 0.9,
+            "critique_text": "Majority support for 'Bond Wires (Gold/Copper)': 2/3 agents agree (conf: 0.90). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Encapsulation Compound (Mold Compound)",
+            "normalized_name": "encapsulation compound (mold compound)",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_3"
+            ],
+            "avg_confidence": 0.88,
+            "critique_text": "Majority support for 'Encapsulation Compound (Mold Compound)': 2/3 agents agree (conf: 0.88). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Die Attach Material/Adhesive",
+            "normalized_name": "die attach material/adhesive",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_3"
+            ],
+            "avg_confidence": 0.835,
+            "critique_text": "Majority support for 'Die Attach Material/Adhesive': 2/3 agents agree (conf: 0.83). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Lead Frame (for QFP packages)",
+            "normalized_name": "lead frame (for qfp packages)",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_3"
+            ],
+            "avg_confidence": 0.775,
+            "critique_text": "Majority support for 'Lead Frame (for QFP packages)': 2/3 agents agree (conf: 0.78). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Heat Spreader/Thermal Interface",
+            "normalized_name": "heat spreader/thermal interface",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.7999999999999999,
+            "critique_text": "Strong consensus on 'Heat Spreader/Thermal Interface': all 3 agents support with avg confidence 0.80. Preserve this component."
+          },
+          {
+            "item_name": "Solder Balls (for BGA packages)",
+            "normalized_name": "solder balls (for bga packages)",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.7166666666666667,
+            "critique_text": "Strong consensus on 'Solder Balls (for BGA packages)': all 3 agents support with avg confidence 0.72. Preserve this component."
+          },
+          {
+            "item_name": "DSP Core Silicon Die",
+            "normalized_name": "dsp core silicon die",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_3"
+            ],
+            "opposing_agents": [
+              "Agent_1",
+              "Agent_2"
+            ],
+            "avg_confidence": 0.98,
+            "critique_text": "Isolated proposal 'DSP Core Silicon Die' from 1 agent(s) (conf: 0.98). Requires justification or peer validation."
+          },
+          {
+            "item_name": "IC Package Substrate",
+            "normalized_name": "ic package substrate",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_3"
+            ],
+            "opposing_agents": [
+              "Agent_1",
+              "Agent_2"
+            ],
+            "avg_confidence": 0.95,
+            "critique_text": "Isolated proposal 'IC Package Substrate' from 1 agent(s) (conf: 0.95). Requires justification or peer validation."
+          },
+          {
+            "item_name": "Bond Wire Assembly",
+            "normalized_name": "bond wire",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_3"
+            ],
+            "opposing_agents": [
+              "Agent_1",
+              "Agent_2"
+            ],
+            "avg_confidence": 0.9,
+            "critique_text": "Isolated proposal 'Bond Wire Assembly' from 1 agent(s) (conf: 0.90). Requires justification or peer validation."
+          },
+          {
+            "item_name": "Package Encapsulation Compound",
+            "normalized_name": "package encapsulation compound",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_3"
+            ],
+            "opposing_agents": [
+              "Agent_1",
+              "Agent_2"
+            ],
+            "avg_confidence": 0.88,
+            "critique_text": "Isolated proposal 'Package Encapsulation Compound' from 1 agent(s) (conf: 0.88). Requires justification or peer validation."
+          },
+          {
+            "item_name": "Die Attach Material",
+            "normalized_name": "die attach material",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_3"
+            ],
+            "opposing_agents": [
+              "Agent_1",
+              "Agent_2"
+            ],
+            "avg_confidence": 0.82,
+            "critique_text": "Isolated proposal 'Die Attach Material' from 1 agent(s) (conf: 0.82). Requires justification or peer validation."
+          },
+          {
+            "item_name": "Lead Frame",
+            "normalized_name": "lead frame",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_3"
+            ],
+            "opposing_agents": [
+              "Agent_1",
+              "Agent_2"
+            ],
+            "avg_confidence": 0.82,
+            "critique_text": "Isolated proposal 'Lead Frame' from 1 agent(s) (conf: 0.82). Requires justification or peer validation."
+          }
+        ],
+        "changes_from_previous": {
+          "items_added": [
+            "bond wire",
+            "bond wires (gold/copper)",
+            "lead frame (for qfp packages)",
+            "solder balls (for bga packages)",
+            "dsp core silicon die",
+            "die attach material/adhesive",
+            "heat spreader/thermal interface",
+            "package substrate (bga/qfp)",
+            "ic package substrate",
+            "package encapsulation compound",
+            "encapsulation compound (mold compound)"
+          ],
+          "items_removed": [
+            "package substrate",
+            "bond wires",
+            "heat spreader",
+            "solder balls",
+            "power management ic",
+            "encapsulation compound",
+            "analog front end",
+            "ic",
+            "external memory interface",
+            "crystal oscillator",
+            "thermal interface material"
+          ],
+          "confidence_changes": {}
+        }
+      },
+      {
+        "round_num": 3,
+        "convergence": 1.0,
+        "threshold": 0.7,
+        "threshold_reached": true,
+        "proposals": {
+          "Agent_1": [
+            {
+              "agent_id": "Agent_1",
+              "component": "DSP Silicon Die",
+              "confidence": 0.98,
+              "reasoning": "Strong consensus with 2 agents supporting at 0.98 average confidence. This is the core processing component of a DSP.",
+              "round": 3,
+              "normalized_component": "DSP Silicon Die"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Package Substrate (BGA/QFP)",
+              "confidence": 0.95,
+              "reasoning": "Strong consensus with 2 agents supporting at 0.95 average confidence. Essential for electrical connectivity and mechanical support.",
+              "round": 3,
+              "normalized_component": "Package Substrate"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Bond Wires (Gold/Copper)",
+              "confidence": 0.9,
+              "reasoning": "Strong consensus with 2 agents supporting at 0.90 average confidence. Critical for electrical connections between die and package.",
+              "round": 3,
+              "normalized_component": "Bond Wires"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Encapsulation Compound (Mold Compound)",
+              "confidence": 0.88,
+              "reasoning": "Strong consensus with 2 agents supporting at 0.88 average confidence. Provides physical protection for the die and internal components.",
+              "round": 3,
+              "normalized_component": "Encapsulation Compound"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Die Attach Material/Adhesive",
+              "confidence": 0.83,
+              "reasoning": "Strong consensus with 2 agents supporting at 0.83 average confidence. Essential for mechanically and thermally connecting the die to package.",
+              "round": 3,
+              "normalized_component": "Adhesive"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Heat Spreader/Thermal Interface",
+              "confidence": 0.8,
+              "reasoning": "Strongest consensus with 3 agents supporting at 0.80 average confidence. Important for thermal management in DSP applications.",
+              "round": 3,
+              "normalized_component": "Heat Spreader"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Lead Frame (for QFP packages)",
+              "confidence": 0.78,
+              "reasoning": "Strong consensus with 2 agents supporting at 0.78 average confidence. Necessary structural component for QFP package types.",
+              "round": 3,
+              "normalized_component": "Lead Frame"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Solder Balls (for BGA packages)",
+              "confidence": 0.72,
+              "reasoning": "Strongest consensus with 3 agents supporting at 0.72 average confidence. Essential for BGA package electrical connections to PCB.",
+              "round": 3,
+              "normalized_component": "Solder Balls"
+            }
+          ],
+          "Agent_2": [
+            {
+              "agent_id": "Agent_2",
+              "component": "DSP Silicon Die",
+              "confidence": 0.98,
+              "reasoning": "Strong consensus from 2 agents with high confidence. The core computational component of any DSP.",
+              "round": 3,
+              "normalized_component": "DSP Silicon Die"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Package Substrate (BGA/QFP)",
+              "confidence": 0.95,
+              "reasoning": "Strong consensus from 2 agents. Essential for electrical connections and mechanical support.",
+              "round": 3,
+              "normalized_component": "Package Substrate"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Bond Wires (Gold/Copper)",
+              "confidence": 0.9,
+              "reasoning": "Strong consensus from 2 agents. Critical for electrical connections between die and package.",
+              "round": 3,
+              "normalized_component": "Bond Wires"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Encapsulation Compound (Mold Compound)",
+              "confidence": 0.88,
+              "reasoning": "Strong consensus from 2 agents. Essential for protecting the die and internal components.",
+              "round": 3,
+              "normalized_component": "Encapsulation Compound"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Die Attach Material/Adhesive",
+              "confidence": 0.83,
+              "reasoning": "Strong consensus from 2 agents with average confidence 0.83. Critical for securing die to substrate.",
+              "round": 3,
+              "normalized_component": "Adhesive"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Heat Spreader/Thermal Interface",
+              "confidence": 0.8,
+              "reasoning": "Strongest consensus with all 3 agents supporting it. Important for thermal management in DSPs.",
+              "round": 3,
+              "normalized_component": "Heat Spreader"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Lead Frame (for QFP packages)",
+              "confidence": 0.78,
+              "reasoning": "Strong consensus from 2 agents. Essential component for QFP package types.",
+              "round": 3,
+              "normalized_component": "Lead Frame"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Solder Balls (for BGA packages)",
+              "confidence": 0.72,
+              "reasoning": "Supported by all 3 agents with average confidence 0.72. Essential for BGA package connections.",
+              "round": 3,
+              "normalized_component": "Solder Balls"
+            }
+          ],
+          "Agent_3": [
+            {
+              "agent_id": "Agent_3",
+              "component": "DSP Silicon Die",
+              "confidence": 0.98,
+              "reasoning": "Strong consensus from 2 agents with 0.98 confidence. This is the core functional component of any DSP.",
+              "round": 3,
+              "normalized_component": "DSP Silicon Die"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Package Substrate (BGA/QFP)",
+              "confidence": 0.95,
+              "reasoning": "Strong consensus from 2 agents with 0.95 confidence. Essential for electrical connections and mechanical support.",
+              "round": 3,
+              "normalized_component": "Package Substrate"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Bond Wires (Gold/Copper)",
+              "confidence": 0.9,
+              "reasoning": "Strong consensus from 2 agents with 0.90 confidence. Critical for electrical connections between die and package.",
+              "round": 3,
+              "normalized_component": "Bond Wires"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Encapsulation Compound (Mold Compound)",
+              "confidence": 0.88,
+              "reasoning": "Strong consensus from 2 agents with 0.88 confidence. Essential for environmental protection of internal components.",
+              "round": 3,
+              "normalized_component": "Encapsulation Compound"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Die Attach Material/Adhesive",
+              "confidence": 0.83,
+              "reasoning": "Strong consensus from 2 agents with average 0.83 confidence. Critical for securing die to substrate and thermal/electrical path.",
+              "round": 3,
+              "normalized_component": "Adhesive"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Heat Spreader/Thermal Interface",
+              "confidence": 0.8,
+              "reasoning": "Strong consensus from all 3 agents with 0.80 average confidence. Important for thermal management in DSP applications.",
+              "round": 3,
+              "normalized_component": "Heat Spreader"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Lead Frame (for QFP packages)",
+              "confidence": 0.78,
+              "reasoning": "Strong consensus from 2 agents with 0.78 average confidence. Essential structural component for QFP package types.",
+              "round": 3,
+              "normalized_component": "Lead Frame"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Solder Balls (for BGA packages)",
+              "confidence": 0.72,
+              "reasoning": "Strong consensus from all 3 agents with 0.72 average confidence. Essential for BGA package electrical connections to PCB.",
+              "round": 3,
+              "normalized_component": "Solder Balls"
+            }
+          ]
+        },
+        "rounds_completed": 3,
+        "support_analysis": {
+          "consensus": [
+            "dsp silicon die",
+            "package substrate (bga/qfp)",
+            "bond wires (gold/copper)",
+            "encapsulation compound (mold compound)",
+            "die attach material/adhesive",
+            "heat spreader/thermal interface",
+            "lead frame (for qfp packages)",
+            "solder balls (for bga packages)"
+          ],
+          "majority": [],
+          "isolated": []
+        },
+        "critiques": [
+          {
+            "item_name": "DSP Silicon Die",
+            "normalized_name": "dsp silicon die",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.98,
+            "critique_text": "Strong consensus on 'DSP Silicon Die': all 3 agents support with avg confidence 0.98. Preserve this component."
+          },
+          {
+            "item_name": "Package Substrate (BGA/QFP)",
+            "normalized_name": "package substrate (bga/qfp)",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.9499999999999998,
+            "critique_text": "Strong consensus on 'Package Substrate (BGA/QFP)': all 3 agents support with avg confidence 0.95. Preserve this component."
+          },
+          {
+            "item_name": "Bond Wires (Gold/Copper)",
+            "normalized_name": "bond wires (gold/copper)",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.9,
+            "critique_text": "Strong consensus on 'Bond Wires (Gold/Copper)': all 3 agents support with avg confidence 0.90. Preserve this component."
+          },
+          {
+            "item_name": "Encapsulation Compound (Mold Compound)",
+            "normalized_name": "encapsulation compound (mold compound)",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.88,
+            "critique_text": "Strong consensus on 'Encapsulation Compound (Mold Compound)': all 3 agents support with avg confidence 0.88. Preserve this component."
+          },
+          {
+            "item_name": "Die Attach Material/Adhesive",
+            "normalized_name": "die attach material/adhesive",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.83,
+            "critique_text": "Strong consensus on 'Die Attach Material/Adhesive': all 3 agents support with avg confidence 0.83. Preserve this component."
+          },
+          {
+            "item_name": "Heat Spreader/Thermal Interface",
+            "normalized_name": "heat spreader/thermal interface",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.8000000000000002,
+            "critique_text": "Strong consensus on 'Heat Spreader/Thermal Interface': all 3 agents support with avg confidence 0.80. Preserve this component."
+          },
+          {
+            "item_name": "Lead Frame (for QFP packages)",
+            "normalized_name": "lead frame (for qfp packages)",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.7799999999999999,
+            "critique_text": "Strong consensus on 'Lead Frame (for QFP packages)': all 3 agents support with avg confidence 0.78. Preserve this component."
+          },
+          {
+            "item_name": "Solder Balls (for BGA packages)",
+            "normalized_name": "solder balls (for bga packages)",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.7200000000000001,
+            "critique_text": "Strong consensus on 'Solder Balls (for BGA packages)': all 3 agents support with avg confidence 0.72. Preserve this component."
+          }
+        ],
+        "changes_from_previous": {
+          "items_added": [],
+          "items_removed": [
+            "bond wire",
+            "die attach material",
+            "dsp core silicon die",
+            "lead frame",
+            "ic package substrate",
+            "package encapsulation compound"
+          ],
+          "confidence_changes": {}
+        }
+      }
+    ],
+    "phase3_final_consensus": {
+      "technology": "Digital Signal Processors (DSPs)",
+      "technology_specification": "Digital Signal Processors (DSPs)",
+      "technology_reasoning": "",
+      "components": [
+        "Dsp Silicon Die",
+        "Package Substrate",
+        "Bond Wires",
+        "Encapsulation Compound",
+        "Adhesive",
+        "Heat Spreader",
+        "Lead Frame",
+        "Solder Balls"
+      ],
+      "confidence": 1.0,
+      "rounds": 3,
+      "convergence_score": 1.0
+    }
+  }
+}

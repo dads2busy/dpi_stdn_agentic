@@ -1,0 +1,989 @@
+{
+  "version": "2.0",
+  "metadata": {
+    "technology": "Computer Graphics Processing Units (GPUs)",
+    "technology_specification": "Computer Graphics Processing Units (GPUs)",
+    "technology_reasoning": "",
+    "timestamp": "2026-01-30T12:55:32.906821",
+    "format_version": "2.0"
+  },
+  "config": {
+    "num_agents": 3,
+    "max_rounds": 1
+  },
+  "component_stage": {
+    "phase1_initial_proposals": [
+      {
+        "agent_id": "Agent_1",
+        "components": [
+          {
+            "name": "Graphics Processing Unit (GPU) Die/Chip",
+            "confidence": 0.98,
+            "reasoning": "The core silicon chip containing thousands of processing cores, manufactured by specialized foundries like TSMC and procured as a complete functional unit by GPU manufacturers."
+          },
+          {
+            "name": "GDDR Memory Modules",
+            "confidence": 0.95,
+            "reasoning": "High-bandwidth graphics memory chips (GDDR6/6X) that are manufactured by memory companies like Samsung, Micron, and SK Hynix as separate components and mounted on the GPU board."
+          },
+          {
+            "name": "Printed Circuit Board (PCB)",
+            "confidence": 0.92,
+            "reasoning": "Complex multi-layer PCB that houses all components and provides electrical connections, manufactured by specialized PCB fabricators as a distinct substrate component."
+          },
+          {
+            "name": "Cooling Solution Assembly",
+            "confidence": 0.9,
+            "reasoning": "Complete thermal management system including heatsink, heat pipes, and fans, typically procured as an integrated assembly from thermal solution manufacturers like Noctua or custom OEM suppliers."
+          },
+          {
+            "name": "Power Delivery System (VRM)",
+            "confidence": 0.88,
+            "reasoning": "Voltage regulation module consisting of power MOSFETs, capacitors, and inductors, often procured as a complete power management subsystem from companies like International Rectifier or Infineon."
+          },
+          {
+            "name": "Display Output Connectors",
+            "confidence": 0.85,
+            "reasoning": "HDMI, DisplayPort, and DVI connector assemblies manufactured by connector specialists like Amphenol or Molex and installed as discrete components on the PCB."
+          },
+          {
+            "name": "PCIe Edge Connector",
+            "confidence": 0.83,
+            "reasoning": "Gold-plated connector interface for motherboard connection, manufactured as a standardized component by connector companies and soldered to the PCB as a separate part."
+          },
+          {
+            "name": "Card Bracket and Shroud",
+            "confidence": 0.8,
+            "reasoning": "Metal mounting bracket and plastic/metal shroud assembly for case installation and airflow management, typically manufactured by metal stamping/molding companies as separate mechanical components."
+          },
+          {
+            "name": "BIOS/Firmware Chip",
+            "confidence": 0.75,
+            "reasoning": "Dedicated flash memory chip containing GPU firmware and BIOS, procured as a programmed component from memory manufacturers or programming services."
+          }
+        ],
+        "technology_specification": "Discrete graphics processing unit (dGPU) card with dedicated GDDR memory and PCIe interface",
+        "technology_reasoning": "Discrete GPUs represent the dominant form of high-performance graphics processing units, accounting for over 80% of the dedicated GPU market by revenue as of 2024, used primarily for gaming, AI/ML workloads, and professional graphics applications where integrated solutions are insufficient."
+      },
+      {
+        "agent_id": "Agent_2",
+        "components": [
+          {
+            "name": "Graphics Processing Unit (GPU) Chip",
+            "confidence": 0.98,
+            "reasoning": "The core silicon die manufactured by GPU vendors like NVIDIA or AMD, universally present as the primary functional component with its own complex supply chain."
+          },
+          {
+            "name": "Video Memory (VRAM) Modules",
+            "confidence": 0.95,
+            "reasoning": "GDDR6/6X memory chips essential for graphics data storage, procured as separate components from memory manufacturers and mounted on the PCB."
+          },
+          {
+            "name": "Printed Circuit Board (PCB)",
+            "confidence": 0.92,
+            "reasoning": "Custom multi-layer PCB assembly that interconnects all components, manufactured separately by specialized PCB suppliers with GPU-specific layouts."
+          },
+          {
+            "name": "Cooling Assembly (Heatsink and Fans)",
+            "confidence": 0.9,
+            "reasoning": "Thermal management system consisting of heatsink, heat pipes, and fans, typically procured as complete assembly from cooling specialists."
+          },
+          {
+            "name": "Power Regulation Module (VRM)",
+            "confidence": 0.88,
+            "reasoning": "Voltage regulation circuitry including MOSFETs, capacitors, and inductors, often procured as integrated power modules from specialized suppliers."
+          },
+          {
+            "name": "Display Output Connectors",
+            "confidence": 0.85,
+            "reasoning": "HDMI, DisplayPort, and other video output ports manufactured as separate connector assemblies and mounted to the PCB bracket."
+          },
+          {
+            "name": "Backplate/Shroud Assembly",
+            "confidence": 0.82,
+            "reasoning": "Structural and aesthetic cover assembly typically made of metal or plastic, procured separately to provide mechanical support and branding."
+          },
+          {
+            "name": "PCIe Connector",
+            "confidence": 0.8,
+            "reasoning": "Edge connector interface for motherboard connection, standardized component procured from connector manufacturers for PCIe slot compatibility."
+          },
+          {
+            "name": "Power Input Connectors",
+            "confidence": 0.78,
+            "reasoning": "6-pin, 8-pin, or 12-pin power connectors for PSU connection, manufactured as separate components for high-power GPU designs."
+          }
+        ],
+        "technology_specification": "Discrete graphics processing unit (GPU) card with dedicated VRAM for gaming and computational workloads",
+        "technology_reasoning": "Discrete GPU cards represent the dominant form for high-performance graphics and compute applications, accounting for over 80% of the dedicated GPU market as of 2024, distinguished from integrated GPUs by their separate PCB assembly, dedicated cooling, and independent VRAM."
+      },
+      {
+        "agent_id": "Agent_3",
+        "components": [
+          {
+            "name": "Graphics Processing Unit Die (GPU chip)",
+            "confidence": 0.98,
+            "reasoning": "Core silicon chip containing thousands of processing cores, manufactured by specialized foundries like TSMC and procured as complete tested dies by GPU manufacturers."
+          },
+          {
+            "name": "Graphics Memory Modules (GDDR DRAM)",
+            "confidence": 0.95,
+            "reasoning": "High-speed dedicated video memory chips, typically GDDR6 or GDDR6X, procured from memory manufacturers like Samsung, Micron, or SK Hynix as complete modules."
+          },
+          {
+            "name": "Printed Circuit Board (PCB) Assembly",
+            "confidence": 0.92,
+            "reasoning": "Multi-layer PCB substrate that connects all components, manufactured by specialized PCB suppliers with complex routing for high-speed signals and power delivery."
+          },
+          {
+            "name": "Cooling Solution Assembly",
+            "confidence": 0.9,
+            "reasoning": "Complete thermal management system including heatsink, heat pipes, and fans, typically procured as integrated assembly from thermal solution specialists like Foxconn or Cooler Master."
+          },
+          {
+            "name": "Power Delivery Module (VRM)",
+            "confidence": 0.88,
+            "reasoning": "Voltage regulation circuitry including MOSFETs, inductors, and capacitors, often procured as complete power module assemblies from companies like Infineon or ON Semiconductor."
+          },
+          {
+            "name": "Display Output Connectors",
+            "confidence": 0.85,
+            "reasoning": "Physical interface ports (DisplayPort, HDMI, DVI) manufactured by connector specialists and procured as complete assemblies with specific electrical characteristics."
+          },
+          {
+            "name": "Card Bracket and Backplate",
+            "confidence": 0.8,
+            "reasoning": "Structural metal components for mechanical support and electromagnetic shielding, typically stamped or machined by metalworking suppliers as finished parts."
+          },
+          {
+            "name": "PCIe Edge Connector",
+            "confidence": 0.92,
+            "reasoning": "Gold-plated interface connector for motherboard communication, manufactured to strict PCIe specifications and procured from specialized connector manufacturers."
+          },
+          {
+            "name": "BIOS/UEFI Flash Memory Chip",
+            "confidence": 0.75,
+            "reasoning": "Non-volatile memory storing graphics card firmware, typically a small flash memory chip procured from memory manufacturers, though sometimes integrated into other components."
+          }
+        ],
+        "technology_specification": "Discrete graphics processing unit (GPU) card for gaming and professional computing with dedicated GDDR memory",
+        "technology_reasoning": "Discrete GPU cards represent the dominant high-performance graphics market segment, accounting for over 80% of dedicated graphics revenue as of 2024, with standardized PCIe interfaces and modular designs that distinguish them from integrated solutions."
+      }
+    ],
+    "phase2_debate_rounds": [
+      {
+        "round_num": 1,
+        "convergence": 0.8666666666666667,
+        "threshold": 0.7,
+        "threshold_reached": true,
+        "proposals": {
+          "Agent_1": [
+            {
+              "name": "Graphics Processing Unit (GPU) Die/Chip",
+              "confidence": 0.98,
+              "reasoning": "The core silicon chip containing thousands of processing cores, manufactured by specialized foundries like TSMC and procured as a complete functional unit by GPU manufacturers.",
+              "component": "Graphics Processing Unit (GPU) Die/Chip",
+              "normalized_component": "Graphics Processing Unit"
+            },
+            {
+              "name": "GDDR Memory Modules",
+              "confidence": 0.95,
+              "reasoning": "High-bandwidth graphics memory chips (GDDR6/6X) that are manufactured by memory companies like Samsung, Micron, and SK Hynix as separate components and mounted on the GPU board.",
+              "component": "GDDR Memory Modules",
+              "normalized_component": "GDDR Memory Modules"
+            },
+            {
+              "name": "Printed Circuit Board (PCB)",
+              "confidence": 0.92,
+              "reasoning": "Complex multi-layer PCB that houses all components and provides electrical connections, manufactured by specialized PCB fabricators as a distinct substrate component.",
+              "component": "Printed Circuit Board (PCB)",
+              "normalized_component": "Main Board"
+            },
+            {
+              "name": "Cooling Solution Assembly",
+              "confidence": 0.9,
+              "reasoning": "Complete thermal management system including heatsink, heat pipes, and fans, typically procured as an integrated assembly from thermal solution manufacturers like Noctua or custom OEM suppliers.",
+              "component": "Cooling Solution Assembly",
+              "normalized_component": "Cooling Assembly"
+            },
+            {
+              "name": "Power Delivery System (VRM)",
+              "confidence": 0.88,
+              "reasoning": "Voltage regulation module consisting of power MOSFETs, capacitors, and inductors, often procured as a complete power management subsystem from companies like International Rectifier or Infineon.",
+              "component": "Power Delivery System (VRM)",
+              "normalized_component": "Voltage Regulator Module"
+            },
+            {
+              "name": "Display Output Connectors",
+              "confidence": 0.85,
+              "reasoning": "HDMI, DisplayPort, and DVI connector assemblies manufactured by connector specialists like Amphenol or Molex and installed as discrete components on the PCB.",
+              "component": "Display Output Connectors",
+              "normalized_component": "Display Connector"
+            },
+            {
+              "name": "PCIe Edge Connector",
+              "confidence": 0.83,
+              "reasoning": "Gold-plated connector interface for motherboard connection, manufactured as a standardized component by connector companies and soldered to the PCB as a separate part.",
+              "component": "PCIe Edge Connector",
+              "normalized_component": "PCIe Connector"
+            },
+            {
+              "name": "Card Bracket and Shroud",
+              "confidence": 0.8,
+              "reasoning": "Metal mounting bracket and plastic/metal shroud assembly for case installation and airflow management, typically manufactured by metal stamping/molding companies as separate mechanical components.",
+              "component": "Card Bracket and Shroud",
+              "normalized_component": "Card Bracket and Shroud"
+            },
+            {
+              "name": "BIOS/Firmware Chip",
+              "confidence": 0.75,
+              "reasoning": "Dedicated flash memory chip containing GPU firmware and BIOS, procured as a programmed component from memory manufacturers or programming services.",
+              "component": "BIOS/Firmware Chip",
+              "normalized_component": "BIOS Chip"
+            }
+          ],
+          "Agent_2": [
+            {
+              "name": "Graphics Processing Unit (GPU) Chip",
+              "confidence": 0.98,
+              "reasoning": "The core silicon die manufactured by GPU vendors like NVIDIA or AMD, universally present as the primary functional component with its own complex supply chain.",
+              "component": "Graphics Processing Unit (GPU) Chip",
+              "normalized_component": "Graphics Processing Unit (Gpu) Chip"
+            },
+            {
+              "name": "Video Memory (VRAM) Modules",
+              "confidence": 0.95,
+              "reasoning": "GDDR6/6X memory chips essential for graphics data storage, procured as separate components from memory manufacturers and mounted on the PCB.",
+              "component": "Video Memory (VRAM) Modules",
+              "normalized_component": "VRAM Module"
+            },
+            {
+              "name": "Printed Circuit Board (PCB)",
+              "confidence": 0.92,
+              "reasoning": "Custom multi-layer PCB assembly that interconnects all components, manufactured separately by specialized PCB suppliers with GPU-specific layouts.",
+              "component": "Printed Circuit Board (PCB)",
+              "normalized_component": "Main Board"
+            },
+            {
+              "name": "Cooling Assembly (Heatsink and Fans)",
+              "confidence": 0.9,
+              "reasoning": "Thermal management system consisting of heatsink, heat pipes, and fans, typically procured as complete assembly from cooling specialists.",
+              "component": "Cooling Assembly (Heatsink and Fans)",
+              "normalized_component": "Cooling Assembly"
+            },
+            {
+              "name": "Power Regulation Module (VRM)",
+              "confidence": 0.88,
+              "reasoning": "Voltage regulation circuitry including MOSFETs, capacitors, and inductors, often procured as integrated power modules from specialized suppliers.",
+              "component": "Power Regulation Module (VRM)",
+              "normalized_component": "Power Regulation Module"
+            },
+            {
+              "name": "Display Output Connectors",
+              "confidence": 0.85,
+              "reasoning": "HDMI, DisplayPort, and other video output ports manufactured as separate connector assemblies and mounted to the PCB bracket.",
+              "component": "Display Output Connectors",
+              "normalized_component": "Display Connector"
+            },
+            {
+              "name": "Backplate/Shroud Assembly",
+              "confidence": 0.82,
+              "reasoning": "Structural and aesthetic cover assembly typically made of metal or plastic, procured separately to provide mechanical support and branding.",
+              "component": "Backplate/Shroud Assembly",
+              "normalized_component": "Backplate Assembly"
+            },
+            {
+              "name": "PCIe Connector",
+              "confidence": 0.8,
+              "reasoning": "Edge connector interface for motherboard connection, standardized component procured from connector manufacturers for PCIe slot compatibility.",
+              "component": "PCIe Connector",
+              "normalized_component": "PCIe Connector"
+            },
+            {
+              "name": "Power Input Connectors",
+              "confidence": 0.78,
+              "reasoning": "6-pin, 8-pin, or 12-pin power connectors for PSU connection, manufactured as separate components for high-power GPU designs.",
+              "component": "Power Input Connectors",
+              "normalized_component": "Power Input Connectors"
+            }
+          ],
+          "Agent_3": [
+            {
+              "name": "Graphics Processing Unit Die (GPU chip)",
+              "confidence": 0.98,
+              "reasoning": "Core silicon chip containing thousands of processing cores, manufactured by specialized foundries like TSMC and procured as complete tested dies by GPU manufacturers.",
+              "component": "Graphics Processing Unit Die (GPU chip)",
+              "normalized_component": "Graphics Processing Unit"
+            },
+            {
+              "name": "Graphics Memory Modules (GDDR DRAM)",
+              "confidence": 0.95,
+              "reasoning": "High-speed dedicated video memory chips, typically GDDR6 or GDDR6X, procured from memory manufacturers like Samsung, Micron, or SK Hynix as complete modules.",
+              "component": "Graphics Memory Modules (GDDR DRAM)",
+              "normalized_component": "GDDR Memory Modules"
+            },
+            {
+              "name": "Printed Circuit Board (PCB) Assembly",
+              "confidence": 0.92,
+              "reasoning": "Multi-layer PCB substrate that connects all components, manufactured by specialized PCB suppliers with complex routing for high-speed signals and power delivery.",
+              "component": "Printed Circuit Board (PCB) Assembly",
+              "normalized_component": "Printed Circuit Board Assembly"
+            },
+            {
+              "name": "Cooling Solution Assembly",
+              "confidence": 0.9,
+              "reasoning": "Complete thermal management system including heatsink, heat pipes, and fans, typically procured as integrated assembly from thermal solution specialists like Foxconn or Cooler Master.",
+              "component": "Cooling Solution Assembly",
+              "normalized_component": "Cooling Assembly"
+            },
+            {
+              "name": "Power Delivery Module (VRM)",
+              "confidence": 0.88,
+              "reasoning": "Voltage regulation circuitry including MOSFETs, inductors, and capacitors, often procured as complete power module assemblies from companies like Infineon or ON Semiconductor.",
+              "component": "Power Delivery Module (VRM)",
+              "normalized_component": "Power Regulation Module"
+            },
+            {
+              "name": "Display Output Connectors",
+              "confidence": 0.85,
+              "reasoning": "Physical interface ports (DisplayPort, HDMI, DVI) manufactured by connector specialists and procured as complete assemblies with specific electrical characteristics.",
+              "component": "Display Output Connectors",
+              "normalized_component": "Display Connector"
+            },
+            {
+              "name": "Card Bracket and Backplate",
+              "confidence": 0.8,
+              "reasoning": "Structural metal components for mechanical support and electromagnetic shielding, typically stamped or machined by metalworking suppliers as finished parts.",
+              "component": "Card Bracket and Backplate",
+              "normalized_component": "Card Bracket and Backplate"
+            },
+            {
+              "name": "PCIe Edge Connector",
+              "confidence": 0.92,
+              "reasoning": "Gold-plated interface connector for motherboard communication, manufactured to strict PCIe specifications and procured from specialized connector manufacturers.",
+              "component": "PCIe Edge Connector",
+              "normalized_component": "PCIe Connector"
+            },
+            {
+              "name": "BIOS/UEFI Flash Memory Chip",
+              "confidence": 0.75,
+              "reasoning": "Non-volatile memory storing graphics card firmware, typically a small flash memory chip procured from memory manufacturers, though sometimes integrated into other components.",
+              "component": "BIOS/UEFI Flash Memory Chip",
+              "normalized_component": "Flash Memory Chip"
+            }
+          ]
+        },
+        "rounds_completed": 1,
+        "support_analysis": {
+          "consensus": [
+            "graphics processing",
+            "graphics memory modules",
+            "printed circuit board",
+            "cooling",
+            "voltage regulator",
+            "display output connectors",
+            "pcie connector",
+            "card bracket"
+          ],
+          "majority": [
+            "bios flash memory chip"
+          ],
+          "isolated": [
+            "power input connectors"
+          ]
+        },
+        "critiques": [
+          {
+            "item_name": "graphics processing",
+            "normalized_name": "graphics processing",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.98,
+            "critique_text": "Strong consensus on 'graphics processing': all 3 agents support with avg confidence 0.98. Preserve this component."
+          },
+          {
+            "item_name": "graphics memory modules",
+            "normalized_name": "graphics memory modules",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.9499999999999998,
+            "critique_text": "Strong consensus on 'graphics memory modules': all 3 agents support with avg confidence 0.95. Preserve this component."
+          },
+          {
+            "item_name": "printed circuit board",
+            "normalized_name": "printed circuit board",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.92,
+            "critique_text": "Strong consensus on 'printed circuit board': all 3 agents support with avg confidence 0.92. Preserve this component."
+          },
+          {
+            "item_name": "cooling",
+            "normalized_name": "cooling",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.9,
+            "critique_text": "Strong consensus on 'cooling': all 3 agents support with avg confidence 0.90. Preserve this component."
+          },
+          {
+            "item_name": "voltage regulator",
+            "normalized_name": "voltage regulator",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.88,
+            "critique_text": "Strong consensus on 'voltage regulator': all 3 agents support with avg confidence 0.88. Preserve this component."
+          },
+          {
+            "item_name": "display output connectors",
+            "normalized_name": "display output connectors",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.85,
+            "critique_text": "Strong consensus on 'display output connectors': all 3 agents support with avg confidence 0.85. Preserve this component."
+          },
+          {
+            "item_name": "pcie connector",
+            "normalized_name": "pcie connector",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.85,
+            "critique_text": "Strong consensus on 'pcie connector': all 3 agents support with avg confidence 0.85. Preserve this component."
+          },
+          {
+            "item_name": "card bracket",
+            "normalized_name": "card bracket",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.8066666666666666,
+            "critique_text": "Strong consensus on 'card bracket': all 3 agents support with avg confidence 0.81. Preserve this component."
+          },
+          {
+            "item_name": "bios flash memory chip",
+            "normalized_name": "bios flash memory chip",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2"
+            ],
+            "avg_confidence": 0.75,
+            "critique_text": "Majority support for 'bios flash memory chip': 2/3 agents agree (conf: 0.75). Consider strengthening consensus."
+          },
+          {
+            "item_name": "power input connectors",
+            "normalized_name": "power input connectors",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_3",
+              "Agent_1"
+            ],
+            "avg_confidence": 0.78,
+            "critique_text": "Isolated proposal 'power input connectors' from 1 agent(s) (conf: 0.78). Requires justification or peer validation."
+          }
+        ],
+        "changes_from_previous": null
+      }
+    ],
+    "phase3_final_consensus": {
+      "technology": "Computer Graphics Processing Units (GPUs)",
+      "technology_specification": "Computer Graphics Processing Units (GPUs)",
+      "technology_reasoning": "",
+      "components": [
+        "Graphics Processing Unit",
+        "Graphics Processing Unit (gpu) Chip",
+        "Gddr Memory Modules",
+        "Vram Module",
+        "Main Board",
+        "Printed Circuit Board Assembly",
+        "Cooling Assembly",
+        "Voltage Regulator Module",
+        "Power Regulation Module",
+        "Display Connector",
+        "Pcie Connector",
+        "Backplate Assembly",
+        "Card Bracket And Shroud",
+        "Card Bracket And Backplate",
+        "Power Input Connectors",
+        "Bios Chip",
+        "Flash Memory Chip"
+      ],
+      "confidence": 0.8666666666666667,
+      "rounds": 1,
+      "convergence_score": 0.8666666666666667
+    }
+  },
+  "materials_debate": {
+    "debate_rounds": [],
+    "final_consensus": {
+      "components": 17,
+      "unique_materials": 7,
+      "total_assignments": 55,
+      "materials_by_component": {
+        "Graphics Processing Unit": [
+          {
+            "name": "Silicon",
+            "confidence": 0.98,
+            "reasoning": "Proposed by Agent1 as key material for Graphics Processing Unit",
+            "score": 1.294,
+            "support": 3
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.9499999999999998,
+            "reasoning": "Proposed by Agent1 as key material for Graphics Processing Unit",
+            "score": 1.285,
+            "support": 3
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.85,
+            "reasoning": "Proposed by Agent1 as key material for Graphics Processing Unit",
+            "score": 1.255,
+            "support": 3
+          },
+          {
+            "name": "Arsenic",
+            "confidence": 0.7333333333333334,
+            "reasoning": "Proposed by Agent1 as key material for Graphics Processing Unit",
+            "score": 1.22,
+            "support": 3
+          },
+          {
+            "name": "Boron",
+            "confidence": 0.7150000000000001,
+            "reasoning": "Proposed by Agent1 as key material for Graphics Processing Unit",
+            "score": 0.8311666666666667,
+            "support": 2
+          }
+        ],
+        "Graphics Processing Unit (gpu) Chip": [
+          {
+            "name": "Silicon",
+            "confidence": 0.98,
+            "reasoning": "Proposed by Agent1 as key material for Graphics Processing Unit (gpu) Chip",
+            "score": 1.294,
+            "support": 3
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.94,
+            "reasoning": "Proposed by Agent1 as key material for Graphics Processing Unit (gpu) Chip",
+            "score": 1.282,
+            "support": 3
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.8000000000000002,
+            "reasoning": "Proposed by Agent1 as key material for Graphics Processing Unit (gpu) Chip",
+            "score": 1.24,
+            "support": 3
+          },
+          {
+            "name": "Arsenic",
+            "confidence": 0.7399999999999999,
+            "reasoning": "Proposed by Agent1 as key material for Graphics Processing Unit (gpu) Chip",
+            "score": 1.222,
+            "support": 3
+          }
+        ],
+        "Gddr Memory Module": [
+          {
+            "name": "Silicon",
+            "confidence": 0.9499999999999998,
+            "reasoning": "Proposed by Agent1 as key material for Gddr Memory Module",
+            "score": 1.285,
+            "support": 3
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.8933333333333334,
+            "reasoning": "Proposed by Agent1 as key material for Gddr Memory Module",
+            "score": 1.268,
+            "support": 3
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.8166666666666668,
+            "reasoning": "Proposed by Agent1 as key material for Gddr Memory Module",
+            "score": 1.2449999999999999,
+            "support": 3
+          },
+          {
+            "name": "Borosilicate glass",
+            "confidence": 0.6833333333333332,
+            "reasoning": "Proposed by Agent1 as key material for Gddr Memory Module",
+            "score": 1.2049999999999998,
+            "support": 3
+          }
+        ],
+        "Vram Module": [
+          {
+            "name": "Silicon",
+            "confidence": 0.9533333333333333,
+            "reasoning": "Proposed by Agent2 as key material for Vram Module",
+            "score": 1.286,
+            "support": 3
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.9,
+            "reasoning": "Proposed by Agent1 as key material for Vram Module",
+            "score": 1.27,
+            "support": 3
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.81,
+            "reasoning": "Proposed by Agent1 as key material for Vram Module",
+            "score": 1.2429999999999999,
+            "support": 3
+          },
+          {
+            "name": "Borosilicate glass",
+            "confidence": 0.725,
+            "reasoning": "Proposed by Agent3 as key material for Vram Module",
+            "score": 0.8341666666666666,
+            "support": 2
+          }
+        ],
+        "Main Board": [
+          {
+            "name": "Copper",
+            "confidence": 0.9499999999999998,
+            "reasoning": "Proposed by Agent1 as key material for Main Board",
+            "score": 1.285,
+            "support": 3
+          },
+          {
+            "name": "Borosilicate glass",
+            "confidence": 0.8666666666666667,
+            "reasoning": "Proposed by Agent1 as key material for Main Board",
+            "score": 1.26,
+            "support": 3
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.7333333333333334,
+            "reasoning": "Proposed by Agent1 as key material for Main Board",
+            "score": 1.22,
+            "support": 3
+          }
+        ],
+        "Graphics Card Cooling System": [
+          {
+            "name": "Aluminum",
+            "confidence": 0.915,
+            "reasoning": "Proposed by Agent1 as key material for Graphics Card Cooling System",
+            "score": 2.4245,
+            "support": 6
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.8983333333333333,
+            "reasoning": "Proposed by Agent2 as key material for Graphics Card Cooling System",
+            "score": 2.4194999999999998,
+            "support": 6
+          },
+          {
+            "name": "Acrylic",
+            "confidence": 0.625,
+            "reasoning": "Proposed by Agent2 as key material for Graphics Card Cooling System",
+            "score": 1.570833333333333,
+            "support": 4
+          }
+        ],
+        "Heat Sink And Fan Assembly": [
+          {
+            "name": "Aluminum",
+            "confidence": 0.94,
+            "reasoning": "Proposed by Agent1 as key material for Heat Sink And Fan Assembly",
+            "score": 1.282,
+            "support": 3
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.8433333333333334,
+            "reasoning": "Proposed by Agent2 as key material for Heat Sink And Fan Assembly",
+            "score": 1.253,
+            "support": 3
+          },
+          {
+            "name": "Acrylic",
+            "confidence": 0.7,
+            "reasoning": "Proposed by Agent2 as key material for Heat Sink And Fan Assembly",
+            "score": 0.8266666666666667,
+            "support": 2
+          }
+        ],
+        "Voltage Regulator Module": [
+          {
+            "name": "Silicon",
+            "confidence": 0.9333333333333332,
+            "reasoning": "Proposed by Agent1 as key material for Voltage Regulator Module",
+            "score": 1.28,
+            "support": 3
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.9066666666666667,
+            "reasoning": "Proposed by Agent2 as key material for Voltage Regulator Module",
+            "score": 1.272,
+            "support": 3
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.7833333333333333,
+            "reasoning": "Proposed by Agent1 as key material for Voltage Regulator Module",
+            "score": 1.2349999999999999,
+            "support": 3
+          },
+          {
+            "name": "Borosilicate glass",
+            "confidence": 0.7166666666666667,
+            "reasoning": "Proposed by Agent1 as key material for Voltage Regulator Module",
+            "score": 1.2149999999999999,
+            "support": 3
+          }
+        ],
+        "Power Delivery Module": [
+          {
+            "name": "Copper",
+            "confidence": 0.9499999999999998,
+            "reasoning": "Proposed by Agent1 as key material for Power Delivery Module",
+            "score": 1.285,
+            "support": 3
+          },
+          {
+            "name": "Silicon",
+            "confidence": 0.8933333333333334,
+            "reasoning": "Proposed by Agent1 as key material for Power Delivery Module",
+            "score": 1.268,
+            "support": 3
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.81,
+            "reasoning": "Proposed by Agent1 as key material for Power Delivery Module",
+            "score": 1.2429999999999999,
+            "support": 3
+          },
+          {
+            "name": "Borosilicate glass",
+            "confidence": 0.7399999999999999,
+            "reasoning": "Proposed by Agent1 as key material for Power Delivery Module",
+            "score": 1.222,
+            "support": 3
+          }
+        ],
+        "Display Connector": [
+          {
+            "name": "Copper",
+            "confidence": 0.94,
+            "reasoning": "Proposed by Agent1 as key material for Display Connector",
+            "score": 1.282,
+            "support": 3
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.7333333333333334,
+            "reasoning": "Proposed by Agent1 as key material for Display Connector",
+            "score": 1.22,
+            "support": 3
+          },
+          {
+            "name": "Acrylic",
+            "confidence": 0.7,
+            "reasoning": "Proposed by Agent2 as key material for Display Connector",
+            "score": 0.8266666666666667,
+            "support": 2
+          }
+        ],
+        "Pcie Connector": [
+          {
+            "name": "Copper",
+            "confidence": 0.9466666666666667,
+            "reasoning": "Proposed by Agent1 as key material for Pcie Connector",
+            "score": 1.284,
+            "support": 3
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.6833333333333332,
+            "reasoning": "Proposed by Agent1 as key material for Pcie Connector",
+            "score": 1.2049999999999998,
+            "support": 3
+          },
+          {
+            "name": "Acrylic",
+            "confidence": 0.7,
+            "reasoning": "Proposed by Agent2 as key material for Pcie Connector",
+            "score": 0.8266666666666667,
+            "support": 2
+          }
+        ],
+        "Gpu Bracket": [
+          {
+            "name": "Aluminum",
+            "confidence": 0.9,
+            "reasoning": "Proposed by Agent1 as key material for Gpu Bracket",
+            "score": 1.27,
+            "support": 3
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.625,
+            "reasoning": "Proposed by Agent2 as key material for Gpu Bracket",
+            "score": 0.8041666666666666,
+            "support": 2
+          }
+        ],
+        "Metal Shroud Assembly": [
+          {
+            "name": "Aluminum",
+            "confidence": 0.9333333333333332,
+            "reasoning": "Proposed by Agent1 as key material for Metal Shroud Assembly",
+            "score": 1.28,
+            "support": 3
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.625,
+            "reasoning": "Proposed by Agent3 as key material for Metal Shroud Assembly",
+            "score": 0.8041666666666666,
+            "support": 2
+          }
+        ],
+        "Structural Support Plate": [
+          {
+            "name": "Aluminum",
+            "confidence": 0.9266666666666666,
+            "reasoning": "Proposed by Agent1 as key material for Structural Support Plate",
+            "score": 1.278,
+            "support": 3
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.7,
+            "reasoning": "Proposed by Agent2 as key material for Structural Support Plate",
+            "score": 0.8266666666666667,
+            "support": 2
+          }
+        ],
+        "Bios/uefi Firmware Chip": [
+          {
+            "name": "Silicon",
+            "confidence": 0.96,
+            "reasoning": "Proposed by Agent3 as key material for Bios/uefi Firmware Chip",
+            "score": 1.288,
+            "support": 3
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.7999999999999999,
+            "reasoning": "Proposed by Agent1 as key material for Bios/uefi Firmware Chip",
+            "score": 1.24,
+            "support": 3
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.7333333333333334,
+            "reasoning": "Proposed by Agent3 as key material for Bios/uefi Firmware Chip",
+            "score": 1.22,
+            "support": 3
+          }
+        ],
+        "Housing Assembly": [
+          {
+            "name": "Aluminum",
+            "confidence": 0.9,
+            "reasoning": "Proposed by Agent1 as key material for Housing Assembly",
+            "score": 1.27,
+            "support": 3
+          },
+          {
+            "name": "Acrylic",
+            "confidence": 0.725,
+            "reasoning": "Proposed by Agent3 as key material for Housing Assembly",
+            "score": 0.8341666666666666,
+            "support": 2
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.6,
+            "reasoning": "Proposed by Agent2 as key material for Housing Assembly",
+            "score": 0.7966666666666666,
+            "support": 2
+          }
+        ],
+        "Bios Chip": [
+          {
+            "name": "Silicon",
+            "confidence": 0.9633333333333333,
+            "reasoning": "Proposed by Agent3 as key material for Bios Chip",
+            "score": 1.289,
+            "support": 3
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.79,
+            "reasoning": "Proposed by Agent1 as key material for Bios Chip",
+            "score": 1.2369999999999999,
+            "support": 3
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.7600000000000001,
+            "reasoning": "Proposed by Agent3 as key material for Bios Chip",
+            "score": 1.228,
+            "support": 3
+          }
+        ]
+      }
+    }
+  }
+}

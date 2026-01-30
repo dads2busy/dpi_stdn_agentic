@@ -1,0 +1,937 @@
+{
+  "version": "2.0",
+  "metadata": {
+    "technology": "Soil Moisture Sensor",
+    "technology_specification": "Soil Moisture Sensor",
+    "technology_reasoning": "",
+    "timestamp": "2026-01-30T12:33:15.293970",
+    "format_version": "2.0"
+  },
+  "config": {
+    "num_agents": 3,
+    "max_rounds": 2
+  },
+  "component_stage": {
+    "phase1_initial_proposals": [
+      {
+        "agent_id": "Agent_1",
+        "components": [
+          {
+            "name": "Capacitive Sensing Element",
+            "confidence": 0.95,
+            "reasoning": "Core functional component that measures soil dielectric properties, universally present and procured as specialized manufactured unit from sensor suppliers."
+          },
+          {
+            "name": "Signal Conditioning Circuit Board",
+            "confidence": 0.92,
+            "reasoning": "Essential electronic module that converts capacitive measurements to digital signals, typically manufactured as separate PCB assembly with specific agricultural-grade components."
+          },
+          {
+            "name": "Microcontroller Unit (MCU)",
+            "confidence": 0.88,
+            "reasoning": "Processes sensor data and manages communication protocols, standard component procured from semiconductor suppliers and integrated into sensor systems."
+          },
+          {
+            "name": "Weatherproof Housing/Enclosure",
+            "confidence": 0.9,
+            "reasoning": "Protective casing designed for harsh agricultural environments, typically manufactured separately with IP67/IP68 rating and procured from specialized enclosure suppliers."
+          },
+          {
+            "name": "Communication Module (LoRaWAN/WiFi/Cellular)",
+            "confidence": 0.85,
+            "reasoning": "Wireless transmission component for data connectivity, procured as standardized modules from communication technology suppliers, though specific technology varies by application."
+          },
+          {
+            "name": "Power Management Circuit",
+            "confidence": 0.82,
+            "reasoning": "Battery management and power regulation system, often manufactured as separate module to optimize power consumption for long-term field deployment."
+          },
+          {
+            "name": "Battery Pack",
+            "confidence": 0.88,
+            "reasoning": "Energy storage component typically using lithium batteries, procured as complete assemblies from battery manufacturers with agricultural-specific longevity requirements."
+          },
+          {
+            "name": "Probe Assembly",
+            "confidence": 0.92,
+            "reasoning": "Physical sensing probe that penetrates soil, manufactured as durable metal/polymer assembly with specific length and corrosion-resistant coatings for soil contact."
+          },
+          {
+            "name": "Cable Assembly",
+            "confidence": 0.75,
+            "reasoning": "Connects sensor probe to electronics housing, procured as weatherproof assemblies though sometimes integrated directly into probe design in compact sensors."
+          }
+        ],
+        "technology_specification": "Capacitive soil moisture sensor with digital output and weatherproof enclosure",
+        "technology_reasoning": "Capacitive sensors dominate the agricultural market due to their corrosion resistance, accuracy across different soil types, and long-term reliability compared to resistive sensors, representing approximately 70% of commercial agricultural installations as of 2024."
+      },
+      {
+        "agent_id": "Agent_2",
+        "components": [
+          {
+            "name": "Capacitive Sensing Probe",
+            "confidence": 0.95,
+            "reasoning": "Core functional element that measures dielectric changes in soil moisture, manufactured as a distinct assembly with specialized electrode configuration and calibrated sensing characteristics."
+          },
+          {
+            "name": "Signal Processing PCB",
+            "confidence": 0.92,
+            "reasoning": "Dedicated circuit board containing analog-to-digital conversion, microcontroller, and calibration circuits, typically procured as a complete electronic assembly from specialized manufacturers."
+          },
+          {
+            "name": "Weatherproof Housing/Enclosure",
+            "confidence": 0.9,
+            "reasoning": "Protective casing designed for outdoor agricultural environments, manufactured separately with IP65/IP67 ratings and specific materials for UV and chemical resistance."
+          },
+          {
+            "name": "Cable Assembly with Connector",
+            "confidence": 0.88,
+            "reasoning": "Specialized agricultural-grade cable with waterproof connectors for data and power transmission, procured as complete assembly with specific length and connector specifications."
+          },
+          {
+            "name": "Mounting Bracket/Stake",
+            "confidence": 0.85,
+            "reasoning": "Structural component for field installation, typically manufactured from corrosion-resistant materials as a separate mechanical assembly with specific mounting configurations."
+          },
+          {
+            "name": "Temperature Compensation Sensor",
+            "confidence": 0.75,
+            "reasoning": "Integrated temperature sensing element for measurement accuracy correction, often procured as a separate sensor module and integrated during assembly."
+          },
+          {
+            "name": "Power Management Module",
+            "confidence": 0.7,
+            "reasoning": "Voltage regulation and power conditioning circuitry, sometimes integrated into main PCB but often a distinct procurable module for low-power operation and battery management."
+          }
+        ],
+        "technology_specification": "Capacitive soil moisture sensor with digital output and weatherproof housing",
+        "technology_reasoning": "Capacitive sensors represent approximately 70% of the commercial soil moisture sensor market as of 2024 due to their non-contact measurement principle, which prevents corrosion and provides longer operational life compared to resistive sensors, while digital output enables direct integration with modern IoT and precision agriculture systems."
+      },
+      {
+        "agent_id": "Agent_3",
+        "components": [
+          {
+            "name": "Sensing Probe Assembly",
+            "confidence": 0.95,
+            "reasoning": "Core functional component containing capacitive electrodes and sensing circuitry, always procured as a complete sealed unit with specific geometric and material specifications."
+          },
+          {
+            "name": "Microcontroller Module",
+            "confidence": 0.9,
+            "reasoning": "Dedicated processing unit for signal conditioning and digital conversion, typically a separate PCB assembly with integrated analog-to-digital conversion capabilities."
+          },
+          {
+            "name": "Protective Housing/Enclosure",
+            "confidence": 0.88,
+            "reasoning": "Weather-resistant case protecting electronics from moisture and environmental conditions, manufactured as separate molded component with specific IP rating requirements."
+          },
+          {
+            "name": "Power Management Circuit",
+            "confidence": 0.85,
+            "reasoning": "Voltage regulation and power conditioning assembly, often a distinct PCB module managing battery or external power input for low-power sensor operation."
+          },
+          {
+            "name": "Communication Interface Module",
+            "confidence": 0.82,
+            "reasoning": "Digital output circuitry for data transmission (I2C, SPI, or wireless), typically a separate electronic assembly enabling integration with monitoring systems."
+          },
+          {
+            "name": "Cable Assembly",
+            "confidence": 0.75,
+            "reasoning": "Multi-conductor cable with connectors for power and data transmission, manufactured as complete assembly with waterproof connectors and specified length."
+          },
+          {
+            "name": "Calibration Circuit Board",
+            "confidence": 0.7,
+            "reasoning": "Analog signal processing and calibration electronics, often integrated with main PCB but can be separate module in higher-end sensors for field calibration."
+          },
+          {
+            "name": "Mounting Hardware Kit",
+            "confidence": 0.65,
+            "reasoning": "Specialized brackets and installation components for field deployment, typically procured as separate kit though sometimes integrated with housing design."
+          }
+        ],
+        "technology_specification": "Capacitive soil moisture sensor with digital output interface",
+        "technology_reasoning": "Capacitive sensors represent approximately 70% of commercial soil moisture sensor deployments as of 2024 due to their corrosion resistance, minimal soil disturbance, and ability to provide continuous digital readings compared to resistive sensors which suffer from electrode degradation."
+      }
+    ],
+    "phase2_debate_rounds": [
+      {
+        "round_num": 1,
+        "convergence": 0.5333333333333333,
+        "threshold": 0.7,
+        "threshold_reached": false,
+        "proposals": {
+          "Agent_1": [
+            {
+              "name": "Capacitive Sensing Element",
+              "confidence": 0.95,
+              "reasoning": "Core functional component that measures soil dielectric properties, universally present and procured as specialized manufactured unit from sensor suppliers.",
+              "component": "Capacitive Sensing Element",
+              "normalized_component": "sensing probe"
+            },
+            {
+              "name": "Signal Conditioning Circuit Board",
+              "confidence": 0.92,
+              "reasoning": "Essential electronic module that converts capacitive measurements to digital signals, typically manufactured as separate PCB assembly with specific agricultural-grade components.",
+              "component": "Signal Conditioning Circuit Board",
+              "normalized_component": "signal conditioning pcb"
+            },
+            {
+              "name": "Microcontroller Unit (MCU)",
+              "confidence": 0.88,
+              "reasoning": "Processes sensor data and manages communication protocols, standard component procured from semiconductor suppliers and integrated into sensor systems.",
+              "component": "Microcontroller Unit (MCU)",
+              "normalized_component": "microcontroller"
+            },
+            {
+              "name": "Weatherproof Housing/Enclosure",
+              "confidence": 0.9,
+              "reasoning": "Protective casing designed for harsh agricultural environments, typically manufactured separately with IP67/IP68 rating and procured from specialized enclosure suppliers.",
+              "component": "Weatherproof Housing/Enclosure",
+              "normalized_component": "protective housing enclosure"
+            },
+            {
+              "name": "Communication Module (LoRaWAN/WiFi/Cellular)",
+              "confidence": 0.85,
+              "reasoning": "Wireless transmission component for data connectivity, procured as standardized modules from communication technology suppliers, though specific technology varies by application.",
+              "component": "Communication Module (LoRaWAN/WiFi/Cellular)",
+              "normalized_component": "communication interface"
+            },
+            {
+              "name": "Power Management Circuit",
+              "confidence": 0.82,
+              "reasoning": "Battery management and power regulation system, often manufactured as separate module to optimize power consumption for long-term field deployment.",
+              "component": "Power Management Circuit",
+              "normalized_component": "power management circuit"
+            },
+            {
+              "name": "Battery Pack",
+              "confidence": 0.88,
+              "reasoning": "Energy storage component typically using lithium batteries, procured as complete assemblies from battery manufacturers with agricultural-specific longevity requirements.",
+              "component": "Battery Pack",
+              "normalized_component": "battery pack"
+            },
+            {
+              "name": "Probe Assembly",
+              "confidence": 0.92,
+              "reasoning": "Physical sensing probe that penetrates soil, manufactured as durable metal/polymer assembly with specific length and corrosion-resistant coatings for soil contact.",
+              "component": "Probe Assembly",
+              "normalized_component": "sensing probe"
+            },
+            {
+              "name": "Cable Assembly",
+              "confidence": 0.75,
+              "reasoning": "Connects sensor probe to electronics housing, procured as weatherproof assemblies though sometimes integrated directly into probe design in compact sensors.",
+              "component": "Cable Assembly",
+              "normalized_component": "cable"
+            }
+          ],
+          "Agent_2": [
+            {
+              "name": "Capacitive Sensing Probe",
+              "confidence": 0.95,
+              "reasoning": "Core functional element that measures dielectric changes in soil moisture, manufactured as a distinct assembly with specialized electrode configuration and calibrated sensing characteristics.",
+              "component": "Capacitive Sensing Probe",
+              "normalized_component": "sensing probe"
+            },
+            {
+              "name": "Signal Processing PCB",
+              "confidence": 0.92,
+              "reasoning": "Dedicated circuit board containing analog-to-digital conversion, microcontroller, and calibration circuits, typically procured as a complete electronic assembly from specialized manufacturers.",
+              "component": "Signal Processing PCB",
+              "normalized_component": "signal conditioning pcb"
+            },
+            {
+              "name": "Weatherproof Housing/Enclosure",
+              "confidence": 0.9,
+              "reasoning": "Protective casing designed for outdoor agricultural environments, manufactured separately with IP65/IP67 ratings and specific materials for UV and chemical resistance.",
+              "component": "Weatherproof Housing/Enclosure",
+              "normalized_component": "protective housing enclosure"
+            },
+            {
+              "name": "Cable Assembly with Connector",
+              "confidence": 0.88,
+              "reasoning": "Specialized agricultural-grade cable with waterproof connectors for data and power transmission, procured as complete assembly with specific length and connector specifications.",
+              "component": "Cable Assembly with Connector",
+              "normalized_component": "cable"
+            },
+            {
+              "name": "Mounting Bracket/Stake",
+              "confidence": 0.85,
+              "reasoning": "Structural component for field installation, typically manufactured from corrosion-resistant materials as a separate mechanical assembly with specific mounting configurations.",
+              "component": "Mounting Bracket/Stake",
+              "normalized_component": "mounting hardware kit"
+            },
+            {
+              "name": "Temperature Compensation Sensor",
+              "confidence": 0.75,
+              "reasoning": "Integrated temperature sensing element for measurement accuracy correction, often procured as a separate sensor module and integrated during assembly.",
+              "component": "Temperature Compensation Sensor",
+              "normalized_component": "temperature compensation sensor"
+            },
+            {
+              "name": "Power Management Module",
+              "confidence": 0.7,
+              "reasoning": "Voltage regulation and power conditioning circuitry, sometimes integrated into main PCB but often a distinct procurable module for low-power operation and battery management.",
+              "component": "Power Management Module",
+              "normalized_component": "power management circuit"
+            }
+          ],
+          "Agent_3": [
+            {
+              "name": "Sensing Probe Assembly",
+              "confidence": 0.95,
+              "reasoning": "Core functional component containing capacitive electrodes and sensing circuitry, always procured as a complete sealed unit with specific geometric and material specifications.",
+              "component": "Sensing Probe Assembly",
+              "normalized_component": "sensing probe"
+            },
+            {
+              "name": "Microcontroller Module",
+              "confidence": 0.9,
+              "reasoning": "Dedicated processing unit for signal conditioning and digital conversion, typically a separate PCB assembly with integrated analog-to-digital conversion capabilities.",
+              "component": "Microcontroller Module",
+              "normalized_component": "microcontroller"
+            },
+            {
+              "name": "Protective Housing/Enclosure",
+              "confidence": 0.88,
+              "reasoning": "Weather-resistant case protecting electronics from moisture and environmental conditions, manufactured as separate molded component with specific IP rating requirements.",
+              "component": "Protective Housing/Enclosure",
+              "normalized_component": "protective housing enclosure"
+            },
+            {
+              "name": "Power Management Circuit",
+              "confidence": 0.85,
+              "reasoning": "Voltage regulation and power conditioning assembly, often a distinct PCB module managing battery or external power input for low-power sensor operation.",
+              "component": "Power Management Circuit",
+              "normalized_component": "power management circuit"
+            },
+            {
+              "name": "Communication Interface Module",
+              "confidence": 0.82,
+              "reasoning": "Digital output circuitry for data transmission (I2C, SPI, or wireless), typically a separate electronic assembly enabling integration with monitoring systems.",
+              "component": "Communication Interface Module",
+              "normalized_component": "communication interface"
+            },
+            {
+              "name": "Cable Assembly",
+              "confidence": 0.75,
+              "reasoning": "Multi-conductor cable with connectors for power and data transmission, manufactured as complete assembly with waterproof connectors and specified length.",
+              "component": "Cable Assembly",
+              "normalized_component": "cable"
+            },
+            {
+              "name": "Calibration Circuit Board",
+              "confidence": 0.7,
+              "reasoning": "Analog signal processing and calibration electronics, often integrated with main PCB but can be separate module in higher-end sensors for field calibration.",
+              "component": "Calibration Circuit Board",
+              "normalized_component": "calibration circuit board"
+            },
+            {
+              "name": "Mounting Hardware Kit",
+              "confidence": 0.65,
+              "reasoning": "Specialized brackets and installation components for field deployment, typically procured as separate kit though sometimes integrated with housing design.",
+              "component": "Mounting Hardware Kit",
+              "normalized_component": "mounting hardware kit"
+            }
+          ]
+        },
+        "rounds_completed": 1,
+        "support_analysis": {
+          "consensus": [
+            "sensing probe",
+            "protective housing enclosure",
+            "power management circuit",
+            "cable"
+          ],
+          "majority": [
+            "signal conditioning pcb",
+            "microcontroller",
+            "communication interface",
+            "mounting hardware kit"
+          ],
+          "isolated": [
+            "battery pack",
+            "temperature compensation sensor",
+            "calibration circuit board"
+          ]
+        },
+        "critiques": [
+          {
+            "item_name": "sensing probe",
+            "normalized_name": "sensing probe",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.9425,
+            "critique_text": "Strong consensus on 'sensing probe': all 3 agents support with avg confidence 0.94. Preserve this component."
+          },
+          {
+            "item_name": "signal conditioning pcb",
+            "normalized_name": "signal conditioning pcb",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_3"
+            ],
+            "avg_confidence": 0.92,
+            "critique_text": "Majority support for 'signal conditioning pcb': 2/3 agents agree (conf: 0.92). Consider strengthening consensus."
+          },
+          {
+            "item_name": "microcontroller",
+            "normalized_name": "microcontroller",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2"
+            ],
+            "avg_confidence": 0.89,
+            "critique_text": "Majority support for 'microcontroller': 2/3 agents agree (conf: 0.89). Consider strengthening consensus."
+          },
+          {
+            "item_name": "protective housing enclosure",
+            "normalized_name": "protective housing enclosure",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.8933333333333334,
+            "critique_text": "Strong consensus on 'protective housing enclosure': all 3 agents support with avg confidence 0.89. Preserve this component."
+          },
+          {
+            "item_name": "communication interface",
+            "normalized_name": "communication interface",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2"
+            ],
+            "avg_confidence": 0.835,
+            "critique_text": "Majority support for 'communication interface': 2/3 agents agree (conf: 0.83). Consider strengthening consensus."
+          },
+          {
+            "item_name": "power management circuit",
+            "normalized_name": "power management circuit",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.79,
+            "critique_text": "Strong consensus on 'power management circuit': all 3 agents support with avg confidence 0.79. Preserve this component."
+          },
+          {
+            "item_name": "battery pack",
+            "normalized_name": "battery pack",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_3",
+              "Agent_2"
+            ],
+            "avg_confidence": 0.88,
+            "critique_text": "Isolated proposal 'battery pack' from 1 agent(s) (conf: 0.88). Requires justification or peer validation."
+          },
+          {
+            "item_name": "cable",
+            "normalized_name": "cable",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.7933333333333333,
+            "critique_text": "Strong consensus on 'cable': all 3 agents support with avg confidence 0.79. Preserve this component."
+          },
+          {
+            "item_name": "mounting hardware kit",
+            "normalized_name": "mounting hardware kit",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_1"
+            ],
+            "avg_confidence": 0.75,
+            "critique_text": "Majority support for 'mounting hardware kit': 2/3 agents agree (conf: 0.75). Consider strengthening consensus."
+          },
+          {
+            "item_name": "temperature compensation sensor",
+            "normalized_name": "temperature compensation sensor",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_3",
+              "Agent_1"
+            ],
+            "avg_confidence": 0.75,
+            "critique_text": "Isolated proposal 'temperature compensation sensor' from 1 agent(s) (conf: 0.75). Requires justification or peer validation."
+          },
+          {
+            "item_name": "calibration circuit board",
+            "normalized_name": "calibration circuit board",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_3"
+            ],
+            "opposing_agents": [
+              "Agent_1",
+              "Agent_2"
+            ],
+            "avg_confidence": 0.7,
+            "critique_text": "Isolated proposal 'calibration circuit board' from 1 agent(s) (conf: 0.70). Requires justification or peer validation."
+          }
+        ],
+        "changes_from_previous": null
+      },
+      {
+        "round_num": 2,
+        "convergence": 0.7962962962962963,
+        "threshold": 0.7,
+        "threshold_reached": true,
+        "proposals": {
+          "Agent_1": [
+            {
+              "agent_id": "Agent_1",
+              "component": "Capacitive Sensing Element",
+              "confidence": 0.95,
+              "reasoning": "Core sensing technology with strong individual support (0.95). Essential primary component for soil moisture detection.",
+              "round": 2,
+              "normalized_component": "Capacitive Sensing Element"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Signal Conditioning Circuit Board",
+              "confidence": 0.92,
+              "reasoning": "Strong consensus across 2 agents with 0.92 average confidence. Critical for processing raw sensor signals.",
+              "round": 2,
+              "normalized_component": "Signal Conditioning Circuit Board"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Microcontroller Unit (MCU)",
+              "confidence": 0.89,
+              "reasoning": "Strong consensus across 2 agents with 0.89 average confidence. Essential for data processing and system control.",
+              "round": 2,
+              "normalized_component": "Microcontroller"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Weatherproof Housing/Enclosure",
+              "confidence": 0.89,
+              "reasoning": "Strong consensus across 3 agents with 0.89 average confidence. Critical for outdoor durability and protection.",
+              "round": 2,
+              "normalized_component": "Weatherproof Housing"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Communication Module (LoRaWAN/WiFi/Cellular)",
+              "confidence": 0.83,
+              "reasoning": "Strong consensus across 2 agents with 0.83 average confidence. Essential for data transmission in IoT applications.",
+              "round": 2,
+              "normalized_component": "Wireless Communication Module"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Power Management Circuit",
+              "confidence": 0.84,
+              "reasoning": "Strong consensus across 3 agents with 0.79 average confidence. Critical for efficient power usage and battery life.",
+              "round": 2,
+              "normalized_component": "Power Management IC"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Cable Assembly",
+              "confidence": 0.75,
+              "reasoning": "Strong consensus across 3 agents with 0.79 average confidence. Necessary for connecting probe to electronics.",
+              "round": 2,
+              "normalized_component": "Cable Assembly"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Mounting Bracket/Stake",
+              "confidence": 0.75,
+              "reasoning": "Strong consensus across 2 agents with 0.75 average confidence. Important for proper sensor installation and positioning.",
+              "round": 2,
+              "normalized_component": "Mounting Bracket"
+            }
+          ],
+          "Agent_2": [
+            {
+              "agent_id": "Agent_2",
+              "component": "Capacitive Sensing Element",
+              "confidence": 0.95,
+              "reasoning": "Core sensing component with strong consensus - functionally equivalent to other sensing probe variants selected by peers",
+              "round": 2,
+              "normalized_component": "Capacitive Sensing Element"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Signal Conditioning Circuit Board",
+              "confidence": 0.92,
+              "reasoning": "Strong consensus from peers (avg 0.92) - essential for processing raw sensor signals",
+              "round": 2,
+              "normalized_component": "Signal Conditioning Circuit Board"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Microcontroller Unit (MCU)",
+              "confidence": 0.89,
+              "reasoning": "Strong consensus from peers (avg 0.89) - critical for device control and data processing",
+              "round": 2,
+              "normalized_component": "Microcontroller"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Weatherproof Housing/Enclosure",
+              "confidence": 0.89,
+              "reasoning": "Strong consensus from all agents (avg 0.89) - essential protection for outdoor deployment",
+              "round": 2,
+              "normalized_component": "Weatherproof Housing"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Communication Module (LoRaWAN/WiFi/Cellular)",
+              "confidence": 0.83,
+              "reasoning": "Strong consensus from peers (avg 0.83) - necessary for remote data transmission",
+              "round": 2,
+              "normalized_component": "Wireless Communication Module"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Power Management Circuit",
+              "confidence": 0.82,
+              "reasoning": "Strong consensus from peers (avg 0.79) - essential for efficient power usage and battery life",
+              "round": 2,
+              "normalized_component": "Power Management IC"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Cable Assembly",
+              "confidence": 0.79,
+              "reasoning": "Strong consensus from peers (avg 0.79) - necessary for connecting probe to electronics",
+              "round": 2,
+              "normalized_component": "Cable Assembly"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Mounting Bracket/Stake",
+              "confidence": 0.75,
+              "reasoning": "Strong consensus from peers (avg 0.75) - important for proper sensor installation and positioning",
+              "round": 2,
+              "normalized_component": "Mounting Bracket"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Battery Pack",
+              "confidence": 0.65,
+              "reasoning": "Isolated proposal but critically important for powering the device - reducing confidence due to lack of peer support but maintaining inclusion",
+              "round": 2,
+              "normalized_component": "Battery Pack"
+            }
+          ],
+          "Agent_3": [
+            {
+              "agent_id": "Agent_3",
+              "component": "Capacitive Sensing Probe",
+              "confidence": 0.95,
+              "reasoning": "Strong consensus with 0.94 average confidence across agents. Essential sensing element for soil moisture measurement.",
+              "round": 2,
+              "normalized_component": "Capacitive Probe"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Signal Conditioning Circuit Board",
+              "confidence": 0.92,
+              "reasoning": "Strong consensus with 0.92 average confidence. Critical for processing raw capacitive sensor signals.",
+              "round": 2,
+              "normalized_component": "Signal Conditioning Circuit Board"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Microcontroller Unit (MCU)",
+              "confidence": 0.89,
+              "reasoning": "Strong consensus with 0.89 average confidence. Essential for data processing and system control.",
+              "round": 2,
+              "normalized_component": "Microcontroller"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Weatherproof Housing/Enclosure",
+              "confidence": 0.89,
+              "reasoning": "Strong consensus with 0.89 average confidence across 3 agents. Critical for outdoor deployment protection.",
+              "round": 2,
+              "normalized_component": "Weatherproof Housing"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Communication Module (LoRaWAN/WiFi/Cellular)",
+              "confidence": 0.83,
+              "reasoning": "Strong consensus with 0.83 average confidence. Essential for data transmission in IoT applications.",
+              "round": 2,
+              "normalized_component": "Wireless Communication Module"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Power Management Circuit",
+              "confidence": 0.82,
+              "reasoning": "Strong consensus with 0.79 average confidence across 3 agents. Critical for efficient power distribution and battery management.",
+              "round": 2,
+              "normalized_component": "Power Management IC"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Cable Assembly",
+              "confidence": 0.75,
+              "reasoning": "Strong consensus with 0.79 average confidence across 3 agents. Necessary for connecting probe to electronics.",
+              "round": 2,
+              "normalized_component": "Cable Assembly"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Mounting Bracket/Stake",
+              "confidence": 0.75,
+              "reasoning": "Strong consensus with 0.75 average confidence. Important for proper sensor deployment and positioning.",
+              "round": 2,
+              "normalized_component": "Mounting Bracket"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Battery Pack",
+              "confidence": 0.65,
+              "reasoning": "Lower confidence due to isolated proposal, but essential for standalone operation. Reducing confidence per critique guidance.",
+              "round": 2,
+              "normalized_component": "Battery Pack"
+            }
+          ]
+        },
+        "rounds_completed": 2,
+        "support_analysis": {
+          "consensus": [
+            "signal conditioning circuit board",
+            "microcontroller unit (mcu)",
+            "weatherproof housing/enclosure",
+            "communication module (lorawan/wifi/cellular)",
+            "power management circuit",
+            "cable",
+            "mounting bracket/stake"
+          ],
+          "majority": [
+            "capacitive sensing element",
+            "battery pack"
+          ],
+          "isolated": [
+            "capacitive sensing probe"
+          ]
+        },
+        "critiques": [
+          {
+            "item_name": "Capacitive Sensing Element",
+            "normalized_name": "capacitive sensing element",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_3"
+            ],
+            "avg_confidence": 0.95,
+            "critique_text": "Majority support for 'Capacitive Sensing Element': 2/3 agents agree (conf: 0.95). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Signal Conditioning Circuit Board",
+            "normalized_name": "signal conditioning circuit board",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.92,
+            "critique_text": "Strong consensus on 'Signal Conditioning Circuit Board': all 3 agents support with avg confidence 0.92. Preserve this component."
+          },
+          {
+            "item_name": "Microcontroller Unit (MCU)",
+            "normalized_name": "microcontroller unit (mcu)",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.89,
+            "critique_text": "Strong consensus on 'Microcontroller Unit (MCU)': all 3 agents support with avg confidence 0.89. Preserve this component."
+          },
+          {
+            "item_name": "Weatherproof Housing/Enclosure",
+            "normalized_name": "weatherproof housing/enclosure",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.89,
+            "critique_text": "Strong consensus on 'Weatherproof Housing/Enclosure': all 3 agents support with avg confidence 0.89. Preserve this component."
+          },
+          {
+            "item_name": "Communication Module (LoRaWAN/WiFi/Cellular)",
+            "normalized_name": "communication module (lorawan/wifi/cellular)",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.83,
+            "critique_text": "Strong consensus on 'Communication Module (LoRaWAN/WiFi/Cellular)': all 3 agents support with avg confidence 0.83. Preserve this component."
+          },
+          {
+            "item_name": "Power Management Circuit",
+            "normalized_name": "power management circuit",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.8266666666666667,
+            "critique_text": "Strong consensus on 'Power Management Circuit': all 3 agents support with avg confidence 0.83. Preserve this component."
+          },
+          {
+            "item_name": "Cable Assembly",
+            "normalized_name": "cable",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.7633333333333333,
+            "critique_text": "Strong consensus on 'Cable Assembly': all 3 agents support with avg confidence 0.76. Preserve this component."
+          },
+          {
+            "item_name": "Mounting Bracket/Stake",
+            "normalized_name": "mounting bracket/stake",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.75,
+            "critique_text": "Strong consensus on 'Mounting Bracket/Stake': all 3 agents support with avg confidence 0.75. Preserve this component."
+          },
+          {
+            "item_name": "Battery Pack",
+            "normalized_name": "battery pack",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_1"
+            ],
+            "avg_confidence": 0.65,
+            "critique_text": "Majority support for 'Battery Pack': 2/3 agents agree (conf: 0.65). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Capacitive Sensing Probe",
+            "normalized_name": "capacitive sensing probe",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_3"
+            ],
+            "opposing_agents": [
+              "Agent_1",
+              "Agent_2"
+            ],
+            "avg_confidence": 0.95,
+            "critique_text": "Isolated proposal 'Capacitive Sensing Probe' from 1 agent(s) (conf: 0.95). Requires justification or peer validation."
+          }
+        ],
+        "changes_from_previous": {
+          "items_added": [
+            "signal conditioning circuit board",
+            "communication module (lorawan/wifi/cellular)",
+            "mounting bracket/stake",
+            "capacitive sensing probe",
+            "capacitive sensing element",
+            "microcontroller unit (mcu)",
+            "weatherproof housing/enclosure"
+          ],
+          "items_removed": [
+            "signal conditioning pcb",
+            "microcontroller",
+            "mounting hardware kit",
+            "calibration circuit board",
+            "protective housing enclosure",
+            "temperature compensation sensor",
+            "sensing probe",
+            "communication interface"
+          ],
+          "confidence_changes": {
+            "battery pack": {
+              "from": 0.88,
+              "to": 0.65
+            }
+          }
+        }
+      }
+    ],
+    "phase3_final_consensus": {
+      "technology": "Soil Moisture Sensor",
+      "technology_specification": "Soil Moisture Sensor",
+      "technology_reasoning": "",
+      "components": [
+        "Signal Conditioning Circuit Board",
+        "Microcontroller",
+        "Weatherproof Housing",
+        "Wireless Communication Module",
+        "Power Management Ic",
+        "Cable Assembly",
+        "Mounting Bracket",
+        "Capacitive Sensing Element"
+      ],
+      "confidence": 0.7962962962962963,
+      "rounds": 2,
+      "convergence_score": 0.7962962962962963
+    }
+  }
+}
