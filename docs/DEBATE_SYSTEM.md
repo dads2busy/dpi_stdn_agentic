@@ -265,6 +265,61 @@ The system maintains a **canonical vocabulary** (`data/component_canonical_vocab
 
 When normalizing, the system first checks the vocabulary. Only names not found in the vocabulary are sent to the LLM. New mappings are added to the vocabulary and saved for future runs.
 
+### Material-Specific Canonical Names
+
+A critical principle of the canonical vocabulary is that **canonical names must preserve material-relevant distinctions**. Over-generalizing component names would lose information essential for accurate material extraction downstream.
+
+#### The Problem with Over-Generalization
+
+Consider what would happen if all battery types were consolidated to simply "Battery":
+
+| Battery Type | Key Materials |
+|--------------|---------------|
+| Lithium-ion (Li-ion) | Lithium, Cobalt, Nickel, Graphite, Manganese |
+| Lead-acid | Lead, Sulfuric acid |
+| Nickel-metal hydride (NiMH) | Nickel, Rare earth elements (Lanthanum, Cerium) |
+| Lithium iron phosphate (LFP) | Lithium, Iron, Phosphorus |
+
+If these were all mapped to "Battery", the materials extraction phase would face an impossible task—which materials should it return? The system cannot accurately determine material dependencies without knowing the specific battery chemistry.
+
+#### Normalization Rules
+
+The LLM normalization prompt explicitly instructs:
+
+> - Preserve material-relevant distinctions (battery chemistry, display technology, etc.)
+> - Preserve battery chemistry types (Lithium-ion, Lead-acid, NiMH, etc.)
+> - Preserve display technology types (OLED, LCD, LED, etc.)
+
+This ensures that variant names are consolidated only when they refer to the **same underlying technology with the same materials**:
+
+| Raw Variants | Canonical Form | Why This Works |
+|--------------|----------------|----------------|
+| "Li-ion Battery", "Lithium Ion Battery Pack", "Lithium-ion Cell" | "Lithium-ion Battery" | Same chemistry, same materials |
+| "Lead-Acid Battery", "Lead Acid Cell", "SLA Battery" | "Lead-Acid Battery" | Same chemistry, same materials |
+| "OLED Display", "OLED Screen Panel", "OLED Module" | "OLED Display" | Same technology, same materials |
+
+But these are **NOT** consolidated:
+
+| These Names | Are NOT Consolidated To | Because |
+|-------------|-------------------------|---------|
+| "Lithium-ion Battery", "Lead-Acid Battery" | "Battery" | Different chemistries use completely different materials |
+| "OLED Display", "LCD Display" | "Display" | Different technologies use different materials (organic compounds vs liquid crystals) |
+| "NMC Battery", "LFP Battery" | "Lithium-ion Battery" | Different cathode chemistries with different material profiles |
+
+#### Why This Matters for STDN Accuracy
+
+The Supply Technology Decomposition Network (STDN) traces materials from components back to producing countries. If component names are too generic:
+
+1. **Material ambiguity**: "Battery" could mean any of dozens of chemistries with completely different material requirements
+2. **False supply chain mappings**: Lithium supply chains would incorrectly appear for lead-acid batteries
+3. **Risk assessment errors**: Critical material dependencies would be masked or misattributed
+4. **Cross-run inconsistency**: Different runs might interpret "Battery" as different chemistries
+
+By maintaining material-specific canonical names, the system ensures that:
+- Material extraction is targeted to the correct component variant
+- Supply chain analysis reflects actual material dependencies
+- Cross-run comparisons remain meaningful (same canonical name = same materials)
+
 ### Formal State Definitions
 
 Each state in the debate process has a specific data structure and produces a well-defined output:
