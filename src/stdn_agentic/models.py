@@ -94,6 +94,25 @@ class ConfigModel(BaseModel):
     )
 
     # ========================================================================
+    # Post-Processing / Output Control (useful for parallel child runs)
+    # ========================================================================
+
+    skip_postprocess_normalization: bool = Field(
+        default=False,
+        description=(
+            "Skip post-processing component name normalization at the end of a run. "
+            "Recommended for parallel child runs; run scripts/normalize_outputs.py once after all runs finish."
+        ),
+    )
+    skip_json_output: bool = Field(
+        default=False,
+        description=(
+            "Skip JSON output generation at the end of a run. "
+            "Recommended for parallel child runs when JSON should be generated from normalized CSVs."
+        ),
+    )
+
+    # ========================================================================
     # Per-Agent Model Configuration
     # ========================================================================
 

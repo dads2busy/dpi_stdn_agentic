@@ -9,6 +9,16 @@ Launches multiple parallel pipeline runs with validation:
 4. Monitors that all files are growing during execution
 5. Cleans up temporary database and config files after completion
 
+Collision-proof shared-normalization mode:
+- Each run config sets `output_csv_filename` to `stdns_output_{config_type}_run{N}` to avoid
+  timestamp collisions when multiple runs create output files close together.
+- Output directory remains shared across runs so that consolidated outputs can be normalized together.
+- After ALL runs complete:
+  1) raw outputs are renamed back to the standard naming by removing `_run{N}` from filenames
+  2) a single shared normalization pass is run across the consolidated raw files
+     (writing to output/normalized/), matching the intended “group normalization” behavior
+  3) JSON files are generated from the normalized CSVs (JSON contains normalized components)
+
 Usage:
     # Run 5 v1v1v1 runs using base config
     python scripts/parallel_runs.py --config-type v1v1v1 --num-runs 5 --base-config config.json
@@ -24,6 +34,7 @@ Usage:
 """
 
 import argparse
+import csv
 import json
 import shutil
 import subprocess
@@ -39,10 +50,28 @@ def get_today_date_prefix() -> str:
 
 
 def find_new_output_file(
-    output_dir: Path, config_type: str, date_prefix: str, known_files: set[str]
+    output_dir: Path,
+    filename_config_marker: str,
+    date_prefix: str,
+    known_files: set[str],
+    run_num: int | None = None,
 ) -> str | None:
-    """Find a newly created output file that wasn't in known_files."""
-    pattern = f"stdns_output_{config_type}_{date_prefix}*.csv"
+    """Find a newly created output file that wasn't in known_files.
+
+    In collision-proof mode each run uses a unique output_csv_filename prefix:
+      stdns_output_{config_type}_run{N}
+
+    The orchestrator then appends:
+      _{debate_config_marker}_{timestamp}.csv
+
+    So for detection we must match:
+      stdns_output_*_run{N}_{filename_config_marker}_{date_prefix}*.csv
+    """
+    if run_num is None:
+        pattern = f"stdns_output_{filename_config_marker}_{date_prefix}*.csv"
+    else:
+        pattern = f"stdns_output_*_run{run_num}_{filename_config_marker}_{date_prefix}*.csv"
+
     for f in output_dir.glob(pattern):
         if f.name not in known_files:
             return f.name
@@ -51,16 +80,23 @@ def find_new_output_file(
 
 def wait_for_new_file(
     output_dir: Path,
-    config_type: str,
+    filename_config_marker: str,
     date_prefix: str,
     known_files: set[str],
+    run_num: int | None = None,
     timeout: int = 30,
     poll_interval: float = 1.0,
 ) -> str | None:
     """Wait for a new output file to appear, return filename or None on timeout."""
     elapsed = 0
     while elapsed < timeout:
-        new_file = find_new_output_file(output_dir, config_type, date_prefix, known_files)
+        new_file = find_new_output_file(
+            output_dir,
+            filename_config_marker,
+            date_prefix,
+            known_files,
+            run_num=run_num,
+        )
         if new_file:
             return new_file
         time.sleep(poll_interval)
@@ -71,18 +107,26 @@ def wait_for_new_file(
 def check_files_growing(
     output_dir: Path, files: list[str], interval: float = 5.0
 ) -> dict[str, bool]:
-    """Check if files are growing by comparing sizes before and after interval."""
-    sizes_before = {}
+    """
+    Check if files are growing by comparing sizes before and after interval.
+
+    Supports:
+    - relative filenames (resolved against output_dir)
+    - absolute/relative full paths passed in `files`
+    """
+    sizes_before: dict[str, int] = {}
     for f in files:
-        path = output_dir / f
+        p = Path(f)
+        path = p if p.is_absolute() or p.parent != Path(".") else (output_dir / f)
         if path.exists():
             sizes_before[f] = path.stat().st_size
 
     time.sleep(interval)
 
-    results = {}
+    results: dict[str, bool] = {}
     for f in files:
-        path = output_dir / f
+        p = Path(f)
+        path = p if p.is_absolute() or p.parent != Path(".") else (output_dir / f)
         if path.exists():
             size_after = path.stat().st_size
             size_before = sizes_before.get(f, 0)
@@ -148,6 +192,8 @@ def create_config_files(
     config_type: str,
     db_copies: list[Path],
     project_dir: Path,
+    *,
+    base_output_dir: Path,
 ) -> list[Path]:
     """
     Create config files for each parallel run.
@@ -166,8 +212,23 @@ def create_config_files(
 
         # Create config with updated database path
         run_config = base_config.copy()
+
         # Store relative path for portability
         run_config["usgs_database"] = f"./{db_path.relative_to(project_dir)}"
+
+        # Collision-proof output naming while keeping output_dir shared:
+        # - Keep output_dir identical across runs so consolidated outputs can be normalized together.
+        # - Make the base output name unique per run to prevent timestamp collisions.
+        run_config["output_csv_filename"] = f"stdns_output_{config_type}_run{run_num}"
+
+        # Force a shared output directory across runs (raw/ + normalized/ live under this).
+        run_config["output_dir"] = f"./{base_output_dir.relative_to(project_dir)}"
+
+        # IMPORTANT: For parallel runs, skip in-process normalization/JSON.
+        # We will run one shared normalization pass after all runs finish, and generate JSON from
+        # normalized CSVs then. This avoids duplicated work and races.
+        run_config["skip_postprocess_normalization"] = True
+        run_config["skip_json_output"] = True
 
         print(f"  Creating: {config_path}")
         with open(config_path, "w") as f:
@@ -309,6 +370,184 @@ def wait_for_all_processes_to_complete(
         raise
 
 
+def rename_raw_outputs_to_standard(
+    output_dir: Path,
+    config_type: str,
+    num_runs: int,
+    date_prefix: str,
+) -> list[Path]:
+    """
+    Rename collision-proof raw outputs back to standard naming.
+
+    From:
+      output/raw/stdns_output_{config_type}_run{N}_{config_type}_{date_prefix}*.csv
+    To:
+      output/raw/stdns_output_{config_type}_{date_prefix}*.csv
+
+    Returns list of renamed standard raw CSV paths.
+    """
+    renamed: list[Path] = []
+    raw_dir = output_dir / "raw"
+    raw_dir.mkdir(parents=True, exist_ok=True)
+
+    for run_num in range(1, num_runs + 1):
+        run_prefix = f"stdns_output_{config_type}_run{run_num}_{config_type}_{date_prefix}"
+        standard_prefix = f"stdns_output_{config_type}_{date_prefix}"
+
+        for f in raw_dir.glob(f"{run_prefix}*.csv"):
+            new_name = f.name.replace(run_prefix, standard_prefix, 1)
+            target = f.with_name(new_name)
+
+            if target.exists():
+                print(f"WARNING: Cannot rename (target exists): {f.name} -> {target.name}")
+                continue
+
+            print(f"Renaming raw: {f.name} -> {target.name}")
+            f.rename(target)
+            renamed.append(target)
+
+    return renamed
+
+
+def generate_json_from_normalized_group(
+    output_dir: Path,
+    config_type: str,
+    date_prefix: str,
+) -> list[Path]:
+    """
+    Generate JSON files from the normalized CSVs for a completed group.
+
+    Reads:
+      output/normalized/stdns_output_{config_type}_{date_prefix}*.csv
+
+    Writes:
+      output/stdns_output_{config_type}_{date_prefix}*.json
+
+    JSON is a row-wise serialization of the normalized CSV (so components are normalized).
+    Returns list of written JSON paths.
+    """
+    written: list[Path] = []
+
+    normalized_dir = output_dir / "normalized"
+    if not normalized_dir.exists():
+        print(f"WARNING: Normalized directory does not exist: {normalized_dir}")
+        return written
+
+    pattern = f"stdns_output_{config_type}_{date_prefix}*.csv"
+    normalized_csvs = sorted(normalized_dir.glob(pattern))
+
+    if not normalized_csvs:
+        print(f"WARNING: No normalized CSVs found matching: {normalized_dir / pattern}")
+        return written
+
+    for csv_path in normalized_csvs:
+        json_name = csv_path.with_suffix(".json").name
+        # Write JSON alongside normalized CSVs
+        json_path = output_dir / "normalized" / json_name
+
+        if json_path.exists():
+            print(f"WARNING: JSON already exists, skipping: {json_path}")
+            continue
+
+        with open(csv_path, "r", encoding="utf-8", newline="") as f:
+            reader = csv.DictReader(f)
+            data = list(reader)
+
+        with open(json_path, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2, ensure_ascii=False)
+
+        print(f"Wrote JSON: {json_path}")
+        written.append(json_path)
+
+    return written
+
+
+def rename_json_outputs_to_standard(
+    output_dir: Path,
+    config_type: str,
+    num_runs: int,
+) -> list[Path]:
+    """
+    Rename per-run JSON outputs to a collision-proof standard form.
+
+    The pipeline writes JSON as:
+      {output_csv_filename}_{timestamp}.json
+
+    In parallel runs we set:
+      output_csv_filename = stdns_output_{config_type}_run{N}
+
+    So JSON files look like:
+      output/stdns_output_{config_type}_run{N}_YYYYMMDD_HHMMSS.json
+
+    If we renamed them to `stdns_output_YYYYMMDD_HHMMSS.json`, parallel runs can collide
+    whenever timestamps match. Instead we rename to:
+
+      output/stdns_output_{config_type}_YYYYMMDD_HHMMSS_run{N}.json
+
+    Returns list of renamed JSON paths.
+    """
+    renamed: list[Path] = []
+
+    for run_num in range(1, num_runs + 1):
+        run_prefix = f"stdns_output_{config_type}_run{run_num}_"
+
+        for f in output_dir.glob(f"{run_prefix}*.json"):
+            # Extract the timestamp suffix after the run-specific prefix
+            ts_part = f.name[len(run_prefix) : -len(".json")]  # YYYYMMDD_HHMMSS
+            new_name = f"stdns_output_{config_type}_{ts_part}_run{run_num}.json"
+            target = f.with_name(new_name)
+
+            if target.exists():
+                print(f"WARNING: Cannot rename JSON (target exists): {f.name} -> {target.name}")
+                continue
+
+            print(f"Renaming json: {f.name} -> {target.name}")
+            f.rename(target)
+            renamed.append(target)
+
+    return renamed
+
+
+def run_shared_normalization_pass(
+    output_dir: Path,
+    config_type: str,
+    date_prefix: str,
+) -> None:
+    """
+    Run one shared, LLM-backed component-name normalization pass across all consolidated
+    raw CSVs for the given config_type and date_prefix.
+
+    This delegates to the existing `scripts/normalize_outputs.py` implementation, which:
+    - loads all matching raw CSVs
+    - uses the canonical vocabulary cache
+    - calls the LLM for unknown names
+    - writes normalized CSVs to output/normalized/
+
+    We intentionally do this ONCE for the whole group (after raw files have been renamed
+    back to the standard pattern), to restore the intended “group normalization” behavior
+    even when runs were executed in parallel with collision-proof filenames.
+    """
+    pattern = f"output/raw/stdns_output_{config_type}_{date_prefix}*.csv"
+
+    print("\nRunning shared normalization via scripts/normalize_outputs.py ...")
+    print(f"  Pattern: {pattern}")
+
+    cmd = [
+        "uv",
+        "run",
+        "python",
+        "scripts/normalize_outputs.py",
+        "--pattern",
+        pattern,
+    ]
+
+    result = subprocess.run(cmd, cwd=output_dir.parent)
+    if result.returncode != 0:
+        raise RuntimeError(
+            f"Shared normalization failed (exit {result.returncode}). Command: {' '.join(cmd)}"
+        )
+
+
 def run_parallel_pipeline(
     config_type: str,
     num_runs: int,
@@ -325,6 +564,22 @@ def run_parallel_pipeline(
     """
     # Parse config type to get debate settings
     debate_settings = parse_config_type(config_type)
+
+    # Compute the ACTUAL debate config marker used in filenames by the orchestrator.
+    # Orchestrator logic encodes debate enabled/disabled per stage as:
+    #   components: d{N} if enabled else v1
+    #   materials:  d{N} if enabled else v1
+    #   countries:  d{N} if enabled else v1
+    # (The user-facing config_type string (e.g. d3d3v3) may not match this exactly.)
+    filename_config_marker = (
+        f"{'d' if debate_settings['enable_component_debate'] else 'v'}"
+        f"{debate_settings['num_agents_component'] if debate_settings['enable_component_debate'] else 1}"
+        f"{'d' if debate_settings['enable_material_debate'] else 'v'}"
+        f"{debate_settings['num_agents_material'] if debate_settings['enable_material_debate'] else 1}"
+        f"{'d' if debate_settings['enable_country_debate'] else 'v'}"
+        f"{debate_settings['num_agents_country'] if debate_settings['enable_country_debate'] else 1}"
+    )
+
     date_prefix = get_today_date_prefix()
     known_files: set[str] = set()
     launched_files: list[str] = []
@@ -342,11 +597,26 @@ def run_parallel_pipeline(
 
     # Create database copies and config files
     db_copies = create_database_copies(base_db_path, num_runs, project_dir)
-    config_files = create_config_files(base_config_path, config_type, db_copies, project_dir)
+    config_files = create_config_files(
+        base_config_path,
+        config_type,
+        db_copies,
+        project_dir,
+        base_output_dir=output_dir,
+    )
 
-    # Get existing files to exclude
-    pattern = f"stdns_output_{config_type}_{date_prefix}*.csv"
-    for f in output_dir.glob(pattern):
+    # Get existing files to exclude (standard location only)
+    raw_dir = output_dir / "raw"
+    raw_dir.mkdir(parents=True, exist_ok=True)
+
+    # Existing standard files to exclude (based on ACTUAL filename marker)
+    pattern_standard = f"stdns_output_{filename_config_marker}_{date_prefix}*.csv"
+    for f in raw_dir.glob(pattern_standard):
+        known_files.add(f.name)
+
+    # Also exclude any collision-proof per-run raw files already present (if rerunning the script)
+    pattern_runs = f"stdns_output_*_run*_{filename_config_marker}_{date_prefix}*.csv"
+    for f in raw_dir.glob(pattern_runs):
         known_files.add(f.name)
 
     print(f"\n{'=' * 60}")
@@ -384,14 +654,22 @@ def run_parallel_pipeline(
 
             # Wait for output file to be created
             print("  Waiting for output file...")
+            # Each run writes to the shared output/raw directory, but uses a unique
+            # output_csv_filename, so we wait for the run-specific filename pattern.
             new_file = wait_for_new_file(
-                output_dir, config_type, date_prefix, known_files, timeout=30
+                raw_dir,
+                filename_config_marker,
+                date_prefix,
+                known_files,
+                run_num=run_num,
+                timeout=30,
             )
 
             if new_file:
                 print(f"  SUCCESS: Created {new_file}")
                 known_files.add(new_file)
-                launched_files.append(new_file)
+                # Track the actual raw file path (shared output/raw directory)
+                launched_files.append(str((raw_dir / new_file)))
             else:
                 print("  ERROR: Output file not created within timeout")
                 print("  Stopping all processes and aborting.")
@@ -417,11 +695,14 @@ def run_parallel_pipeline(
 
         # Check files are growing
         print("\nChecking if files are growing (5s interval)...")
+        # launched_files may contain full paths; check_files_growing supports both
         growth_status = check_files_growing(output_dir, launched_files)
 
         all_ok = True
         for filename, is_growing in growth_status.items():
-            file_path = output_dir / filename
+            file_path = Path(filename)
+            if not file_path.is_absolute() and file_path.parent == Path("."):
+                file_path = output_dir / filename
             size = file_path.stat().st_size if file_path.exists() else 0
             status = "OK" if is_growing else "NOT GROWING"
             if not is_growing:
@@ -447,8 +728,12 @@ def run_parallel_pipeline(
             print(f"  - output/{config_type}_run{run_num}.log")
         print("\nTo monitor progress:")
         print(f"  tail -f output/{config_type}_run*.log")
-        print("\nTo check file sizes:")
-        print(f"  ls -la output/raw/stdns_output_{config_type}_{date_prefix}*.csv")
+        print("\nTo check file sizes (during parallel run):")
+        print(
+            f"  ls -la output/raw/stdns_output_{config_type}_run*_{config_type}_{date_prefix}*.csv"
+        )
+        print("\nAfter completion, raw files will be renamed back to:")
+        print(f"  output/raw/stdns_output_{config_type}_{date_prefix}*.csv")
         print("\nTo stop all runs:")
         print(f"  pkill -f 'stdn -i config_{config_type}'")
 
@@ -456,9 +741,43 @@ def run_parallel_pipeline(
         if cleanup_after:
             try:
                 wait_for_all_processes_to_complete(config_type, check_interval=60)
+
+                # Step 1: Rename collision-proof raw outputs back to standard naming
+                print("\nRenaming raw outputs back to standard naming...")
+                rename_raw_outputs_to_standard(
+                    output_dir=output_dir,
+                    config_type=filename_config_marker,
+                    num_runs=num_runs,
+                    date_prefix=date_prefix,
+                )
+
+                # Step 1b: Rename per-run JSON outputs back to standard naming
+                print("\nRenaming JSON outputs back to standard naming...")
+                rename_json_outputs_to_standard(
+                    output_dir=output_dir,
+                    config_type=filename_config_marker,
+                    num_runs=num_runs,
+                )
+
+                # Step 2: Run one shared normalization pass across the consolidated raw outputs
+                run_shared_normalization_pass(
+                    output_dir=output_dir,
+                    config_type=filename_config_marker,
+                    date_prefix=date_prefix,
+                )
+
+                # Step 3: Generate JSON from normalized outputs (JSON should contain normalized components)
+                print("\nGenerating JSON from normalized outputs...")
+                generate_json_from_normalized_group(
+                    output_dir=output_dir,
+                    config_type=filename_config_marker,
+                    date_prefix=date_prefix,
+                )
+
                 cleanup_temp_files(db_copies, config_files)
             except KeyboardInterrupt:
                 print("\nSkipping cleanup due to interrupt.")
+                print("NOTE: Outputs may still have per-run naming (contain '_runN_').")
                 print("To manually cleanup later, run:")
                 print(f"  rm -f data/*_run*.db config_{config_type}_run*.json")
 
@@ -526,7 +845,7 @@ def main():
         sys.exit(1)
 
     project_dir = args.project_dir.resolve()
-    output_dir = project_dir / "output" / "raw"
+    output_dir = project_dir / "output"
     base_config_path = (
         args.base_config.resolve()
         if args.base_config.is_absolute()

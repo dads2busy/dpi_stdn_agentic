@@ -36,7 +36,7 @@ from ..data import CountryDataRepository
 from ..debate.component_debater import MultiAgentDebater
 from ..dependencies import initialize_dependencies
 from ..logging_config import get_logger
-from ..models import ConfigModel
+from ..models import ConfigModel, STDNDependencies
 from ..normalization.canonical_vocab import CanonicalVocab
 from ..reporting import DebateReporter
 from .component_extractor import ComponentExtractor
@@ -419,21 +419,43 @@ class STDNOrchestrator:
     # Pipeline Execution
     # ========================================================================
 
-    def _save_json_output(self) -> str:
+    def _save_json_output(self, csv_path: str | None = None) -> str:
         """
-        Convert CSV output to JSON file.
+        Convert a CSV output file to a JSON file.
+
+        By default, converts the raw output CSV for this run. Callers may pass a CSV path
+        explicitly (e.g., a normalized CSV) so JSON contains normalized components.
+
+        If JSON is derived from a normalized CSV (i.e., the CSV lives under output/normalized),
+        the JSON will be written alongside it in output/normalized as well.
+
+        Args:
+            csv_path: Path to CSV to convert. If None, uses this run's raw CSV output.
 
         Returns:
             Path to saved JSON file
         """
+        source_csv = csv_path or self.output_file
+
         # Read the CSV file
-        with open(self.output_file, "r", encoding="utf-8") as f:
+        with open(source_csv, "r", encoding="utf-8") as f:
             reader = csv.DictReader(f)
             data = list(reader)
 
-        # Create JSON filename from CSV filename with timestamp
-        json_filename = f"{self.config.output_csv_filename}_{self.timestamp}.json"
-        json_filepath = os.path.join(self.config.output_dir, json_filename)
+        # Create JSON filename from the source CSV basename
+        # Example:
+        #   stdns_output_d3d1v1_YYYYMMDD_HHMMSS.csv -> stdns_output_d3d1v1_YYYYMMDD_HHMMSS.json
+        base = os.path.splitext(os.path.basename(source_csv))[0]
+        json_filename = f"{base}.json"
+
+        # Write JSON next to the normalized CSV when converting normalized output,
+        # otherwise write to the base output dir.
+        source_csv_norm = os.path.normpath(source_csv)
+        normalized_dir_norm = os.path.normpath(self.normalized_output_dir)
+        if os.path.commonpath([source_csv_norm, normalized_dir_norm]) == normalized_dir_norm:
+            json_filepath = os.path.join(self.normalized_output_dir, json_filename)
+        else:
+            json_filepath = os.path.join(self.config.output_dir, json_filename)
 
         # Save as formatted JSON
         with open(json_filepath, "w", encoding="utf-8") as f:
@@ -597,6 +619,7 @@ For each input name, output the canonical form it should map to."""
         agent = Agent(
             model=self.deps.get_component_model(),
             output_type=ComponentMapping,
+            deps_type=STDNDependencies,
             system_prompt=system_prompt,
         )
 
@@ -730,12 +753,38 @@ For each input name, output the canonical form it should map to."""
 
         normalized_file = None
         if successful > 0:
-            # Run component name normalization
-            normalized_file = await self._normalize_output()
+            # Parallel runs should avoid per-process post-processing and JSON.
+            # Prefer config flags (set by parallel runner) with env var as a backstop.
+            skip_norm_env = os.getenv("SKIP_POSTPROCESS_NORMALIZATION", "").strip().lower()
+            skip_postprocess_norm_env = skip_norm_env in ("1", "true", "yes", "y", "on")
+            skip_postprocess_norm = (
+                bool(getattr(self.config, "skip_postprocess_normalization", False))
+                or skip_postprocess_norm_env
+            )
 
-            # Convert CSV to JSON
-            json_path = self._save_json_output
-            logger.info("JSON output written to: %s", json_path)
+            if skip_postprocess_norm:
+                logger.info(
+                    "Skipping post-processing normalization (config.skip_postprocess_normalization=%s, SKIP_POSTPROCESS_NORMALIZATION=%s)",
+                    getattr(self.config, "skip_postprocess_normalization", False),
+                    skip_norm_env,
+                )
+            else:
+                # Run component name normalization
+                normalized_file = await self._normalize_output()
+
+            # JSON should contain normalized components. In parallel mode, JSON generation
+            # should be deferred until a shared normalization pass completes.
+            skip_json = bool(getattr(self.config, "skip_json_output", False))
+            if skip_json:
+                logger.info(
+                    "Skipping JSON output generation due to config.skip_json_output=%s",
+                    getattr(self.config, "skip_json_output", False),
+                )
+            else:
+                # Convert CSV to JSON (JSON contains normalized components when available)
+                json_source_csv = normalized_file or self.output_file
+                json_path = self._save_json_output(csv_path=json_source_csv)
+                logger.info("JSON output written to: %s", json_path)
 
         return {
             "successful": successful,
