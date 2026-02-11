@@ -116,7 +116,7 @@ class TestSingleTechNoDebate:
 
     @pytest.mark.asyncio
     @pytest.mark.e2e
-    async def test_debate_config_string_variations(self, test_config):
+    def test_debate_config_string_variations(self, test_config):
         """Test that different debate configurations produce correct filename patterns."""
         test_cases = [
             # (enable_debate, enable_material, enable_country, num_comp, num_mat, num_country, expected)
@@ -158,6 +158,68 @@ class TestSingleTechNoDebate:
             print(
                 f"✓ Config ({enable_debate}, {enable_material}, {enable_country}) "
                 f"agents=({num_comp},{num_mat},{num_country}) -> {expected}"
+            )
+
+    def test_parallel_runner_filename_marker_matches_orchestrator(self, test_config):
+        """
+        Unit-style test: ensure the parallel runner's filename config marker semantics match
+        STDNOrchestrator._build_debate_config_string().
+
+        Orchestrator semantics:
+          - component: d{N} if enabled else v1
+          - material:  d{N} if enabled else v1
+          - country:   v{N} if enabled else v1  (voting, not iterative debate)
+
+        The parallel runner must use the same marker so analysis can group files consistently.
+        """
+
+        def parallel_runner_marker(
+            enable_comp: bool,
+            enable_mat: bool,
+            enable_country: bool,
+            n_comp: int,
+            n_mat: int,
+            n_country: int,
+        ) -> str:
+            comp = f"d{n_comp}" if enable_comp else "v1"
+            mat = f"d{n_mat}" if enable_mat else "v1"
+            country = f"v{n_country if enable_country else 1}"
+            return f"{comp}{mat}{country}"
+
+        test_cases = [
+            # (enable_debate, enable_material, enable_country, num_comp, num_mat, num_country)
+            (False, False, False, 3, 3, 3),
+            (True, False, False, 3, 3, 3),
+            (False, True, False, 3, 3, 3),
+            (False, False, True, 3, 3, 3),
+            (True, True, True, 3, 3, 3),
+            (True, True, True, 5, 4, 3),
+            (True, False, True, 5, 3, 7),
+            (False, True, True, 3, 4, 2),
+        ]
+
+        for enable_debate, enable_material, enable_country, n_comp, n_mat, n_country in test_cases:
+            orchestrator = STDNOrchestrator(
+                config=test_config,
+                enable_debate=enable_debate,
+                enable_material_debate=enable_material,
+                enable_country_debate=enable_country,
+                num_agents_component=n_comp,
+                num_agents_material=n_mat,
+                num_agents_country=n_country,
+                save_transcripts=False,
+            )
+
+            expected = orchestrator._build_debate_config_string()
+            got = parallel_runner_marker(
+                enable_debate, enable_material, enable_country, n_comp, n_mat, n_country
+            )
+
+            assert got == expected, (
+                "Parallel runner filename marker must match orchestrator debate config string.\n"
+                f"  settings: comp={enable_debate}({n_comp}), mat={enable_material}({n_mat}), country={enable_country}({n_country})\n"
+                f"  expected (orchestrator): {expected}\n"
+                f"  got (parallel runner):   {got}"
             )
 
 
