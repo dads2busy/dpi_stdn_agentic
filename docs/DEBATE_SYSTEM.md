@@ -4,7 +4,7 @@ This document explains the complete multi-agent debate process used in the STDN 
 
 ## Configuration and Terminology Notes (Current Behavior)
 
-### Configuration precedence (Policy A: config-first)
+### Configuration precedence (config-first)
 STDN Agentic is **config-first**:
 1. **CLI flags** (highest precedence for debate/voting settings)
 2. **Environment variables / `.env`** only for explicitly supported runtime toggles and overrides

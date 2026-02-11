@@ -69,7 +69,7 @@ Examples:
 
 ---
 
-## Configuration precedence (Policy A: config-first)
+## Configuration precedence (config-first)
 
 STDN Agentic is **config-first**:
 
@@ -174,7 +174,7 @@ This allows the main extraction agents to use a lighter model (e.g. `openai:gpt-
 ## Common pitfalls
 
 - **Starting “3 more” after a “2 run” batch**: the launcher uses `run1..runN` numbering and renaming logic. Launching a second batch with overlapping run indices can cause collisions. Prefer stopping and relaunching a single coherent 5-run batch, or extend the launcher to support a `--start-run-index`.
-- **Assuming `.env` overrides config**: under Policy A, `.env` only affects behavior where env vars are explicitly read.
+- **Assuming `.env` overrides config**: `.env` only affects behavior where env vars are explicitly read.
 - **Interpreting partial outputs as success**: confirm completion by checking the per-run log summary and counts of “Successfully processed”.
 
 ---

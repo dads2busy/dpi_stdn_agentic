@@ -1,8 +1,8 @@
 # STDN Configuration Guide
 
-Configuration in STDN Agentic is **config-first** (Policy A): a JSON config file (by default `config.json`) is the source of truth for core settings, while `.env` / environment variables are used only for **explicitly supported runtime toggles and overrides**.
+Configuration in STDN Agentic is **config-first**: a JSON config file (by default `config.json`) is the source of truth for core settings, while `.env` / environment variables are used only for **explicitly supported runtime toggles and overrides**.
 
-## Configuration Precedence (Policy A)
+## Configuration Precedence
 
 1. **CLI flags** (highest precedence for debate/voting settings)
 2. **Environment variables / `.env`** (only where explicitly supported by the code)

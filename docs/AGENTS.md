@@ -2,7 +2,7 @@
 
 STDN Agentic uses specialized agents for the three pipeline stages (components, materials, countries) plus a factory helper for constructing agents. The agents can operate both independently (single-agent mode) and collaboratively (multi-agent debate/voting mode) to reach consensus on technology dependencies.
 
-## Configuration Precedence (Policy A: config-first)
+## Configuration Precedence (config-first)
 
 1. **CLI flags** (highest precedence for debate/voting settings)
 2. **Environment variables / `.env`** only for explicitly supported runtime toggles and overrides
