@@ -8,6 +8,19 @@ This script:
 3. Sends unknown names to LLM for normalization
 4. Updates the canonical vocabulary with new mappings
 5. Writes normalized CSVs to output/normalized/ directory
+6. Writes a normalization manifest JSON capturing batch metadata for traceability
+
+Manifest:
+- By default, writes a JSON manifest into the output directory (default: output/normalized/)
+  that records:
+  - timestamp
+  - glob pattern used
+  - input CSV list
+  - output CSV list
+  - vocab path and vocab size before/after
+  - counts of unique components, cached vs unknown
+  - number of new mappings added
+  - model used for LLM normalization
 
 Usage:
     # Normalize all raw output files
@@ -16,20 +29,19 @@ Usage:
     # Normalize specific config group
     python scripts/normalize_outputs.py --pattern "output/raw/stdns_output_d3d3v3_*.csv"
 
-    # Dry run (show what would be normalized without writing)
+    # Dry run (preview changes)
     python scripts/normalize_outputs.py --pattern "output/raw/*.csv" --dry-run
 
-    # Specify custom vocab path
+    # Custom vocabulary path
     python scripts/normalize_outputs.py --pattern "output/raw/*.csv" --vocab data/my_vocab.json
-
-    # Process legacy files in output/ root (before directory restructure)
-    python scripts/normalize_outputs.py --pattern "output/stdns_output_*.csv" --output-dir output/normalized
 """
 
 import argparse
 import asyncio
+import json
 import logging
 import sys
+from datetime import datetime, timezone
 from glob import glob
 from pathlib import Path
 from typing import Dict, List, Optional, Set
@@ -372,7 +384,7 @@ async def main():
     parser.add_argument(
         "--model",
         type=str,
-        default="anthropic:claude-sonnet-4-20250514",
+        default="openai:gpt-4.1-mini",
         help="Model to use for LLM normalization",
     )
     parser.add_argument(
@@ -380,6 +392,15 @@ async def main():
         type=str,
         default="output/normalized",
         help="Directory for normalized output files (default: output/normalized)",
+    )
+    parser.add_argument(
+        "--manifest-path",
+        type=str,
+        default="",
+        help=(
+            "Optional path for normalization manifest JSON. "
+            "If not provided, writes to <output-dir>/normalization_manifest_<timestamp>.json"
+        ),
     )
     parser.add_argument(
         "--dry-run",
@@ -402,9 +423,14 @@ async def main():
 
     logger.info(f"Found {len(csv_files)} CSV files matching pattern")
 
+    # Establish output dir early (used for default manifest path)
+    output_dir = Path(args.output_dir)
+    output_dir.mkdir(parents=True, exist_ok=True)
+
     # Load canonical vocabulary
     vocab = CanonicalVocab(args.vocab)
-    logger.info(f"Loaded vocab with {len(vocab.mappings)} existing mappings")
+    vocab_size_before = len(vocab.mappings)
+    logger.info(f"Loaded vocab with {vocab_size_before} existing mappings")
 
     # Extract all unique component names
     all_components = extract_components_from_csvs(csv_files)
@@ -446,14 +472,49 @@ async def main():
             all_mappings[canonical] = canonical
 
     # Apply normalization to each CSV
-    output_dir = Path(args.output_dir)
     logger.info(f"\nNormalizing CSV files to {output_dir}...")
+    written_csvs: List[Path] = []
     for csv_path in csv_files:
-        normalize_csv_file(
+        out_path = normalize_csv_file(
             csv_path,
             all_mappings,
             output_dir=output_dir,
         )
+        written_csvs.append(out_path)
+
+    # Write manifest (only for non-dry-run runs)
+    manifest = {
+        "version": "1.0",
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "pattern": args.pattern,
+        "model": args.model,
+        "vocab_path": args.vocab,
+        "vocab_size_before": vocab_size_before,
+        "vocab_size_after": len(vocab.mappings),
+        "unique_components_total": len(all_components),
+        "cached_components_count": len(cached),
+        "unknown_components_count": len(unknown),
+        "new_mappings_added": len(new_mappings),
+        "input_csvs": [str(p) for p in csv_files],
+        "output_csvs": [str(p) for p in written_csvs],
+    }
+
+    if args.manifest_path.strip():
+        manifest_path = Path(args.manifest_path)
+    else:
+        manifest_path = (
+            output_dir
+            / f"normalization_manifest_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}.json"
+        )
+
+    try:
+        manifest_path.parent.mkdir(parents=True, exist_ok=True)
+        manifest_path.write_text(
+            json.dumps(manifest, indent=2, ensure_ascii=False), encoding="utf-8"
+        )
+        logger.info(f"Wrote normalization manifest: {manifest_path}")
+    except Exception as e:
+        logger.error(f"Failed to write normalization manifest to {manifest_path}: {e}")
 
     # Print summary
     print("\n=== NORMALIZATION COMPLETE ===")
