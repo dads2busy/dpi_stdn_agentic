@@ -41,9 +41,9 @@ uv sync
 cp .env.example .env
 ```
 
-## Configuration Precedence (Policy A)
+## Configuration Precedence
 
-STDN Agentic follows **config-first** configuration (Policy A):
+STDN Agentic follows **config-first** configuration:
 
 1. **CLI flags** (highest precedence for debate/voting settings)
 2. **Environment variables / `.env`** for supported runtime toggles and explicit overrides
@@ -87,9 +87,9 @@ Notes:
 
 ## Configuration
 
-### Configuration Precedence (Policy A: config-first)
+### Configuration Precedence (config-first)
 
-STDN Agentic follows **config-first** configuration (Policy A):
+STDN Agentic follows **config-first** configuration:
 
 1. **CLI flags** (highest precedence for debate/voting settings)
 2. **Environment variables / `.env`** for supported runtime toggles and explicit overrides
