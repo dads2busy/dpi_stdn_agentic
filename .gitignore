@@ -1,9 +1,12 @@
 # Environment variables (contains secrets)
 .env
+.env.*
+!.env.example
 
 # Virtual environments
 .venv/
 .python-version
+venv/
 
 # Python
 __pycache__/
@@ -13,11 +16,26 @@ __pycache__/
 dist/
 build/
 .pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
 
 # Project-specific
 #config.json
-#output/*
+
+# Generated outputs (runs, normalization, logs, manifests)
+output/
+logs/
 !output/.gitkeep
+
+# Debate transcripts are generated artifacts
+src/stdn_agentic/debate_transcripts/results/
+
+# Parallel-run generated configs and DB copies
+config_*_run*.json
+data/*_run*.db
+
+# Logs (general)
 *.log
 
 # IDE
