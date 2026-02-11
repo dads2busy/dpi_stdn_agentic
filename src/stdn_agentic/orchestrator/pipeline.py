@@ -103,16 +103,10 @@ class STDNOrchestrator:
         self.deps = initialize_dependencies(config)
         self.write_nulls = config.write_nulls_to_output
 
-        # Initialize debate system with enhanced parameters
-        if enable_debate:
-            self.debater = MultiAgentDebater(
-                max_rounds=max_debate_rounds,
-                convergence_threshold=convergence_threshold,
-                confidence_weight=0.3,  # Weight for confidence in voting
-                peer_support_boost=0.15,  # Boost per supporting agent
-                debate_top_p=debate_top_p,
-            )
-
+        # Transcripts should be saveable regardless of whether component debate is enabled.
+        # So: decouple reporter creation (controlled by save_transcripts) from debater creation
+        # (controlled by enable_debate).
+        if save_transcripts:
             # Find project root for transcript output
             current_dir = Path(__file__).parent
             project_root = current_dir
@@ -121,16 +115,24 @@ class STDNOrchestrator:
                     project_root = parent
                     break
 
-            transcript_dir = (
-                project_root / "src" / "stdn_agentic" / "debate_transcripts" / "results"
-            )
+            transcript_dir = project_root / "output" / "transcripts"
 
             logger.info("Debate transcripts will be saved to: %s", transcript_dir.resolve())
-
             self.reporter = DebateReporter(output_dir=str(transcript_dir))
         else:
-            self.debater = None
             self.reporter = None
+
+        # Initialize debate system with enhanced parameters (components only)
+        if enable_debate:
+            self.debater = MultiAgentDebater(
+                max_rounds=max_debate_rounds,
+                convergence_threshold=convergence_threshold,
+                confidence_weight=0.3,  # Weight for confidence in voting
+                peer_support_boost=0.15,  # Boost per supporting agent
+                debate_top_p=debate_top_p,
+            )
+        else:
+            self.debater = None
 
         # Initialize country data repository with validation
         if not config.usgs_database:
@@ -151,8 +153,11 @@ class STDNOrchestrator:
         # Output directories: raw and normalized
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         self.timestamp = timestamp  # Store for JSON output
-        debate_config_str = self._build_debate_config_string()
-        output_filename = f"{config.output_csv_filename}_{debate_config_str}_{timestamp}.csv"
+
+        # Track the per-run configuration string (e.g., v1v1v1, d3d3v3) so transcripts can include it.
+        self.debate_config_str = self._build_debate_config_string()
+
+        output_filename = f"{config.output_csv_filename}_{self.debate_config_str}_{timestamp}.csv"
 
         # Set up output directory structure
         self.raw_output_dir = os.path.join(config.output_dir, "raw")
@@ -179,6 +184,10 @@ class STDNOrchestrator:
             debate_top_p=self.debate_top_p,
             canonical_vocab=self.canonical_vocab,
         )
+
+        # Plumb the transcript config tag through to the component extractor so transcript filenames
+        # can include the per-run configuration string (e.g., Smartphone_v1v1v1_YYYYMMDD_HHMMSS.txt).
+        self.component_extractor.transcript_config_tag = self.debate_config_str
 
         # Initialize materials extractor (use materials-specific model)
         self.materials_extractor = MaterialsExtractor(
@@ -300,7 +309,54 @@ class STDNOrchestrator:
 
             logger.info("Extracted materials for %d components", len(materials_list.component_list))
 
-            transcript_path = self._get_latest_transcript_path(tech)
+            # Prefer the explicit transcript path created during component extraction for this run.
+            # This avoids appending/enriching against an older transcript from a different run.
+            transcript_path = getattr(self.component_extractor, "last_transcript_path", None)
+            if not transcript_path:
+                transcript_path = self._get_latest_transcript_path(tech)
+
+            # Append materials section to the same transcript for THIS run BEFORE any country enrichment/append.
+            if self.save_transcripts and self.reporter and transcript_path is not None:
+                try:
+                    consensus: dict[str, list[dict]] = {}
+                    for cm in materials_list.component_list:
+                        mats_out: list[dict] = []
+
+                        # ComponentMaterials uses `raw_materials` with alias "materials".
+                        # Depending on how the object was constructed, the attribute may be present as either.
+                        raw_mats = []
+                        if hasattr(cm, "raw_materials") and cm.raw_materials is not None:
+                            raw_mats = cm.raw_materials or []
+                        elif hasattr(cm, "materials") and cm.materials is not None:
+                            raw_mats = cm.materials or []
+
+                        for m in raw_mats:
+                            mats_out.append(
+                                {
+                                    "name": m.name,
+                                    "confidence": float(m.confidence),
+                                    "reasoning": m.reasoning,
+                                }
+                            )
+
+                        consensus[cm.component] = mats_out
+
+                    # In non-debate mode, we have no debate_history/initial_proposals; append a concise materials section.
+                    self.materials_extractor._append_materials_to_transcript(
+                        technology=tech,
+                        components=components,
+                        debate_history=[],
+                        consensus=consensus,
+                        initial_proposals=None,
+                        transcript_path=transcript_path,
+                    )
+                except Exception as e:
+                    logger.error(
+                        "Error appending materials section to transcript for %s: %s",
+                        tech,
+                        e,
+                        exc_info=True,
+                    )
 
             enriched_data = await self._enrich_with_country_data(
                 materials_list,
@@ -311,7 +367,13 @@ class STDNOrchestrator:
             )
 
             if self.save_transcripts and self.reporter and enriched_data:
-                self._append_country_data_to_transcript(tech, enriched_data)
+                # Prefer explicit transcript path (if known) to avoid cross-run contamination.
+                if transcript_path is not None:
+                    self.country_enricher.append_country_data_to_transcript(
+                        tech, enriched_data, transcript_path=transcript_path
+                    )
+                else:
+                    self._append_country_data_to_transcript(tech, enriched_data)
 
             return {
                 "technology": tech,

@@ -53,6 +53,7 @@ class DebateReporter:
         final_consensus: Dict[str, Any],
         file_format: str = "txt",
         timestamp: str = None,
+        config_tag: str | None = None,
     ) -> Path:
         """
         Save debate transcript to file.
@@ -70,7 +71,13 @@ class DebateReporter:
         """
         if timestamp is None:
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        filename = f"{technology.replace(' ', '_')}_{timestamp}.{file_format}"
+
+        tech_part = technology.replace(" ", "_")
+        if config_tag:
+            filename = f"{tech_part}_{config_tag}_{timestamp}.{file_format}"
+        else:
+            filename = f"{tech_part}_{timestamp}.{file_format}"
+
         filepath = self.output_dir / filename
 
         if file_format == "json":

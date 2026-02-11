@@ -15,7 +15,7 @@ from datetime import datetime
 from pathlib import Path
 
 # Import CanonicalVocab with TYPE_CHECKING to avoid circular imports
-from typing import TYPE_CHECKING, Dict, List, Optional
+from typing import TYPE_CHECKING, Any, Dict, List, Optional
 
 from pydantic_ai import RunUsage
 
@@ -48,6 +48,7 @@ class ComponentExtractor:
         timestamp: Optional[str] = None,
         debate_top_p: float = 0.0001,
         canonical_vocab: Optional["CanonicalVocab"] = None,
+        transcript_config_tag: Optional[str] = None,
     ):
         """
         Initialize component extractor.
@@ -60,6 +61,7 @@ class ComponentExtractor:
             timestamp: Optional timestamp for transcript filenames
             debate_top_p: Top-p sampling for debate
             canonical_vocab: Optional canonical vocabulary for component normalization
+            transcript_config_tag: Optional config string (e.g., v1v1v1, d3d3v3) to include in transcript filenames
         """
         self.deps = deps
         self.component_agent = get_component_agent(model_name=model_name)
@@ -68,12 +70,21 @@ class ComponentExtractor:
         self.timestamp = timestamp or datetime.now().strftime("%Y%m%d_%H%M%S")
         self.debate_top_p = debate_top_p
         self.canonical_vocab = canonical_vocab
+        self.transcript_config_tag = transcript_config_tag
+
+        # The explicit transcript path created for the current technology during component extraction.
+        # Downstream stages should prefer this over "latest transcript" globbing.
+        self.last_transcript_path: Optional[Path] = None
 
     async def extract_components_simple(
         self, technology: str, usage: RunUsage
     ) -> Optional[ComponentList]:
         """
         Simple single-agent component extraction without debate.
+
+        If transcripts are enabled (i.e., a reporter is present), this also writes a
+        single-agent transcript so downstream stages (e.g., country append) have a
+        file to attach to.
 
         Args:
             technology: Technology name
@@ -91,7 +102,78 @@ class ComponentExtractor:
             if result and result.usage():
                 usage.incr(result.usage())
 
-            return result.output if result else None
+            output = result.output if result else None
+
+            # In non-debate runs, we still want a transcript file to exist when transcripts
+            # are enabled. We emulate the "ROUND 1: Independent Proposals" section with only
+            # Agent_1 data and omit debate history.
+            if output and self.reporter:
+                try:
+                    agent_responses: list[dict[str, Any]] = [
+                        {
+                            "agent_id": "Agent_1",
+                            "components": [
+                                {
+                                    "component": comp.name,
+                                    "confidence": float(comp.confidence),
+                                    "reasoning": comp.reasoning,
+                                }
+                                for comp in output.component_list
+                            ],
+                            "technology_specification": output.technology_specification,
+                            "technology_reasoning": output.technology_reasoning,
+                        }
+                    ]
+
+                    final_consensus: dict[str, Any] = {
+                        "technology": technology,
+                        "technology_specification": output.technology_specification,
+                        "technology_reasoning": output.technology_reasoning,
+                        "components": [comp.name for comp in output.component_list],
+                        # For single-agent mode, treat confidence as a light summary metric.
+                        # The reporter expects a float; use the mean if available.
+                        "confidence": (
+                            sum(float(c.confidence) for c in output.component_list)
+                            / len(output.component_list)
+                            if output.component_list
+                            else 0.0
+                        ),
+                        "rounds": 1,
+                        "convergence_score": 1.0,
+                    }
+
+                    # Save text + JSON transcripts for symmetry with debate runs.
+                    txt_path = self.reporter.save_debate_transcript(
+                        technology=technology,
+                        agent_responses=agent_responses,
+                        debate_history=[],
+                        final_consensus=final_consensus,
+                        file_format="txt",
+                        timestamp=self.timestamp,
+                        config_tag=self.transcript_config_tag,
+                    )
+                    self.reporter.save_debate_transcript(
+                        technology=technology,
+                        agent_responses=agent_responses,
+                        debate_history=[],
+                        final_consensus=final_consensus,
+                        file_format="json",
+                        timestamp=self.timestamp,
+                        config_tag=self.transcript_config_tag,
+                    )
+
+                    # Expose explicit transcript path for downstream stages.
+                    self.last_transcript_path = txt_path
+
+                except Exception as e:
+                    logger.error(
+                        "Error saving single-agent transcript for %s: %s",
+                        technology,
+                        e,
+                        exc_info=True,
+                    )
+
+            return output
 
         except Exception as e:
             logger.error(
@@ -324,6 +406,8 @@ class ComponentExtractor:
                 technology, agent_responses, debate_result
             )
             if transcript_path:
+                # Expose explicit transcript path for downstream stages.
+                self.last_transcript_path = transcript_path
                 logger.info("Debate transcript saved to: %s", transcript_path)
 
         # Create components
@@ -433,6 +517,7 @@ class ComponentExtractor:
                 final_consensus=final_consensus,
                 file_format="txt",
                 timestamp=self.timestamp,
+                config_tag=self.transcript_config_tag,
             )
 
             # Also save JSON version for programmatic access
@@ -443,6 +528,7 @@ class ComponentExtractor:
                 final_consensus=final_consensus,
                 file_format="json",
                 timestamp=self.timestamp,
+                config_tag=self.transcript_config_tag,
             )
 
             return filepath

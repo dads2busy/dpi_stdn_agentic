@@ -378,7 +378,7 @@ class MaterialsExtractor:
         # Save material debate transcript if enabled
         if self.reporter:
             initial_proposals = debate_result.get("initial_proposals", {})
-            self._save_material_debate_transcript(
+            self._append_materials_to_transcript(
                 technology,
                 components,
                 self.material_debater.debate_history,
@@ -812,15 +812,28 @@ class MaterialsExtractor:
 
             content.append("\n")  # Blank line between components
 
-    def _save_material_debate_transcript(
+    def _append_materials_to_transcript(
         self,
         technology: str,
         components: list,  # Can be strings or ComponentWithConfidence
         debate_history: list,
         consensus: dict[str, list[dict]],
         initial_proposals: dict[str, list] | None = None,
+        transcript_path: Path | None = None,
     ) -> None:
-        """Append material debate results to existing component transcript."""
+        """Append materials extraction results to a specific transcript (preferred) or the latest transcript.
+
+        IMPORTANT: Materials must appear BEFORE country data in the combined transcript. Call this
+        immediately after materials extraction completes and before country enrichment/append.
+
+        Args:
+            technology: Technology name
+            components: Component list (strings or ComponentWithConfidence)
+            debate_history: Debate history (may be empty in non-debate mode)
+            consensus: Mapping of component -> list of material dicts (name/confidence/reasoning)
+            initial_proposals: Optional per-agent initial proposals (debate mode)
+            transcript_path: Explicit transcript path to append to (recommended; avoids cross-run contamination)
+        """
         logger.debug(
             "Attempting to save material transcript for %s: %d components, %d consensus items",
             technology,
@@ -833,24 +846,33 @@ class MaterialsExtractor:
             return
 
         try:
-            output_dir = Path(self.reporter.output_dir)
+            # Prefer explicit path when provided
+            if transcript_path is not None:
+                filepath = Path(transcript_path)
+                if not filepath.exists():
+                    logger.warning("Provided transcript path does not exist: %s", filepath)
+                    return
+            else:
+                output_dir = Path(self.reporter.output_dir)
 
-            # Replace spaces with underscores to match filename format
-            tech_filename = technology.replace(" ", "_")
+                # Replace spaces with underscores to match filename format
+                tech_filename = technology.replace(" ", "_")
 
-            # Find most recent component transcript
-            component_transcripts = list(output_dir.glob(f"{tech_filename}_*.txt"))
-            component_transcripts = [f for f in component_transcripts if "_materials" not in f.name]
+                # Find most recent component transcript
+                component_transcripts = list(output_dir.glob(f"{tech_filename}_*.txt"))
+                component_transcripts = [
+                    f for f in component_transcripts if "_materials" not in f.name
+                ]
 
-            logger.debug("Looking for: %s_*.txt", tech_filename)
-            logger.debug("Found %d component transcripts", len(component_transcripts))
+                logger.debug("Looking for: %s_*.txt", tech_filename)
+                logger.debug("Found %d component transcripts", len(component_transcripts))
 
-            if not component_transcripts:
-                logger.warning("No component transcript found for %s", technology)
-                return
+                if not component_transcripts:
+                    logger.warning("No component transcript found for %s", technology)
+                    return
 
-            filepath = max(component_transcripts, key=lambda p: p.stat().st_mtime)
-            logger.debug("Will append to: %s", filepath.name)
+                filepath = max(component_transcripts, key=lambda p: p.stat().st_mtime)
+                logger.debug("Will append to: %s", filepath.name)
 
             # Build and write content
             materials_content = self._build_material_transcript_content(
@@ -861,15 +883,15 @@ class MaterialsExtractor:
                 f.write(materials_content)
                 f.flush()
 
-            # Update JSON
+            # Update JSON (if present)
             json_path = filepath.with_suffix(".json")
             if json_path.exists():
                 self._update_material_json(json_path, debate_history, consensus)
 
-            logger.info("Appended material debate to: %s", filepath.name)
+            logger.info("Appended materials section to: %s", filepath.name)
 
         except Exception as e:
-            logger.error("Error appending material debate transcript: %s", e, exc_info=True)
+            logger.error("Error appending material transcript: %s", e, exc_info=True)
 
     def _update_material_json(
         self,

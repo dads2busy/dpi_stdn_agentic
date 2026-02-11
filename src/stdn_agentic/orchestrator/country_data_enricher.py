@@ -237,13 +237,19 @@ class CountryDataEnricher:
         self,
         technology: str,
         enriched_data: list[dict[str, Any]],
+        transcript_path: Optional[Path] = None,
     ) -> None:
         """
-        Append country production data to existing transcript.
+        Append country production data to a transcript.
+
+        If `transcript_path` is provided, append to that exact file (preferred; avoids
+        cross-run contamination). Otherwise, fall back to selecting the most recent
+        transcript for this technology by globbing.
 
         Args:
             technology: Technology name
-            enriched_ List of enriched data records
+            enriched_data: List of enriched data records
+            transcript_path: Explicit transcript path to append to (recommended)
         """
         if not self.reporter:
             logger.warning("Reporter is None, cannot append country data")
@@ -256,18 +262,24 @@ class CountryDataEnricher:
         try:
             output_dir = Path(self.reporter.output_dir)
 
-            # Replace spaces with underscores to match filename format
-            tech_filename = technology.replace(" ", "_")
+            # Prefer explicit path when provided
+            if transcript_path is not None:
+                filepath = Path(transcript_path)
+                if not filepath.exists():
+                    logger.warning("Provided transcript path does not exist: %s", filepath)
+                    return
+            else:
+                # Replace spaces with underscores to match filename format
+                tech_filename = technology.replace(" ", "_")
 
-            # Find most recent transcript for this technology
-            transcripts = list(output_dir.glob(f"{tech_filename}_*.txt"))
+                # Find most recent transcript for this technology
+                transcripts = list(output_dir.glob(f"{tech_filename}_*.txt"))
+                if not transcripts:
+                    logger.warning("No transcript found for %s", technology)
+                    return
 
-            if not transcripts:
-                logger.warning("No transcript found for %s", technology)
-                return
-
-            # Get most recent transcript
-            filepath = max(transcripts, key=lambda p: p.stat().st_mtime)
+                # Get most recent transcript
+                filepath = max(transcripts, key=lambda p: p.stat().st_mtime)
 
             # Build country data section
             content = []

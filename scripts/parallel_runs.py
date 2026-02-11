@@ -319,7 +319,11 @@ def launch_run(
 ) -> subprocess.Popen:
     """Launch a single pipeline run."""
     config_file = f"config_{config_type}_run{run_num}.json"
-    log_file = project_dir / "output" / f"{config_type}_run{run_num}.log"
+
+    # Write logs under output/logs/ (ensure directory exists)
+    log_dir = project_dir / "output" / "logs"
+    log_dir.mkdir(parents=True, exist_ok=True)
+    log_file = log_dir / f"{config_type}_run{run_num}.log"
 
     debate_flags = [
         "--enable-component-debate",
@@ -740,9 +744,9 @@ def run_parallel_pipeline(
             print(f"  - {f}")
         print("\nLog files:")
         for run_num in range(1, num_runs + 1):
-            print(f"  - output/{config_type}_run{run_num}.log")
+            print(f"  - output/logs/{config_type}_run{run_num}.log")
         print("\nTo monitor progress:")
-        print(f"  tail -f output/{config_type}_run*.log")
+        print(f"  tail -f output/logs/{config_type}_run*.log")
         print("\nTo check file sizes (during parallel run):")
         print(
             f"  ls -la output/raw/stdns_output_{config_type}_run*_{config_type}_{date_prefix}*.csv"
