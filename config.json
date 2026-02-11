@@ -1,9 +1,12 @@
 {
+  "_comment": "STDN Configuration file - specifies input data sources, model settings, and output options",
   "import_tech_list": "./data/tech_list.csv",
-
-  "model": "anthropic:claude-sonnet-4-20250514",
+  "model": "openai:gpt-4.1-mini",
   "output_dir": "./output",
   "output_csv_filename": "stdns_output",
+
+  "_comment_component_normalization_model": "Model used specifically for semantic component-name normalization mappings (more reliable model recommended)",
+  "component_normalization_model": "openai:gpt-4.1",
 
   "materials_hs_codes_listing": "./data/hs_codes_and_usgs_names.csv",
   "materials_column_name": "Elements_Compounds",
@@ -35,9 +38,12 @@
   "model_temperature": 0.1,
 
   "_comment_per_agent_models": "Optional: Use different models for different agents",
-  "component_model": "anthropic:claude-sonnet-4-20250514",
-  "materials_model": "anthropic:claude-sonnet-4-20250514",
-  "country_model": "anthropic:claude-haiku-4-20250514",
+  "component_model": "openai:gpt-4.1-mini",
+  "materials_model": "openai:gpt-4.1-mini",
+  "country_model": "openai:gpt-4.1-mini",
+
+  "_comment_retries": "Increase generation-time output validation retries for pydantic_ai Agents (applies when the code reads this config field)",
+  "agent_retries": 5,
 
   "_comment_visualization": "Visualization options (requires networkx, matplotlib)",
   "generate_visualizations": false,

@@ -159,9 +159,18 @@ def kill_all_processes(config_type: str) -> None:
     print(f"Killed all {config_type} processes")
 
 
-def create_database_copies(base_db_path: Path, num_copies: int, project_dir: Path) -> list[Path]:
+def create_database_copies(
+    base_db_path: Path,
+    num_copies: int,
+    project_dir: Path,
+    *,
+    config_type: str,
+) -> list[Path]:
     """
     Create copies of the database for parallel runs.
+
+    IMPORTANT: Copies are config-type-specific to avoid DuckDB file lock conflicts when
+    multiple configuration groups run concurrently (e.g., d3v1v1 and d5v1v1 in parallel).
 
     Returns list of paths to the created database copies.
     """
@@ -172,7 +181,7 @@ def create_database_copies(base_db_path: Path, num_copies: int, project_dir: Pat
     print(f"\nCreating {num_copies} database copies from {base_db_path}...")
 
     for run_num in range(1, num_copies + 1):
-        copy_name = f"{base_name}_run{run_num}.db"
+        copy_name = f"{base_name}_{config_type}_run{run_num}.db"
         copy_path = db_dir / copy_name
 
         if copy_path.exists():
@@ -415,13 +424,16 @@ def generate_json_from_normalized_group(
     date_prefix: str,
 ) -> list[Path]:
     """
-    Generate JSON files from the normalized CSVs for a completed group.
+    Generate JSON files from normalized CSVs for a configuration.
+
+    IMPORTANT: This intentionally ignores timestamp/date so that JSON generation applies to
+    ALL normalized outputs for the same config_type.
 
     Reads:
-      output/normalized/stdns_output_{config_type}_{date_prefix}*.csv
+      output/normalized/stdns_output_{config_type}_*.csv
 
     Writes:
-      output/stdns_output_{config_type}_{date_prefix}*.json
+      output/normalized/stdns_output_{config_type}_*.json
 
     JSON is a row-wise serialization of the normalized CSV (so components are normalized).
     Returns list of written JSON paths.
@@ -433,7 +445,7 @@ def generate_json_from_normalized_group(
         print(f"WARNING: Normalized directory does not exist: {normalized_dir}")
         return written
 
-    pattern = f"stdns_output_{config_type}_{date_prefix}*.csv"
+    pattern = f"stdns_output_{config_type}_*.csv"
     normalized_csvs = sorted(normalized_dir.glob(pattern))
 
     if not normalized_csvs:
@@ -514,8 +526,8 @@ def run_shared_normalization_pass(
     date_prefix: str,
 ) -> None:
     """
-    Run one shared, LLM-backed component-name normalization pass across all consolidated
-    raw CSVs for the given config_type and date_prefix.
+    Run one shared, LLM-backed component-name normalization pass across ALL raw CSVs for
+    a configuration (ignoring timestamp/date).
 
     This delegates to the existing `scripts/normalize_outputs.py` implementation, which:
     - loads all matching raw CSVs
@@ -523,11 +535,10 @@ def run_shared_normalization_pass(
     - calls the LLM for unknown names
     - writes normalized CSVs to output/normalized/
 
-    We intentionally do this ONCE for the whole group (after raw files have been renamed
-    back to the standard pattern), to restore the intended “group normalization” behavior
-    even when runs were executed in parallel with collision-proof filenames.
+    We intentionally do this ONCE (after raw files have been renamed back to the standard
+    pattern), so normalization applies to all outputs of the same config_type.
     """
-    pattern = f"output/raw/stdns_output_{config_type}_{date_prefix}*.csv"
+    pattern = f"output/raw/stdns_output_{config_type}_*.csv"
 
     print("\nRunning shared normalization via scripts/normalize_outputs.py ...")
     print(f"  Pattern: {pattern}")
@@ -566,18 +577,17 @@ def run_parallel_pipeline(
     debate_settings = parse_config_type(config_type)
 
     # Compute the ACTUAL debate config marker used in filenames by the orchestrator.
-    # Orchestrator logic encodes debate enabled/disabled per stage as:
+    # Orchestrator logic encodes:
     #   components: d{N} if enabled else v1
     #   materials:  d{N} if enabled else v1
-    #   countries:  d{N} if enabled else v1
+    #   countries:  v{N} (voting) where N=num_agents_country if enabled else 1
     # (The user-facing config_type string (e.g. d3d3v3) may not match this exactly.)
     filename_config_marker = (
         f"{'d' if debate_settings['enable_component_debate'] else 'v'}"
         f"{debate_settings['num_agents_component'] if debate_settings['enable_component_debate'] else 1}"
         f"{'d' if debate_settings['enable_material_debate'] else 'v'}"
         f"{debate_settings['num_agents_material'] if debate_settings['enable_material_debate'] else 1}"
-        f"{'d' if debate_settings['enable_country_debate'] else 'v'}"
-        f"{debate_settings['num_agents_country'] if debate_settings['enable_country_debate'] else 1}"
+        f"v{debate_settings['num_agents_country'] if debate_settings['enable_country_debate'] else 1}"
     )
 
     date_prefix = get_today_date_prefix()
@@ -596,7 +606,12 @@ def run_parallel_pipeline(
         return False
 
     # Create database copies and config files
-    db_copies = create_database_copies(base_db_path, num_runs, project_dir)
+    db_copies = create_database_copies(
+        base_db_path,
+        num_runs,
+        project_dir,
+        config_type=config_type,
+    )
     config_files = create_config_files(
         base_config_path,
         config_type,

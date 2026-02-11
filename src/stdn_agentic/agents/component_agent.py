@@ -216,12 +216,24 @@ def get_component_agent(model_name: Optional[str] = None) -> Agent[STDNDependenc
             "OLLAMA_MODEL", "ollama:qwen2.5-7b"
         )
 
+    # Default to 5 (pydantic_ai defaults to 1). Allow overriding via env var.
+    retries_env = os.environ.get("STDN_AGENT_RETRIES")
+    retries = 5
+    if retries_env is not None:
+        try:
+            retries = int(retries_env)
+        except ValueError:
+            retries = 5
+
+    print(f"[agent] component_agent model={model_name} retries={retries}")
+
     return Agent(
         model_name,
         output_type=ComponentList,
         deps_type=STDNDependencies,
         system_prompt=COMPONENT_SYSTEM_PROMPT,
-        retries=5,
+        retries=retries,
+        output_retries=retries,
     )
 
 

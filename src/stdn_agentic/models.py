@@ -57,9 +57,23 @@ class STDNDependencies:
     materials_model: Optional[str] = None
     country_model: Optional[str] = None
 
+    # Model specifically for semantic component-name normalization mappings
+    component_normalization_model: Optional[str] = None
+
     def get_component_model(self) -> str:
         """Get the model to use for component extraction."""
         return self.component_model or self.model
+
+    def get_component_normalization_model(self) -> str:
+        """
+        Get the model to use for semantic component-name normalization mappings.
+
+        Preference order:
+        1) component_normalization_model
+        2) component_model
+        3) model
+        """
+        return self.component_normalization_model or self.get_component_model()
 
     def get_materials_model(self) -> str:
         """Get the model to use for materials extraction."""
@@ -79,6 +93,19 @@ class ConfigModel(BaseModel):
     """
     Configuration validation model for STDN generation.
     """
+
+    # ========================================================================
+    # Agent Runtime / Reliability Settings
+    # ========================================================================
+
+    agent_retries: int = Field(
+        default=5,
+        ge=0,
+        description=(
+            "Default number of retries for pydantic_ai Agent output validation / tool-call recovery. "
+            "Used when agent construction code reads this field."
+        ),
+    )
 
     # ========================================================================
     # Required Fields
@@ -127,6 +154,18 @@ class ConfigModel(BaseModel):
     country_model: Optional[str] = Field(
         default=None,
         description="Model for country data (defaults to 'model' if not set)",
+    )
+
+    # ========================================================================
+    # Normalization Model Configuration
+    # ========================================================================
+
+    component_normalization_model: Optional[str] = Field(
+        default=None,
+        description=(
+            "Model for semantic component-name normalization mapping (defaults to "
+            "'component_model' then 'model' if not set)."
+        ),
     )
 
     # ========================================================================

@@ -1,6 +1,27 @@
 # Multi-Agent Debate System for STDN Generation
 
-This document explains the complete multi-agent debate process used in the STDN (Supply Technology Dependency Network) pipeline. The system uses multiple LLM agents that propose, critique, and refine their answers to reach consensus on technology components, materials, and country production data.
+This document explains the complete multi-agent debate process used in the STDN (Supply Technology Dependency Network) pipeline. The system uses multiple LLM agents that propose, receive System-Generated Agreement-Based Feedback, and refine their answers to reach consensus on technology components, materials, and country production data.
+
+## Configuration and Terminology Notes (Current Behavior)
+
+### Configuration precedence (Policy A: config-first)
+STDN Agentic is **config-first**:
+1. **CLI flags** (highest precedence for debate/voting settings)
+2. **Environment variables / `.env`** only for explicitly supported runtime toggles and overrides
+3. **`config.json`** is the source of truth for core configuration (paths/models/output)
+
+Environment variables do **not** automatically override all `config.json` fields—only settings explicitly read from the environment affect runtime behavior.
+
+### Debate vs voting terminology
+- **Components / Materials**: multi-agent **debate** with convergence metrics (Jaccard-based).
+- **Countries**: multi-agent **voting/consensus** when the system must fall back to LLM-based country estimates (e.g., when USGS data is missing). This stage is not the same “debate loop” as components/materials.
+
+### Semantic normalization model (config-driven)
+Component-name semantic normalization uses a dedicated model:
+- Preferred: `component_normalization_model` in `config.json` (e.g., `openai:gpt-4.1`)
+- Optional override: `STDN_COMPONENT_NORMALIZATION_MODEL` environment variable (only if explicitly used)
+
+Using a more reliable normalization model can reduce schema/validation failures during mapping.
 
 ## Table of Contents
 
@@ -9,7 +30,7 @@ This document explains the complete multi-agent debate process used in the STDN 
 3. [Three-Phases of Debate](#three-phases-of-debate)
 4. [Component Debate (Phase 1)](#component-debate-phase-1)
 5. [Materials Debate (Phase 2)](#materials-debate-phase-2)
-6. [Country Data Debate (Phase 3)](#country-data-debate-phase-3)
+6. [Country Data Voting/Consensus (Phase 3)](#country-data-votingconsensus-phase-3)
 7. [Convergence and Consensus](#convergence-and-consensus)
 8. [Complete Example](#complete-example)
 
@@ -17,7 +38,7 @@ This document explains the complete multi-agent debate process used in the STDN 
 
 ## Overview
 
-The debate system improves extraction quality by having multiple AI agents independently analyze the same question, then iteratively critique and refine their proposals until they converge on a consensus answer.
+The debate system improves extraction quality by having multiple AI agents independently analyze the same question, then iteratively incorporate System-Generated Agreement-Based Feedback and refine their proposals until they converge on a consensus answer.
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐
@@ -67,7 +88,7 @@ The debate process can be formally modeled as a state machine with well-defined 
 │             ▼                                                               │
 │  ┌─────────────────────┐                                                    │
 │  │ S2: NORMALIZED      │  Data: {agent_id: [proposals + normalized_name]}   │
-│  │     PROPOSALS       │  Transition: LLM semantic mapping                  │
+│  │     PROPOSALS       │  Transition: Semantic mapping (LLM; config-driven) │
 │  └──────────┬──────────┘                                                    │
 │             │                                                               │
 │             ▼                                                               │
@@ -88,8 +109,8 @@ The debate process can be formally modeled as a state machine with well-defined 
 │      │             │                                                        │
 │      ▼             ▼                                                        │
 │  ┌────────┐   ┌─────────────────────┐                                       │
-│  │ S6:    │   │ S4: CRITIQUES       │  Data: [critique strings]             │
-│  │CONSENSUS│  │     GENERATED       │  Transition: Deterministic            │
+│  │ S6:    │   │ S4: SYSTEM-GENERATED│  Data: [feedback strings]             │
+│  │CONSENSUS│  │     FEEDBACK        │  Transition: Deterministic            │
 │  │ BUILT  │   └──────────┬──────────┘  (aggregation rules)                  │
 │  └────────┘              │                                                  │
 │      │                   ▼                                                  │
@@ -123,6 +144,9 @@ Without normalization, the convergence calculation would incorrectly count these
 ### The Two-Stage Normalization Process
 
 Normalization happens in two stages: **rule-based** and **LLM-based semantic mapping**.
+
+**Model selection (current behavior):**
+- For semantic mapping, the system uses the configured **component normalization model** (preferred: `component_normalization_model` in `config.json`), with an optional environment override (`STDN_COMPONENT_NORMALIZATION_MODEL`) when explicitly supported.
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
@@ -357,8 +381,8 @@ Each state in the debate process has a specific data structure and produces a we
 │                        │                             │ agent pairs           │
 ├──────────────────────────────────────────────────────────────────────────────┤
 │                        │                             │                       │
-│  S4: CRITIQUES         │ critiques: List<string>     │ Deterministic         │
-│      GENERATED         │                             │                       │
+│  S4: SYSTEM-GENERATED  │ feedback: List<string>      │ Deterministic         │
+│      FEEDBACK          │                             │                       │
 │                        │ Examples:                   │ Rule-based text       │
 │                        │ - "Strong consensus on X"   │ generation based on   │
 │                        │ - "Isolated proposal Y"     │ support counts        │
@@ -370,7 +394,8 @@ Each state in the debate process has a specific data structure and produces a we
 │                        │                             │                       │
 │                        │ Same structure as S1, but   │ Each agent receives   │
 │                        │ proposals have been updated │ same prompt with      │
-│                        │ based on critique feedback  │ critiques + all       │
+│                        │ based on system-generated   │ system-generated      │
+│                        │ agreement-based feedback    │ feedback + all        │
 │                        │                             │ prior proposals       │
 ├──────────────────────────────────────────────────────────────────────────────┤
 │                        │                             │                       │
@@ -393,7 +418,7 @@ Each state in the debate process has a specific data structure and produces a we
 | START | S1: INDEPENDENT_PROPOSALS | Always | LLM (parallel) |
 | S1 | S2: NORMALIZED_PROPOSALS | Always | LLM (single) |
 | S2 | S3: CONVERGENCE_CALCULATED | Always | Deterministic |
-| S3 | S4: CRITIQUES_GENERATED | convergence < threshold AND round < max | Deterministic |
+| S3 | S4: SYSTEM_GENERATED_FEEDBACK | convergence < threshold AND round < max | Deterministic |
 | S3 | S6: CONSENSUS_BUILT | convergence ≥ threshold OR round ≥ max | Deterministic |
 | S4 | S5: PROPOSALS_REFINED | Always | LLM (parallel) |
 | S5 | S2: NORMALIZED_PROPOSALS | Always (loop) | LLM (single) |
@@ -475,10 +500,10 @@ flowchart TB
     
     Calc --> Check{"Converged?"}
     Check -->|"Yes"| Output[/"Final Components"/]
-    Check -->|"No"| Critique["Generate Critiques"]
+    Check -->|"No"| Feedback["Generate System-Generated Agreement-Based Feedback"]
     
     subgraph Loop["ROUNDS 2+: Refinement"]
-        Critique --> Forward["Forward Proposals + Critiques"]
+        Feedback --> Forward["Forward Proposals + System-Generated Agreement-Based Feedback"]
         Forward --> R1[("Agent 1")]
         Forward --> R2[("Agent 2")]
         Forward --> R3[("Agent 3")]
@@ -488,7 +513,7 @@ flowchart TB
     R2 --> Calc2
     R3 --> Calc2
     Calc2 --> Check2{"Done?"}
-    Check2 -->|"No"| Critique
+    Check2 -->|"No"| Feedback
     Check2 -->|"Yes"| Output
 ```
 
@@ -497,8 +522,8 @@ flowchart TB
 1. **Round 1 (Independent)**: Each agent independently proposes components based on the technology query, without seeing other agents' proposals
 2. **Normalization**: LLM semantic mapping ensures variants like "Li-ion Battery" and "Lithium Ion Battery" are recognized as the same component
 3. **Convergence Check**: Jaccard similarity measures agreement across all agent pairs
-4. **Critique Generation**: The system (not agents) generates feedback highlighting consensus items to preserve and isolated items to reconsider
-5. **Refinement Loop**: In rounds 2+, agents receive critiques plus all prior proposals and must select from a candidate list (not invent new names)
+4. **System-Generated Agreement-Based Feedback**: The system (not agents) generates feedback highlighting consensus items to preserve and isolated items to reconsider
+5. **Refinement Loop**: In rounds 2+, agents receive System-Generated Agreement-Based Feedback plus all prior proposals and must select from a candidate list (not invent new names)
 6. **Termination**: Loop exits when convergence threshold is met OR maximum rounds reached
 
 **Why Semantic Normalization is Essential for Multi-Agent Debate:**
@@ -543,14 +568,16 @@ In a single-agent (non-debate) approach, component naming inconsistency is not a
 │                     │              │                                       │
 │                     ▼              ▼                                       │
 │  ┌──────────────────────┐   ┌──────────────────────┐                      │
-│  │  GENERATE CRITIQUES  │   │   BUILD CONSENSUS    │                      │
+│  │  GENERATE SYSTEM-    │   │   BUILD CONSENSUS    │                      │
+│  │  GENERATED FEEDBACK  │   │   (Final Output)     │                      │
 │  │  (See Below)         │   │   (Final Output)     │                      │
 │  └──────────┬───────────┘   └──────────────────────┘                      │
 │             │                                                              │
 │             ▼                                                              │
 │  ┌─────────────────────────────────────────────────────────────────────┐   │
 │  │                      ROUND 2, 3, ... N                              │   │
-│  │   Agents receive critiques and refine their proposals               │   │
+│  │   Agents receive system-generated agreement-based feedback and      │
+│  │   refine their proposals                                            │
 │  │   Process repeats until convergence ≥ 75% or max rounds reached    │   │
 │  └─────────────────────────────────────────────────────────────────────┘   │
 │                                                                             │
@@ -574,9 +601,9 @@ CRITICAL: For each component, you MUST provide:
    - 0.0-0.3 = Low confidence, rarely separate
 3. Brief reasoning justifying your confidence
 
-Consider peer proposals and critiques carefully. Adjust your confidence based on:
+Consider peer proposals and the system-generated agreement-based feedback carefully. Adjust your confidence based on:
 - Consensus among peers (higher confidence if many agree)
-- Strength of reasoning in critiques
+- Strength of reasoning in the system-generated agreement-based feedback
 - Your own expertise and certainty
 ```
 
@@ -595,7 +622,7 @@ PREVIOUS ROUND PROPOSALS:
 - Agent3: Lithium-ion Battery (confidence=0.92)
 - Agent3: Display Module (confidence=0.80)
 
-PEER CRITIQUES AND GUIDANCE:
+SYSTEM-GENERATED AGREEMENT-BASED FEEDBACK:
 - Strong consensus on 'Lithium-ion Battery': 2 agents support it with average 
   confidence 0.94. This should be preserved.
 - Isolated proposal 'LCD Display' appears only once with average confidence 
@@ -604,7 +631,7 @@ PEER CRITIQUES AND GUIDANCE:
   idiosyncratic proposals.
 
 YOUR TASK:
-1. Review all peer proposals and critiques carefully
+1. Review all peer proposals and the system-generated agreement-based feedback carefully
 2. For EACH component you propose, assign a confidence score (0.0-1.0)
 3. Support strong consensus candidates with high confidence
 4. Lower confidence for isolated proposals unless critically justified
@@ -613,13 +640,13 @@ YOUR TASK:
 Return your refined component list with confidence scores and reasoning.
 ```
 
-### How Critiques Are Generated
+### How System-Generated Agreement-Based Feedback Is Generated
 
-**Important clarification**: Critiques are **generated by the system**, not by individual agents critiquing each other directly. The system acts as a moderator that aggregates all proposals and produces a summary of agreement levels.
+**Important clarification**: System-Generated Agreement-Based Feedback is **generated by the system**, not by individual agents critiquing each other directly. The system acts as a moderator that aggregates all proposals and produces a summary of agreement levels.
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│                    CRITIQUE GENERATION PROCESS                              │
+│     SYSTEM-GENERATED AGREEMENT-BASED FEEDBACK GENERATION PROCESS            │
 ├─────────────────────────────────────────────────────────────────────────────┤
 │                                                                             │
 │  ROUND 1: All agents submit proposals independently                         │
@@ -638,14 +665,14 @@ Return your refined component list with confidence scores and reasoning.
 │  │                                                                       │  │
 │  │     Battery: 3/3 agents  ──► "Strong consensus, preserve"             │  │
 │  │     Display: 3/3 agents  ──► "Strong consensus, preserve"             │  │
-│  │     CPU:     2/3 agents  ──► (no specific critique)                   │  │
-│  │     Memory:  2/3 agents  ──► (no specific critique)                   │  │
+│  │     CPU:     2/3 agents  ──► (no specific feedback)                   │  │
+│  │     Memory:  2/3 agents  ──► (no specific feedback)                   │  │
 │  │     Camera:  1/3 agents  ──► "Isolated, reconsider"                   │  │
 │  │     Speaker: 1/3 agents  ──► "Isolated, reconsider"                   │  │
 │  └───────────────────────────────────────────────────────────────────────┘  │
 │                              ▼                                              │
 │                                                                             │
-│  ROUND 2: ALL agents receive the SAME critique summary                      │
+│  ROUND 2: ALL agents receive the SAME feedback summary                      │
 │           Each agent then calls the LLM to refine their own proposals       │
 │                                                                             │
 │     ┌─────────┐         ┌─────────┐         ┌─────────┐                    │
@@ -653,8 +680,8 @@ Return your refined component list with confidence scores and reasoning.
 │     │         │         │         │         │         │                    │
 │     │ Receives│         │ Receives│         │ Receives│                    │
 │     │ SAME    │         │ SAME    │         │ SAME    │                    │
-│     │ critique│         │ critique│         │ critique│                    │
-│     │ summary │         │ summary │         │ summary │                    │
+│     │ feedback│         │ feedback│         │ feedback│         │
+│     │ summary │         │ summary │         │ summary │         │
 │     └────┬────┘         └────┬────┘         └────┬────┘                    │
 │          │                   │                   │                          │
 │          ▼                   ▼                   ▼                          │
@@ -664,19 +691,19 @@ Return your refined component list with confidence scores and reasoning.
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
 
-The critique generation is **deterministic Python code** (see `generate_critiques_with_influence` in `component_debater.py`), not an LLM call. It counts how many agents proposed each component and generates text feedback based on support levels:
+The System-Generated Agreement-Based Feedback is produced by **deterministic Python code** (see `generate_critiques_with_influence` in `component_debater.py`), not an LLM call. It counts how many agents proposed each component and generates agreement-based feedback based on support levels:
 
 ```python
 def generate_critiques_with_influence(proposals, round_num):
     """
-    System-generated critiques based on aggregated proposal statistics.
+    System-generated agreement-based feedback based on aggregated proposal statistics.
     
     This is NOT an LLM call - it's deterministic code that:
     1. Counts how many agents proposed each component
     2. Calculates average confidence for each component
-    3. Generates text critiques based on support thresholds
+    3. Generates text feedback based on support thresholds
     """
-    critiques = []
+    feedback = []
     
     # Group proposals by normalized component name
     for component_name, supporting_proposals in component_groups.items():
@@ -685,13 +712,13 @@ def generate_critiques_with_influence(proposals, round_num):
         support_rate = num_supporters / num_agents
         
         if support_rate >= 0.67:  # 2/3 majority
-            critiques.append(
+            feedback.append(
                 f"Strong consensus on '{component_name}': {num_supporters} agents "
                 f"support it with average confidence {avg_confidence:.2f}. "
                 f"This should be preserved."
             )
         elif support_rate <= 1/num_agents:  # Only 1 agent
-            critiques.append(
+            feedback.append(
                 f"Isolated proposal '{component_name}' appears only once with "
                 f"average confidence {avg_confidence:.2f}; reconsider unless "
                 f"critically justified."
@@ -699,17 +726,17 @@ def generate_critiques_with_influence(proposals, round_num):
     
     # Add round-dependent general guidance
     if round_num == 1:
-        critiques.append(
+        feedback.append(
             "Focus on aligning on obvious shared components while dropping "
             "clearly idiosyncratic proposals."
         )
     else:
-        critiques.append(
+        feedback.append(
             "Consolidate around components that have multi-agent support and "
             "high confidence, and prune uncertain or unsupported components."
         )
     
-    return critiques
+    return feedback
 ```
 
 **Key insight**: The system acts like a **debate moderator** that:
@@ -720,11 +747,11 @@ def generate_critiques_with_influence(proposals, round_num):
 
 Agents do NOT directly see or respond to each other's specific reasoning - they only see the aggregated statistics about support levels.
 
-### What Agents Do With Critique Feedback
+### What Agents Do With System-Generated Agreement-Based Feedback
 
 Each agent receives the **exact same prompt** containing:
 1. **Previous proposals from ALL agents** (with their confidence scores)
-2. **System-generated critiques** (consensus/isolated classifications)
+2. **System-Generated Agreement-Based Feedback** (consensus/isolated classifications)
 3. **Instructions** on how to incorporate the feedback
 
 Here is the actual prompt sent to each agent in Round 2+:
@@ -745,7 +772,7 @@ PREVIOUS ROUND PROPOSALS:
 - Agent3: Display Module (confidence=0.80)
 - Agent3: Processor (confidence=0.88)
 
-PEER CRITIQUES AND GUIDANCE:
+SYSTEM-GENERATED AGREEMENT-BASED FEEDBACK:
 - Strong consensus on 'Lithium-ion Battery': 2 agents support it with 
   average confidence 0.94. This should be preserved.
 - Strong consensus on 'CPU': 3 agents support it with average confidence 
@@ -756,7 +783,7 @@ PEER CRITIQUES AND GUIDANCE:
   confidence, and prune uncertain or unsupported components.
 
 YOUR TASK:
-1. Review all peer proposals and critiques carefully
+1. Review all peer proposals and the system-generated agreement-based feedback carefully
 2. For EACH component you propose, assign a confidence score (0.0-1.0) based on:
    - How certain you are it's a primary component
    - Degree of peer support or opposition
@@ -769,7 +796,7 @@ Return your refined component list with confidence scores and reasoning.
 ```
 
 **Critical point**: The LLM decides how to respond to this feedback. The system prompt instructs the agent to:
-- "Consider peer proposals and critiques carefully"
+- "Consider peer proposals and the system-generated agreement-based feedback carefully"
 - "Adjust your confidence based on consensus among peers"
 - "Support strong consensus candidates with high confidence"
 - "Lower confidence for isolated proposals unless critically justified"
@@ -784,7 +811,7 @@ The system relies on the LLM's instruction-following capability to gradually con
 1. **Adopt consensus items** they didn't previously propose
 2. **Drop isolated items** that lack peer support (unless they have strong reasoning)
 3. **Increase confidence** on items with peer support
-4. **Decrease confidence** on items with critique
+4. **Decrease confidence** on items flagged by the system-generated agreement-based feedback
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
@@ -796,7 +823,7 @@ The system relies on the LLM's instruction-following capability to gradually con
 │     Agent2: [Battery, Display, CPU, Camera, GPS]                            │
 │     Agent3: [Battery, Display, Memory, Speaker, Haptic]                     │
 │                                                                             │
-│  System critique: "Battery, Display strong consensus; NFC, GPS, Speaker,    │
+│  System feedback: "Battery, Display strong consensus; NFC, GPS, Speaker,    │
 │                    Haptic are isolated proposals"                           │
 │                                                                             │
 │  ROUND 2 (After seeing feedback):                                           │
@@ -816,10 +843,10 @@ The system relies on the LLM's instruction-following capability to gradually con
 
 This gradual adoption of peer proposals is what drives convergence. The system measures agreement (Jaccard similarity) and stops when agents sufficiently agree.
 
-### Example Critique Output
+### Example System-Generated Agreement-Based Feedback Output
 
 ```
-CRITIQUES FOR ROUND 2:
+SYSTEM-GENERATED AGREEMENT-BASED FEEDBACK FOR ROUND 2:
 
 ✓ Strong consensus on 'Lithium-ion Battery': 3 agents support it 
   with average confidence 0.93. This should be preserved.
@@ -881,7 +908,7 @@ For each component identified in Phase 1, identify the raw materials needed for 
 │  │  Round 1: 45% convergence                                          │   │
 │  │     │                                                               │   │
 │  │     ▼                                                               │   │
-│  │  Generate critiques:                                                │   │
+│  │  Generate system-generated agreement-based feedback:                 │   │
 │  │  ✓ CONSENSUS: 3/3 agents agree on Lithium (avg conf: 0.95)         │   │
 │  │  ✓ CONSENSUS: 3/3 agents agree on Cobalt (avg conf: 0.92)          │   │
 │  │  ⚠ PARTIAL: 2/3 agents proposed Graphite. 1 agent proposed         │   │
@@ -946,10 +973,10 @@ Return a JSON response with 'component_list' containing 'component' and
 'materials' fields.
 ```
 
-### Materials Critique Types
+### Materials Feedback Types (System-Generated Agreement-Based)
 
 ```
-CRITIQUES FOR ROUND 2:
+SYSTEM-GENERATED AGREEMENT-BASED FEEDBACK FOR ROUND 2:
 
 ✓ CONSENSUS: 3/3 agents agree on Lithium (avg confidence: 0.95). 
   Strong evidence: Essential cathode material for Li-ion chemistry
@@ -968,7 +995,7 @@ CRITIQUES FOR ROUND 2:
 
 ---
 
-## Country Data Debate (Phase 3)
+## Country Data Voting/Consensus (Phase 3)
 
 ### Purpose
 
@@ -978,7 +1005,7 @@ For each material, identify the top producing countries. This phase uses **singl
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│                    COUNTRY DATA DEBATE FLOW                                 │
+│               COUNTRY DATA VOTING/CONSENSUS FLOW                             │
 ├─────────────────────────────────────────────────────────────────────────────┤
 │                                                                             │
 │  Input: Material = "Lithium", Year = 2023                                   │
@@ -1149,9 +1176,9 @@ DEBATE: Electric Vehicle Battery
 ROUND 1:
   Confidence: avg=0.82, min=0.65, max=0.95
   Convergence: 45.2%
-  Generating critiques...
+  Generating system-generated agreement-based feedback...
   
-  Critiques:
+  System-Generated Agreement-Based Feedback:
   ✓ Strong consensus on 'Battery Cell': 3 agents support it with average 
     confidence 0.94. This should be preserved.
   ✓ Strong consensus on 'Battery Management System': 3 agents support it 
@@ -1167,7 +1194,7 @@ ROUND 1:
 ROUND 2:
   Confidence: avg=0.86, min=0.72, max=0.96
   Convergence: 68.4%
-  Generating critiques...
+  Generating system-generated agreement-based feedback...
   Refining proposals based on peer feedback...
 
 ROUND 3:
@@ -1329,7 +1356,7 @@ Examples:
 The multi-agent debate system improves STDN extraction quality through:
 
 1. **Multiple perspectives**: 3 agents independently analyze each question
-2. **Critique-driven refinement**: Agents learn from peer feedback
+2. **Feedback-driven refinement**: Agents learn from system-generated agreement-based feedback
 3. **Convergence tracking**: Jaccard similarity measures agreement
 4. **Adaptive consensus**: Thresholds adjust based on agreement level
 5. **Confidence scoring**: Combined support + confidence determines inclusion

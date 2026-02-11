@@ -616,11 +616,41 @@ For each input name, output the canonical form it should map to."""
         names_list = "\n".join(f"- {name}" for name in unknown_names)
         prompt = f"Normalize these component names to canonical forms:\n\n{names_list}"
 
+        # Use a dedicated, more reliable model for schema-valid normalization mappings.
+        #
+        # Preference order:
+        # 1) Config-driven dependency model (self.deps.get_component_normalization_model)
+        # 2) Environment override (STDN_COMPONENT_NORMALIZATION_MODEL)
+        # 3) Hard default (openai:gpt-4.1)
+        normalization_model = None
+        if hasattr(self.deps, "get_component_normalization_model"):
+            try:
+                normalization_model = self.deps.get_component_normalization_model()
+            except Exception:
+                normalization_model = None
+
+        if not normalization_model or not str(normalization_model).strip():
+            normalization_model = (
+                os.environ.get("STDN_COMPONENT_NORMALIZATION_MODEL", "openai:gpt-4.1").strip()
+                or "openai:gpt-4.1"
+            )
+
+        # pydantic_ai defaults retries=1; raise this to reduce premature failures.
+        retries_env = os.environ.get("STDN_AGENT_RETRIES")
+        retries = 5
+        if retries_env is not None:
+            try:
+                retries = int(retries_env)
+            except ValueError:
+                retries = 5
+
         agent = Agent(
-            model=self.deps.get_component_model(),
+            model=normalization_model,
             output_type=ComponentMapping,
             deps_type=STDNDependencies,
             system_prompt=system_prompt,
+            retries=retries,
+            output_retries=retries,
         )
 
         try:

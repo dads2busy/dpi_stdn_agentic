@@ -1,15 +1,40 @@
 # STDN Agent System
 
-STDN Agentic uses four specialized agents, each with distinct responsibilities and reasoning patterns. The agents are designed to work both independently (single-agent mode) and collaboratively (multi-agent debate mode) to achieve consensus on technology dependencies.
+STDN Agentic uses specialized agents for the three pipeline stages (components, materials, countries) plus a factory helper for constructing agents. The agents can operate both independently (single-agent mode) and collaboratively (multi-agent debate/voting mode) to reach consensus on technology dependencies.
+
+## Configuration Precedence (Policy A: config-first)
+
+1. **CLI flags** (highest precedence for debate/voting settings)
+2. **Environment variables / `.env`** only for explicitly supported runtime toggles and overrides
+3. **`config.json`** is the source of truth for core configuration (paths/models/output)
+
+Environment variables do **not** automatically override all `config.json` fields—only settings explicitly read from the environment affect runtime behavior.
+
+## Model configuration (current)
+
+Models are configured primarily via `config.json`:
+- `model`: default model identifier
+- `component_model`, `materials_model`, `country_model`: per-agent overrides
+- `component_normalization_model`: model used specifically for semantic component-name normalization mappings (recommended: `openai:gpt-4.1`)
+
+During multi-agent component debate, semantic mapping/normalization is a schema-sensitive step. Using a more reliable model for normalization can reduce validation failures.
+
+## Reliability / retries (current)
+
+`pydantic_ai.Agent` defaults to low retry counts. STDN Agentic supports an explicit override:
+
+- `STDN_AGENT_RETRIES` (env var): sets the retry count used when constructing agents (including output validation retries where configured).
+
+This is especially important for structured outputs validated against Pydantic schemas.
 
 ## Agent Overview
 
-| Agent | Stage | Purpose | Confidence | Debate Type |
-|-------|-------|---------|-----------|------------|
-| **Component Agent** | 1 | Extracts primary manufacturing components from technology descriptions | 0.85-0.95 | Jaccard-based convergence |
-| **Materials Agent** | 2 | Identifies raw materials needed for each component | 0.70-0.90 | Jaccard-based convergence |
-| **Country Agent** | 3 | Estimates top-producing countries for raw materials | 0.95 (USGS) → 0.75 (LLM) | Borda voting (fallback only) |
-| **Factory** | All | Creates and configures agent instances with caching | — | — |
+| Agent | Stage | Purpose | Confidence | Collaboration Type |
+|-------|-------|---------|-----------|--------------------|
+| **Component Agent** | 1 | Extracts primary manufacturing components from technology descriptions | 0.85-0.95 | Debate with convergence (Jaccard-based) |
+| **Materials Agent** | 2 | Identifies raw materials needed for each component | 0.70-0.90 | Debate with convergence (Jaccard-based) |
+| **Country Agent** | 3 | Estimates top-producing countries for raw materials | 0.95 (USGS) → 0.75 (LLM) | Voting/consensus for LLM fallback (when USGS misses) |
+| **Factory** | All | Creates and configures agent instances | — | — |
 
 ---
 
@@ -36,9 +61,10 @@ STDN Agentic uses four specialized agents, each with distinct responsibilities a
 
 4. **Dual-Mode Operation**:
    - **Single-agent**: Direct LLM inference → components
-   - **Multi-agent debate**: 3 agents with different perspectives, Jaccard convergence metric
+   - **Multi-agent debate**: N agents with different perspectives, Jaccard convergence metric
      - **Round 1**: Independent proposals with full component generation
      - **Subsequent rounds**: Selection-based refinement from candidate list (agents cannot invent new components)
+     - **Semantic normalization (schema-sensitive)**: near-duplicate names are mapped to canonical forms before convergence is computed
      - **Name preservation**: Fuzzy matching ensures component names stay consistent across rounds
 
 ### Input Schema
@@ -64,6 +90,10 @@ Domain: consumer electronics
   ]
 }
 ```
+
+Notes:
+- The system may also maintain intermediate fields (e.g., normalized names) during debate to compute convergence reliably.
+- Semantic normalization mappings are driven by `component_normalization_model` (config-first), which is intentionally allowed to differ from `component_model`.
 
 ---
 
@@ -217,6 +247,16 @@ async def get_country_data(material, year):
     # Tier 1: Memory cache
     if key in self.cache:
         return self.cache[key]
+```
+
+## Parallel-run considerations (stdn-parallel)
+
+When running batch experiments via the parallel launcher:
+
+- Child runs commonly set `skip_postprocess_normalization=true` and `skip_json_output=true` so that normalization/JSON generation can be performed **once per batch** after consolidation.
+- Raw outputs may use per-run collision-proof naming (e.g., include `_runN_`) during execution to avoid timestamp collisions, and are renamed back to standard naming after completion.
+- For reproducibility, prefer configuring debate/voting via CLI flags (used by the launcher) rather than relying on environment defaults.
+
 
     # Tier 2: USGS database
     usgs_data = self.query_usgs(material, year)

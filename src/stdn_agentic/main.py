@@ -134,7 +134,7 @@ async def process_all_technologies(config: ConfigModel, cli_args: argparse.Names
     if cli_args.enable_country_debate is not None:
         enable_country_debate = cli_args.enable_country_debate
     else:
-        enable_country_debate = os.getenv("ENABLE_COUNTRY_DEBATE", "false").lower() == "true"
+        enable_country_debate = os.getenv("ENABLE_COUNTRY_DEBATE", "true").lower() == "true"
 
     # Number of agents
     if cli_args.num_agents_component is not None:
@@ -242,6 +242,25 @@ def _str_to_bool(value: str) -> bool:
 
 
 def main():
+    # Log effective retries for pydantic_ai Agents (used by agent factory functions)
+    # This is controlled via env var to avoid threading config through every agent constructor.
+    effective_retries = os.environ.get("STDN_AGENT_RETRIES", "").strip() or "5"
+    print(f"[stdn] STDN_AGENT_RETRIES={effective_retries}")
+
+    # Log where model configuration will come from. Agents may use:
+    # - per-agent models from config (component_model/materials_model/country_model), OR
+    # - STDN_MODEL from environment (often set via .env), OR
+    # - fallbacks (e.g., OLLAMA_MODEL) if neither is set.
+    env_stdn_model = os.environ.get("STDN_MODEL", "").strip()
+    env_ollama_model = os.environ.get("OLLAMA_MODEL", "").strip()
+    print(
+        "[stdn] model sources: "
+        f"STDN_MODEL={'<set>' if env_stdn_model else '<unset>'}, "
+        f"OLLAMA_MODEL={'<set>' if env_ollama_model else '<unset>'}"
+    )
+    if env_stdn_model:
+        print(f"[stdn] STDN_MODEL={env_stdn_model}")
+
     """
     Main entry point for the CLI application.
 
@@ -362,6 +381,22 @@ def main():
 
         traceback.print_exc()
         return 1
+
+    # Log which model configuration is present in config vs environment.
+    # This helps diagnose surprises where STDN_MODEL in .env overrides expectations.
+    print(
+        "[stdn] config models: "
+        f"model={getattr(config, 'model', None)!r}, "
+        f"component_model={getattr(config, 'component_model', None)!r}, "
+        f"materials_model={getattr(config, 'materials_model', None)!r}, "
+        f"country_model={getattr(config, 'country_model', None)!r}"
+    )
+    env_stdn_model = os.environ.get("STDN_MODEL", "").strip()
+    if env_stdn_model:
+        print(
+            "[stdn] NOTE: STDN_MODEL is set in the environment; "
+            "any agent factory that does not receive an explicit model may default to it."
+        )
 
     # Process all technologies
     try:

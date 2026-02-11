@@ -556,12 +556,26 @@ def get_materials_agent(
     model_to_use = model_name or _get_configured_model()
 
     if _agent is None or getattr(_agent, "model", None) != model_to_use:
+        # Allow overriding Agent output-validation/tool-call retry behavior without code changes.
+        # This helps avoid premature termination due to transient schema/validation mismatches.
+        retries_env = os.environ.get("STDN_AGENT_RETRIES")
+        retries = 5
+        if retries_env is not None:
+            try:
+                retries = int(retries_env)
+            except ValueError:
+                # Keep default if env var is malformed
+                retries = 5
+
+        print(f"[agent] materials_agent model={model_to_use} retries={retries}")
+
         _agent = Agent(
             model=model_to_use,
             output_type=ComponentMaterialsList,
             deps_type=STDNDependencies,
             system_prompt=MATERIALS_SYSTEM_PROMPT,
-            retries=5,
+            retries=retries,
+            output_retries=retries,
         )
 
         # DISABLED BY DEFAULT - Ollama backends often reject tool calls

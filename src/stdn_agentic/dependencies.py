@@ -33,4 +33,6 @@ def initialize_dependencies(config: ConfigModel) -> STDNDependencies:
         component_model=config.component_model,
         materials_model=config.materials_model,
         country_model=config.country_model,
+        # Normalization model configuration
+        component_normalization_model=config.component_normalization_model,
     )

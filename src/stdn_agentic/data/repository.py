@@ -86,8 +86,14 @@ class CountryDataRepository:
         # Initialize USGS client
         self.usgs_client = USGSClient(database_path, top_n=top_n)
 
-        # Initialize LLM agent if fallback enabled
-        self.country_agent = get_country_data_agent() if use_llm_fallback else None
+        # Initialize LLM agent if fallback enabled.
+        # IMPORTANT: Always construct this agent using the configured country model from dependencies,
+        # rather than falling back to STDN_MODEL/defaults. This avoids surprising mixed-model behavior.
+        self.country_agent = (
+            get_country_data_agent(model_name=self.deps.get_country_model())
+            if use_llm_fallback
+            else None
+        )
 
         # Initialize LLM fallback cache
         self.llm_cache = None

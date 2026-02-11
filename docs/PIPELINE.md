@@ -1,38 +1,91 @@
 # STDN Pipeline Stages
 
-This document describes the three-stage pipeline that transforms technology descriptions into Shallow Technology Dependency Networks (STDNs).
+This document describes the three-stage pipeline that transforms technology descriptions into Shallow Technology Dependency Networks (STDNs), and how to run it in **single-run** and **parallel batch** modes.
+
+## Running: single vs parallel
+
+### Single run (`stdn`)
+
+`stdn` runs one pipeline end-to-end from a JSON configuration file:
+
+```bash
+uv run stdn -i config.json
+```
+
+You can override debate/voting per stage via CLI flags:
+
+```bash
+uv run stdn -i config.json \
+  --enable-component-debate true \
+  --enable-material-debate false \
+  --enable-country-debate false \
+  --num-agents-component 5 \
+  --num-agents-material 1 \
+  --num-agents-country 1
+```
+
+### Parallel batch runs (`stdn-parallel`)
+
+`stdn-parallel` launches multiple pipeline runs in parallel for a given debate configuration:
+
+```bash
+uv run stdn-parallel --config-type d5v1v1 --num-runs 5 --base-config config.json --delay 5
+```
+
+Key behaviors in parallel mode:
+- Each child run writes collision-proof raw outputs containing `_runN_` in the filename to avoid timestamp collisions.
+- After all runs complete, raw outputs are renamed back to the standard naming (removing `_runN_`), then post-processing normalization and JSON generation are run once across the consolidated batch.
+- Child runs typically set `skip_postprocess_normalization=true` and `skip_json_output=true` in their generated configs so post-processing is not redundantly executed per run.
+
+## Normalization: two distinct steps (important)
+
+STDN Agentic performs **two different kinds of normalization** that serve different purposes and happen at different times:
+
+1. **In-debate semantic mapping (during Stage 1 debate)**
+   - Purpose: improve debate convergence by mapping near-duplicate component names (e.g., “CPU” vs “Processor”) to canonical forms before computing similarity.
+   - Timing: occurs *inside* the component debate loop (e.g., after Round 1 proposals and again before final consensus).
+   - Model: uses the **component normalization model** (config-first), e.g. `component_normalization_model` in `config.json`.
+
+2. **Post-processing batch normalization (after raw CSVs exist)**
+   - Purpose: normalize component names **across output files** and produce normalized artifacts for analysis.
+   - Timing: runs after raw outputs are written. In parallel batches, it is intentionally run **once** after all runs complete.
+   - Behavior: uses canonical vocabulary lookup and an LLM mapping step for unknown names, writing normalized CSVs (and JSON) under `output/normalized/`.
+
+These two steps are complementary:
+- the in-debate semantic mapping helps the debate mechanism work reliably,
+- the post-processing batch normalization makes outputs comparable and analysis-friendly across runs.
 
 ## High-Level Architecture
 
 ```text
-CLI / stdn command
+CLI / stdn (single run) or stdn-parallel (batch launcher)
           ↓
-   STDNOrchestrator (pipeline.py)
+   STDNOrchestrator (orchestrator/pipeline.py)
           ↓
  ┌──────────────────────┬──────────────────────┬──────────────────────┐
  │ Stage 1:             │ Stage 2:             │ Stage 3:             │
  │ Component Extraction │ Materials Mapping    │ Country Data         │
  ├──────────────────────┼──────────────────────┼──────────────────────┤
- │ • 3 Debating Agents  │ • 3 Debating Agents  │ • USGS Database      │
- │ • Jaccard-based      │ • Jaccard-based      │ • LLM Fallback       │
- │   convergence        │   convergence        │ • Borda Voting       │
- │ • LLM normalization  │ • Rule-based         │ • 30-day Cache       │
- │ • Confidence scoring │   normalization      │ • Multi-tier Query   │
- │                      │ • Ontology matching  │                      │
+ │ • N debating agents  │ • N debating agents  │ • USGS Database      │
+ │ • Jaccard-based      │ • Jaccard-based      │ • LLM fallback       │
+ │   convergence        │   convergence        │ • voting/consensus   │
+ │ • Semantic name      │ • Rule-based +       │ • Caching            │
+ │   normalization      │   ontology matching  │                      │
+ │ • Confidence scoring │ • Confidence scoring │ • Confidence scoring │
  └──────────────────────┴──────────────────────┴──────────────────────┘
           ↓
    Raw CSV output (output/raw/)
           ↓
  ┌─────────────────────────────────────────────────────────────────────┐
- │                    Post-Processing Normalization                    │
+ │              Post-Processing Batch Normalization (Step 2)           │
  ├─────────────────────────────────────────────────────────────────────┤
- │ • Batch component name normalization across all outputs             │
+ │ • Batch component name normalization across a run group             │
  │ • Canonical vocabulary lookup (cached mappings)                     │
  │ • LLM semantic normalization for unknown names                      │
- │ • Persistent vocabulary updates                                     │
+ │ • Persistent vocabulary updates + normalization manifests           │
  └─────────────────────────────────────────────────────────────────────┘
           ↓
-   Normalized CSV output (output/normalized/) + debate transcripts
+   Normalized CSV output (output/normalized/) + JSON + debate transcripts
 ```
 
 ## Module Organization
@@ -91,19 +144,30 @@ src/stdn_agentic/
 
 The component extraction stage turns a high-level technology entry (such as "Solar Panel") into a list of major components that have their own supply chains, like solar cells, junction boxes, or aluminum frames.
 
-### Single-Agent Mode
+### Single-Agent Mode (no debate)
+
+Single-agent mode is achieved by setting the debate flags to false (or leaving them unset) and using agent counts of 1:
 
 ```bash
-uv run stdn --input tech_list.csv --output output.csv
+uv run stdn -i config.json \
+  --enable-component-debate false \
+  --enable-material-debate false \
+  --enable-country-debate false \
+  --num-agents-component 1 \
+  --num-agents-material 1 \
+  --num-agents-country 1
 ```
 
 ### Multi-Agent Debate Mode
 
+Enable debate for Stage 1 via CLI flags (recommended for reproducibility):
+
 ```bash
-export ENABLE_COMPONENT_DEBATE=true
-export MAX_DEBATE_ROUNDS=5
-export CONVERGENCE_THRESHOLD=0.75
-uv run stdn --input tech_list.csv --output output.csv
+uv run stdn -i config.json \
+  --enable-component-debate true \
+  --num-agents-component 3 \
+  --max-debate-rounds 5 \
+  --convergence-threshold 0.75
 ```
 
 ### Debate Process
@@ -112,7 +176,7 @@ When debate is enabled:
 1. **Round 1 (Initial Proposals)**: Three agents with different perspectives independently propose components
 2. **LLM Normalization**: Proposals are normalized using LLM semantic normalization to map variations to canonical names
 3. **Convergence Check**: Jaccard convergence is calculated across agent proposals
-4. **Critique Generation**: System generates critiques highlighting:
+4. **System-Generated Agreement-Based Feedback**: The system generates agreement-based feedback highlighting:
    - CONSENSUS items (all agents agree)
    - MAJORITY items (2/3 agents agree)
    - ISOLATED items (only 1 agent proposed)
@@ -120,6 +184,16 @@ When debate is enabled:
 6. **Name Preservation**: A fuzzy matching function ensures LLM responses map back to original component names
 7. **Iteration**: Process repeats until convergence ≥ threshold or max rounds reached
 8. **Final Scoring**: Confidence scores are adjusted based on peer support levels
+
+### LLM Semantic Normalization (config-driven model)
+
+Component-name semantic normalization is used to map near-duplicates (e.g., “CPU” vs “Processor Chip”) to canonical names for convergence and downstream consistency.
+
+The model used for semantic normalization is configurable:
+- `component_normalization_model` in `config.json` (preferred; config-first)
+- optional env override `STDN_COMPONENT_NORMALIZATION_MODEL` (only if explicitly used)
+
+Using a more reliable model for normalization (e.g. `openai:gpt-4.1`) can substantially reduce schema validation failures during mapping.
 
 ### LLM Semantic Normalization
 
@@ -147,7 +221,7 @@ Materials identification maps each component to the raw materials required for m
 
 ### Single-Agent Mode
 
-Materials are extracted directly without debate.
+Materials are extracted directly without debate when `--enable-material-debate false` (or the corresponding environment default is false).
 
 ### Multi-Agent Debate Mode
 
@@ -162,7 +236,7 @@ When debate is enabled for materials:
 1. Three agents independently propose raw materials for each component
 2. Names are normalized using **rule-based normalization** and matched against the ontology
 3. Jaccard convergence is calculated per component
-4. Similar debate, critique, and refinement rounds occur
+4. Similar debate, System-Generated Agreement-Based Feedback, and refinement rounds occur
 5. Materials with low peer support may be downweighted or removed
 
 ### Rule-Based Normalization
@@ -201,11 +275,14 @@ Country production data uses a three-tier retrieval system with automatic fallba
 3. **LLM fallback cache** - Previous debate (0.80 confidence, 30-day TTL)
 4. **Fresh LLM debate** - Borda voting (0.75-0.80 confidence)
 
-### Enable Multi-Agent Debate for LLM Fallback
+### Enable Voting/Consensus for LLM Fallback
+
+Enable the country voting/consensus mode via CLI flags:
 
 ```bash
-export ENABLE_COUNTRY_DEBATE=true
-uv run stdn --input tech_list.csv --output output.csv
+uv run stdn -i config.json \
+  --enable-country-debate true \
+  --num-agents-country 3
 ```
 
 ### Borda Voting Process

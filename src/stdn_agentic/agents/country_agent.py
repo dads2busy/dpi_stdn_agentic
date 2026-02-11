@@ -163,9 +163,22 @@ def get_country_data_agent(
             "OLLAMA_MODEL", "ollama:qwen2.5-7b"
         )
 
+    # Default to 5 (pydantic_ai defaults to 1). Allow overriding via env var.
+    retries_env = os.environ.get("STDN_AGENT_RETRIES")
+    retries = 5
+    if retries_env is not None:
+        try:
+            retries = int(retries_env)
+        except ValueError:
+            retries = 5
+
+    print(f"[agent] country_agent model={model_name} retries={retries}")
+
     return Agent(
         model_name,
         output_type=CountryList,
         deps_type=STDNDependencies,
         system_prompt=COUNTRY_DATA_SYSTEM_PROMPT,
+        retries=retries,
+        output_retries=retries,
     )

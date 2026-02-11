@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 from typing import Any, Dict, List
 
 from pydantic import BaseModel, Field
@@ -59,10 +60,42 @@ async def normalize_components_with_llm(
         '- Use SPECIFIC names like "Memory Chip", "Power IC", "Display Module"'
     )
 
+    # pydantic_ai defaults `retries=1`, which can cause premature failures like:
+    # "Exceeded maximum retries (1) for output validation".
+    # Default to 5 and allow override via STDN_AGENT_RETRIES for consistency with other agents.
+    retries_env = os.environ.get("STDN_AGENT_RETRIES")
+    retries = 5
+    if retries_env is not None:
+        try:
+            retries = int(retries_env)
+        except ValueError:
+            retries = 5
+
+    # Use a dedicated, more reliable model for semantic normalization.
+    #
+    # Preference order:
+    # 1) Config-driven dependency model (deps.get_component_normalization_model)
+    # 2) Environment override (STDN_COMPONENT_NORMALIZATION_MODEL)
+    # 3) Hard default (openai:gpt-4.1)
+    normalization_model = None
+    if hasattr(deps, "get_component_normalization_model"):
+        try:
+            normalization_model = deps.get_component_normalization_model()
+        except Exception:
+            normalization_model = None
+
+    if not normalization_model or not str(normalization_model).strip():
+        normalization_model = (
+            os.environ.get("STDN_COMPONENT_NORMALIZATION_MODEL", "openai:gpt-4.1").strip()
+            or "openai:gpt-4.1"
+        )
+
     mapping_agent = Agent(
-        model=deps.get_component_model(),
+        model=normalization_model,
         output_type=ComponentMapping,
         system_prompt=prompt,
+        retries=retries,
+        output_retries=retries,
     )
     result = await mapping_agent.run(names_list, deps=deps)
 

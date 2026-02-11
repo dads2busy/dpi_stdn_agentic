@@ -36,14 +36,21 @@ class AgentFactory:
     Provides centralized initialization of component, materials, and country
     data agents with support for configuration overrides and agent pooling.
 
+    IMPORTANT:
+        This factory should be constructed with `deps` so it can consistently
+        use per-agent models (component/materials/country) from dependencies.
+        This avoids surprising mixed-model behavior where an agent silently
+        falls back to environment variables or `config.model`.
+
     Attributes:
+        deps: Runtime dependencies (includes per-agent model configuration)
         config: Optional configuration dictionary for agent customization
         _component_agent: Cached component agent instance
         _materials_agent: Cached materials agent instance
         _country_agent: Cached country agent instance
 
     Example:
-        >>> factory = AgentFactory()
+        >>> factory = AgentFactory(deps)
         >>> agents = factory.create_all_agents()
         >>> components = await agents["component"].run(
         ...     "Extract components from a smartphone",
@@ -51,24 +58,26 @@ class AgentFactory:
         ... )
     """
 
-    def __init__(self, config: Optional[Dict[str, Any]] = None):
+    def __init__(self, deps: STDNDependencies, config: Optional[Dict[str, Any]] = None):
         """
         Initialize the agent factory.
 
         Args:
+            deps: STDNDependencies instance. Required so the factory can use
+                  configured per-agent models consistently.
             config: Optional configuration dictionary with keys:
                 - "enable_caching": bool (default: False) - Cache agent instances
-                - "component_agent": dict - Override component agent config
-                - "materials_agent": dict - Override materials agent config
-                - "country_agent": dict - Override country agent config
+                - "component_agent": dict - Override component agent config (future)
+                - "materials_agent": dict - Override materials agent config (future)
+                - "country_agent": dict - Override country agent config (future)
 
         Example:
-            >>> config = {
-            ...     "enable_caching": True,
-            ...     "component_agent": {"model": "openai:gpt-4"}
-            ... }
-            >>> factory = AgentFactory(config)
+            >>> factory = AgentFactory(
+            ...     deps,
+            ...     config={"enable_caching": True},
+            ... )
         """
+        self.deps = deps
         self.config = config or {}
         self._caching_enabled = self.config.get("enable_caching", False)
 
@@ -88,20 +97,13 @@ class AgentFactory:
         Returns:
             Configured Agent for component extraction.
             Returns cached instance if caching is enabled.
-
-        Example:
-            >>> agent = factory.create_component_agent()
-            >>> result = await agent.run(
-            ...     "What are the main components?",
-            ...     deps=STDNDependencies(...)
-            ... )
         """
         # Return cached instance if available
         if self._caching_enabled and self._component_agent is not None:
             return self._component_agent
 
-        # Create new instance
-        agent = get_component_agent()
+        # Create new instance (prefer configured per-agent model from deps)
+        agent = get_component_agent(model_name=self.deps.get_component_model())
 
         # Cache if enabled
         if self._caching_enabled:
@@ -116,20 +118,13 @@ class AgentFactory:
         Returns:
             Configured Agent for materials extraction with validation.
             Returns cached instance if caching is enabled.
-
-        Example:
-            >>> agent = factory.create_materials_agent()
-            >>> result = await agent.run(
-            ...     "Extract materials for each component",
-            ...     deps=STDNDependencies(...)
-            ... )
         """
         # Return cached instance if available
         if self._caching_enabled and self._materials_agent is not None:
             return self._materials_agent
 
-        # Create new instance
-        agent = get_materials_agent()
+        # Create new instance (prefer configured per-agent model from deps)
+        agent = get_materials_agent(model_name=self.deps.get_materials_model())
 
         # Cache if enabled
         if self._caching_enabled:
@@ -144,20 +139,13 @@ class AgentFactory:
         Returns:
             Configured Agent for country production data (LLM fallback).
             Returns cached instance if caching is enabled.
-
-        Example:
-            >>> agent = factory.create_country_agent()
-            >>> result = await agent.run(
-            ...     "Get top countries producing lithium in 2024",
-            ...     deps=STDNDependencies(...)
-            ... )
         """
         # Return cached instance if available
         if self._caching_enabled and self._country_agent is not None:
             return self._country_agent
 
-        # Create new instance
-        agent = get_country_data_agent()
+        # Create new instance (prefer configured per-agent model from deps)
+        agent = get_country_data_agent(model_name=self.deps.get_country_model())
 
         # Cache if enabled
         if self._caching_enabled:
@@ -188,17 +176,8 @@ class AgentFactory:
         Returns:
             Dictionary with keys:
                 - "component": Component extraction agent
-                - "materials": Materials extraction agent (with validation)
-                - "country": Country data agent (LLM fallback)
-
-        Example:
-            >>> factory = AgentFactory()
-            >>> agents = factory.create_all_agents()
-            >>>
-            >>> # Use in pipeline
-            >>> components = await agents["component"].run(prompt, deps)
-            >>> materials = await agents["materials"].run(prompt, deps)
-            >>> countries = await agents["country"].run(prompt, deps)
+                - "materials": Materials extraction agent
+                - "country": Country data agent
         """
         return {
             "component": self.create_component_agent(),

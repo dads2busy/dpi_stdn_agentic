@@ -9,7 +9,7 @@ The system uses **11 distinct prompt types** across four categories:
 | Category | Count | Purpose |
 |----------|-------|---------|
 | Agent System Prompts | 3 | Define agent personas and capabilities |
-| Debate Prompts | 6 | Multi-agent debate, critique, and refinement |
+| Debate Prompts | 6 | Multi-agent debate, System-Generated Agreement-Based Feedback, and refinement |
 | Orchestrator Prompts | 2 | Pipeline coordination and extraction |
 
 ---
@@ -302,7 +302,7 @@ CRITICAL RULES:
 1. You MUST ONLY select from the CANDIDATE COMPONENTS list provided
 2. Do NOT invent new component names - use the EXACT names from the list
 3. Your job is to decide which components to INCLUDE and with what CONFIDENCE
-4. Adjust confidence based on peer support and critique feedback
+4. Adjust confidence based on peer support and System-Generated Agreement-Based Feedback
 
 For each component you include, provide:
 - The EXACT component name from the candidate list
@@ -331,7 +331,7 @@ CANDIDATE COMPONENTS (you MUST select from this list):
 PREVIOUS ROUND - AGENT SELECTIONS:
 {prev_context}
 
-PEER CRITIQUES AND GUIDANCE:
+SYSTEM-GENERATED AGREEMENT-BASED FEEDBACK:
 {critique_text}
 
 YOUR TASK:
@@ -341,7 +341,7 @@ YOUR TASK:
    - Use the EXACT name from the candidate list
    - Assign confidence (0.0-1.0) based on:
      * Peer support (higher if multiple agents selected it)
-     * Critique feedback (adjust based on critiques)
+     * System-Generated Agreement-Based Feedback (adjust based on the feedback)
      * Your assessment of its importance as a primary component
    - Provide brief reasoning
 
@@ -354,7 +354,7 @@ Components with low peer support should have lower confidence unless critically 
 - `{technology}`: Technology being analyzed
 - `{component_list}`: Numbered list of all unique components from previous round with initial confidence scores
 - `{prev_context}`: Previous round selections grouped by agent
-- `{critique_text}`: Generated critiques highlighting consensus/isolated items
+- `{critique_text}`: System-Generated Agreement-Based Feedback highlighting consensus/isolated items (placeholder name retained for backward compatibility)
 
 **Key design decisions:**
 
@@ -450,8 +450,9 @@ COMPONENTS:
 AVAILABLE RAW MATERIALS:
 {ontology_str}
 
-PEER FEEDBACK FROM ROUND {round_num - 1}:
+SYSTEM-GENERATED AGREEMENT-BASED FEEDBACK FROM ROUND {round_num - 1}:
 {critique_text}
+
 
 INSTRUCTIONS:
 - Review the peer feedback carefully
