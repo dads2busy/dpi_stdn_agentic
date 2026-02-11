@@ -139,6 +139,7 @@ async def normalize_with_llm(
             model=model,
             output_type=ComponentMapping,
             system_prompt=NORMALIZATION_SYSTEM_PROMPT,
+            retries=3,
         )
 
         try:
@@ -252,6 +253,7 @@ Output a mapping where EVERY input name appears as a key, mapped to its consolid
                 model=model,
                 output_type=ComponentMapping,
                 system_prompt=consolidation_prompt,
+                retries=3,
             )
 
             try:
