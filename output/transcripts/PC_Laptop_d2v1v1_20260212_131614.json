@@ -1,0 +1,919 @@
+{
+  "version": "2.0",
+  "metadata": {
+    "technology": "PC Laptop",
+    "technology_specification": "PC Laptop",
+    "technology_reasoning": "",
+    "timestamp": "2026-02-12T13:17:37.637405",
+    "format_version": "2.0"
+  },
+  "config": {
+    "num_agents": 2,
+    "max_rounds": 2
+  },
+  "component_stage": {
+    "phase1_initial_proposals": [
+      {
+        "agent_id": "Agent_1",
+        "components": [
+          {
+            "name": "Main Logic Board (Motherboard)",
+            "confidence": 0.98,
+            "reasoning": "The central printed circuit board that hosts the CPU socket or SoC, RAM slots, chipset, and connectors; always a procurable unit from suppliers or manufactured in-house with standard form factors."
+          },
+          {
+            "name": "Processor (CPU) Module",
+            "confidence": 0.95,
+            "reasoning": "A distinct, separately sourced microprocessor unit or SoC that serves as the computing core; typically sourced from Intel, AMD, or ARM licensees and provided as a separate component or socketed CPU."
+          },
+          {
+            "name": "Memory Module (SO-DIMM)",
+            "confidence": 0.95,
+            "reasoning": "Standardized removable RAM modules (typically DDR4 or DDR5 SO-DIMMs) that serve to expand system memory, commonly procured separately and replaceable in most laptop designs."
+          },
+          {
+            "name": "Storage Drive (SSD)",
+            "confidence": 0.95,
+            "reasoning": "Removable solid-state storage in M.2 or SATA form factors, widely available and distinct from the motherboard; critical for operating system and data storage."
+          },
+          {
+            "name": "Display Assembly (LCD or OLED Panel with Backlight and Digitizer)",
+            "confidence": 0.97,
+            "reasoning": "Complete display module including screen panel, backlight, digitizer (for touch), and often front glass; a large, fragile manufactured assembly procured from specialized panel manufacturers."
+          },
+          {
+            "name": "Battery Pack (Li-ion or Li-polymer)",
+            "confidence": 0.98,
+            "reasoning": "Battery pack supplying portable power, manufactured as distinct modules by specialist suppliers, integral to laptop mobility and a critical separate component."
+          },
+          {
+            "name": "Keyboard Assembly",
+            "confidence": 0.9,
+            "reasoning": "Integrated keyboard including key mechanisms and backplate, typically procured as a subassembly from specialized suppliers, distinct from the mainboard and chassis."
+          },
+          {
+            "name": "Cooling Assembly (Heatsink and Fan Module)",
+            "confidence": 0.9,
+            "reasoning": "Thermal management module, including heatsinks and fans, procured as an assembled cooling solution essential for CPU/GPU thermal control, separate from other components."
+          },
+          {
+            "name": "Chassis/Enclosure (Top and Bottom Case)",
+            "confidence": 0.95,
+            "reasoning": "Structural mechanical housing that supports and protects internal components, generally sourced separately or manufactured by specialized OEMs; distinct metal and plastic parts forming the laptop body."
+          },
+          {
+            "name": "Wireless Communication Module (Wi-Fi/Bluetooth Card)",
+            "confidence": 0.88,
+            "reasoning": "Standard PCIe or M.2 wireless card providing Wi-Fi and Bluetooth connectivity; a commonly separate module with a clear supply chain distinct from mainboard."
+          },
+          {
+            "name": "Power Adapter / Charging Circuit Module",
+            "confidence": 0.85,
+            "reasoning": "External power supply unit or internal charging circuitry converted separately, with some designs using external adapters and others integrating charging boards, each treated as separate components."
+          }
+        ],
+        "technology_specification": "Portable personal computer with integrated display, keyboard, processor, memory, and storage, optimized for mobile use and typically running full desktop operating systems like Windows or Linux.",
+        "technology_reasoning": "This specification captures the standard PC laptop form factor widely produced and sold globally, characterized by compact integration of core computing modules and peripherals in a single clamshell design, which dominates both consumer and business markets as of 2024."
+      },
+      {
+        "agent_id": "Agent_2",
+        "components": [
+          {
+            "name": "Laptop Chassis (Base and Lid Assembly)",
+            "confidence": 0.95,
+            "reasoning": "The structural frame enclosing and supporting all internal components, procured as a finished or semi-finished assembly from specialized manufacturers; nearly always a separate manufactured component."
+          },
+          {
+            "name": "Display Module (LCD or OLED Panel with Housing)",
+            "confidence": 0.98,
+            "reasoning": "The integrated display and front bezel assembly, critical for user interface, universally present and supplied as a procured module."
+          },
+          {
+            "name": "Keyboard Assembly",
+            "confidence": 0.96,
+            "reasoning": "Includes keys and underlying mechanism within a frame, supplied as a separate assembly for replacement or customization, standard across all laptops."
+          },
+          {
+            "name": "Touchpad Module",
+            "confidence": 0.9,
+            "reasoning": "Distinct input device assembly with separate electronics and mechanical parts mounted on the chassis, commonly procured separately."
+          },
+          {
+            "name": "Battery Pack (Lithium-ion)",
+            "confidence": 0.98,
+            "reasoning": "Essential for laptop portability, procured as a sealed pack from battery manufacturers or integrators, universally present."
+          },
+          {
+            "name": "Motherboard (Main Printed Circuit Board)",
+            "confidence": 0.99,
+            "reasoning": "Key electronics board housing CPU, memory sockets, chipset, and connectors; distinct and critical component procured from specialized PCB and component assembly suppliers."
+          },
+          {
+            "name": "Cooling System (Heat Sink and Fan Assembly)",
+            "confidence": 0.93,
+            "reasoning": "Thermal management module including heat pipes, heat sink, and fan, typically a separately manufactured subassembly with distinct supply chain."
+          },
+          {
+            "name": "Bottom Cover / Back Panel",
+            "confidence": 0.87,
+            "reasoning": "Separate enclosure piece that protects internal components from the underside, often procured separately from the main chassis depending on design."
+          },
+          {
+            "name": "Hinge Mechanism",
+            "confidence": 0.85,
+            "reasoning": "Mechanical subassembly connecting lid and base, enabling opening and closing motions; sourced as a distinct, critical mechanical component."
+          }
+        ],
+        "technology_specification": "Clamshell-style portable personal computer (PC) laptop featuring integrated display, keyboard, motherboard, and battery within a unified chassis designed for mobility and user interaction.",
+        "technology_reasoning": "This specification reflects the dominant design in the PC laptop market as of 2024, where most laptops use a clamshell form factor with integrated key physical assemblies such as the mainboard, battery pack, and display module, enabling portability and usability. It aligns with industry standards used by major OEMs like Dell, HP, Lenovo, and Apple."
+      }
+    ],
+    "phase2_debate_rounds": [
+      {
+        "round_num": 1,
+        "convergence": 0.42857142857142855,
+        "threshold": 0.7,
+        "threshold_reached": false,
+        "proposals": {
+          "Agent_1": [
+            {
+              "name": "Main Logic Board (Motherboard)",
+              "confidence": 0.98,
+              "reasoning": "The central printed circuit board that hosts the CPU socket or SoC, RAM slots, chipset, and connectors; always a procurable unit from suppliers or manufactured in-house with standard form factors.",
+              "component": "Main Logic Board (Motherboard)",
+              "normalized_component": "motherboard"
+            },
+            {
+              "name": "Processor (CPU) Module",
+              "confidence": 0.95,
+              "reasoning": "A distinct, separately sourced microprocessor unit or SoC that serves as the computing core; typically sourced from Intel, AMD, or ARM licensees and provided as a separate component or socketed CPU.",
+              "component": "Processor (CPU) Module",
+              "normalized_component": "processor (cpu)"
+            },
+            {
+              "name": "Memory Module (SO-DIMM)",
+              "confidence": 0.95,
+              "reasoning": "Standardized removable RAM modules (typically DDR4 or DDR5 SO-DIMMs) that serve to expand system memory, commonly procured separately and replaceable in most laptop designs.",
+              "component": "Memory Module (SO-DIMM)",
+              "normalized_component": "memory module (so dimm)"
+            },
+            {
+              "name": "Storage Drive (SSD)",
+              "confidence": 0.95,
+              "reasoning": "Removable solid-state storage in M.2 or SATA form factors, widely available and distinct from the motherboard; critical for operating system and data storage.",
+              "component": "Storage Drive (SSD)",
+              "normalized_component": "storage drive (ssd)"
+            },
+            {
+              "name": "Display Assembly (LCD or OLED Panel with Backlight and Digitizer)",
+              "confidence": 0.97,
+              "reasoning": "Complete display module including screen panel, backlight, digitizer (for touch), and often front glass; a large, fragile manufactured assembly procured from specialized panel manufacturers.",
+              "component": "Display Assembly (LCD or OLED Panel with Backlight and Digitizer)",
+              "normalized_component": "display assembly (lcd or oled panel with backlight and digitizer)"
+            },
+            {
+              "name": "Battery Pack (Li-ion or Li-polymer)",
+              "confidence": 0.98,
+              "reasoning": "Battery pack supplying portable power, manufactured as distinct modules by specialist suppliers, integral to laptop mobility and a critical separate component.",
+              "component": "Battery Pack (Li-ion or Li-polymer)",
+              "normalized_component": "battery pack"
+            },
+            {
+              "name": "Keyboard Assembly",
+              "confidence": 0.9,
+              "reasoning": "Integrated keyboard including key mechanisms and backplate, typically procured as a subassembly from specialized suppliers, distinct from the mainboard and chassis.",
+              "component": "Keyboard Assembly",
+              "normalized_component": "keyboard"
+            },
+            {
+              "name": "Cooling Assembly (Heatsink and Fan Module)",
+              "confidence": 0.9,
+              "reasoning": "Thermal management module, including heatsinks and fans, procured as an assembled cooling solution essential for CPU/GPU thermal control, separate from other components.",
+              "component": "Cooling Assembly (Heatsink and Fan Module)",
+              "normalized_component": "cooling system (heatsink and fan assembly)"
+            },
+            {
+              "name": "Chassis/Enclosure (Top and Bottom Case)",
+              "confidence": 0.95,
+              "reasoning": "Structural mechanical housing that supports and protects internal components, generally sourced separately or manufactured by specialized OEMs; distinct metal and plastic parts forming the laptop body.",
+              "component": "Chassis/Enclosure (Top and Bottom Case)",
+              "normalized_component": "laptop chassis"
+            },
+            {
+              "name": "Wireless Communication Module (Wi-Fi/Bluetooth Card)",
+              "confidence": 0.88,
+              "reasoning": "Standard PCIe or M.2 wireless card providing Wi-Fi and Bluetooth connectivity; a commonly separate module with a clear supply chain distinct from mainboard.",
+              "component": "Wireless Communication Module (Wi-Fi/Bluetooth Card)",
+              "normalized_component": "wireless communication module (wi fi/bluetooth card)"
+            },
+            {
+              "name": "Power Adapter / Charging Circuit Module",
+              "confidence": 0.85,
+              "reasoning": "External power supply unit or internal charging circuitry converted separately, with some designs using external adapters and others integrating charging boards, each treated as separate components.",
+              "component": "Power Adapter / Charging Circuit Module",
+              "normalized_component": "power adapter"
+            }
+          ],
+          "Agent_2": [
+            {
+              "name": "Laptop Chassis (Base and Lid Assembly)",
+              "confidence": 0.95,
+              "reasoning": "The structural frame enclosing and supporting all internal components, procured as a finished or semi-finished assembly from specialized manufacturers; nearly always a separate manufactured component.",
+              "component": "Laptop Chassis (Base and Lid Assembly)",
+              "normalized_component": "laptop chassis"
+            },
+            {
+              "name": "Display Module (LCD or OLED Panel with Housing)",
+              "confidence": 0.98,
+              "reasoning": "The integrated display and front bezel assembly, critical for user interface, universally present and supplied as a procured module.",
+              "component": "Display Module (LCD or OLED Panel with Housing)",
+              "normalized_component": "display assembly (lcd or oled panel with backlight and digitizer)"
+            },
+            {
+              "name": "Keyboard Assembly",
+              "confidence": 0.96,
+              "reasoning": "Includes keys and underlying mechanism within a frame, supplied as a separate assembly for replacement or customization, standard across all laptops.",
+              "component": "Keyboard Assembly",
+              "normalized_component": "keyboard"
+            },
+            {
+              "name": "Touchpad Module",
+              "confidence": 0.9,
+              "reasoning": "Distinct input device assembly with separate electronics and mechanical parts mounted on the chassis, commonly procured separately.",
+              "component": "Touchpad Module",
+              "normalized_component": "touchpad"
+            },
+            {
+              "name": "Battery Pack (Lithium-ion)",
+              "confidence": 0.98,
+              "reasoning": "Essential for laptop portability, procured as a sealed pack from battery manufacturers or integrators, universally present.",
+              "component": "Battery Pack (Lithium-ion)",
+              "normalized_component": "battery pack"
+            },
+            {
+              "name": "Motherboard (Main Printed Circuit Board)",
+              "confidence": 0.99,
+              "reasoning": "Key electronics board housing CPU, memory sockets, chipset, and connectors; distinct and critical component procured from specialized PCB and component assembly suppliers.",
+              "component": "Motherboard (Main Printed Circuit Board)",
+              "normalized_component": "motherboard"
+            },
+            {
+              "name": "Cooling System (Heat Sink and Fan Assembly)",
+              "confidence": 0.93,
+              "reasoning": "Thermal management module including heat pipes, heat sink, and fan, typically a separately manufactured subassembly with distinct supply chain.",
+              "component": "Cooling System (Heat Sink and Fan Assembly)",
+              "normalized_component": "cooling system (heatsink and fan assembly)"
+            },
+            {
+              "name": "Bottom Cover / Back Panel",
+              "confidence": 0.87,
+              "reasoning": "Separate enclosure piece that protects internal components from the underside, often procured separately from the main chassis depending on design.",
+              "component": "Bottom Cover / Back Panel",
+              "normalized_component": "bottom cover"
+            },
+            {
+              "name": "Hinge Mechanism",
+              "confidence": 0.85,
+              "reasoning": "Mechanical subassembly connecting lid and base, enabling opening and closing motions; sourced as a distinct, critical mechanical component.",
+              "component": "Hinge Mechanism",
+              "normalized_component": "hinge mechanism"
+            }
+          ]
+        },
+        "rounds_completed": 1,
+        "support_analysis": {
+          "consensus": [],
+          "majority": [
+            "motherboard",
+            "display assembly (lcd or oled panel with backlight and digitizer)",
+            "battery pack",
+            "keyboard",
+            "cooling system (heatsink and fan assembly)",
+            "laptop chassis"
+          ],
+          "isolated": [
+            "processor (cpu)",
+            "memory module (so dimm)",
+            "storage drive (ssd)",
+            "wireless communication module (wi fi/bluetooth card)",
+            "power adapter",
+            "touchpad",
+            "bottom cover",
+            "hinge mechanism"
+          ]
+        },
+        "critiques": [
+          {
+            "item_name": "motherboard",
+            "normalized_name": "motherboard",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.985,
+            "critique_text": "Majority support for 'motherboard': 2/3 agents agree (conf: 0.98). Consider strengthening consensus."
+          },
+          {
+            "item_name": "processor (cpu)",
+            "normalized_name": "processor (cpu)",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2"
+            ],
+            "avg_confidence": 0.95,
+            "critique_text": "Isolated proposal 'processor (cpu)' from 1 agent(s) (conf: 0.95). Requires justification or peer validation."
+          },
+          {
+            "item_name": "memory module (so dimm)",
+            "normalized_name": "memory module (so dimm)",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2"
+            ],
+            "avg_confidence": 0.95,
+            "critique_text": "Isolated proposal 'memory module (so dimm)' from 1 agent(s) (conf: 0.95). Requires justification or peer validation."
+          },
+          {
+            "item_name": "storage drive (ssd)",
+            "normalized_name": "storage drive (ssd)",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2"
+            ],
+            "avg_confidence": 0.95,
+            "critique_text": "Isolated proposal 'storage drive (ssd)' from 1 agent(s) (conf: 0.95). Requires justification or peer validation."
+          },
+          {
+            "item_name": "display assembly (lcd or oled panel with backlight and digitizer)",
+            "normalized_name": "display assembly (lcd or oled panel with backlight and digitizer)",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.975,
+            "critique_text": "Majority support for 'display assembly (lcd or oled panel with backlight and digitizer)': 2/3 agents agree (conf: 0.97). Consider strengthening consensus."
+          },
+          {
+            "item_name": "battery pack",
+            "normalized_name": "battery pack",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.98,
+            "critique_text": "Majority support for 'battery pack': 2/3 agents agree (conf: 0.98). Consider strengthening consensus."
+          },
+          {
+            "item_name": "keyboard",
+            "normalized_name": "keyboard",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.9299999999999999,
+            "critique_text": "Majority support for 'keyboard': 2/3 agents agree (conf: 0.93). Consider strengthening consensus."
+          },
+          {
+            "item_name": "cooling system (heatsink and fan assembly)",
+            "normalized_name": "cooling system (heatsink and fan assembly)",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.915,
+            "critique_text": "Majority support for 'cooling system (heatsink and fan assembly)': 2/3 agents agree (conf: 0.92). Consider strengthening consensus."
+          },
+          {
+            "item_name": "laptop chassis",
+            "normalized_name": "laptop chassis",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.95,
+            "critique_text": "Majority support for 'laptop chassis': 2/3 agents agree (conf: 0.95). Consider strengthening consensus."
+          },
+          {
+            "item_name": "wireless communication module (wi fi/bluetooth card)",
+            "normalized_name": "wireless communication module (wi fi/bluetooth card)",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2"
+            ],
+            "avg_confidence": 0.88,
+            "critique_text": "Isolated proposal 'wireless communication module (wi fi/bluetooth card)' from 1 agent(s) (conf: 0.88). Requires justification or peer validation."
+          },
+          {
+            "item_name": "power adapter",
+            "normalized_name": "power adapter",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2"
+            ],
+            "avg_confidence": 0.85,
+            "critique_text": "Isolated proposal 'power adapter' from 1 agent(s) (conf: 0.85). Requires justification or peer validation."
+          },
+          {
+            "item_name": "touchpad",
+            "normalized_name": "touchpad",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_1"
+            ],
+            "avg_confidence": 0.9,
+            "critique_text": "Isolated proposal 'touchpad' from 1 agent(s) (conf: 0.90). Requires justification or peer validation."
+          },
+          {
+            "item_name": "bottom cover",
+            "normalized_name": "bottom cover",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_1"
+            ],
+            "avg_confidence": 0.87,
+            "critique_text": "Isolated proposal 'bottom cover' from 1 agent(s) (conf: 0.87). Requires justification or peer validation."
+          },
+          {
+            "item_name": "hinge mechanism",
+            "normalized_name": "hinge mechanism",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_1"
+            ],
+            "avg_confidence": 0.85,
+            "critique_text": "Isolated proposal 'hinge mechanism' from 1 agent(s) (conf: 0.85). Requires justification or peer validation."
+          }
+        ],
+        "changes_from_previous": null
+      },
+      {
+        "round_num": 2,
+        "convergence": 1.0,
+        "threshold": 0.7,
+        "threshold_reached": true,
+        "proposals": {
+          "Agent_1": [
+            {
+              "agent_id": "Agent_1",
+              "component": "Motherboard (Main Printed Circuit Board)",
+              "confidence": 0.98,
+              "reasoning": "Strong consensus with high average confidence (0.98), critical primary component for PC laptop.",
+              "round": 2,
+              "normalized_component": "Motherboard"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Display Assembly (LCD or OLED Panel with Backlight and Digitizer)",
+              "confidence": 0.97,
+              "reasoning": "Strong consensus and high confidence (0.97), essential for user interaction and display.",
+              "round": 2,
+              "normalized_component": "Display Assembly"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Battery Pack (Lithium-ion)",
+              "confidence": 0.98,
+              "reasoning": "Strong consensus with high confidence (0.98), vital for laptop portability and operation.",
+              "round": 2,
+              "normalized_component": "Lithium-ion Battery Pack"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Keyboard Assembly",
+              "confidence": 0.93,
+              "reasoning": "Strong consensus with solid average confidence (0.93), fundamental input device for laptop.",
+              "round": 2,
+              "normalized_component": "Keyboard"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Cooling System (Heat Sink and Fan Assembly)",
+              "confidence": 0.92,
+              "reasoning": "Strong consensus with good confidence (0.92), essential for thermal management of laptop components.",
+              "round": 2,
+              "normalized_component": "Cooling System"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Laptop Chassis (Base and Lid Assembly)",
+              "confidence": 0.95,
+              "reasoning": "Strong consensus with high confidence (0.95), structural frame and enclosure for laptop.",
+              "round": 2,
+              "normalized_component": "Laptop Chassis"
+            }
+          ],
+          "Agent_2": [
+            {
+              "agent_id": "Agent_2",
+              "component": "Motherboard (Main Printed Circuit Board)",
+              "confidence": 0.99,
+              "reasoning": "Strong show of consensus from both agents with high confidence; clearly a primary component of a PC laptop.",
+              "round": 2,
+              "normalized_component": "Motherboard"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Display Assembly (LCD or OLED Panel with Backlight and Digitizer)",
+              "confidence": 0.97,
+              "reasoning": "Strong consensus from both agents with average confidence around 0.97; essential for user interface and primary visual output.",
+              "round": 2,
+              "normalized_component": "Display Assembly"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Battery Pack (Lithium-ion)",
+              "confidence": 0.98,
+              "reasoning": "Strong agreement from both agents with high confidence; crucial for portable power in laptops.",
+              "round": 2,
+              "normalized_component": "Lithium-ion Battery Pack"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Keyboard Assembly",
+              "confidence": 0.93,
+              "reasoning": "Both agents support this with good confidence; integral for input in a laptop device.",
+              "round": 2,
+              "normalized_component": "Keyboard"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Cooling System (Heat Sink and Fan Assembly)",
+              "confidence": 0.92,
+              "reasoning": "Both agents have selected cooling-related components with similarly high confidence; vital for thermal management in laptops.",
+              "round": 2,
+              "normalized_component": "Cooling System"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Laptop Chassis (Base and Lid Assembly)",
+              "confidence": 0.95,
+              "reasoning": "Both agents selected this component with high confidence; foundational physical structure for the laptop.",
+              "round": 2,
+              "normalized_component": "Laptop Chassis"
+            }
+          ],
+          "Agent_3": [
+            {
+              "agent_id": "Agent_3",
+              "component": "Motherboard (Main Printed Circuit Board)",
+              "confidence": 0.99,
+              "reasoning": "Strong consensus among agents with highest average confidence (0.99). Critical primary component for PC laptop functionality.",
+              "round": 2,
+              "normalized_component": "Motherboard"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Display Assembly (LCD or OLED Panel with Backlight and Digitizer)",
+              "confidence": 0.97,
+              "reasoning": "Strong consensus, supported by both agents with average confidence 0.97. Essential for user interface.",
+              "round": 2,
+              "normalized_component": "Display Assembly"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Battery Pack (Lithium-ion)",
+              "confidence": 0.98,
+              "reasoning": "Strong consensus with both agents supporting lithium-ion variant at 0.98 confidence. Fundamental power source component.",
+              "round": 2,
+              "normalized_component": "Lithium-ion Battery Pack"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Keyboard Assembly",
+              "confidence": 0.93,
+              "reasoning": "Strong consensus average confidence 0.93; primary input device for a laptop.",
+              "round": 2,
+              "normalized_component": "Keyboard"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Cooling System (Heat Sink and Fan Assembly)",
+              "confidence": 0.92,
+              "reasoning": "Strong support from both agents with average confidence 0.92; essential for thermal management of CPU and system.",
+              "round": 2,
+              "normalized_component": "Cooling System"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Laptop Chassis (Base and Lid Assembly)",
+              "confidence": 0.95,
+              "reasoning": "Strong consensus average confidence 0.95; critical structural and protective enclosure.",
+              "round": 2,
+              "normalized_component": "Laptop Chassis"
+            }
+          ]
+        },
+        "rounds_completed": 2,
+        "support_analysis": {
+          "consensus": [
+            "motherboard (main printed circuit board)",
+            "display assembly (lcd or oled panel with backlight and digitizer)",
+            "battery pack (lithium ion)",
+            "keyboard",
+            "cooling system (heat sink and fan assembly)",
+            "laptop chassis (base and lid assembly)"
+          ],
+          "majority": [],
+          "isolated": []
+        },
+        "critiques": [
+          {
+            "item_name": "Motherboard (Main Printed Circuit Board)",
+            "normalized_name": "motherboard (main printed circuit board)",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.9866666666666667,
+            "critique_text": "Strong consensus on 'Motherboard (Main Printed Circuit Board)': all 3 agents support with avg confidence 0.99. Preserve this component."
+          },
+          {
+            "item_name": "Display Assembly (LCD or OLED Panel with Backlight and Digitizer)",
+            "normalized_name": "display assembly (lcd or oled panel with backlight and digitizer)",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.9700000000000001,
+            "critique_text": "Strong consensus on 'Display Assembly (LCD or OLED Panel with Backlight and Digitizer)': all 3 agents support with avg confidence 0.97. Preserve this component."
+          },
+          {
+            "item_name": "Battery Pack (Lithium-ion)",
+            "normalized_name": "battery pack (lithium ion)",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.98,
+            "critique_text": "Strong consensus on 'Battery Pack (Lithium-ion)': all 3 agents support with avg confidence 0.98. Preserve this component."
+          },
+          {
+            "item_name": "Keyboard Assembly",
+            "normalized_name": "keyboard",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.93,
+            "critique_text": "Strong consensus on 'Keyboard Assembly': all 3 agents support with avg confidence 0.93. Preserve this component."
+          },
+          {
+            "item_name": "Cooling System (Heat Sink and Fan Assembly)",
+            "normalized_name": "cooling system (heat sink and fan assembly)",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.92,
+            "critique_text": "Strong consensus on 'Cooling System (Heat Sink and Fan Assembly)': all 3 agents support with avg confidence 0.92. Preserve this component."
+          },
+          {
+            "item_name": "Laptop Chassis (Base and Lid Assembly)",
+            "normalized_name": "laptop chassis (base and lid assembly)",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.9499999999999998,
+            "critique_text": "Strong consensus on 'Laptop Chassis (Base and Lid Assembly)': all 3 agents support with avg confidence 0.95. Preserve this component."
+          }
+        ],
+        "changes_from_previous": {
+          "items_added": [
+            "battery pack (lithium ion)",
+            "cooling system (heat sink and fan assembly)",
+            "motherboard (main printed circuit board)",
+            "laptop chassis (base and lid assembly)"
+          ],
+          "items_removed": [
+            "laptop chassis",
+            "touchpad",
+            "cooling system (heatsink and fan assembly)",
+            "power adapter",
+            "motherboard",
+            "bottom cover",
+            "battery pack",
+            "hinge mechanism",
+            "memory module (so dimm)",
+            "processor (cpu)",
+            "storage drive (ssd)",
+            "wireless communication module (wi fi/bluetooth card)"
+          ],
+          "confidence_changes": {}
+        }
+      }
+    ],
+    "phase3_final_consensus": {
+      "technology": "PC Laptop",
+      "technology_specification": "PC Laptop",
+      "technology_reasoning": "",
+      "components": [
+        "Motherboard",
+        "Lithium-ion Battery Pack",
+        "Display Assembly",
+        "Laptop Chassis",
+        "Keyboard",
+        "Cooling System"
+      ],
+      "confidence": 1.0,
+      "rounds": 2,
+      "convergence_score": 1.0
+    }
+  },
+  "materials_debate": {
+    "debate_rounds": [],
+    "final_consensus": {
+      "components": 6,
+      "unique_materials": 13,
+      "total_assignments": 24,
+      "materials_by_component": {
+        "Motherboard": [
+          {
+            "name": "Copper",
+            "confidence": 0.95,
+            "reasoning": "Used extensively for electrical traces and connections due to its excellent electrical conductivity; industry standard with no practical substitutes."
+          },
+          {
+            "name": "Silicon",
+            "confidence": 1.0,
+            "reasoning": "Primary semiconductor material for integrated circuits and chips on the motherboard; absolutely essential with no commercial alternatives."
+          },
+          {
+            "name": "Gold",
+            "confidence": 0.85,
+            "reasoning": "Used for high-quality contacts and bonding wires due to excellent corrosion resistance and conductivity; standard but costly, some alternatives exist but less common."
+          },
+          {
+            "name": "Tin",
+            "confidence": 0.85,
+            "reasoning": "Commonly used for soldering components; essential for secure electrical connections though alternative solder alloys exist."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.75,
+            "reasoning": "Used in heat sinks and casing parts due to lightweight and thermal conductivity; alternatives exist but aluminum is standard."
+          },
+          {
+            "name": "Glass",
+            "confidence": 0.6,
+            "reasoning": "Used in laminated layers and substrates for buildup; alternatives like epoxy substrates exist but glass-based substrates are common."
+          }
+        ],
+        "Lithium-ion Battery Pack": [
+          {
+            "name": "Lithium",
+            "confidence": 0.98,
+            "reasoning": "Core active material for energy storage in lithium-ion batteries; absolutely essential with no commercial alternatives for this type."
+          },
+          {
+            "name": "Cobalt",
+            "confidence": 0.8,
+            "reasoning": "Used in cathode materials to improve energy density and stability; standard material though some battery chemistries try to reduce cobalt content."
+          },
+          {
+            "name": "Nickel",
+            "confidence": 0.8,
+            "reasoning": "Used in cathode active materials for capacity and stability; common in NMC and NCA cathodes."
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.95,
+            "reasoning": "Essential for current collectors and internal wiring due to excellent conductivity; universally used."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.85,
+            "reasoning": "Used for cathode current collectors and casing; standard material though steel alternatives exist."
+          },
+          {
+            "name": "Graphite",
+            "confidence": 0.9,
+            "reasoning": "Primary anode material for lithium-ion intercalation; essential in commercial lithium-ion batteries."
+          }
+        ],
+        "Display Assembly": [
+          {
+            "name": "Glass",
+            "confidence": 0.95,
+            "reasoning": "Substrate material for LCD or OLED panels providing structural support and optical clarity; universally used."
+          },
+          {
+            "name": "Indium",
+            "confidence": 0.9,
+            "reasoning": "Key element of indium tin oxide transparent conductive coatings; industry standard with emerging alternatives."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.7,
+            "reasoning": "Used for reflective layers or back casing; commonly used but some alternatives like plastics exist."
+          },
+          {
+            "name": "Silicon",
+            "confidence": 0.75,
+            "reasoning": "Used in driver ICs and control chips embedded in display assembly; common semiconductor choice."
+          }
+        ],
+        "Laptop Chassis": [
+          {
+            "name": "Aluminum",
+            "confidence": 0.9,
+            "reasoning": "Widely used lightweight structural metal for chassis due to good strength-to-weight ratio and corrosion resistance; industry standard."
+          },
+          {
+            "name": "Magnesium",
+            "confidence": 0.7,
+            "reasoning": "Sometimes used in alloys or parts of chassis for weight reduction and strength; moderately common alternative."
+          },
+          {
+            "name": "Steel Ingots",
+            "confidence": 0.65,
+            "reasoning": "Used in some chassis or internal support structures for strength; alternatives exist but steel is common."
+          }
+        ],
+        "Keyboard": [
+          {
+            "name": "Silicon",
+            "confidence": 0.75,
+            "reasoning": "Used in membrane or rubber dome switches; common material for tactile response."
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.8,
+            "reasoning": "Used in electrical contacts and traces within keyboard circuitry; standard conductive metal."
+          }
+        ],
+        "Cooling System": [
+          {
+            "name": "Copper",
+            "confidence": 0.9,
+            "reasoning": "Primary material in heat pipes and fins due to high thermal and electrical conductivity; industry standard."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.85,
+            "reasoning": "Used for heat sink fins and casing due to good thermal conductivity and lightweight; very common."
+          },
+          {
+            "name": "Silicon",
+            "confidence": 0.7,
+            "reasoning": "Used in thermal interface materials and sensors; common but alternatives do exist."
+          }
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,876 @@
+{
+  "version": "2.0",
+  "metadata": {
+    "technology": "Electric Vehicle Motor",
+    "technology_specification": "Electric Vehicle Motor",
+    "technology_reasoning": "",
+    "timestamp": "2026-02-12T14:40:42.418624",
+    "format_version": "2.0"
+  },
+  "config": {
+    "num_agents": 4,
+    "max_rounds": 1
+  },
+  "component_stage": {
+    "phase1_initial_proposals": [
+      {
+        "agent_id": "Agent_1",
+        "components": [
+          {
+            "name": "Stator Assembly",
+            "confidence": 1.0,
+            "reasoning": "The stator, including laminated core and copper windings, is the stationary primary electromagnetic component and a distinct, separately manufactured assembly procured from specialized suppliers."
+          },
+          {
+            "name": "Rotor Assembly",
+            "confidence": 1.0,
+            "reasoning": "The rotor contains permanent magnets or squirrel cage conductors and is a major rotating subassembly, manufactured separately and essential for motor function."
+          },
+          {
+            "name": "Housing (Motor Frame)",
+            "confidence": 0.95,
+            "reasoning": "The structural enclosure protecting internal components is procured as a distinct mechanical assembly, often made from aluminum or steel, and includes mounts for integrating the motor into the vehicle."
+          },
+          {
+            "name": "Bearings",
+            "confidence": 0.9,
+            "reasoning": "Bearings support rotor rotation and are procured as standardized, high-precision components, separate from stator and rotor assemblies."
+          },
+          {
+            "name": "End Bell (End Cover)",
+            "confidence": 0.85,
+            "reasoning": "The end bell houses the bearings and seals the motor at both ends; this is a distinct mechanical part procured separately or manufactured as a module."
+          },
+          {
+            "name": "Cooling System Assembly",
+            "confidence": 0.8,
+            "reasoning": "Includes liquid or air cooling jackets, pumps, and channels integrated into the motor housing but often supplied as a modular cooling assembly to maintain thermal management."
+          },
+          {
+            "name": "Electrical Connector/Terminal Box",
+            "confidence": 0.85,
+            "reasoning": "The external connection interface for power and sensors is a separately procured subassembly to facilitate integration with vehicle wiring harnesses."
+          },
+          {
+            "name": "Shaft Assembly",
+            "confidence": 0.9,
+            "reasoning": "The rotor shaft transmits mechanical torque; it is a separately manufactured mechanical component often procured or supplied as an assembly with the rotor."
+          }
+        ],
+        "technology_specification": "Electric vehicle motor, typically a three-phase AC permanent magnet synchronous motor (PMSM) or induction motor, designed for traction drive applications in battery electric vehicles as of 2024.",
+        "technology_reasoning": "PMSM and AC induction motors dominate the EV motor market due to their high efficiency, power density, and scalability. These motors provide reliable traction power and are standard in most commercial battery electric vehicles worldwide."
+      },
+      {
+        "agent_id": "Agent_2",
+        "components": [
+          {
+            "name": "Stator Assembly",
+            "confidence": 0.98,
+            "reasoning": "The stator is a core structural and magnetic assembly housing the copper windings; it is procured or manufactured as a complete unit and distinct from the rotor."
+          },
+          {
+            "name": "Rotor Assembly (including Permanent Magnets)",
+            "confidence": 0.98,
+            "reasoning": "The rotor is a separate rotating assembly containing permanent magnets; it is procured or assembled as one unit and essential for motor operation."
+          },
+          {
+            "name": "Motor Housing (Frame)",
+            "confidence": 0.95,
+            "reasoning": "The structural enclosure that holds and protects the stator and rotor, typically made of cast aluminum or steel; procured as a distinct mechanical assembly."
+          },
+          {
+            "name": "End Bells (Bearing Housings)",
+            "confidence": 0.9,
+            "reasoning": "End covers that house the bearings and provide structural support for the rotor shaft, often separate components procured individually."
+          },
+          {
+            "name": "Bearings",
+            "confidence": 0.9,
+            "reasoning": "Critical rotational components that support the rotor shaft; standard manufactured items procured separately and installed in end bells."
+          },
+          {
+            "name": "Shaft",
+            "confidence": 0.85,
+            "reasoning": "The central rotor shaft transmits mechanical power to the drivetrain; a distinct machined component typically sourced separately."
+          },
+          {
+            "name": "Cooling Jacket or Cooling System Assembly",
+            "confidence": 0.8,
+            "reasoning": "An integrated or separate thermal management component (water or oil cooled) that removes heat from the motor; commonly procured as a distinct assembly."
+          },
+          {
+            "name": "Terminal or Connector Assembly",
+            "confidence": 0.75,
+            "reasoning": "Electrical interface components for power connections from the motor to the inverter; typically distinct and sourced separately."
+          }
+        ],
+        "technology_specification": "Electric vehicle motor assembly, specifically a permanent magnet synchronous motor (PMSM) used as the primary traction motor in battery electric vehicles (BEVs).",
+        "technology_reasoning": "PMSMs dominate the EV traction motor market due to their high efficiency, power density, and reliability, making them the industry standard for commercial BEVs as of 2024."
+      },
+      {
+        "agent_id": "Agent_3",
+        "components": [
+          {
+            "name": "Stator Assembly",
+            "confidence": 0.99,
+            "reasoning": "The stator is a fundamental subassembly with wound coils and laminated iron core, procured or manufactured as an independent component; it forms the stationary part of the motor providing magnetic field generation."
+          },
+          {
+            "name": "Rotor Assembly",
+            "confidence": 0.98,
+            "reasoning": "The rotor contains permanent magnets fixed to a rotor core; this is a separate manufactured part critical for torque generation, distinguished by its magnetic elements and mechanical structure."
+          },
+          {
+            "name": "Housing/Frame",
+            "confidence": 0.92,
+            "reasoning": "The motor housing or frame encloses and supports the internal components, typically made as a discrete structural assembly procured separately from the motor internals."
+          },
+          {
+            "name": "End Shields/Bearings Supports",
+            "confidence": 0.9,
+            "reasoning": "End shields or bearing caps support the rotor shaft and bearings, essential to the mechanical integrity and commonly procured as separate cast or machined parts distinct from stator and rotor."
+          },
+          {
+            "name": "Bearings",
+            "confidence": 0.85,
+            "reasoning": "Rolling element bearings accommodate the rotor rotation within the housing; these are standardized manufactured components procured from specialized suppliers."
+          },
+          {
+            "name": "Cooling System Assembly",
+            "confidence": 0.8,
+            "reasoning": "Cooling components such as liquid cooling jackets or fans are often procured as distinct parts integrated into motor assemblies to manage thermal loads."
+          },
+          {
+            "name": "Encoder/Sensor Module",
+            "confidence": 0.75,
+            "reasoning": "Position sensors or encoders that provide rotor position feedback to the motor controller are frequently procured separately and installed as discrete submodules."
+          }
+        ],
+        "technology_specification": "Electric vehicle motor commonly refers to the brushless permanent magnet synchronous motor (PMSM) used in battery electric vehicles (BEVs). This motor type dominates the motor market in EVs due to its high efficiency, power density, and precise speed control.",
+        "technology_reasoning": "Brushless permanent magnet synchronous motors (PMSM) are preferred in electric vehicles globally as of 2024 because they provide superior efficiency, higher torque-to-weight ratio, and better thermal performance compared to induction or brushed DC motors. They comprise distinct manufactured components typically sourced through an established supply chain."
+      },
+      {
+        "agent_id": "Agent_4",
+        "components": [
+          {
+            "name": "Stator Assembly",
+            "confidence": 0.98,
+            "reasoning": "The stator is a distinct manufactured subassembly consisting of wound coils and laminated steel core, critical for producing the rotating magnetic field, universally present in all PMSM EV motors."
+          },
+          {
+            "name": "Rotor Assembly with Permanent Magnets",
+            "confidence": 0.98,
+            "reasoning": "The rotor includes embedded or surface-mounted rare-earth permanent magnets and a rotor core; this subassembly is essential and separately manufactured due to its role in magnetic flux generation."
+          },
+          {
+            "name": "Motor Housing (Frame)",
+            "confidence": 0.92,
+            "reasoning": "The motor housing provides structural integrity, supports bearing placement, and protects internal components; it is a separate mechanical assembly procured independently."
+          },
+          {
+            "name": "Bearings",
+            "confidence": 0.9,
+            "reasoning": "Bearings enable smooth rotation of the rotor shaft within the housing; these are precision manufactured components with distinct supply chains."
+          },
+          {
+            "name": "Shaft Assembly",
+            "confidence": 0.85,
+            "reasoning": "The rotor shaft transfers mechanical torque to the drivetrain and is manufactured as a separate assembly often including integrated features like keyways or splines."
+          },
+          {
+            "name": "Motor Connector and Wiring Harness",
+            "confidence": 0.87,
+            "reasoning": "Connectors and wiring harnesses enable electrical interface between the motor windings and the power electronics; these are distinct, supplier-procured components."
+          },
+          {
+            "name": "Rotor Position Sensor Module (e.g., Hall Effect or Resolver)",
+            "confidence": 0.88,
+            "reasoning": "Position sensors provide rotor angle feedback critical for motor control; these are separate electronic modules typically procured from specialized suppliers."
+          },
+          {
+            "name": "Cooling System Assembly (Liquid or Air Cooling)",
+            "confidence": 0.8,
+            "reasoning": "The cooling system, including cooling jackets or channels and pumps for liquid cooling or fans for air cooling, is a distinct subsystem essential for maintaining motor temperature."
+          },
+          {
+            "name": "End Bells or Motor Covers",
+            "confidence": 0.75,
+            "reasoning": "End bells seal the motor ends, support bearing placement, and sometimes include mount points; they are separate components that vary by motor design."
+          }
+        ],
+        "technology_specification": "Electric vehicle motor system based on a three-phase permanent magnet synchronous motor (PMSM) with integrated rotor and stator assemblies designed for traction power in battery electric vehicles.",
+        "technology_reasoning": "Three-phase PMSMs dominate the EV motor market due to their high efficiency, power density, and widespread adoption by major EV manufacturers as of 2024, making this configuration the industry standard for electric traction motors."
+      }
+    ],
+    "phase2_debate_rounds": [
+      {
+        "round_num": 1,
+        "convergence": 0.8148148148148148,
+        "threshold": 0.7,
+        "threshold_reached": true,
+        "proposals": {
+          "Agent_1": [
+            {
+              "name": "Stator Assembly",
+              "confidence": 1.0,
+              "reasoning": "The stator, including laminated core and copper windings, is the stationary primary electromagnetic component and a distinct, separately manufactured assembly procured from specialized suppliers.",
+              "component": "Stator Assembly",
+              "normalized_component": "Motor Components"
+            },
+            {
+              "name": "Rotor Assembly",
+              "confidence": 1.0,
+              "reasoning": "The rotor contains permanent magnets or squirrel cage conductors and is a major rotating subassembly, manufactured separately and essential for motor function.",
+              "component": "Rotor Assembly",
+              "normalized_component": "Gearbox"
+            },
+            {
+              "name": "Housing (Motor Frame)",
+              "confidence": 0.95,
+              "reasoning": "The structural enclosure protecting internal components is procured as a distinct mechanical assembly, often made from aluminum or steel, and includes mounts for integrating the motor into the vehicle.",
+              "component": "Housing (Motor Frame)",
+              "normalized_component": "Motor Housing"
+            },
+            {
+              "name": "Bearings",
+              "confidence": 0.9,
+              "reasoning": "Bearings support rotor rotation and are procured as standardized, high-precision components, separate from stator and rotor assemblies.",
+              "component": "Bearings",
+              "normalized_component": "Bearings"
+            },
+            {
+              "name": "End Bell (End Cover)",
+              "confidence": 0.85,
+              "reasoning": "The end bell houses the bearings and seals the motor at both ends; this is a distinct mechanical part procured separately or manufactured as a module.",
+              "component": "End Bell (End Cover)",
+              "normalized_component": "End Bell"
+            },
+            {
+              "name": "Cooling System Assembly",
+              "confidence": 0.8,
+              "reasoning": "Includes liquid or air cooling jackets, pumps, and channels integrated into the motor housing but often supplied as a modular cooling assembly to maintain thermal management.",
+              "component": "Cooling System Assembly",
+              "normalized_component": "Cooling System Assembly"
+            },
+            {
+              "name": "Electrical Connector/Terminal Box",
+              "confidence": 0.85,
+              "reasoning": "The external connection interface for power and sensors is a separately procured subassembly to facilitate integration with vehicle wiring harnesses.",
+              "component": "Electrical Connector/Terminal Box",
+              "normalized_component": "Electrical Connector/Terminal Box"
+            },
+            {
+              "name": "Shaft Assembly",
+              "confidence": 0.9,
+              "reasoning": "The rotor shaft transmits mechanical torque; it is a separately manufactured mechanical component often procured or supplied as an assembly with the rotor.",
+              "component": "Shaft Assembly",
+              "normalized_component": "Shaft Assembly"
+            }
+          ],
+          "Agent_2": [
+            {
+              "name": "Stator Assembly",
+              "confidence": 0.98,
+              "reasoning": "The stator is a core structural and magnetic assembly housing the copper windings; it is procured or manufactured as a complete unit and distinct from the rotor.",
+              "component": "Stator Assembly",
+              "normalized_component": "Motor Components"
+            },
+            {
+              "name": "Rotor Assembly (including Permanent Magnets)",
+              "confidence": 0.98,
+              "reasoning": "The rotor is a separate rotating assembly containing permanent magnets; it is procured or assembled as one unit and essential for motor operation.",
+              "component": "Rotor Assembly (including Permanent Magnets)",
+              "normalized_component": "Rotor Assembly"
+            },
+            {
+              "name": "Motor Housing (Frame)",
+              "confidence": 0.95,
+              "reasoning": "The structural enclosure that holds and protects the stator and rotor, typically made of cast aluminum or steel; procured as a distinct mechanical assembly.",
+              "component": "Motor Housing (Frame)",
+              "normalized_component": "Motor Housing"
+            },
+            {
+              "name": "End Bells (Bearing Housings)",
+              "confidence": 0.9,
+              "reasoning": "End covers that house the bearings and provide structural support for the rotor shaft, often separate components procured individually.",
+              "component": "End Bells (Bearing Housings)",
+              "normalized_component": "End Bells"
+            },
+            {
+              "name": "Bearings",
+              "confidence": 0.9,
+              "reasoning": "Critical rotational components that support the rotor shaft; standard manufactured items procured separately and installed in end bells.",
+              "component": "Bearings",
+              "normalized_component": "Bearings"
+            },
+            {
+              "name": "Shaft",
+              "confidence": 0.85,
+              "reasoning": "The central rotor shaft transmits mechanical power to the drivetrain; a distinct machined component typically sourced separately.",
+              "component": "Shaft",
+              "normalized_component": "Motor Assembly"
+            },
+            {
+              "name": "Cooling Jacket or Cooling System Assembly",
+              "confidence": 0.8,
+              "reasoning": "An integrated or separate thermal management component (water or oil cooled) that removes heat from the motor; commonly procured as a distinct assembly.",
+              "component": "Cooling Jacket or Cooling System Assembly",
+              "normalized_component": "Cooling System Assembly"
+            },
+            {
+              "name": "Terminal or Connector Assembly",
+              "confidence": 0.75,
+              "reasoning": "Electrical interface components for power connections from the motor to the inverter; typically distinct and sourced separately.",
+              "component": "Terminal or Connector Assembly",
+              "normalized_component": "Terminal or Connector Assembly"
+            }
+          ],
+          "Agent_3": [
+            {
+              "name": "Stator Assembly",
+              "confidence": 0.99,
+              "reasoning": "The stator is a fundamental subassembly with wound coils and laminated iron core, procured or manufactured as an independent component; it forms the stationary part of the motor providing magnetic field generation.",
+              "component": "Stator Assembly",
+              "normalized_component": "Motor Components"
+            },
+            {
+              "name": "Rotor Assembly",
+              "confidence": 0.98,
+              "reasoning": "The rotor contains permanent magnets fixed to a rotor core; this is a separate manufactured part critical for torque generation, distinguished by its magnetic elements and mechanical structure.",
+              "component": "Rotor Assembly",
+              "normalized_component": "Gearbox"
+            },
+            {
+              "name": "Housing/Frame",
+              "confidence": 0.92,
+              "reasoning": "The motor housing or frame encloses and supports the internal components, typically made as a discrete structural assembly procured separately from the motor internals.",
+              "component": "Housing/Frame",
+              "normalized_component": "Housing/Frame"
+            },
+            {
+              "name": "End Shields/Bearings Supports",
+              "confidence": 0.9,
+              "reasoning": "End shields or bearing caps support the rotor shaft and bearings, essential to the mechanical integrity and commonly procured as separate cast or machined parts distinct from stator and rotor.",
+              "component": "End Shields/Bearings Supports",
+              "normalized_component": "End Shields/Bearing Supports"
+            },
+            {
+              "name": "Bearings",
+              "confidence": 0.85,
+              "reasoning": "Rolling element bearings accommodate the rotor rotation within the housing; these are standardized manufactured components procured from specialized suppliers.",
+              "component": "Bearings",
+              "normalized_component": "Bearings"
+            },
+            {
+              "name": "Cooling System Assembly",
+              "confidence": 0.8,
+              "reasoning": "Cooling components such as liquid cooling jackets or fans are often procured as distinct parts integrated into motor assemblies to manage thermal loads.",
+              "component": "Cooling System Assembly",
+              "normalized_component": "Cooling System Assembly"
+            },
+            {
+              "name": "Encoder/Sensor Module",
+              "confidence": 0.75,
+              "reasoning": "Position sensors or encoders that provide rotor position feedback to the motor controller are frequently procured separately and installed as discrete submodules.",
+              "component": "Encoder/Sensor Module",
+              "normalized_component": "Encoder/Sensor Module"
+            }
+          ],
+          "Agent_4": [
+            {
+              "name": "Stator Assembly",
+              "confidence": 0.98,
+              "reasoning": "The stator is a distinct manufactured subassembly consisting of wound coils and laminated steel core, critical for producing the rotating magnetic field, universally present in all PMSM EV motors.",
+              "component": "Stator Assembly",
+              "normalized_component": "Motor Components"
+            },
+            {
+              "name": "Rotor Assembly with Permanent Magnets",
+              "confidence": 0.98,
+              "reasoning": "The rotor includes embedded or surface-mounted rare-earth permanent magnets and a rotor core; this subassembly is essential and separately manufactured due to its role in magnetic flux generation.",
+              "component": "Rotor Assembly with Permanent Magnets",
+              "normalized_component": "Permanent Magnet Rotor Assembly"
+            },
+            {
+              "name": "Motor Housing (Frame)",
+              "confidence": 0.92,
+              "reasoning": "The motor housing provides structural integrity, supports bearing placement, and protects internal components; it is a separate mechanical assembly procured independently.",
+              "component": "Motor Housing (Frame)",
+              "normalized_component": "Motor Housing"
+            },
+            {
+              "name": "Bearings",
+              "confidence": 0.9,
+              "reasoning": "Bearings enable smooth rotation of the rotor shaft within the housing; these are precision manufactured components with distinct supply chains.",
+              "component": "Bearings",
+              "normalized_component": "Bearings"
+            },
+            {
+              "name": "Shaft Assembly",
+              "confidence": 0.85,
+              "reasoning": "The rotor shaft transfers mechanical torque to the drivetrain and is manufactured as a separate assembly often including integrated features like keyways or splines.",
+              "component": "Shaft Assembly",
+              "normalized_component": "Shaft Assembly"
+            },
+            {
+              "name": "Motor Connector and Wiring Harness",
+              "confidence": 0.87,
+              "reasoning": "Connectors and wiring harnesses enable electrical interface between the motor windings and the power electronics; these are distinct, supplier-procured components.",
+              "component": "Motor Connector and Wiring Harness",
+              "normalized_component": "Connector and Wiring Harness"
+            },
+            {
+              "name": "Rotor Position Sensor Module (e.g., Hall Effect or Resolver)",
+              "confidence": 0.88,
+              "reasoning": "Position sensors provide rotor angle feedback critical for motor control; these are separate electronic modules typically procured from specialized suppliers.",
+              "component": "Rotor Position Sensor Module (e.g., Hall Effect or Resolver)",
+              "normalized_component": "Rotor Position Sensor Module"
+            },
+            {
+              "name": "Cooling System Assembly (Liquid or Air Cooling)",
+              "confidence": 0.8,
+              "reasoning": "The cooling system, including cooling jackets or channels and pumps for liquid cooling or fans for air cooling, is a distinct subsystem essential for maintaining motor temperature.",
+              "component": "Cooling System Assembly (Liquid or Air Cooling)",
+              "normalized_component": "Cooling System Assembly"
+            },
+            {
+              "name": "End Bells or Motor Covers",
+              "confidence": 0.75,
+              "reasoning": "End bells seal the motor ends, support bearing placement, and sometimes include mount points; they are separate components that vary by motor design.",
+              "component": "End Bells or Motor Covers",
+              "normalized_component": "End Bells"
+            }
+          ]
+        },
+        "rounds_completed": 1,
+        "support_analysis": {
+          "consensus": [
+            "wiring harness",
+            "shaft"
+          ],
+          "majority": [
+            "stator",
+            "rotor",
+            "motor housing",
+            "bearings",
+            "end bells",
+            "cooling",
+            "rotor position sensor"
+          ],
+          "isolated": []
+        },
+        "critiques": [
+          {
+            "item_name": "stator",
+            "normalized_name": "stator",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_2",
+              "Agent_3",
+              "Agent_4"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.9875,
+            "critique_text": "Majority support for 'stator': 4/3 agents agree (conf: 0.99). Consider strengthening consensus."
+          },
+          {
+            "item_name": "rotor",
+            "normalized_name": "rotor",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_2",
+              "Agent_3",
+              "Agent_4"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.985,
+            "critique_text": "Majority support for 'rotor': 4/3 agents agree (conf: 0.98). Consider strengthening consensus."
+          },
+          {
+            "item_name": "motor housing",
+            "normalized_name": "motor housing",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_2",
+              "Agent_3",
+              "Agent_4"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.935,
+            "critique_text": "Majority support for 'motor housing': 4/3 agents agree (conf: 0.94). Consider strengthening consensus."
+          },
+          {
+            "item_name": "bearings",
+            "normalized_name": "bearings",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_2",
+              "Agent_3",
+              "Agent_4"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.8875,
+            "critique_text": "Majority support for 'bearings': 4/3 agents agree (conf: 0.89). Consider strengthening consensus."
+          },
+          {
+            "item_name": "end bells",
+            "normalized_name": "end bells",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_2",
+              "Agent_3",
+              "Agent_4"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.85,
+            "critique_text": "Majority support for 'end bells': 4/3 agents agree (conf: 0.85). Consider strengthening consensus."
+          },
+          {
+            "item_name": "cooling",
+            "normalized_name": "cooling",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_2",
+              "Agent_3",
+              "Agent_4"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.8,
+            "critique_text": "Majority support for 'cooling': 4/3 agents agree (conf: 0.80). Consider strengthening consensus."
+          },
+          {
+            "item_name": "wiring harness",
+            "normalized_name": "wiring harness",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_2",
+              "Agent_4"
+            ],
+            "opposing_agents": [
+              "Agent_3"
+            ],
+            "avg_confidence": 0.8233333333333333,
+            "critique_text": "Strong consensus on 'wiring harness': all 3 agents support with avg confidence 0.82. Preserve this component."
+          },
+          {
+            "item_name": "shaft",
+            "normalized_name": "shaft",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_2",
+              "Agent_4"
+            ],
+            "opposing_agents": [
+              "Agent_3"
+            ],
+            "avg_confidence": 0.8666666666666667,
+            "critique_text": "Strong consensus on 'shaft': all 3 agents support with avg confidence 0.87. Preserve this component."
+          },
+          {
+            "item_name": "rotor position sensor",
+            "normalized_name": "rotor position sensor",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_4"
+            ],
+            "opposing_agents": [
+              "Agent_1",
+              "Agent_2"
+            ],
+            "avg_confidence": 0.815,
+            "critique_text": "Majority support for 'rotor position sensor': 2/3 agents agree (conf: 0.81). Consider strengthening consensus."
+          }
+        ],
+        "changes_from_previous": null
+      }
+    ],
+    "phase3_final_consensus": {
+      "technology": "Electric Vehicle Motor",
+      "technology_specification": "Electric Vehicle Motor",
+      "technology_reasoning": "",
+      "components": [
+        "Gearbox",
+        "Motor Components",
+        "Rotor Assembly",
+        "Permanent Magnet Rotor Assembly",
+        "Motor Housing",
+        "Housing/frame",
+        "End Shields/bearing Supports",
+        "Bearings",
+        "Rotor Position Sensor Module",
+        "Shaft Assembly",
+        "Connector And Wiring Harness",
+        "End Bell",
+        "Electrical Connector/terminal Box",
+        "Motor Assembly",
+        "End Bells",
+        "Cooling System Assembly",
+        "Terminal Or Connector Assembly",
+        "Encoder/sensor Module"
+      ],
+      "confidence": 0.8148148148148148,
+      "rounds": 1,
+      "convergence_score": 0.8148148148148148
+    }
+  },
+  "materials_debate": {
+    "debate_rounds": [],
+    "final_consensus": {
+      "components": 18,
+      "unique_materials": 6,
+      "total_assignments": 41,
+      "materials_by_component": {
+        "Gearbox": [
+          {
+            "name": "Steel Ingots",
+            "confidence": 0.95,
+            "reasoning": "Steel is the primary structural material for gearbox gears and shafts due to its strength and wear resistance; steel ingots are the raw form before processing, universally essential with no practical substitute for automotive gearboxes."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.7,
+            "reasoning": "Aluminum is commonly used in gearbox housings for weight reduction and corrosion resistance, moderately confident as some gearboxes use different alloys or materials for housings."
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.55,
+            "reasoning": "Copper may be used in certain sensors or wiring integrated in gearboxes, but not universally essential to gearbox mechanical parts."
+          }
+        ],
+        "Motor Components": [
+          {
+            "name": "Copper",
+            "confidence": 0.95,
+            "reasoning": "Copper is essential for windings and electrical conductivity in motor components; it is industry standard with no effective substitutes for conductivity."
+          },
+          {
+            "name": "Steel Ingots",
+            "confidence": 0.9,
+            "reasoning": "Steel is used in frames and shafts inside the motor for mechanical strength and magnetic properties; a standard material."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.75,
+            "reasoning": "Aluminum may be used in lightweight components such as housing parts or cooling fins, common but alternative light metals exist."
+          },
+          {
+            "name": "Silicon",
+            "confidence": 0.7,
+            "reasoning": "Silicon is used in semiconductor elements or sensors within motor assemblies, commonly used but some components may have alternatives."
+          }
+        ],
+        "Rotor Assembly": [
+          {
+            "name": "Steel Ingots",
+            "confidence": 0.95,
+            "reasoning": "Steel is the primary material for rotor laminations and shaft for mechanical strength and magnetic properties, absolutely essential."
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.9,
+            "reasoning": "Copper is used in rotor windings or bars for electrical conductivity, standard in induction rotors."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.7,
+            "reasoning": "Aluminum can be used in rotor cages sometimes for weight reduction but less common than copper."
+          }
+        ],
+        "Permanent Magnet Rotor Assembly": [
+          {
+            "name": "Neodymium",
+            "confidence": 0.95,
+            "reasoning": "Neodymium is the key rare earth element used in high-strength permanent magnets for rotor assemblies, absolutely essential for performance."
+          },
+          {
+            "name": "Iron",
+            "confidence": 0.9,
+            "reasoning": "Iron is used as a core and backing material in permanent magnet rotors, critical for magnetic properties."
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.7,
+            "reasoning": "Copper may be present for coils or connections, commonly used but not in all designs."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.6,
+            "reasoning": "Aluminum is sometimes used for structural components or magnet holders, but alternatives exist."
+          }
+        ],
+        "Motor Housing": [
+          {
+            "name": "Aluminum",
+            "confidence": 0.9,
+            "reasoning": "Aluminum is widely used in motor housings for its balance of weight, strength, and thermal conductivity; industry standard."
+          },
+          {
+            "name": "Steel Ingots",
+            "confidence": 0.7,
+            "reasoning": "Steel is an alternative for housing material offering higher strength but heavier; used in some designs."
+          }
+        ],
+        "Housing/frame": [
+          {
+            "name": "Steel Ingots",
+            "confidence": 0.95,
+            "reasoning": "Steel is the predominant material used in motor housing and frame for mechanical strength and durability, virtually universal."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.7,
+            "reasoning": "Aluminum sometimes used to reduce weight in housing/frame components but less common than steel."
+          }
+        ],
+        "End Shields/bearing Supports": [
+          {
+            "name": "Steel Ingots",
+            "confidence": 0.9,
+            "reasoning": "Steel is commonly used for end shields and bearing supports for mechanical strength and wear resistance."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.7,
+            "reasoning": "Aluminum alloys may be used for lightweight end shields but steel is predominant."
+          }
+        ],
+        "Bearings": [
+          {
+            "name": "Steel Ingots",
+            "confidence": 0.95,
+            "reasoning": "Steel (high-grade bearing steel) is essential for bearings due to its hardness, fatigue resistance, and load capability."
+          },
+          {
+            "name": "Iron",
+            "confidence": 0.6,
+            "reasoning": "Iron is a base element in steel alloys used in bearings; moderately confident as part of material composition."
+          }
+        ],
+        "Rotor Position Sensor Module": [
+          {
+            "name": "Silicon",
+            "confidence": 0.9,
+            "reasoning": "Silicon is essential as the semiconductor material in position sensors for signal processing, industry standard."
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.8,
+            "reasoning": "Copper is used in wiring and connections within sensor modules, standard with few substitutes."
+          }
+        ],
+        "Shaft Assembly": [
+          {
+            "name": "Steel Ingots",
+            "confidence": 0.95,
+            "reasoning": "Steel is the primary raw material for motor shafts due to strength and durability, universally used."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.6,
+            "reasoning": "Aluminum shafts are less common but used in some lightweight motor designs; moderately confident."
+          }
+        ],
+        "Connector And Wiring Harness": [
+          {
+            "name": "Copper",
+            "confidence": 0.95,
+            "reasoning": "Copper is essential for electrical wiring due to its conductivity, standard in all wiring harnesses."
+          }
+        ],
+        "End Bell": [
+          {
+            "name": "Steel Ingots",
+            "confidence": 0.9,
+            "reasoning": "Steel is commonly used for end bells providing structural integrity and mounting surfaces."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.7,
+            "reasoning": "Aluminum is frequently used to reduce weight in end bells; a common alternative."
+          }
+        ],
+        "Electrical Connector/terminal Box": [
+          {
+            "name": "Copper",
+            "confidence": 0.9,
+            "reasoning": "Copper is widely used in connector terminals and internal contacts for its conductivity."
+          }
+        ],
+        "Motor Assembly": [
+          {
+            "name": "Steel Ingots",
+            "confidence": 0.95,
+            "reasoning": "Steel is essential in the structural frame, shafts, and laminations of motor assemblies."
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.95,
+            "reasoning": "Copper is essential for coils and electrical connections within motor assemblies."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.7,
+            "reasoning": "Aluminum is often used in housing or cooling components as part of motor assembly, common but alternatives exist."
+          }
+        ],
+        "End Bells": [
+          {
+            "name": "Steel Ingots",
+            "confidence": 0.9,
+            "reasoning": "Steel is standard for end bells due to strength and durability."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.7,
+            "reasoning": "Aluminum alternatives exist to reduce weight, common in motor design."
+          }
+        ],
+        "Cooling System Assembly": [
+          {
+            "name": "Aluminum",
+            "confidence": 0.85,
+            "reasoning": "Aluminum is commonly used in cooling fins, heat exchangers, and housings for thermal conductivity and lightness."
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.7,
+            "reasoning": "Copper is used in cooling system piping and electrical elements due to thermal and electrical conductivity; moderately confident."
+          },
+          {
+            "name": "Steel Ingots",
+            "confidence": 0.6,
+            "reasoning": "Steel may be used in structural supports of cooling system but less critical; moderate confidence."
+          }
+        ],
+        "Terminal Or Connector Assembly": [
+          {
+            "name": "Copper",
+            "confidence": 0.9,
+            "reasoning": "Copper is standard for electrical terminals and connectors for high conductivity."
+          }
+        ],
+        "Encoder/sensor Module": [
+          {
+            "name": "Silicon",
+            "confidence": 0.9,
+            "reasoning": "Silicon is essential as the semiconductor base of encoders and sensors for signal processing."
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.8,
+            "reasoning": "Copper is used for wiring and conductive traces inside sensor modules."
+          }
+        ]
+      }
+    }
+  }
+}

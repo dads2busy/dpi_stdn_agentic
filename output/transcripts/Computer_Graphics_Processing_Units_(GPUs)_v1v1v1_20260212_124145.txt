@@ -1,0 +1,619 @@
+================================================================================
+STDN ANALYSIS: Computer Graphics Processing Units (GPUs)
+Generated: 2026-02-12 12:49:20
+================================================================================
+
+LEGEND
+--------------------------------------------------------------------------------
+Support Levels:
+  [C] CONSENSUS  - All agents agree (3/3)
+  [M] MAJORITY   - Majority agrees (2/3)
+  [I] ISOLATED   - Single agent only (1/3)
+
+Confidence Scale: 0.0-1.0 (higher = more certain)
+  0.9-1.0: High certainty - universal/essential
+  0.7-0.9: Confident - industry standard
+  0.5-0.7: Moderate - common but varies
+  <0.5:    Low - optional or uncertain
+
+================================================================================
+TECHNOLOGY SPECIFICATION
+================================================================================
+
+Query: Computer Graphics Processing Units (GPUs)
+Specification: Discrete graphics processing unit (GPU) card with dedicated GDDR memory
+
+Reasoning: Discrete GPUs with dedicated graphics memory (usually GDDR SDRAM) represent the dominant form factor for computer graphics acceleration, widely used in desktops and workstations, with high volume market adoption from major suppliers like NVIDIA and AMD. Integrated GPUs share resources and are less prevalent for high-performance graphics workloads.
+
+================================================================================
+STAGE 1: COMPONENT EXTRACTION
+================================================================================
+
+ROUND 1: Independent Proposals
+--------------------------------------------------------------------------------
+
+Agent_1 (Expert):
+  • GPU Chip (Graphics Processing Unit Die) (1.00) - The core silicon die performing all graphics computations, a...
+  • Dedicated VRAM (GDDR Memory Modules) (0.98) - Discrete GPUs require dedicated high-speed video memory, typ...
+  • Printed Circuit Board (PCB) (0.95) - The main substrate that hosts the GPU die, memory chips, pow...
+  • Voltage Regulation Module (VRM) / Power Delivery System (0.92) - Critical power conversion and regulation circuitry to supply...
+  • Cooling Solution (Heatsink and Fan Assembly) (0.90) - Thermal management module essential for performance and reli...
+  • Input/Output Interface Connectors (PCIe Connector and Display Outputs) (0.89) - The PCI Express interface for motherboard connection and dis...
+  • Graphics BIOS/UEFI Firmware Chip (0.85) - Non-volatile memory storing firmware for GPU initialization ...
+
+Initial Support Analysis:
+  [C] Consensus (7 items):
+      • {'component': 'GPU Chip (Graphics Processing Unit Die)', 'confidence': 1.0, 'reasoning': 'The core silicon die performing all graphics computations, always present as the essential processing element.'} (1.00)
+      • {'component': 'Dedicated VRAM (GDDR Memory Modules)', 'confidence': 0.98, 'reasoning': 'Discrete GPUs require dedicated high-speed video memory, typically GDDR6 or GDDR6X, produced as separate memory chips on the graphics card.'} (0.98)
+      • {'component': 'Printed Circuit Board (PCB)', 'confidence': 0.95, 'reasoning': 'The main substrate that hosts the GPU die, memory chips, power circuitry, and connectors; a distinct manufacturing component.'} (0.95)
+      • {'component': 'Voltage Regulation Module (VRM) / Power Delivery System', 'confidence': 0.92, 'reasoning': 'Critical power conversion and regulation circuitry to supply stable power to the GPU and memory, often modular and sourced separately.'} (0.92)
+      • {'component': 'Cooling Solution (Heatsink and Fan Assembly)', 'confidence': 0.9, 'reasoning': 'Thermal management module essential for performance and reliability, typically sourced as a separate subassembly.'} (0.90)
+
+================================================================================
+FINAL CONSENSUS: Components
+================================================================================
+
+Rounds Completed: 1
+Final Convergence: 92.7%
+Components Selected: 7
+
+  1. GPU Chip (Graphics Processing Unit Die)
+  2. Dedicated VRAM (GDDR Memory Modules)
+  3. Printed Circuit Board (PCB)
+  4. Voltage Regulation Module (VRM) / Power Delivery System
+  5. Cooling Solution (Heatsink and Fan Assembly)
+  6. Input/Output Interface Connectors (PCIe Connector and Display Outputs)
+  7. Graphics BIOS/UEFI Firmware Chip
+
+================================================================================
+END OF COMPONENT EXTRACTION
+================================================================================
+
+
+================================================================================
+MATERIALS EXTRACTION DEBATE
+================================================================================
+
+COMPONENTS PROCESSED:
+--------------------------------------------------------------------------------
+Total Components: 7
+  - GPU Chip (Graphics Processing Unit Die)
+  - Dedicated VRAM (GDDR Memory Modules)
+  - Printed Circuit Board (PCB)
+  - Voltage Regulation Module (VRM) / Power Delivery System
+  - Cooling Solution (Heatsink and Fan Assembly)
+  - Input/Output Interface Connectors (PCIe Connector and Display Outputs)
+  - Graphics BIOS/UEFI Firmware Chip
+
+================================================================================
+MATERIAL DEBATE ROUNDS
+================================================================================
+
+================================================================================
+FINAL MATERIAL ASSIGNMENTS
+================================================================================
+
+Components: 7
+Unique Materials: 12
+Total Assignments: 25
+
+Materials by Component:
+--------------------------------------------------------------------------------
+
+Cooling Solution (Heatsink and Fan Assembly):
+  • Aluminum (confidence: 0.95)
+    → Primary material for heatsink due to high thermal conductivity and low weight; industry standard.
+  • Copper (confidence: 0.80)
+    → Sometimes used in heat pipes or heatsink bases for enhanced heat transfer; commonly combined with aluminum.
+  • Steel Ingots (confidence: 0.60)
+    → Used in motor components or fan frame structures; common but alternatives like plastics or aluminum exist.
+
+Dedicated VRAM (GDDR Memory Modules):
+  • Silicon (confidence: 1.00)
+    → Core semiconductor substrate for memory chips, essential and universally used.
+  • Copper (confidence: 0.90)
+    → Critical for electrical interconnects within the memory modules; industry standard.
+  • Aluminum (confidence: 0.85)
+    → Used in wiring layers and packaging of memory chips; standard material.
+  • Ceramic (confidence: 0.65)
+    → Packaging material providing electrical insulation and mechanical protection; widely used but sometimes replaced with plastics.
+  • Tantalum (confidence: 0.60)
+    → Used for capacitors in VRAM modules for power stabilization, common but alternative capacitor materials exist.
+
+GPU Chip (Graphics Processing Unit Die):
+  • Silicon (confidence: 1.00)
+    → Primary semiconductor material for the GPU die, absolutely essential and defines integrated circuit fabrication.
+  • Copper (confidence: 0.90)
+    → Used in interconnects within the die for electrical conductivity; standard industry material for internal wiring.
+  • Aluminum (confidence: 0.85)
+    → Used in metallization layers for interconnects and contacts; common alternative to copper in some layers.
+  • Tungsten (confidence: 0.75)
+    → Employed for contact vias and gate material in transistors; standard but can vary by fabrication process.
+  • Gallium (confidence: 0.60)
+    → Present in gallium arsenide or aluminum gallium arsenide compounds in some specialized chips or laser components integrated, but optional for typical silicon GPUs.
+
+Graphics BIOS/UEFI Firmware Chip:
+  • Silicon (confidence: 1.00)
+    → Semiconductor substrate for the BIOS/UEFI chip, essential for chip functionality.
+  • Copper (confidence: 0.90)
+    → Used in interconnect layers inside the chip, standard material for electrical connections.
+
+Input/Output Interface Connectors (PCIe Connector and Display Outputs):
+  • Copper (confidence: 1.00)
+    → Conductive material essential for the connector pins, universally used due to conductivity.
+  • Gold (confidence: 0.85)
+    → Commonly used for plating connector contacts to enhance corrosion resistance and conductivity, standard industry practice.
+
+Printed Circuit Board (PCB):
+  • Copper (confidence: 1.00)
+    → Essential for electrical circuit traces on the PCB, universally used.
+  • Epoxy resins (confidence: 0.95)
+    → Base polymer matrix (e.g., FR4) used as substrate in PCBs for mechanical support and insulation, industry standard.
+  • Glass (confidence: 0.90)
+    → Fiberglass reinforcement in PCB substrate, critical for mechanical strength and insulation.
+  • Tin (confidence: 0.70)
+    → Used in surface finish (e.g., tin plating) to protect copper traces and facilitate soldering; common but alternatives exist.
+
+Voltage Regulation Module (VRM) / Power Delivery System:
+  • Copper (confidence: 1.00)
+    → Primary conductor for power delivery and inductors, absolutely essential for electrical conductivity.
+  • Silicon (confidence: 0.90)
+    → Semiconductor material for power transistors (MOSFETs), critical in VRM design.
+  • Aluminum (confidence: 0.85)
+    → Used for heat sinks and some capacitor casings; common material due to thermal conductivity.
+  • Ceramic (confidence: 0.75)
+    → Used in capacitor dielectrics and insulating components; standard but alternatives like polymer capacitors exist.
+
+================================================================================
+END OF COMBINED TRANSCRIPT
+================================================================================
+
+
+============================================================
+TOP PRODUCING COUNTRIES: Tungsten
+Data Source: USGS Database
+============================================================
+1. CHINA
+   Production: 63,000.00 METRIC TONS
+   Global Share: 80.8%
+   Confidence: 0.95
+   Reasoning: USGS Mineral Commodity Summaries 2024/2023 - authoritative U.S. government production data with global coverage
+2. VIETNAM
+   Production: 3,500.00 METRIC TONS
+   Global Share: 4.5%
+   Confidence: 0.95
+   Reasoning: USGS Mineral Commodity Summaries 2024/2023 - authoritative U.S. government production data with global coverage
+3. RUSSIA
+   Production: 2,000.00 METRIC TONS
+   Global Share: 2.6%
+   Confidence: 0.95
+   Reasoning: USGS Mineral Commodity Summaries 2024/2023 - authoritative U.S. government production data with global coverage
+4. KOREA, NORTH
+   Production: 1,700.00 METRIC TONS
+   Global Share: 2.2%
+   Confidence: 0.95
+   Reasoning: USGS Mineral Commodity Summaries 2024/2023 - authoritative U.S. government production data with global coverage
+5. BOLIVIA
+   Production: 1,500.00 METRIC TONS
+   Global Share: 1.9%
+   Confidence: 0.95
+   Reasoning: USGS Mineral Commodity Summaries 2024/2023 - authoritative U.S. government production data with global coverage
+============================================================
+
+
+============================================================
+TOP PRODUCING COUNTRIES: Gallium
+Data Source: USGS Database
+============================================================
+1. CHINA
+   Production: 600,000.00 KILOGRAMS
+   Global Share: 98.4%
+   Confidence: 0.95
+   Reasoning: USGS Mineral Commodity Summaries 2024/2023 - authoritative U.S. government production data with global coverage
+2. RUSSIA
+   Production: 5,000.00 KILOGRAMS
+   Global Share: 0.8%
+   Confidence: 0.95
+   Reasoning: USGS Mineral Commodity Summaries 2024/2023 - authoritative U.S. government production data with global coverage
+3. JAPAN
+   Production: 3,000.00 KILOGRAMS
+   Global Share: 0.5%
+   Confidence: 0.95
+   Reasoning: USGS Mineral Commodity Summaries 2024/2023 - authoritative U.S. government production data with global coverage
+4. KOREA, REPUBLIC OF
+   Production: 2,000.00 KILOGRAMS
+   Global Share: 0.3%
+   Confidence: 0.95
+   Reasoning: USGS Mineral Commodity Summaries 2024/2023 - authoritative U.S. government production data with global coverage
+5. UNITED STATES
+   Production: 0.00 KILOGRAMS
+   Global Share: 0.0%
+   Confidence: 0.95
+   Reasoning: USGS Mineral Commodity Summaries 2024/2023 - authoritative U.S. government production data with global coverage
+============================================================
+
+
+================================================================================
+COUNTRY PRODUCTION DATA
+================================================================================
+
+Cooling Solution (Heatsink and Fan Assembly):
+--------------------------------------------------------------------------------
+
+  Material: Aluminum
+  Confidence: 0.950
+  Countries (5):
+    • CHINA: 41000.0 THOUSAND METRIC TONS (58.57%)
+      Confidence: 0.950
+    • OTHER: 7000.0 THOUSAND METRIC TONS (10.0%)
+      Confidence: 0.950
+    • INDIA: 4100.0 THOUSAND METRIC TONS (5.86%)
+      Confidence: 0.950
+    • RUSSIA: 3800.0 THOUSAND METRIC TONS (5.43%)
+      Confidence: 0.950
+    • CANADA: 3000.0 THOUSAND METRIC TONS (4.29%)
+      Confidence: 0.950
+
+  Material: Copper
+  Confidence: 0.800
+  Countries (5):
+    • CHINA: 1700.0 THOUSAND METRIC TONS (3.47%)
+      Confidence: 0.950
+    • CHILE: 5000.0 THOUSAND METRIC TONS (10.2%)
+      Confidence: 0.950
+    • OTHER: 3100.0 THOUSAND METRIC TONS (6.33%)
+      Confidence: 0.950
+    • CONGO: 2500.0 THOUSAND METRIC TONS (5.1%)
+      Confidence: 0.950
+    • PERU: 2600.0 THOUSAND METRIC TONS (5.31%)
+      Confidence: 0.950
+
+  Material: Steel Ingots
+  Confidence: 0.600
+  Countries (5):
+    • China: 0.0 metric tons (52.0%)
+      Confidence: 0.950
+    • Japan: 0.0 metric tons (6.0%)
+      Confidence: 0.900
+    • India: 0.0 metric tons (5.0%)
+      Confidence: 0.900
+    • South Korea: 0.0 metric tons (5.0%)
+      Confidence: 0.850
+    • Germany: 0.0 metric tons (4.0%)
+      Confidence: 0.850
+
+Dedicated VRAM (GDDR Memory Modules):
+--------------------------------------------------------------------------------
+
+  Material: Aluminum
+  Confidence: 0.850
+  Countries (5):
+    • CHINA: 41000.0 THOUSAND METRIC TONS (58.57%)
+      Confidence: 0.950
+    • OTHER: 7000.0 THOUSAND METRIC TONS (10.0%)
+      Confidence: 0.950
+    • INDIA: 4100.0 THOUSAND METRIC TONS (5.86%)
+      Confidence: 0.950
+    • RUSSIA: 3800.0 THOUSAND METRIC TONS (5.43%)
+      Confidence: 0.950
+    • CANADA: 3000.0 THOUSAND METRIC TONS (4.29%)
+      Confidence: 0.950
+
+  Material: Ceramic
+  Confidence: 0.650
+  Countries (5):
+    • China: 0.0 metric tons (60.0%)
+      Confidence: 0.950
+    • India: 0.0 metric tons (15.0%)
+      Confidence: 0.850
+    • United States: 0.0 metric tons (8.0%)
+      Confidence: 0.800
+    • Brazil: 0.0 metric tons (7.0%)
+      Confidence: 0.750
+    • Italy: 0.0 metric tons (5.0%)
+      Confidence: 0.780
+
+  Material: Copper
+  Confidence: 0.900
+  Countries (5):
+    • CHINA: 1700.0 THOUSAND METRIC TONS (3.47%)
+      Confidence: 0.950
+    • CHILE: 5000.0 THOUSAND METRIC TONS (10.2%)
+      Confidence: 0.950
+    • OTHER: 3100.0 THOUSAND METRIC TONS (6.33%)
+      Confidence: 0.950
+    • CONGO: 2500.0 THOUSAND METRIC TONS (5.1%)
+      Confidence: 0.950
+    • PERU: 2600.0 THOUSAND METRIC TONS (5.31%)
+      Confidence: 0.950
+
+  Material: Silicon
+  Confidence: 1.000
+  Countries (5):
+    • CHINA: 3600.0 THOUSAND METRIC TONS (40.0%)
+      Confidence: 0.950
+    • RUSSIA: 570.0 THOUSAND METRIC TONS (6.33%)
+      Confidence: 0.950
+    • BRAZIL: 190.0 THOUSAND METRIC TONS (2.11%)
+      Confidence: 0.950
+    • NORWAY: 200.0 THOUSAND METRIC TONS (2.22%)
+      Confidence: 0.950
+    • OTHER: 100.0 THOUSAND METRIC TONS (1.11%)
+      Confidence: 0.950
+
+  Material: Tantalum
+  Confidence: 0.600
+  Countries (5):
+    • CONGO: 980.0 METRIC TONS (40.83%)
+      Confidence: 0.950
+    • RWANDA: 520.0 METRIC TONS (21.67%)
+      Confidence: 0.950
+    • BRAZIL: 360.0 METRIC TONS (15.0%)
+      Confidence: 0.950
+    • OTHER: 260.0 METRIC TONS (10.83%)
+      Confidence: 0.950
+    • NIGERIA: 110.0 METRIC TONS (4.58%)
+      Confidence: 0.950
+
+GPU Chip (Graphics Processing Unit Die):
+--------------------------------------------------------------------------------
+
+  Material: Aluminum
+  Confidence: 0.850
+  Countries (5):
+    • CHINA: 41000.0 THOUSAND METRIC TONS (58.57%)
+      Confidence: 0.950
+    • OTHER: 7000.0 THOUSAND METRIC TONS (10.0%)
+      Confidence: 0.950
+    • INDIA: 4100.0 THOUSAND METRIC TONS (5.86%)
+      Confidence: 0.950
+    • RUSSIA: 3800.0 THOUSAND METRIC TONS (5.43%)
+      Confidence: 0.950
+    • CANADA: 3000.0 THOUSAND METRIC TONS (4.29%)
+      Confidence: 0.950
+
+  Material: Copper
+  Confidence: 0.900
+  Countries (5):
+    • CHINA: 1700.0 THOUSAND METRIC TONS (3.47%)
+      Confidence: 0.950
+    • CHILE: 5000.0 THOUSAND METRIC TONS (10.2%)
+      Confidence: 0.950
+    • OTHER: 3100.0 THOUSAND METRIC TONS (6.33%)
+      Confidence: 0.950
+    • CONGO: 2500.0 THOUSAND METRIC TONS (5.1%)
+      Confidence: 0.950
+    • PERU: 2600.0 THOUSAND METRIC TONS (5.31%)
+      Confidence: 0.950
+
+  Material: Gallium
+  Confidence: 0.600
+  Countries (5):
+    • CHINA: 600000.0 KILOGRAMS (98.36%)
+      Confidence: 0.950
+    • RUSSIA: 5000.0 KILOGRAMS (0.82%)
+      Confidence: 0.950
+    • JAPAN: 3000.0 KILOGRAMS (0.49%)
+      Confidence: 0.950
+    • KOREA, REPUBLIC OF: 2000.0 KILOGRAMS (0.33%)
+      Confidence: 0.950
+    • UNITED STATES: 0.0 KILOGRAMS (0.0%)
+      Confidence: 0.950
+
+  Material: Silicon
+  Confidence: 1.000
+  Countries (5):
+    • CHINA: 3600.0 THOUSAND METRIC TONS (40.0%)
+      Confidence: 0.950
+    • RUSSIA: 570.0 THOUSAND METRIC TONS (6.33%)
+      Confidence: 0.950
+    • BRAZIL: 190.0 THOUSAND METRIC TONS (2.11%)
+      Confidence: 0.950
+    • NORWAY: 200.0 THOUSAND METRIC TONS (2.22%)
+      Confidence: 0.950
+    • OTHER: 100.0 THOUSAND METRIC TONS (1.11%)
+      Confidence: 0.950
+
+  Material: Tungsten
+  Confidence: 0.750
+  Countries (5):
+    • CHINA: 63000.0 METRIC TONS (80.77%)
+      Confidence: 0.950
+    • VIETNAM: 3500.0 METRIC TONS (4.49%)
+      Confidence: 0.950
+    • RUSSIA: 2000.0 METRIC TONS (2.56%)
+      Confidence: 0.950
+    • KOREA, NORTH: 1700.0 METRIC TONS (2.18%)
+      Confidence: 0.950
+    • BOLIVIA: 1500.0 METRIC TONS (1.92%)
+      Confidence: 0.950
+
+Graphics BIOS/UEFI Firmware Chip:
+--------------------------------------------------------------------------------
+
+  Material: Copper
+  Confidence: 0.900
+  Countries (5):
+    • CHINA: 1700.0 THOUSAND METRIC TONS (3.47%)
+      Confidence: 0.950
+    • CHILE: 5000.0 THOUSAND METRIC TONS (10.2%)
+      Confidence: 0.950
+    • OTHER: 3100.0 THOUSAND METRIC TONS (6.33%)
+      Confidence: 0.950
+    • CONGO: 2500.0 THOUSAND METRIC TONS (5.1%)
+      Confidence: 0.950
+    • PERU: 2600.0 THOUSAND METRIC TONS (5.31%)
+      Confidence: 0.950
+
+  Material: Silicon
+  Confidence: 1.000
+  Countries (5):
+    • CHINA: 3600.0 THOUSAND METRIC TONS (40.0%)
+      Confidence: 0.950
+    • RUSSIA: 570.0 THOUSAND METRIC TONS (6.33%)
+      Confidence: 0.950
+    • BRAZIL: 190.0 THOUSAND METRIC TONS (2.11%)
+      Confidence: 0.950
+    • NORWAY: 200.0 THOUSAND METRIC TONS (2.22%)
+      Confidence: 0.950
+    • OTHER: 100.0 THOUSAND METRIC TONS (1.11%)
+      Confidence: 0.950
+
+Input/Output Interface Connectors (PCIe Connector and Display Outputs):
+--------------------------------------------------------------------------------
+
+  Material: Copper
+  Confidence: 1.000
+  Countries (5):
+    • CHINA: 1700.0 THOUSAND METRIC TONS (3.47%)
+      Confidence: 0.950
+    • CHILE: 5000.0 THOUSAND METRIC TONS (10.2%)
+      Confidence: 0.950
+    • OTHER: 3100.0 THOUSAND METRIC TONS (6.33%)
+      Confidence: 0.950
+    • CONGO: 2500.0 THOUSAND METRIC TONS (5.1%)
+      Confidence: 0.950
+    • PERU: 2600.0 THOUSAND METRIC TONS (5.31%)
+      Confidence: 0.950
+
+  Material: Gold
+  Confidence: 0.850
+  Countries (5):
+    • OTHER: 700.0 METRIC TONS (23.33%)
+      Confidence: 0.950
+    • CHINA: 370.0 METRIC TONS (12.33%)
+      Confidence: 0.950
+    • AUSTRALIA: 310.0 METRIC TONS (10.33%)
+      Confidence: 0.950
+    • RUSSIA: 310.0 METRIC TONS (10.33%)
+      Confidence: 0.950
+    • CANADA: 200.0 METRIC TONS (6.67%)
+      Confidence: 0.950
+
+Printed Circuit Board (PCB):
+--------------------------------------------------------------------------------
+
+  Material: Copper
+  Confidence: 1.000
+  Countries (5):
+    • CHINA: 1700.0 THOUSAND METRIC TONS (3.47%)
+      Confidence: 0.950
+    • CHILE: 5000.0 THOUSAND METRIC TONS (10.2%)
+      Confidence: 0.950
+    • OTHER: 3100.0 THOUSAND METRIC TONS (6.33%)
+      Confidence: 0.950
+    • CONGO: 2500.0 THOUSAND METRIC TONS (5.1%)
+      Confidence: 0.950
+    • PERU: 2600.0 THOUSAND METRIC TONS (5.31%)
+      Confidence: 0.950
+
+  Material: Epoxy resins
+  Confidence: 0.950
+  Countries (5):
+    • Germany: 0.0 metric tons (30.0%)
+      Confidence: 0.800
+    • Japan: 0.0 metric tons (25.0%)
+      Confidence: 0.800
+    • United States: 0.0 metric tons (18.0%)
+      Confidence: 0.700
+    • China: 0.0 metric tons (15.0%)
+      Confidence: 0.800
+    • South Korea: 0.0 metric tons (9.0%)
+      Confidence: 0.600
+
+  Material: Glass
+  Confidence: 0.900
+  Countries (5):
+    • China: 0.0 metric tons (63.0%)
+      Confidence: 0.950
+    • United States: 0.0 metric tons (12.0%)
+      Confidence: 0.900
+    • Germany: 0.0 metric tons (7.0%)
+      Confidence: 0.850
+    • India: 0.0 metric tons (6.0%)
+      Confidence: 0.800
+    • Japan: 0.0 metric tons (5.0%)
+      Confidence: 0.800
+
+  Material: Tin
+  Confidence: 0.700
+  Countries (5):
+    • CHINA: 68000.0 METRIC TONS (23.45%)
+      Confidence: 0.950
+    • BURMA: 54000.0 METRIC TONS (18.62%)
+      Confidence: 0.950
+    • INDONESIA: 52000.0 METRIC TONS (17.93%)
+      Confidence: 0.950
+    • PERU: 23000.0 METRIC TONS (7.93%)
+      Confidence: 0.950
+    • CONGO: 19000.0 METRIC TONS (6.55%)
+      Confidence: 0.950
+
+Voltage Regulation Module (VRM) / Power Delivery System:
+--------------------------------------------------------------------------------
+
+  Material: Aluminum
+  Confidence: 0.850
+  Countries (5):
+    • CHINA: 41000.0 THOUSAND METRIC TONS (58.57%)
+      Confidence: 0.950
+    • OTHER: 7000.0 THOUSAND METRIC TONS (10.0%)
+      Confidence: 0.950
+    • INDIA: 4100.0 THOUSAND METRIC TONS (5.86%)
+      Confidence: 0.950
+    • RUSSIA: 3800.0 THOUSAND METRIC TONS (5.43%)
+      Confidence: 0.950
+    • CANADA: 3000.0 THOUSAND METRIC TONS (4.29%)
+      Confidence: 0.950
+
+  Material: Ceramic
+  Confidence: 0.750
+  Countries (5):
+    • China: 0.0 metric tons (60.0%)
+      Confidence: 0.950
+    • India: 0.0 metric tons (15.0%)
+      Confidence: 0.850
+    • United States: 0.0 metric tons (8.0%)
+      Confidence: 0.800
+    • Brazil: 0.0 metric tons (7.0%)
+      Confidence: 0.750
+    • Italy: 0.0 metric tons (5.0%)
+      Confidence: 0.780
+
+  Material: Copper
+  Confidence: 1.000
+  Countries (5):
+    • CHINA: 1700.0 THOUSAND METRIC TONS (3.47%)
+      Confidence: 0.950
+    • CHILE: 5000.0 THOUSAND METRIC TONS (10.2%)
+      Confidence: 0.950
+    • OTHER: 3100.0 THOUSAND METRIC TONS (6.33%)
+      Confidence: 0.950
+    • CONGO: 2500.0 THOUSAND METRIC TONS (5.1%)
+      Confidence: 0.950
+    • PERU: 2600.0 THOUSAND METRIC TONS (5.31%)
+      Confidence: 0.950
+
+  Material: Silicon
+  Confidence: 0.900
+  Countries (5):
+    • CHINA: 3600.0 THOUSAND METRIC TONS (40.0%)
+      Confidence: 0.950
+    • RUSSIA: 570.0 THOUSAND METRIC TONS (6.33%)
+      Confidence: 0.950
+    • BRAZIL: 190.0 THOUSAND METRIC TONS (2.11%)
+      Confidence: 0.950
+    • NORWAY: 200.0 THOUSAND METRIC TONS (2.22%)
+      Confidence: 0.950
+    • OTHER: 100.0 THOUSAND METRIC TONS (1.11%)
+      Confidence: 0.950
+
+
+================================================================================
+SUMMARY
+================================================================================
+Total records: 125
+Components: 7
+Unique materials: 12
+Records with country  125
+Average country confidence: 0.926

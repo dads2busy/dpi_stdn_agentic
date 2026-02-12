@@ -1,0 +1,837 @@
+================================================================================
+STDN ANALYSIS: Flow Cytometer
+Generated: 2026-02-12 14:59:55
+================================================================================
+
+LEGEND
+--------------------------------------------------------------------------------
+Support Levels:
+  [C] CONSENSUS  - All agents agree (3/3)
+  [M] MAJORITY   - Majority agrees (2/3)
+  [I] ISOLATED   - Single agent only (1/3)
+
+Confidence Scale: 0.0-1.0 (higher = more certain)
+  0.9-1.0: High certainty - universal/essential
+  0.7-0.9: Confident - industry standard
+  0.5-0.7: Moderate - common but varies
+  <0.5:    Low - optional or uncertain
+
+================================================================================
+TECHNOLOGY SPECIFICATION
+================================================================================
+
+Query: Flow Cytometer
+Specification: Flow Cytometer
+
+================================================================================
+STAGE 1: COMPONENT EXTRACTION
+================================================================================
+
+ROUND 1: Independent Proposals
+--------------------------------------------------------------------------------
+
+Agent_1 (Expert):
+  • Laser Excitation Module (0.95) - This is the core light source assembly typically procured as...
+  • Optical Detection Assembly (0.93) - Includes photodetectors (PMTs or photodiodes), filters, and ...
+  • Fluidics System (0.95) - Comprises pumps, tubing, flow cell, and fluidic valves respo...
+  • Flow Cell / Flow Chamber (0.92) - The physical component where cells pass through laser interr...
+  • Electronics Controller Board (0.90) - Main printed circuit board system managing data acquisition,...
+  • Data Acquisition and Processing Computer Module (0.85) - Dedicated or embedded computer system running analysis softw...
+  • Sample Injection and Autosampler Module (0.80) - Automated sample handling subsystem allowing for high-throug...
+  • Instrument Chassis and Enclosure (0.88) - Structural housing component providing mechanical support, e...
+  • Cooling System Module (0.70) - Includes fans or liquid cooling for temperature regulation o...
+
+Agent_2 (Expert):
+  • Fluidics Module (including sample injection and waste systems) (0.98) - This is a core physical subsystem responsible for hydrodynam...
+  • Optical Detection Module (lasers, filters, photodetectors, optics assembly) (0.98) - Essential subassembly providing excitation and emission dete...
+  • Electronics Control Unit (including signal processing boards and data acquisition hardware) (0.95) - The primary electronic subsystem that processes signals from...
+  • Sample Injector and Flow Cell Assembly (0.90) - Physical interface where the biological sample is introduced...
+  • Chassis / Instrument Enclosure (0.92) - Structural housing that supports all internal subsystems and...
+  • Cooling System (fans, heat exchangers) (0.70) - Necessary for thermal management of lasers and electronics; ...
+  • User Interface Module (touchscreen display and control panel) (0.80) - Provides operator interface, often a separately procured tou...
+
+Agent_3 (Expert):
+  • Fluidic System Module (0.95) - This module includes pumps, valves, fluidic channels, and hy...
+  • Laser Excitation Assembly (0.98) - Comprises laser diodes or solid-state lasers with collimatin...
+  • Optical Detection System (0.96) - Includes photomultiplier tubes (PMTs) or photodiodes and opt...
+  • Fluidics Control Electronics (0.90) - Electronic control board dedicated to managing pumps and val...
+  • Signal Processing and Data Acquisition Board (0.94) - The main electronic board responsible for amplifying, digiti...
+  • User Interface Module (Touchscreen and Controls) (0.85) - Includes touchscreen display, buttons, or other human-machin...
+  • Instrument Housing/Enclosure (0.90) - The fabricated structural and protective chassis, usually me...
+  • Sample Injection System (Syringe or Peristaltic Pump) (0.80) - A distinct subsystem for sample introduction, often supplied...
+  • Waste Collection Assembly (0.70) - Includes tubing and waste receptacles arranged in a discrete...
+
+Agent_4 (Expert):
+  • Fluidics System (including sample injection and flow cell) (0.98) - Essential subsystem that controls the hydrodynamic focusing ...
+  • Laser Excitation Module (0.97) - Provides coherent, monochromatic light at specific wavelengt...
+  • Optical Detection Assembly (Photomultiplier Tubes or Avalanche Photodiodes) (0.96) - Core component for detecting fluorescence and scattered ligh...
+  • Optical Filters and Dichroic Mirrors (0.92) - Separate optical components used to direct and separate emis...
+  • Signal Processing Electronics (including Analog-to-Digital Converters and Data Acquisition Board) (0.90) - Processes photodetector outputs into digital signals for ana...
+  • Fluidics Control Pumps and Valves (0.89) - Mechanical components responsible for precise control of she...
+  • Sample Injector Module (0.85) - Specific subassembly for introducing the sample into the flo...
+  • User Interface Module (Touchscreen Display and Control Panel) (0.80) - Distinct hardware assembly allowing user interaction, common...
+  • Chassis and Structural Frame (0.87) - Physical enclosure providing mechanical support and housing ...
+  • Waste Collection System (0.70) - Subassembly managing disposal of sheath and sample fluids; w...
+
+Initial Support Analysis:
+  [I] Isolated (33 items):
+      • Fluidics Module (including sample injection and waste systems) (0.98) - needs peer support
+      • Optical Detection Module (lasers, filters, photodetectors, optics assembly) (0.98) - needs peer support
+      • Laser Excitation Assembly (0.98) - needs peer support
+
+ROUND 2: Refinement
+--------------------------------------------------------------------------------
+Convergence: 67.3% (threshold: 70%)
+
+Changes from Previous Round:
+  - Removed: instrument chassis and enclosure, cooling, sample injector and flow cell, fluidic, electronics controller board (+16 more)
+
+Key Critiques:
+  [C] 2 items have full consensus
+  [I] Fluidics System (including sample injection and flow cell) (conf: 0.98) - needs peer support
+  [I] Signal Processing Electronics (including Analog-to-Digital Converters and Data Acquisition Board) (conf: 0.90) - needs peer support
+
+Round 2 Support Analysis:
+  [C] Consensus (2 items):
+      • fluidics module (including sample injection and waste systems)
+      • chassis / instrument enclosure
+  [M] Majority (5 items):
+      • laser excitation - partial agreement
+      • optical detection module (lasers, filters, photodetectors, optics assembly) - partial agreement
+      • electronics control unit (including signal processing boards and data acquisition hardware) - partial agreement
+      • user interface module (touchscreen display and control panel) - partial agreement
+      • waste collection - partial agreement
+  [I] Isolated (2 items):
+      • fluidics system (including sample injection and flow cell) - needs peer support
+      • signal processing electronics (including analog to digital converters and data acquisition board) - needs peer support
+
+ROUND 3: Consensus Reached
+--------------------------------------------------------------------------------
+Convergence: 100.0% ✓ (threshold reached)
+
+Changes from Previous Round:
+  - Removed: fluidics system (including sample injection and flow cell), signal processing electronics (including analog to digital converters and data acquisition board)
+
+Key Critiques:
+
+Round 3 Support Analysis:
+  [M] Majority (7 items):
+      • laser excitation - partial agreement
+      • optical detection module (lasers, filters, photodetectors, optics assembly) - partial agreement
+      • fluidics module (including sample injection and waste systems) - partial agreement
+      • electronics control unit (including signal processing boards and data acquisition hardware) - partial agreement
+      • user interface module (touchscreen display and control panel) - partial agreement
+      ... and 2 more
+
+================================================================================
+FINAL CONSENSUS: Components
+================================================================================
+
+Rounds Completed: 3
+Final Convergence: 100.0%
+Components Selected: 7
+
+  1. Laser Excitation Assembly
+  2. Fluidics Module
+  3. Optical Detection Module
+  4. Electronics Control Unit
+  5. Instrument Enclosure
+  6. User Interface Module
+  7. Collection System
+
+================================================================================
+END OF COMPONENT EXTRACTION
+================================================================================
+
+
+================================================================================
+MATERIALS EXTRACTION DEBATE
+================================================================================
+
+COMPONENTS PROCESSED:
+--------------------------------------------------------------------------------
+Total Components: 7
+  - Laser Excitation Assembly
+  - Fluidics Module
+  - Optical Detection Module
+  - Electronics Control Unit
+  - Instrument Enclosure
+  - User Interface Module
+  - Collection System
+
+================================================================================
+MATERIAL DEBATE ROUNDS
+================================================================================
+
+================================================================================
+FINAL MATERIAL ASSIGNMENTS
+================================================================================
+
+Components: 7
+Unique Materials: 18
+Total Assignments: 28
+
+Materials by Component:
+--------------------------------------------------------------------------------
+
+Collection System:
+  • Polypropylene (confidence: 0.90)
+    → Used in collection tubes and containers due to chemical resistance and moldability, widely used in laboratory consumables.
+  • Buffer salts (confidence: 0.85)
+    → Maintains chemical environment of collected samples, essential to preserve sample integrity though buffer composition can vary.
+  • Polystyrene (confidence: 0.80)
+    → Common polymer for clear containers and sample holders, often used alongside polypropylene in collection systems.
+  • Glass (confidence: 0.70)
+    → Used for certain container parts or optical windows in collection, alternatives exist but glass provides chemical inertness.
+
+Electronics Control Unit:
+  • Silicon (confidence: 0.98)
+    → Primary semiconductor material in integrated circuits controlling the instrument, absolutely essential and industry standard.
+  • Copper (confidence: 0.90)
+    → Used extensively for electrical interconnects and wiring due to high conductivity, universally used.
+  • Aluminum (confidence: 0.80)
+    → Used in heat sinks and some packaging for electronics to dissipate heat, very common but some alternatives exist.
+  • Epoxy resins (confidence: 0.75)
+    → Used for encapsulation and insulation of electronic components, commonly used though some other polymers can substitute.
+
+Fluidics Module:
+  • Buffer salts (confidence: 0.95)
+    → Critical chemical compounds for maintaining sample fluid pH and ion balance, absolutely essential for fluid stability.
+  • Polyethylene (confidence: 0.90)
+    → Common polymer for fluidic tubing and reservoirs due to chemical resistance and flexibility; standard choice in microfluidics.
+  • Stainless steel (confidence: 0.85)
+    → Structural parts and fluid connectors require corrosion resistance and strength; stainless steel 304/316 is industry standard.
+  • Glass (confidence: 0.70)
+    → Used in microfluidic channels or windows for observation; alternatives exist but glass provides chemical inertness and optical clarity.
+
+Instrument Enclosure:
+  • Aluminum (confidence: 0.90)
+    → Widely used for chassis and casing because of light weight, corrosion resistance and manufacturability, industry standard.
+  • Acrylic (confidence: 0.75)
+    → Used for windows or aesthetic panels offering optical clarity and impact resistance, common but alternatives like polycarbonate exist.
+  • Steel Ingots (confidence: 0.70)
+    → Structural internal framework and supports use steel for strength, steel ingots are raw steel source material; common though alternatives like aluminum frames are possible.
+  • Polyethylene terephthalate (confidence: 0.60)
+    → Polymer used in panels or protective films, somewhat common but other polymers can replace it.
+
+Laser Excitation Assembly:
+  • Aluminum gallium arsenide (confidence: 0.95)
+    → Key semiconductor material in laser diodes for excitation light source, absolutely essential due to direct role in light emission.
+  • Aluminum (confidence: 0.85)
+    → Used as structural and heat sink material around laser diodes, standard in construction for thermal management.
+  • Copper (confidence: 0.80)
+    → Electrical conduction within the assembly and heat dissipation, copper is standard and rarely substituted in precision optics electronics.
+  • Glass (confidence: 0.80)
+    → Optical components like lenses and windows use glass for clarity and transmission of laser light; alternatives exist but glass is most common.
+
+Optical Detection Module:
+  • Photomultiplier tube materials (confidence: 0.95)
+    → Core detection components rely on photomultiplier tubes made from specific raw materials essential for photon detection, not substitutable.
+  • Glass (confidence: 0.90)
+    → Lenses and filters use glass for optical clarity and transmission; standard material in optical systems.
+  • Quartz (confidence: 0.70)
+    → Used in some optical components and windows due to high UV transmission and durability, alternatives present but quartz is preferred.
+  • Silver (confidence: 0.70)
+    → Commonly used for reflective coatings on mirrors and filters, alternatives like aluminum exist but silver offers high reflectivity.
+
+User Interface Module:
+  • Glass (confidence: 0.90)
+    → Touch screen and display cover use glass for durability and optical clarity, standard in user interfaces.
+  • Silicon (confidence: 0.85)
+    → Semiconductor for touch sensors and display electronics, very commonly used though alternatives like indium phosphide exist in niche areas.
+  • Polycarbonate (confidence: 0.80)
+    → Housing and bezel materials use polycarbonate for impact resistance and molding, common standard.
+  • Copper (confidence: 0.75)
+    → Electrical wiring and interconnections, standard but some alternatives exist.
+
+================================================================================
+END OF COMBINED TRANSCRIPT
+================================================================================
+
+
+============================================================
+TOP PRODUCING COUNTRIES: Aluminum gallium arsenide
+Data Source: LLM Fallback Cache
+============================================================
+1. China
+   Production: 227.33 metric tons
+   Global Share: 31.7%
+   Confidence: 0.42
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Aluminum gallium arsenide
+2. Japan
+   Production: 264.53 metric tons
+   Global Share: 23.7%
+   Confidence: 0.42
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Aluminum gallium arsenide
+3. United States
+   Production: 123.33 metric tons
+   Global Share: 20.7%
+   Confidence: 0.45
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Aluminum gallium arsenide
+4. South Korea
+   Production: 110.40 metric tons
+   Global Share: 9.0%
+   Confidence: 0.38
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Aluminum gallium arsenide
+5. Taiwan
+   Production: 65.40 metric tons
+   Global Share: 6.5%
+   Confidence: 0.33
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Aluminum gallium arsenide
+============================================================
+
+
+============================================================
+TOP PRODUCING COUNTRIES: Buffer salts
+Data Source: LLM Fallback Cache
+============================================================
+1. China
+   Production: 0.00 metric tons
+   Global Share: 40.0%
+   Confidence: 0.85
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Buffer salts
+2. United States
+   Production: 0.00 metric tons
+   Global Share: 20.0%
+   Confidence: 0.80
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Buffer salts
+3. Germany
+   Production: 0.00 metric tons
+   Global Share: 15.0%
+   Confidence: 0.75
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Buffer salts
+4. India
+   Production: 0.00 metric tons
+   Global Share: 12.0%
+   Confidence: 0.70
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Buffer salts
+5. Japan
+   Production: 0.00 metric tons
+   Global Share: 10.0%
+   Confidence: 0.70
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Buffer salts
+============================================================
+
+
+============================================================
+TOP PRODUCING COUNTRIES: Photomultiplier tube materials
+Data Source: LLM Fallback Cache
+============================================================
+1. United States
+   Production: 0.00 pcs
+   Global Share: 35.0%
+   Confidence: 0.85
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Photomultiplier tube materials
+2. Japan
+   Production: 0.00 pcs
+   Global Share: 30.0%
+   Confidence: 0.80
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Photomultiplier tube materials
+3. Germany
+   Production: 0.00 pcs
+   Global Share: 15.0%
+   Confidence: 0.75
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Photomultiplier tube materials
+4. China
+   Production: 0.00 pcs
+   Global Share: 10.0%
+   Confidence: 0.70
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Photomultiplier tube materials
+5. South Korea
+   Production: 0.00 pcs
+   Global Share: 9.0%
+   Confidence: 0.65
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Photomultiplier tube materials
+============================================================
+
+
+============================================================
+TOP PRODUCING COUNTRIES: Polycarbonate
+Data Source: LLM Fallback Cache
+============================================================
+1. China
+   Production: 0.00 metric tons
+   Global Share: 52.0%
+   Confidence: 0.90
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Polycarbonate
+2. South Korea
+   Production: 0.00 metric tons
+   Global Share: 15.0%
+   Confidence: 0.85
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Polycarbonate
+3. United States
+   Production: 0.00 metric tons
+   Global Share: 10.0%
+   Confidence: 0.85
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Polycarbonate
+4. Germany
+   Production: 0.00 metric tons
+   Global Share: 8.0%
+   Confidence: 0.80
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Polycarbonate
+5. Japan
+   Production: 0.00 metric tons
+   Global Share: 7.0%
+   Confidence: 0.80
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Polycarbonate
+============================================================
+
+
+============================================================
+TOP PRODUCING COUNTRIES: Polystyrene
+Data Source: LLM Fallback Cache
+============================================================
+1. China
+   Production: 0.00 metric tons
+   Global Share: 35.0%
+   Confidence: 0.90
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Polystyrene
+2. United States
+   Production: 0.00 metric tons
+   Global Share: 20.0%
+   Confidence: 0.85
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Polystyrene
+3. South Korea
+   Production: 0.00 metric tons
+   Global Share: 12.0%
+   Confidence: 0.80
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Polystyrene
+4. Germany
+   Production: 0.00 metric tons
+   Global Share: 10.0%
+   Confidence: 0.75
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Polystyrene
+5. India
+   Production: 0.00 metric tons
+   Global Share: 8.0%
+   Confidence: 0.70
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Polystyrene
+============================================================
+
+
+================================================================================
+COUNTRY PRODUCTION DATA
+================================================================================
+
+Collection System:
+--------------------------------------------------------------------------------
+
+  Material: Buffer salts
+  Confidence: 0.850
+  Countries (5):
+    • China: 0.0 metric tons (40.0%)
+      Confidence: 0.850
+    • United States: 0.0 metric tons (20.0%)
+      Confidence: 0.800
+    • Germany: 0.0 metric tons (15.0%)
+      Confidence: 0.750
+    • India: 0.0 metric tons (12.0%)
+      Confidence: 0.700
+    • Japan: 0.0 metric tons (10.0%)
+      Confidence: 0.700
+
+  Material: Glass
+  Confidence: 0.700
+  Countries (5):
+    • China: 0.0 metric tons (63.0%)
+      Confidence: 0.950
+    • United States: 0.0 metric tons (12.0%)
+      Confidence: 0.900
+    • Germany: 0.0 metric tons (7.0%)
+      Confidence: 0.850
+    • India: 0.0 metric tons (6.0%)
+      Confidence: 0.800
+    • Japan: 0.0 metric tons (5.0%)
+      Confidence: 0.800
+
+  Material: Polypropylene
+  Confidence: 0.900
+  Countries (5):
+    • China: 0.0 metric tons (30.0%)
+      Confidence: 0.900
+    • United States: 0.0 metric tons (25.0%)
+      Confidence: 0.900
+    • India: 0.0 metric tons (12.0%)
+      Confidence: 0.800
+    • South Korea: 0.0 metric tons (10.0%)
+      Confidence: 0.800
+    • Saudi Arabia: 0.0 metric tons (8.0%)
+      Confidence: 0.800
+
+  Material: Polystyrene
+  Confidence: 0.800
+  Countries (5):
+    • China: 0.0 metric tons (35.0%)
+      Confidence: 0.900
+    • United States: 0.0 metric tons (20.0%)
+      Confidence: 0.850
+    • South Korea: 0.0 metric tons (12.0%)
+      Confidence: 0.800
+    • Germany: 0.0 metric tons (10.0%)
+      Confidence: 0.750
+    • India: 0.0 metric tons (8.0%)
+      Confidence: 0.700
+
+Electronics Control Unit:
+--------------------------------------------------------------------------------
+
+  Material: Aluminum
+  Confidence: 0.800
+  Countries (5):
+    • CHINA: 41000.0 THOUSAND METRIC TONS (58.57%)
+      Confidence: 0.950
+    • OTHER: 7000.0 THOUSAND METRIC TONS (10.0%)
+      Confidence: 0.950
+    • INDIA: 4100.0 THOUSAND METRIC TONS (5.86%)
+      Confidence: 0.950
+    • RUSSIA: 3800.0 THOUSAND METRIC TONS (5.43%)
+      Confidence: 0.950
+    • CANADA: 3000.0 THOUSAND METRIC TONS (4.29%)
+      Confidence: 0.950
+
+  Material: Copper
+  Confidence: 0.900
+  Countries (5):
+    • CHINA: 1700.0 THOUSAND METRIC TONS (3.47%)
+      Confidence: 0.950
+    • CHILE: 5000.0 THOUSAND METRIC TONS (10.2%)
+      Confidence: 0.950
+    • OTHER: 3100.0 THOUSAND METRIC TONS (6.33%)
+      Confidence: 0.950
+    • CONGO: 2500.0 THOUSAND METRIC TONS (5.1%)
+      Confidence: 0.950
+    • PERU: 2600.0 THOUSAND METRIC TONS (5.31%)
+      Confidence: 0.950
+
+  Material: Epoxy resins
+  Confidence: 0.750
+  Countries (5):
+    • Germany: 0.0 metric tons (30.0%)
+      Confidence: 0.800
+    • Japan: 0.0 metric tons (25.0%)
+      Confidence: 0.800
+    • United States: 0.0 metric tons (18.0%)
+      Confidence: 0.700
+    • China: 0.0 metric tons (15.0%)
+      Confidence: 0.800
+    • South Korea: 0.0 metric tons (9.0%)
+      Confidence: 0.600
+
+  Material: Silicon
+  Confidence: 0.980
+  Countries (5):
+    • CHINA: 3600.0 THOUSAND METRIC TONS (40.0%)
+      Confidence: 0.950
+    • RUSSIA: 570.0 THOUSAND METRIC TONS (6.33%)
+      Confidence: 0.950
+    • BRAZIL: 190.0 THOUSAND METRIC TONS (2.11%)
+      Confidence: 0.950
+    • NORWAY: 200.0 THOUSAND METRIC TONS (2.22%)
+      Confidence: 0.950
+    • OTHER: 100.0 THOUSAND METRIC TONS (1.11%)
+      Confidence: 0.950
+
+Fluidics Module:
+--------------------------------------------------------------------------------
+
+  Material: Buffer salts
+  Confidence: 0.950
+  Countries (5):
+    • China: 0.0 metric tons (40.0%)
+      Confidence: 0.850
+    • United States: 0.0 metric tons (20.0%)
+      Confidence: 0.800
+    • Germany: 0.0 metric tons (15.0%)
+      Confidence: 0.750
+    • India: 0.0 metric tons (12.0%)
+      Confidence: 0.700
+    • Japan: 0.0 metric tons (10.0%)
+      Confidence: 0.700
+
+  Material: Glass
+  Confidence: 0.700
+  Countries (5):
+    • China: 0.0 metric tons (63.0%)
+      Confidence: 0.950
+    • United States: 0.0 metric tons (12.0%)
+      Confidence: 0.900
+    • Germany: 0.0 metric tons (7.0%)
+      Confidence: 0.850
+    • India: 0.0 metric tons (6.0%)
+      Confidence: 0.800
+    • Japan: 0.0 metric tons (5.0%)
+      Confidence: 0.800
+
+  Material: Polyethylene
+  Confidence: 0.900
+  Countries (5):
+    • China: 36283333.333333336 metric tons (31.17%)
+      Confidence: 0.877
+    • United States: 19506666.666666668 metric tons (16.73%)
+      Confidence: 0.870
+    • Saudi Arabia: 10090000.0 metric tons (8.7%)
+      Confidence: 0.807
+    • South Korea: 6446666.666666667 metric tons (5.53%)
+      Confidence: 0.840
+    • Iran: 6470000.0 metric tons (5.6%)
+      Confidence: 0.650
+
+  Material: Stainless steel
+  Confidence: 0.850
+  Countries (5):
+    • China: 31600000.0 metric tons (56.53%)
+      Confidence: 0.913
+    • India: 3800000.0 metric tons (6.8%)
+      Confidence: 0.860
+    • Japan: 3043333.3333333335 metric tons (5.43%)
+      Confidence: 0.893
+    • United States: 2473333.3333333335 metric tons (4.43%)
+      Confidence: 0.867
+    • South Korea: 2136666.6666666665 metric tons (3.83%)
+      Confidence: 0.867
+
+Instrument Enclosure:
+--------------------------------------------------------------------------------
+
+  Material: Acrylic
+  Confidence: 0.750
+  Countries (5):
+    • China: 0.0 metric tons (55.0%)
+      Confidence: 0.900
+    • United States: 0.0 metric tons (15.0%)
+      Confidence: 0.850
+    • South Korea: 0.0 metric tons (10.0%)
+      Confidence: 0.800
+    • Japan: 0.0 metric tons (12.0%)
+      Confidence: 0.800
+    • Germany: 0.0 metric tons (8.0%)
+      Confidence: 0.750
+
+  Material: Aluminum
+  Confidence: 0.900
+  Countries (5):
+    • CHINA: 41000.0 THOUSAND METRIC TONS (58.57%)
+      Confidence: 0.950
+    • OTHER: 7000.0 THOUSAND METRIC TONS (10.0%)
+      Confidence: 0.950
+    • INDIA: 4100.0 THOUSAND METRIC TONS (5.86%)
+      Confidence: 0.950
+    • RUSSIA: 3800.0 THOUSAND METRIC TONS (5.43%)
+      Confidence: 0.950
+    • CANADA: 3000.0 THOUSAND METRIC TONS (4.29%)
+      Confidence: 0.950
+
+  Material: Polyethylene terephthalate
+  Confidence: 0.600
+  Countries (5):
+    • China: 0.0 metric tons (35.0%)
+      Confidence: 0.950
+    • Saudi Arabia: 0.0 metric tons (17.0%)
+      Confidence: 0.900
+    • South Korea: 0.0 metric tons (15.0%)
+      Confidence: 0.850
+    • Turkey: 0.0 metric tons (12.0%)
+      Confidence: 0.800
+    • United States: 0.0 metric tons (10.0%)
+      Confidence: 0.750
+
+  Material: Steel Ingots
+  Confidence: 0.700
+  Countries (5):
+    • China: 0.0 metric tons (52.0%)
+      Confidence: 0.950
+    • Japan: 0.0 metric tons (6.0%)
+      Confidence: 0.900
+    • India: 0.0 metric tons (5.0%)
+      Confidence: 0.900
+    • South Korea: 0.0 metric tons (5.0%)
+      Confidence: 0.850
+    • Germany: 0.0 metric tons (4.0%)
+      Confidence: 0.850
+
+Laser Excitation Assembly:
+--------------------------------------------------------------------------------
+
+  Material: Aluminum
+  Confidence: 0.850
+  Countries (5):
+    • CHINA: 41000.0 THOUSAND METRIC TONS (58.57%)
+      Confidence: 0.950
+    • OTHER: 7000.0 THOUSAND METRIC TONS (10.0%)
+      Confidence: 0.950
+    • INDIA: 4100.0 THOUSAND METRIC TONS (5.86%)
+      Confidence: 0.950
+    • RUSSIA: 3800.0 THOUSAND METRIC TONS (5.43%)
+      Confidence: 0.950
+    • CANADA: 3000.0 THOUSAND METRIC TONS (4.29%)
+      Confidence: 0.950
+
+  Material: Aluminum gallium arsenide
+  Confidence: 0.950
+  Countries (5):
+    • China: 227.33333333333334 metric tons (31.67%)
+      Confidence: 0.417
+    • Japan: 264.53333333333336 metric tons (23.67%)
+      Confidence: 0.417
+    • United States: 123.33333333333333 metric tons (20.67%)
+      Confidence: 0.450
+    • South Korea: 110.39999999999999 metric tons (9.0%)
+      Confidence: 0.383
+    • Taiwan: 65.39999999999999 metric tons (6.5%)
+      Confidence: 0.333
+
+  Material: Copper
+  Confidence: 0.800
+  Countries (5):
+    • CHINA: 1700.0 THOUSAND METRIC TONS (3.47%)
+      Confidence: 0.950
+    • CHILE: 5000.0 THOUSAND METRIC TONS (10.2%)
+      Confidence: 0.950
+    • OTHER: 3100.0 THOUSAND METRIC TONS (6.33%)
+      Confidence: 0.950
+    • CONGO: 2500.0 THOUSAND METRIC TONS (5.1%)
+      Confidence: 0.950
+    • PERU: 2600.0 THOUSAND METRIC TONS (5.31%)
+      Confidence: 0.950
+
+  Material: Glass
+  Confidence: 0.800
+  Countries (5):
+    • China: 0.0 metric tons (63.0%)
+      Confidence: 0.950
+    • United States: 0.0 metric tons (12.0%)
+      Confidence: 0.900
+    • Germany: 0.0 metric tons (7.0%)
+      Confidence: 0.850
+    • India: 0.0 metric tons (6.0%)
+      Confidence: 0.800
+    • Japan: 0.0 metric tons (5.0%)
+      Confidence: 0.800
+
+Optical Detection Module:
+--------------------------------------------------------------------------------
+
+  Material: Glass
+  Confidence: 0.900
+  Countries (5):
+    • China: 0.0 metric tons (63.0%)
+      Confidence: 0.950
+    • United States: 0.0 metric tons (12.0%)
+      Confidence: 0.900
+    • Germany: 0.0 metric tons (7.0%)
+      Confidence: 0.850
+    • India: 0.0 metric tons (6.0%)
+      Confidence: 0.800
+    • Japan: 0.0 metric tons (5.0%)
+      Confidence: 0.800
+
+  Material: Photomultiplier tube materials
+  Confidence: 0.950
+  Countries (5):
+    • United States: 0.0 pcs (35.0%)
+      Confidence: 0.850
+    • Japan: 0.0 pcs (30.0%)
+      Confidence: 0.800
+    • Germany: 0.0 pcs (15.0%)
+      Confidence: 0.750
+    • China: 0.0 pcs (10.0%)
+      Confidence: 0.700
+    • South Korea: 0.0 pcs (9.0%)
+      Confidence: 0.650
+
+  Material: Quartz
+  Confidence: 0.700
+  Countries (5):
+    • Brazil: 0.0 metric tons (25.0%)
+      Confidence: 0.900
+    • United States: 0.0 metric tons (20.0%)
+      Confidence: 0.850
+    • India: 0.0 metric tons (18.0%)
+      Confidence: 0.800
+    • China: 0.0 metric tons (17.0%)
+      Confidence: 0.800
+    • South Africa: 0.0 metric tons (10.0%)
+      Confidence: 0.700
+
+  Material: Silver
+  Confidence: 0.700
+  Countries (5):
+    • MEXICO: 6400.0 METRIC TONS (24.62%)
+      Confidence: 0.950
+    • CHINA: 3400.0 METRIC TONS (13.08%)
+      Confidence: 0.950
+    • PERU: 3100.0 METRIC TONS (11.92%)
+      Confidence: 0.950
+    • OTHER: 3000.0 METRIC TONS (11.54%)
+      Confidence: 0.950
+    • CHILE: 1400.0 METRIC TONS (5.38%)
+      Confidence: 0.950
+
+User Interface Module:
+--------------------------------------------------------------------------------
+
+  Material: Copper
+  Confidence: 0.750
+  Countries (5):
+    • CHINA: 1700.0 THOUSAND METRIC TONS (3.47%)
+      Confidence: 0.950
+    • CHILE: 5000.0 THOUSAND METRIC TONS (10.2%)
+      Confidence: 0.950
+    • OTHER: 3100.0 THOUSAND METRIC TONS (6.33%)
+      Confidence: 0.950
+    • CONGO: 2500.0 THOUSAND METRIC TONS (5.1%)
+      Confidence: 0.950
+    • PERU: 2600.0 THOUSAND METRIC TONS (5.31%)
+      Confidence: 0.950
+
+  Material: Glass
+  Confidence: 0.900
+  Countries (5):
+    • China: 0.0 metric tons (63.0%)
+      Confidence: 0.950
+    • United States: 0.0 metric tons (12.0%)
+      Confidence: 0.900
+    • Germany: 0.0 metric tons (7.0%)
+      Confidence: 0.850
+    • India: 0.0 metric tons (6.0%)
+      Confidence: 0.800
+    • Japan: 0.0 metric tons (5.0%)
+      Confidence: 0.800
+
+  Material: Polycarbonate
+  Confidence: 0.800
+  Countries (5):
+    • China: 0.0 metric tons (52.0%)
+      Confidence: 0.900
+    • South Korea: 0.0 metric tons (15.0%)
+      Confidence: 0.850
+    • United States: 0.0 metric tons (10.0%)
+      Confidence: 0.850
+    • Germany: 0.0 metric tons (8.0%)
+      Confidence: 0.800
+    • Japan: 0.0 metric tons (7.0%)
+      Confidence: 0.800
+
+  Material: Silicon
+  Confidence: 0.850
+  Countries (5):
+    • CHINA: 3600.0 THOUSAND METRIC TONS (40.0%)
+      Confidence: 0.950
+    • RUSSIA: 570.0 THOUSAND METRIC TONS (6.33%)
+      Confidence: 0.950
+    • BRAZIL: 190.0 THOUSAND METRIC TONS (2.11%)
+      Confidence: 0.950
+    • NORWAY: 200.0 THOUSAND METRIC TONS (2.22%)
+      Confidence: 0.950
+    • OTHER: 100.0 THOUSAND METRIC TONS (1.11%)
+      Confidence: 0.950
+
+
+================================================================================
+SUMMARY
+================================================================================
+Total records: 140
+Components: 7
+Unique materials: 18
+Records with country  140
+Average country confidence: 0.850

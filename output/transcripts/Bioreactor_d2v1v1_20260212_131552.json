@@ -1,0 +1,921 @@
+{
+  "version": "2.0",
+  "metadata": {
+    "technology": "Bioreactor",
+    "technology_specification": "Bioreactor",
+    "technology_reasoning": "",
+    "timestamp": "2026-02-12T13:28:10.867459",
+    "format_version": "2.0"
+  },
+  "config": {
+    "num_agents": 2,
+    "max_rounds": 2
+  },
+  "component_stage": {
+    "phase1_initial_proposals": [
+      {
+        "agent_id": "Agent_1",
+        "components": [
+          {
+            "name": "Stainless Steel Reactor Vessel",
+            "confidence": 0.98,
+            "reasoning": "Core containment unit for the biological process; usually procured as a precision-fabricated, certified pressure vessel distinctly separate from other systems."
+          },
+          {
+            "name": "Agitator Assembly (Impeller and Shaft)",
+            "confidence": 0.95,
+            "reasoning": "Primary mixing subsystem with separate manufacture and supply chain; critical to ensure homogeneous culture conditions."
+          },
+          {
+            "name": "Control System Panel (Automation Hardware and Software)",
+            "confidence": 0.93,
+            "reasoning": "Dedicated electronic module containing PLCs, sensors interface, and control software; procured as a complete unit from specialized suppliers."
+          },
+          {
+            "name": "Sparger Assembly (Gas Distribution System)",
+            "confidence": 0.91,
+            "reasoning": "Responsible for controlled aeration; often a modular subassembly procured separately due to its design complexity and material requirements."
+          },
+          {
+            "name": "Temperature Control System (Jacket or Internal Coil with Circulating Unit)",
+            "confidence": 0.89,
+            "reasoning": "Major thermal management component usually procured as an integrated unit including heat exchange surfaces and circulation pump."
+          },
+          {
+            "name": "Sampling Port Assembly",
+            "confidence": 0.8,
+            "reasoning": "Procured as a discrete subassembly allowing sterile sampling; commonly available from specialized suppliers."
+          },
+          {
+            "name": "Sterile Harvest and Drain Valve Assemblies",
+            "confidence": 0.85,
+            "reasoning": "Critical for aseptic emptying and transfer; valves with sanitary design are separately sourced and standardized."
+          },
+          {
+            "name": "PID Sensors and Probes (pH, DO, Temperature)",
+            "confidence": 0.88,
+            "reasoning": "Individual sensor probes are distinct components often procured separately and replaced during bioreactor operation."
+          },
+          {
+            "name": "Baffles",
+            "confidence": 0.7,
+            "reasoning": "Structural internals mounted or welded inside the vessel for mixing enhancement; sometimes integrated but often supplied separately."
+          },
+          {
+            "name": "Headplate Assembly",
+            "confidence": 0.75,
+            "reasoning": "Top vessel closure integrating ports for probes, feeding, and gas lines; typically manufactured and procured separately."
+          }
+        ],
+        "technology_specification": "Stainless steel stirred-tank bioreactor with integrated control systems for microbial or cell culture fermentation, commonly used in pharmaceutical and biotech manufacturing.",
+        "technology_reasoning": "Stirred-tank bioreactors with stainless steel vessels dominate pharmaceutical and biotech applications due to their scalability, robust sterilizability, and process control, representing the standard design in industrial fermenter production as of 2024."
+      },
+      {
+        "agent_id": "Agent_2",
+        "components": [
+          {
+            "name": "Stainless Steel Vessel",
+            "confidence": 0.98,
+            "reasoning": "The primary structural container for the culture media and biomass, usually manufactured as a separate pressure-rated assembly with ports and fittings, universally present and critical."
+          },
+          {
+            "name": "Agitator Assembly (Impeller and Shaft)",
+            "confidence": 0.95,
+            "reasoning": "Essential for mixing and oxygen transfer, the agitator is a separately machined and assembled mechanical component distinct from the vessel."
+          },
+          {
+            "name": "Baffles",
+            "confidence": 0.85,
+            "reasoning": "Internal structural attachments fixed inside the vessel to improve mixing efficiency, usually procured or fabricated separately and integrated into the vessel assembly."
+          },
+          {
+            "name": "Top Plate or Head Plate",
+            "confidence": 0.9,
+            "reasoning": "A removable or fixed cover featuring multiple nozzles for sensors, sampling, gas inlet/outlet, and sparger mounting, often procured as a separate assembly."
+          },
+          {
+            "name": "Sparger (Gas Distribution)",
+            "confidence": 0.9,
+            "reasoning": "A separate gas distribution component for sparging oxygen or other gases into the culture, typically a distinct part mounted inside the vessel."
+          },
+          {
+            "name": "Temperature Sensor Probe Assembly",
+            "confidence": 0.8,
+            "reasoning": "Critical sensor unit inserted into the vessel for temperature monitoring; manufactured and supplied as discrete sensor assemblies."
+          },
+          {
+            "name": "Pressure Sensor Assembly",
+            "confidence": 0.75,
+            "reasoning": "A separate instrumentation component monitoring internal vessel pressure, standard in bioreactor setups though may vary by model."
+          },
+          {
+            "name": "Control Panel / Cabinet",
+            "confidence": 0.88,
+            "reasoning": "A dedicated electronics enclosure housing process control hardware including PLCs and interface modules, typically a separate procurable assembly."
+          },
+          {
+            "name": "Heating/Cooling Jacket or Coil",
+            "confidence": 0.9,
+            "reasoning": "An external thermal control assembly, either jacketed vessel or inserted coil system, critical for temperature regulation and separately manufactured."
+          },
+          {
+            "name": "Motor and Drive Unit",
+            "confidence": 0.92,
+            "reasoning": "The mechanical drive system powering the agitator, procured as a discrete assembly including motor and gearbox components."
+          }
+        ],
+        "technology_specification": "Stainless steel stirred-tank bioreactor with integrated control and sensor assemblies, primarily used in pharmaceutical and biotech production for culturing cells or microorganisms in controlled environments.",
+        "technology_reasoning": "The stirred-tank stainless steel bioreactor is the industry standard in pharmaceutical manufacturing due to its robustness, chemical resistance, ease of sterilization (CIP/SIP), and versatile scale-up capabilities. It typically features modular mechanical and structural assemblies standardized across manufacturers, making it the candidate for supply chain and component analysis."
+      }
+    ],
+    "phase2_debate_rounds": [
+      {
+        "round_num": 1,
+        "convergence": 0.42857142857142855,
+        "threshold": 0.7,
+        "threshold_reached": false,
+        "proposals": {
+          "Agent_1": [
+            {
+              "name": "Stainless Steel Reactor Vessel",
+              "confidence": 0.98,
+              "reasoning": "Core containment unit for the biological process; usually procured as a precision-fabricated, certified pressure vessel distinctly separate from other systems.",
+              "component": "Stainless Steel Reactor Vessel",
+              "normalized_component": "reactor vessel"
+            },
+            {
+              "name": "Agitator Assembly (Impeller and Shaft)",
+              "confidence": 0.95,
+              "reasoning": "Primary mixing subsystem with separate manufacture and supply chain; critical to ensure homogeneous culture conditions.",
+              "component": "Agitator Assembly (Impeller and Shaft)",
+              "normalized_component": "agitator"
+            },
+            {
+              "name": "Control System Panel (Automation Hardware and Software)",
+              "confidence": 0.93,
+              "reasoning": "Dedicated electronic module containing PLCs, sensors interface, and control software; procured as a complete unit from specialized suppliers.",
+              "component": "Control System Panel (Automation Hardware and Software)",
+              "normalized_component": "control panel"
+            },
+            {
+              "name": "Sparger Assembly (Gas Distribution System)",
+              "confidence": 0.91,
+              "reasoning": "Responsible for controlled aeration; often a modular subassembly procured separately due to its design complexity and material requirements.",
+              "component": "Sparger Assembly (Gas Distribution System)",
+              "normalized_component": "sparger"
+            },
+            {
+              "name": "Temperature Control System (Jacket or Internal Coil with Circulating Unit)",
+              "confidence": 0.89,
+              "reasoning": "Major thermal management component usually procured as an integrated unit including heat exchange surfaces and circulation pump.",
+              "component": "Temperature Control System (Jacket or Internal Coil with Circulating Unit)",
+              "normalized_component": "temperature control"
+            },
+            {
+              "name": "Sampling Port Assembly",
+              "confidence": 0.8,
+              "reasoning": "Procured as a discrete subassembly allowing sterile sampling; commonly available from specialized suppliers.",
+              "component": "Sampling Port Assembly",
+              "normalized_component": "sampling port"
+            },
+            {
+              "name": "Sterile Harvest and Drain Valve Assemblies",
+              "confidence": 0.85,
+              "reasoning": "Critical for aseptic emptying and transfer; valves with sanitary design are separately sourced and standardized.",
+              "component": "Sterile Harvest and Drain Valve Assemblies",
+              "normalized_component": "sterile harvest and drain valve assemblies"
+            },
+            {
+              "name": "PID Sensors and Probes (pH, DO, Temperature)",
+              "confidence": 0.88,
+              "reasoning": "Individual sensor probes are distinct components often procured separately and replaced during bioreactor operation.",
+              "component": "PID Sensors and Probes (pH, DO, Temperature)",
+              "normalized_component": "process sensors (ph/do/temperature)"
+            },
+            {
+              "name": "Baffles",
+              "confidence": 0.7,
+              "reasoning": "Structural internals mounted or welded inside the vessel for mixing enhancement; sometimes integrated but often supplied separately.",
+              "component": "Baffles",
+              "normalized_component": "baffles"
+            },
+            {
+              "name": "Headplate Assembly",
+              "confidence": 0.75,
+              "reasoning": "Top vessel closure integrating ports for probes, feeding, and gas lines; typically manufactured and procured separately.",
+              "component": "Headplate Assembly",
+              "normalized_component": "head plate"
+            }
+          ],
+          "Agent_2": [
+            {
+              "name": "Stainless Steel Vessel",
+              "confidence": 0.98,
+              "reasoning": "The primary structural container for the culture media and biomass, usually manufactured as a separate pressure-rated assembly with ports and fittings, universally present and critical.",
+              "component": "Stainless Steel Vessel",
+              "normalized_component": "reactor vessel"
+            },
+            {
+              "name": "Agitator Assembly (Impeller and Shaft)",
+              "confidence": 0.95,
+              "reasoning": "Essential for mixing and oxygen transfer, the agitator is a separately machined and assembled mechanical component distinct from the vessel.",
+              "component": "Agitator Assembly (Impeller and Shaft)",
+              "normalized_component": "agitator"
+            },
+            {
+              "name": "Baffles",
+              "confidence": 0.85,
+              "reasoning": "Internal structural attachments fixed inside the vessel to improve mixing efficiency, usually procured or fabricated separately and integrated into the vessel assembly.",
+              "component": "Baffles",
+              "normalized_component": "baffles"
+            },
+            {
+              "name": "Top Plate or Head Plate",
+              "confidence": 0.9,
+              "reasoning": "A removable or fixed cover featuring multiple nozzles for sensors, sampling, gas inlet/outlet, and sparger mounting, often procured as a separate assembly.",
+              "component": "Top Plate or Head Plate",
+              "normalized_component": "head plate"
+            },
+            {
+              "name": "Sparger (Gas Distribution)",
+              "confidence": 0.9,
+              "reasoning": "A separate gas distribution component for sparging oxygen or other gases into the culture, typically a distinct part mounted inside the vessel.",
+              "component": "Sparger (Gas Distribution)",
+              "normalized_component": "sparger"
+            },
+            {
+              "name": "Temperature Sensor Probe Assembly",
+              "confidence": 0.8,
+              "reasoning": "Critical sensor unit inserted into the vessel for temperature monitoring; manufactured and supplied as discrete sensor assemblies.",
+              "component": "Temperature Sensor Probe Assembly",
+              "normalized_component": "temperature sensor probe"
+            },
+            {
+              "name": "Pressure Sensor Assembly",
+              "confidence": 0.75,
+              "reasoning": "A separate instrumentation component monitoring internal vessel pressure, standard in bioreactor setups though may vary by model.",
+              "component": "Pressure Sensor Assembly",
+              "normalized_component": "pressure sensor"
+            },
+            {
+              "name": "Control Panel / Cabinet",
+              "confidence": 0.88,
+              "reasoning": "A dedicated electronics enclosure housing process control hardware including PLCs and interface modules, typically a separate procurable assembly.",
+              "component": "Control Panel / Cabinet",
+              "normalized_component": "control panel"
+            },
+            {
+              "name": "Heating/Cooling Jacket or Coil",
+              "confidence": 0.9,
+              "reasoning": "An external thermal control assembly, either jacketed vessel or inserted coil system, critical for temperature regulation and separately manufactured.",
+              "component": "Heating/Cooling Jacket or Coil",
+              "normalized_component": "heating/cooling"
+            },
+            {
+              "name": "Motor and Drive Unit",
+              "confidence": 0.92,
+              "reasoning": "The mechanical drive system powering the agitator, procured as a discrete assembly including motor and gearbox components.",
+              "component": "Motor and Drive Unit",
+              "normalized_component": "motor and drive"
+            }
+          ]
+        },
+        "rounds_completed": 1,
+        "support_analysis": {
+          "consensus": [],
+          "majority": [
+            "reactor vessel",
+            "agitator",
+            "control panel",
+            "sparger",
+            "baffles",
+            "head plate"
+          ],
+          "isolated": [
+            "temperature control",
+            "sampling port",
+            "sterile harvest and drain valve assemblies",
+            "process sensors (ph/do/temperature)",
+            "temperature sensor probe",
+            "pressure sensor",
+            "heating/cooling",
+            "motor and drive"
+          ]
+        },
+        "critiques": [
+          {
+            "item_name": "reactor vessel",
+            "normalized_name": "reactor vessel",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.98,
+            "critique_text": "Majority support for 'reactor vessel': 2/3 agents agree (conf: 0.98). Consider strengthening consensus."
+          },
+          {
+            "item_name": "agitator",
+            "normalized_name": "agitator",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.95,
+            "critique_text": "Majority support for 'agitator': 2/3 agents agree (conf: 0.95). Consider strengthening consensus."
+          },
+          {
+            "item_name": "control panel",
+            "normalized_name": "control panel",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.905,
+            "critique_text": "Majority support for 'control panel': 2/3 agents agree (conf: 0.91). Consider strengthening consensus."
+          },
+          {
+            "item_name": "sparger",
+            "normalized_name": "sparger",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.905,
+            "critique_text": "Majority support for 'sparger': 2/3 agents agree (conf: 0.91). Consider strengthening consensus."
+          },
+          {
+            "item_name": "temperature control",
+            "normalized_name": "temperature control",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2"
+            ],
+            "avg_confidence": 0.89,
+            "critique_text": "Isolated proposal 'temperature control' from 1 agent(s) (conf: 0.89). Requires justification or peer validation."
+          },
+          {
+            "item_name": "sampling port",
+            "normalized_name": "sampling port",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2"
+            ],
+            "avg_confidence": 0.8,
+            "critique_text": "Isolated proposal 'sampling port' from 1 agent(s) (conf: 0.80). Requires justification or peer validation."
+          },
+          {
+            "item_name": "sterile harvest and drain valve assemblies",
+            "normalized_name": "sterile harvest and drain valve assemblies",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2"
+            ],
+            "avg_confidence": 0.85,
+            "critique_text": "Isolated proposal 'sterile harvest and drain valve assemblies' from 1 agent(s) (conf: 0.85). Requires justification or peer validation."
+          },
+          {
+            "item_name": "process sensors (ph/do/temperature)",
+            "normalized_name": "process sensors (ph/do/temperature)",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2"
+            ],
+            "avg_confidence": 0.88,
+            "critique_text": "Isolated proposal 'process sensors (ph/do/temperature)' from 1 agent(s) (conf: 0.88). Requires justification or peer validation."
+          },
+          {
+            "item_name": "baffles",
+            "normalized_name": "baffles",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.7749999999999999,
+            "critique_text": "Majority support for 'baffles': 2/3 agents agree (conf: 0.77). Consider strengthening consensus."
+          },
+          {
+            "item_name": "head plate",
+            "normalized_name": "head plate",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.825,
+            "critique_text": "Majority support for 'head plate': 2/3 agents agree (conf: 0.82). Consider strengthening consensus."
+          },
+          {
+            "item_name": "temperature sensor probe",
+            "normalized_name": "temperature sensor probe",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_1"
+            ],
+            "avg_confidence": 0.8,
+            "critique_text": "Isolated proposal 'temperature sensor probe' from 1 agent(s) (conf: 0.80). Requires justification or peer validation."
+          },
+          {
+            "item_name": "pressure sensor",
+            "normalized_name": "pressure sensor",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_1"
+            ],
+            "avg_confidence": 0.75,
+            "critique_text": "Isolated proposal 'pressure sensor' from 1 agent(s) (conf: 0.75). Requires justification or peer validation."
+          },
+          {
+            "item_name": "heating/cooling",
+            "normalized_name": "heating/cooling",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_1"
+            ],
+            "avg_confidence": 0.9,
+            "critique_text": "Isolated proposal 'heating/cooling' from 1 agent(s) (conf: 0.90). Requires justification or peer validation."
+          },
+          {
+            "item_name": "motor and drive",
+            "normalized_name": "motor and drive",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_1"
+            ],
+            "avg_confidence": 0.92,
+            "critique_text": "Isolated proposal 'motor and drive' from 1 agent(s) (conf: 0.92). Requires justification or peer validation."
+          }
+        ],
+        "changes_from_previous": null
+      },
+      {
+        "round_num": 2,
+        "convergence": 1.0,
+        "threshold": 0.7,
+        "threshold_reached": true,
+        "proposals": {
+          "Agent_1": [
+            {
+              "agent_id": "Agent_1",
+              "component": "Stainless Steel Reactor Vessel",
+              "confidence": 0.98,
+              "reasoning": "Strong consensus from both agents, very high confidence and critical primary component for bioreactor.",
+              "round": 2,
+              "normalized_component": "Stainless Steel Reactor Vessel"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Agitator Assembly (Impeller and Shaft)",
+              "confidence": 0.95,
+              "reasoning": "Strong agreement from both agents, essential for mixing and bioprocess operation.",
+              "round": 2,
+              "normalized_component": "Agitator Assembly"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Control System Panel (Automation Hardware and Software)",
+              "confidence": 0.91,
+              "reasoning": "Both agents included control panel variants with high confidence; the control system is critical for automation and process control.",
+              "round": 2,
+              "normalized_component": "Control System Panel (Automation Hardware and Software)"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Sparger Assembly (Gas Distribution System)",
+              "confidence": 0.91,
+              "reasoning": "Strong consensus on sparger presence from both agents, needed for gas distribution in bioreactor.",
+              "round": 2,
+              "normalized_component": "Aeration System (Sparger And Air Supply)"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Baffles",
+              "confidence": 0.77,
+              "reasoning": "Both agents support baffles, albeit with lower confidence; important for flow pattern improvement and mixing.",
+              "round": 2,
+              "normalized_component": "Baffles"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Headplate Assembly",
+              "confidence": 0.82,
+              "reasoning": "Both agents selected headplate assemblies with reasonable confidence; serves to support vessel top functions and instrumentation.",
+              "round": 2,
+              "normalized_component": "Headplate Assembly"
+            }
+          ],
+          "Agent_2": [
+            {
+              "agent_id": "Agent_2",
+              "component": "Stainless Steel Reactor Vessel",
+              "confidence": 0.98,
+              "reasoning": "Strong consensus from both agents with very high confidence (0.98). This is a fundamental component of any bioreactor.",
+              "round": 2,
+              "normalized_component": "Stainless Steel Reactor Vessel"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Agitator Assembly (Impeller and Shaft)",
+              "confidence": 0.95,
+              "reasoning": "Unanimous support from both agents at high confidence (0.95). Essential for mixing and homogeneity in the bioreactor.",
+              "round": 2,
+              "normalized_component": "Agitator Assembly"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Control System Panel (Automation Hardware and Software)",
+              "confidence": 0.91,
+              "reasoning": "Strong support from both agents with slightly varied naming but similar function; averaged confidence is about 0.91. Crucial for control and automation of the bioreactor.",
+              "round": 2,
+              "normalized_component": "Control System Panel (Automation Hardware and Software)"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Sparger Assembly (Gas Distribution System)",
+              "confidence": 0.91,
+              "reasoning": "Both agents propose sparger or gas distribution components with similar confidence (around 0.91). Integral for gas exchange in bioprocesses.",
+              "round": 2,
+              "normalized_component": "Aeration System (Sparger And Air Supply)"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Baffles",
+              "confidence": 0.77,
+              "reasoning": "Moderate consensus with average confidence 0.77. Important for improving mixing efficiency and preventing vortex formation.",
+              "round": 2,
+              "normalized_component": "Baffles"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Headplate Assembly",
+              "confidence": 0.82,
+              "reasoning": "Both agents agree on headplate components with average confidence of 0.82. Important for structural closure and mounting of other parts.",
+              "round": 2,
+              "normalized_component": "Headplate Assembly"
+            }
+          ],
+          "Agent_3": [
+            {
+              "agent_id": "Agent_3",
+              "component": "Stainless Steel Reactor Vessel",
+              "confidence": 0.98,
+              "reasoning": "Strong consensus by both agents with very high confidence. Essential base structure of the bioreactor.",
+              "round": 2,
+              "normalized_component": "Stainless Steel Reactor Vessel"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Agitator Assembly (Impeller and Shaft)",
+              "confidence": 0.95,
+              "reasoning": "Strong consensus and high confidence from both agents. Critical for mixing and aeration processes inside the bioreactor.",
+              "round": 2,
+              "normalized_component": "Agitator Assembly"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Control System Panel (Automation Hardware and Software)",
+              "confidence": 0.91,
+              "reasoning": "Both agents selected control panel components with strong confidence. Central to automation and process control.",
+              "round": 2,
+              "normalized_component": "Control System Panel (Automation Hardware and Software)"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Sparger Assembly (Gas Distribution System)",
+              "confidence": 0.91,
+              "reasoning": "Strong agreement from agents, essential for gas distribution and aeration in bioreactor operations.",
+              "round": 2,
+              "normalized_component": "Aeration System (Sparger And Air Supply)"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Baffles",
+              "confidence": 0.77,
+              "reasoning": "Agreed by both agents with moderate confidence. Important for flow disruption and mixing efficiency, though secondary to core components.",
+              "round": 2,
+              "normalized_component": "Baffles"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Headplate Assembly",
+              "confidence": 0.82,
+              "reasoning": "Both agents selected headplate related components with decent confidence. Structural and functional importance at the top of the vessel.",
+              "round": 2,
+              "normalized_component": "Headplate Assembly"
+            }
+          ]
+        },
+        "rounds_completed": 2,
+        "support_analysis": {
+          "consensus": [
+            "stainless steel reactor vessel",
+            "agitator assembly (impeller and shaft)",
+            "control system panel (automation hardware and software)",
+            "sparger assembly (gas distribution system)",
+            "baffles",
+            "headplate"
+          ],
+          "majority": [],
+          "isolated": []
+        },
+        "critiques": [
+          {
+            "item_name": "Stainless Steel Reactor Vessel",
+            "normalized_name": "stainless steel reactor vessel",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_2",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.98,
+            "critique_text": "Strong consensus on 'Stainless Steel Reactor Vessel': all 3 agents support with avg confidence 0.98. Preserve this component."
+          },
+          {
+            "item_name": "Agitator Assembly (Impeller and Shaft)",
+            "normalized_name": "agitator assembly (impeller and shaft)",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_2",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.9499999999999998,
+            "critique_text": "Strong consensus on 'Agitator Assembly (Impeller and Shaft)': all 3 agents support with avg confidence 0.95. Preserve this component."
+          },
+          {
+            "item_name": "Control System Panel (Automation Hardware and Software)",
+            "normalized_name": "control system panel (automation hardware and software)",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_2",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.91,
+            "critique_text": "Strong consensus on 'Control System Panel (Automation Hardware and Software)': all 3 agents support with avg confidence 0.91. Preserve this component."
+          },
+          {
+            "item_name": "Sparger Assembly (Gas Distribution System)",
+            "normalized_name": "sparger assembly (gas distribution system)",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_2",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.91,
+            "critique_text": "Strong consensus on 'Sparger Assembly (Gas Distribution System)': all 3 agents support with avg confidence 0.91. Preserve this component."
+          },
+          {
+            "item_name": "Baffles",
+            "normalized_name": "baffles",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_2",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.77,
+            "critique_text": "Strong consensus on 'Baffles': all 3 agents support with avg confidence 0.77. Preserve this component."
+          },
+          {
+            "item_name": "Headplate Assembly",
+            "normalized_name": "headplate",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_2",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.82,
+            "critique_text": "Strong consensus on 'Headplate Assembly': all 3 agents support with avg confidence 0.82. Preserve this component."
+          }
+        ],
+        "changes_from_previous": {
+          "items_added": [
+            "sparger assembly (gas distribution system)",
+            "control system panel (automation hardware and software)",
+            "agitator assembly (impeller and shaft)",
+            "stainless steel reactor vessel",
+            "headplate"
+          ],
+          "items_removed": [
+            "control panel",
+            "agitator",
+            "process sensors (ph/do/temperature)",
+            "temperature control",
+            "reactor vessel",
+            "sparger",
+            "sterile harvest and drain valve assemblies",
+            "head plate",
+            "pressure sensor",
+            "temperature sensor probe",
+            "sampling port",
+            "heating/cooling",
+            "motor and drive"
+          ],
+          "confidence_changes": {}
+        }
+      }
+    ],
+    "phase3_final_consensus": {
+      "technology": "Bioreactor",
+      "technology_specification": "Bioreactor",
+      "technology_reasoning": "",
+      "components": [
+        "Stainless Steel Reactor Vessel",
+        "Agitator Assembly",
+        "Control System Panel (automation Hardware And Software)",
+        "Aeration System (sparger And Air Supply)",
+        "Headplate Assembly",
+        "Baffles"
+      ],
+      "confidence": 1.0,
+      "rounds": 2,
+      "convergence_score": 1.0
+    }
+  },
+  "materials_debate": {
+    "debate_rounds": [],
+    "final_consensus": {
+      "components": 6,
+      "unique_materials": 13,
+      "total_assignments": 24,
+      "materials_by_component": {
+        "Stainless Steel Reactor Vessel": [
+          {
+            "name": "Stainless steel (SS 304/316)",
+            "confidence": 1.0,
+            "reasoning": "Primary structural material used universally for reactor vessels due to corrosion resistance and strength; essential without viable alternatives for sanitary bioprocessing."
+          },
+          {
+            "name": "Silicon",
+            "confidence": 0.6,
+            "reasoning": "Used as trace element in stainless steel for improved strength and resistance; moderately confident as it is commonly present but not always emphasized."
+          },
+          {
+            "name": "Chromium",
+            "confidence": 0.95,
+            "reasoning": "Critical alloying element providing corrosion resistance in stainless steel; essential in standard stainless steel grades used in reactor vessels."
+          },
+          {
+            "name": "Nickel",
+            "confidence": 0.9,
+            "reasoning": "Alloying element that enhances corrosion resistance and toughness; standard in SS 304/316 grades, very confident for biomedical reactors."
+          },
+          {
+            "name": "Molybdenum",
+            "confidence": 0.8,
+            "reasoning": "Added alloying element in SS 316 to improve corrosion resistance especially to chlorides; common but some stainless steels omit it."
+          }
+        ],
+        "Agitator Assembly": [
+          {
+            "name": "Stainless steel (SS 304/316)",
+            "confidence": 0.95,
+            "reasoning": "Primary material for agitator components due to corrosion resistance and strength in sterile, wet environments; almost always used."
+          },
+          {
+            "name": "Steel Ingots",
+            "confidence": 0.7,
+            "reasoning": "Base raw material for producing stainless steel parts, moderately confident as it underpins stainless steel manufacturing."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.5,
+            "reasoning": "Sometimes used for lightweight agitator parts but less common in bioreactors where corrosion resistance is critical; uncertain."
+          },
+          {
+            "name": "PTFE coating",
+            "confidence": 0.7,
+            "reasoning": "Used as surface treatment or coating for improved chemical resistance and ease of cleaning; common but alternatives exist."
+          }
+        ],
+        "Control System Panel (automation Hardware And Software)": [
+          {
+            "name": "Silicon",
+            "confidence": 0.95,
+            "reasoning": "Fundamental semiconductor material for all integrated circuits and microprocessors in control systems; absolutely essential."
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.9,
+            "reasoning": "Essential electrical conductor in circuit boards, wiring, and connectors within control panels."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.7,
+            "reasoning": "Used in heat sinks and structural frames due to thermal conductivity and light weight; fairly common though alternatives exist."
+          },
+          {
+            "name": "Polycarbonate",
+            "confidence": 0.75,
+            "reasoning": "Common polymer used for control panel casings and faceplates due to transparency and toughness; commonly used but substitutes exist."
+          },
+          {
+            "name": "PTFE",
+            "confidence": 0.6,
+            "reasoning": "Used for insulation or specialized coatings inside electronic components; moderately confident as it is a typical polymer in electronics."
+          }
+        ],
+        "Aeration System (sparger And Air Supply)": [
+          {
+            "name": "Stainless steel (SS 316)",
+            "confidence": 0.95,
+            "reasoning": "Preferred material for sparger components due to superior corrosion resistance and biocompatibility in wet aeration systems."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.6,
+            "reasoning": "Used in structural parts or air supply hardware for its light weight and corrosion resistance; alternatives exist."
+          },
+          {
+            "name": "PTFE",
+            "confidence": 0.7,
+            "reasoning": "Common in aeration system seals and tubing coatings for chemical resistance; typically used but alternatives like other polymers possible."
+          },
+          {
+            "name": "Oxygen",
+            "confidence": 0.95,
+            "reasoning": "Critical chemical input as the biologically supplied gas essential for aeration functionality; absolutely required."
+          }
+        ],
+        "Headplate Assembly": [
+          {
+            "name": "Stainless steel (SS 304/316)",
+            "confidence": 0.95,
+            "reasoning": "Standard material for headplates providing structural integrity and corrosion resistance; almost universally used in bioreactors."
+          },
+          {
+            "name": "PTFE coating",
+            "confidence": 0.7,
+            "reasoning": "Applied as protective coating for chemical resistance and ease of cleaning; common but sometimes replaced by other coatings."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.6,
+            "reasoning": "Occasionally used for lighter headplate components or support structures; alternatives exist."
+          }
+        ],
+        "Baffles": [
+          {
+            "name": "Stainless steel (SS 304/316)",
+            "confidence": 0.95,
+            "reasoning": "Commonly used for baffles due to corrosion resistance, strength and sanitary standards; almost always the choice material."
+          },
+          {
+            "name": "PTFE coating",
+            "confidence": 0.7,
+            "reasoning": "Used to coat baffles for improved corrosion resistance and anti-fouling; frequently used but not mandatory."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.5,
+            "reasoning": "Sometimes used for structural baffles in less demanding applications; uncertain as stainless steel predominates."
+          }
+        ]
+      }
+    }
+  }
+}

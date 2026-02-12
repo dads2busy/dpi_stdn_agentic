@@ -1,0 +1,861 @@
+{
+  "version": "2.0",
+  "metadata": {
+    "technology": "Hydroponic Systems",
+    "technology_specification": "Hydroponic Systems",
+    "technology_reasoning": "",
+    "timestamp": "2026-02-12T13:26:06.237014",
+    "format_version": "2.0"
+  },
+  "config": {
+    "num_agents": 2,
+    "max_rounds": 3
+  },
+  "component_stage": {
+    "phase1_initial_proposals": [
+      {
+        "agent_id": "Agent_1",
+        "components": [
+          {
+            "name": "Nutrient Reservoir Tank",
+            "confidence": 0.95,
+            "reasoning": "Central water and nutrient storage unit, a distinct procurable container essential for hydroponic systems."
+          },
+          {
+            "name": "Submersible Water Pump",
+            "confidence": 0.98,
+            "reasoning": "Critical for circulating nutrient solution through the system, always a separate manufactured component."
+          },
+          {
+            "name": "Grow Trays or Channels",
+            "confidence": 0.92,
+            "reasoning": "These hold plants and nutrient media, specifically designed trays or channels are procured as modular units."
+          },
+          {
+            "name": "Aeration System (Air Pumps and Diffusers)",
+            "confidence": 0.87,
+            "reasoning": "Ensures oxygenation of the nutrient solution, typically a separate assembly with consumer or industrial supply chains."
+          },
+          {
+            "name": "Nutrient Delivery Tubing and Connectors",
+            "confidence": 0.85,
+            "reasoning": "Specialized tubing and connector assemblies for nutrient flow management, procured separately due to material and dimension requirements."
+          },
+          {
+            "name": "Control Unit with Timers and Sensors",
+            "confidence": 0.8,
+            "reasoning": "Electronic subsystem controlling pumps, lighting, and environment; modular and separately supplied."
+          },
+          {
+            "name": "Lighting Fixtures (LED Grow Lights)",
+            "confidence": 0.9,
+            "reasoning": "Essential for plant growth in indoor systems, LED grow lights are distinct commercial products with specialized supply."
+          },
+          {
+            "name": "Support Structure or Frame",
+            "confidence": 0.83,
+            "reasoning": "Physical frame holding grow trays and equipment; often manufactured separately and sourced for modular assembly."
+          },
+          {
+            "name": "pH and EC Meter Systems",
+            "confidence": 0.75,
+            "reasoning": "Instruments for monitoring nutrient solution quality, often standalone electronic devices distinct from controls."
+          }
+        ],
+        "technology_specification": "Commercial hydroponic systems employing nutrient film technique (NFT) or deep water culture (DWC) designs with integrated pumps and nutrient delivery units.",
+        "technology_reasoning": "These systems represent the industry-standard for hydroponic farming setups as they balance scalability and efficiency, dominating commercial and urban agriculture markets. The use of modular pumps, reservoirs, grow trays, and nutrient delivery units allows standardized procurement and assembly."
+      },
+      {
+        "agent_id": "Agent_2",
+        "components": [
+          {
+            "name": "Grow Bed Assembly",
+            "confidence": 0.98,
+            "reasoning": "Core physical structure where plants are housed and nutrients are supplied; typically a distinct manufactured unit made from plastic, metal, or composite materials and procured separately."
+          },
+          {
+            "name": "Nutrient Reservoir Tank",
+            "confidence": 0.95,
+            "reasoning": "Separate container holding the nutrient solution, usually manufactured as a distinct module from plastic or fiberglass, critical for the hydroponic cycle."
+          },
+          {
+            "name": "Pump Unit (Nutrient and Water Circulation Pump)",
+            "confidence": 0.95,
+            "reasoning": "Essential mechanical subassembly providing fluid circulation, procured as a distinct manufactured unit with defined specifications."
+          },
+          {
+            "name": "Structural Frame/Support System",
+            "confidence": 0.9,
+            "reasoning": "Framework supporting the grow beds and system components, commonly aluminum or steel modular structures, usually supplied as separate assemblies."
+          },
+          {
+            "name": "Irrigation Delivery Pipes and Fittings",
+            "confidence": 0.85,
+            "reasoning": "Pre-fabricated piping and connectors designed to distribute nutrient solution; typically standard modular components sourced separately due to variety in system design."
+          },
+          {
+            "name": "Lighting Fixtures (LED Grow Lights)",
+            "confidence": 0.75,
+            "reasoning": "Though optional and system-dependent, in commercial setups LED grow lights are often distinct assemblies procured separately to supplement or replace natural light."
+          },
+          {
+            "name": "Control Panel or Electronic Control Unit",
+            "confidence": 0.7,
+            "reasoning": "Unified electronic module for system automation, nutrient dosing, and environmental monitoring; present in many but not all systems, usually purchased separately."
+          },
+          {
+            "name": "Drainage and Overflow Collection System",
+            "confidence": 0.65,
+            "reasoning": "Physical assemblies for managing excess nutrient solution, often modular and separate, though integration level varies across system designs."
+          }
+        ],
+        "technology_specification": "Commercial hydroponic system designed for industrial or commercial crop production, utilizing a closed-loop nutrient delivery system integrated with structural frameworks and grow bed assemblies.",
+        "technology_reasoning": "Commercial hydroponic systems are the most common form in agricultural technology as they provide scalable controlled environment agriculture solutions, integrating modular structural frameworks and distinct physical assemblies such as grow beds and nutrient reservoirs, which are sourced from specialized manufacturers for optimized crop yields."
+      }
+    ],
+    "phase2_debate_rounds": [
+      {
+        "round_num": 1,
+        "convergence": 0.21428571428571427,
+        "threshold": 0.7,
+        "threshold_reached": false,
+        "proposals": {
+          "Agent_1": [
+            {
+              "name": "Nutrient Reservoir Tank",
+              "confidence": 0.95,
+              "reasoning": "Central water and nutrient storage unit, a distinct procurable container essential for hydroponic systems.",
+              "component": "Nutrient Reservoir Tank",
+              "normalized_component": "nutrient reservoir tank"
+            },
+            {
+              "name": "Submersible Water Pump",
+              "confidence": 0.98,
+              "reasoning": "Critical for circulating nutrient solution through the system, always a separate manufactured component.",
+              "component": "Submersible Water Pump",
+              "normalized_component": "submersible water pump"
+            },
+            {
+              "name": "Grow Trays or Channels",
+              "confidence": 0.92,
+              "reasoning": "These hold plants and nutrient media, specifically designed trays or channels are procured as modular units.",
+              "component": "Grow Trays or Channels",
+              "normalized_component": "grow channel"
+            },
+            {
+              "name": "Aeration System (Air Pumps and Diffusers)",
+              "confidence": 0.87,
+              "reasoning": "Ensures oxygenation of the nutrient solution, typically a separate assembly with consumer or industrial supply chains.",
+              "component": "Aeration System (Air Pumps and Diffusers)",
+              "normalized_component": "aeration"
+            },
+            {
+              "name": "Nutrient Delivery Tubing and Connectors",
+              "confidence": 0.85,
+              "reasoning": "Specialized tubing and connector assemblies for nutrient flow management, procured separately due to material and dimension requirements.",
+              "component": "Nutrient Delivery Tubing and Connectors",
+              "normalized_component": "nutrient delivery tubing and connectors"
+            },
+            {
+              "name": "Control Unit with Timers and Sensors",
+              "confidence": 0.8,
+              "reasoning": "Electronic subsystem controlling pumps, lighting, and environment; modular and separately supplied.",
+              "component": "Control Unit with Timers and Sensors",
+              "normalized_component": "electronic control panel with timers and sensors"
+            },
+            {
+              "name": "Lighting Fixtures (LED Grow Lights)",
+              "confidence": 0.9,
+              "reasoning": "Essential for plant growth in indoor systems, LED grow lights are distinct commercial products with specialized supply.",
+              "component": "Lighting Fixtures (LED Grow Lights)",
+              "normalized_component": "led grow light"
+            },
+            {
+              "name": "Support Structure or Frame",
+              "confidence": 0.83,
+              "reasoning": "Physical frame holding grow trays and equipment; often manufactured separately and sourced for modular assembly.",
+              "component": "Support Structure or Frame",
+              "normalized_component": "structural frame"
+            },
+            {
+              "name": "pH and EC Meter Systems",
+              "confidence": 0.75,
+              "reasoning": "Instruments for monitoring nutrient solution quality, often standalone electronic devices distinct from controls.",
+              "component": "pH and EC Meter Systems",
+              "normalized_component": "ph and ec meter"
+            }
+          ],
+          "Agent_2": [
+            {
+              "name": "Grow Bed Assembly",
+              "confidence": 0.98,
+              "reasoning": "Core physical structure where plants are housed and nutrients are supplied; typically a distinct manufactured unit made from plastic, metal, or composite materials and procured separately.",
+              "component": "Grow Bed Assembly",
+              "normalized_component": "grow bed"
+            },
+            {
+              "name": "Nutrient Reservoir Tank",
+              "confidence": 0.95,
+              "reasoning": "Separate container holding the nutrient solution, usually manufactured as a distinct module from plastic or fiberglass, critical for the hydroponic cycle.",
+              "component": "Nutrient Reservoir Tank",
+              "normalized_component": "nutrient reservoir tank"
+            },
+            {
+              "name": "Pump Unit (Nutrient and Water Circulation Pump)",
+              "confidence": 0.95,
+              "reasoning": "Essential mechanical subassembly providing fluid circulation, procured as a distinct manufactured unit with defined specifications.",
+              "component": "Pump Unit (Nutrient and Water Circulation Pump)",
+              "normalized_component": "water and nutrient circulation pump"
+            },
+            {
+              "name": "Structural Frame/Support System",
+              "confidence": 0.9,
+              "reasoning": "Framework supporting the grow beds and system components, commonly aluminum or steel modular structures, usually supplied as separate assemblies.",
+              "component": "Structural Frame/Support System",
+              "normalized_component": "structural frame"
+            },
+            {
+              "name": "Irrigation Delivery Pipes and Fittings",
+              "confidence": 0.85,
+              "reasoning": "Pre-fabricated piping and connectors designed to distribute nutrient solution; typically standard modular components sourced separately due to variety in system design.",
+              "component": "Irrigation Delivery Pipes and Fittings",
+              "normalized_component": "irrigation delivery pipes and fittings"
+            },
+            {
+              "name": "Lighting Fixtures (LED Grow Lights)",
+              "confidence": 0.75,
+              "reasoning": "Though optional and system-dependent, in commercial setups LED grow lights are often distinct assemblies procured separately to supplement or replace natural light.",
+              "component": "Lighting Fixtures (LED Grow Lights)",
+              "normalized_component": "led grow light"
+            },
+            {
+              "name": "Control Panel or Electronic Control Unit",
+              "confidence": 0.7,
+              "reasoning": "Unified electronic module for system automation, nutrient dosing, and environmental monitoring; present in many but not all systems, usually purchased separately.",
+              "component": "Control Panel or Electronic Control Unit",
+              "normalized_component": "electronic control panel"
+            },
+            {
+              "name": "Drainage and Overflow Collection System",
+              "confidence": 0.65,
+              "reasoning": "Physical assemblies for managing excess nutrient solution, often modular and separate, though integration level varies across system designs.",
+              "component": "Drainage and Overflow Collection System",
+              "normalized_component": "drainage and overflow collection"
+            }
+          ]
+        },
+        "rounds_completed": 1,
+        "support_analysis": {
+          "consensus": [],
+          "majority": [
+            "nutrient reservoir tank",
+            "led grow light",
+            "structural frame"
+          ],
+          "isolated": [
+            "submersible water pump",
+            "grow channel",
+            "aeration",
+            "nutrient delivery tubing and connectors",
+            "electronic control panel with timers and sensors",
+            "ph and ec meter",
+            "grow bed",
+            "water and nutrient circulation pump",
+            "irrigation delivery pipes and fittings",
+            "electronic control panel",
+            "drainage and overflow collection"
+          ]
+        },
+        "critiques": [
+          {
+            "item_name": "nutrient reservoir tank",
+            "normalized_name": "nutrient reservoir tank",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.95,
+            "critique_text": "Majority support for 'nutrient reservoir tank': 2/3 agents agree (conf: 0.95). Consider strengthening consensus."
+          },
+          {
+            "item_name": "submersible water pump",
+            "normalized_name": "submersible water pump",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2"
+            ],
+            "avg_confidence": 0.98,
+            "critique_text": "Isolated proposal 'submersible water pump' from 1 agent(s) (conf: 0.98). Requires justification or peer validation."
+          },
+          {
+            "item_name": "grow channel",
+            "normalized_name": "grow channel",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2"
+            ],
+            "avg_confidence": 0.92,
+            "critique_text": "Isolated proposal 'grow channel' from 1 agent(s) (conf: 0.92). Requires justification or peer validation."
+          },
+          {
+            "item_name": "aeration",
+            "normalized_name": "aeration",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2"
+            ],
+            "avg_confidence": 0.87,
+            "critique_text": "Isolated proposal 'aeration' from 1 agent(s) (conf: 0.87). Requires justification or peer validation."
+          },
+          {
+            "item_name": "nutrient delivery tubing and connectors",
+            "normalized_name": "nutrient delivery tubing and connectors",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2"
+            ],
+            "avg_confidence": 0.85,
+            "critique_text": "Isolated proposal 'nutrient delivery tubing and connectors' from 1 agent(s) (conf: 0.85). Requires justification or peer validation."
+          },
+          {
+            "item_name": "electronic control panel with timers and sensors",
+            "normalized_name": "electronic control panel with timers and sensors",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2"
+            ],
+            "avg_confidence": 0.8,
+            "critique_text": "Isolated proposal 'electronic control panel with timers and sensors' from 1 agent(s) (conf: 0.80). Requires justification or peer validation."
+          },
+          {
+            "item_name": "led grow light",
+            "normalized_name": "led grow light",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.825,
+            "critique_text": "Majority support for 'led grow light': 2/3 agents agree (conf: 0.82). Consider strengthening consensus."
+          },
+          {
+            "item_name": "structural frame",
+            "normalized_name": "structural frame",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.865,
+            "critique_text": "Majority support for 'structural frame': 2/3 agents agree (conf: 0.86). Consider strengthening consensus."
+          },
+          {
+            "item_name": "ph and ec meter",
+            "normalized_name": "ph and ec meter",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2"
+            ],
+            "avg_confidence": 0.75,
+            "critique_text": "Isolated proposal 'ph and ec meter' from 1 agent(s) (conf: 0.75). Requires justification or peer validation."
+          },
+          {
+            "item_name": "grow bed",
+            "normalized_name": "grow bed",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_1"
+            ],
+            "avg_confidence": 0.98,
+            "critique_text": "Isolated proposal 'grow bed' from 1 agent(s) (conf: 0.98). Requires justification or peer validation."
+          },
+          {
+            "item_name": "water and nutrient circulation pump",
+            "normalized_name": "water and nutrient circulation pump",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_1"
+            ],
+            "avg_confidence": 0.95,
+            "critique_text": "Isolated proposal 'water and nutrient circulation pump' from 1 agent(s) (conf: 0.95). Requires justification or peer validation."
+          },
+          {
+            "item_name": "irrigation delivery pipes and fittings",
+            "normalized_name": "irrigation delivery pipes and fittings",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_1"
+            ],
+            "avg_confidence": 0.85,
+            "critique_text": "Isolated proposal 'irrigation delivery pipes and fittings' from 1 agent(s) (conf: 0.85). Requires justification or peer validation."
+          },
+          {
+            "item_name": "electronic control panel",
+            "normalized_name": "electronic control panel",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_1"
+            ],
+            "avg_confidence": 0.7,
+            "critique_text": "Isolated proposal 'electronic control panel' from 1 agent(s) (conf: 0.70). Requires justification or peer validation."
+          },
+          {
+            "item_name": "drainage and overflow collection",
+            "normalized_name": "drainage and overflow collection",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_1"
+            ],
+            "avg_confidence": 0.65,
+            "critique_text": "Isolated proposal 'drainage and overflow collection' from 1 agent(s) (conf: 0.65). Requires justification or peer validation."
+          }
+        ],
+        "changes_from_previous": null
+      },
+      {
+        "round_num": 2,
+        "convergence": 0.6666666666666666,
+        "threshold": 0.7,
+        "threshold_reached": false,
+        "proposals": {
+          "Agent_1": [
+            {
+              "agent_id": "Agent_1",
+              "component": "Nutrient Reservoir Tank",
+              "confidence": 0.95,
+              "reasoning": "Strong consensus among agents with high confidence average, considered essential primary component.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Lighting Fixtures (LED Grow Lights)",
+              "confidence": 0.82,
+              "reasoning": "Both agents selected with reasonable average confidence; essential for plant growth in hydroponics.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Structural Frame/Support System",
+              "confidence": 0.86,
+              "reasoning": "Both agents selected similar structural components with strong consensus; important for system stability and support.",
+              "round": 2
+            }
+          ],
+          "Agent_2": [
+            {
+              "agent_id": "Agent_2",
+              "component": "Nutrient Reservoir Tank",
+              "confidence": 0.95,
+              "reasoning": "Both agents strongly support this component with high confidence; consensus and critiques confirm it as essential.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Lighting Fixtures (LED Grow Lights)",
+              "confidence": 0.83,
+              "reasoning": "Both agents support this component with good confidence; critiques suggest preserving it due to consensus and importance for plant growth.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Structural Frame/Support System",
+              "confidence": 0.86,
+              "reasoning": "Supported by both agents under slightly different naming; critiques highlight the importance of consolidating this as a key structural component.",
+              "round": 2
+            }
+          ],
+          "Agent_3": [
+            {
+              "agent_id": "Agent_3",
+              "component": "Nutrient Reservoir Tank",
+              "confidence": 0.95,
+              "reasoning": "Strong consensus from both agents with high confidence (0.95). Essential for holding nutrient solution in hydroponic systems.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Lighting Fixtures (LED Grow Lights)",
+              "confidence": 0.82,
+              "reasoning": "Supported by both agents with an average confidence of 0.82. Critical for plant growth indoors where natural light is insufficient.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Support Structure or Frame",
+              "confidence": 0.86,
+              "reasoning": "Both agents selected structural support with an average confidence of 0.86. Important for housing and stabilizing the system components.",
+              "round": 2
+            }
+          ]
+        },
+        "rounds_completed": 2,
+        "support_analysis": {
+          "consensus": [
+            "nutrient reservoir tank",
+            "lighting fixtures (led grow lights)"
+          ],
+          "majority": [
+            "structural frame/support"
+          ],
+          "isolated": [
+            "support structure or frame"
+          ]
+        },
+        "critiques": [
+          {
+            "item_name": "Nutrient Reservoir Tank",
+            "normalized_name": "nutrient reservoir tank",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.9499999999999998,
+            "critique_text": "Strong consensus on 'Nutrient Reservoir Tank': all 3 agents support with avg confidence 0.95. Preserve this component."
+          },
+          {
+            "item_name": "Lighting Fixtures (LED Grow Lights)",
+            "normalized_name": "lighting fixtures (led grow lights)",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.8233333333333333,
+            "critique_text": "Strong consensus on 'Lighting Fixtures (LED Grow Lights)': all 3 agents support with avg confidence 0.82. Preserve this component."
+          },
+          {
+            "item_name": "Structural Frame/Support System",
+            "normalized_name": "structural frame/support",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_3"
+            ],
+            "avg_confidence": 0.86,
+            "critique_text": "Majority support for 'Structural Frame/Support System': 2/3 agents agree (conf: 0.86). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Support Structure or Frame",
+            "normalized_name": "support structure or frame",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_3"
+            ],
+            "opposing_agents": [
+              "Agent_1",
+              "Agent_2"
+            ],
+            "avg_confidence": 0.86,
+            "critique_text": "Isolated proposal 'Support Structure or Frame' from 1 agent(s) (conf: 0.86). Requires justification or peer validation."
+          }
+        ],
+        "changes_from_previous": {
+          "items_added": [
+            "structural frame/support",
+            "lighting fixtures (led grow lights)",
+            "support structure or frame"
+          ],
+          "items_removed": [
+            "structural frame",
+            "led grow light",
+            "water and nutrient circulation pump",
+            "grow bed",
+            "grow channel",
+            "nutrient delivery tubing and connectors",
+            "ph and ec meter",
+            "electronic control panel",
+            "electronic control panel with timers and sensors",
+            "submersible water pump",
+            "irrigation delivery pipes and fittings",
+            "aeration",
+            "drainage and overflow collection"
+          ],
+          "confidence_changes": {}
+        }
+      },
+      {
+        "round_num": 3,
+        "convergence": 1.0,
+        "threshold": 0.7,
+        "threshold_reached": true,
+        "proposals": {
+          "Agent_1": [
+            {
+              "agent_id": "Agent_1",
+              "component": "Nutrient Reservoir Tank",
+              "confidence": 0.95,
+              "reasoning": "Strong consensus among all agents with high confidence; essential for hydroponic systems to supply nutrients.",
+              "round": 3,
+              "normalized_component": "Nutrient Reservoir"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Lighting Fixtures (LED Grow Lights)",
+              "confidence": 0.82,
+              "reasoning": "Unanimous support from agents with good confidence; necessary for plant growth especially indoors.",
+              "round": 3,
+              "normalized_component": "LED Grow Lighting Fixture"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Structural Frame/Support System",
+              "confidence": 0.86,
+              "reasoning": "Strong multi-agent support and critical for physically supporting the hydroponic components. Chosen over the similar but isolated 'Support Structure or Frame'.",
+              "round": 3,
+              "normalized_component": "Structural Frame/Support System"
+            }
+          ],
+          "Agent_2": [
+            {
+              "agent_id": "Agent_2",
+              "component": "Nutrient Reservoir Tank",
+              "confidence": 0.95,
+              "reasoning": "Unanimous strong support from all agents with very high initial confidence. Essential for hydroponic nutrient delivery.",
+              "round": 3,
+              "normalized_component": "Nutrient Reservoir"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Lighting Fixtures (LED Grow Lights)",
+              "confidence": 0.82,
+              "reasoning": "Strong consensus with good confidence values from all peers. Critical for plant growth in hydroponic systems.",
+              "round": 3,
+              "normalized_component": "LED Grow Lighting Fixture"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Structural Frame/Support System",
+              "confidence": 0.86,
+              "reasoning": "Selected by majority of agents and supported by peer critique as necessary for physical support. High confidence justified.",
+              "round": 3,
+              "normalized_component": "Structural Frame/Support System"
+            }
+          ],
+          "Agent_3": [
+            {
+              "agent_id": "Agent_3",
+              "component": "Nutrient Reservoir Tank",
+              "confidence": 0.95,
+              "reasoning": "Strong consensus among all agents with high confidence; critical component for hydroponic systems.",
+              "round": 3,
+              "normalized_component": "Nutrient Reservoir"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Lighting Fixtures (LED Grow Lights)",
+              "confidence": 0.82,
+              "reasoning": "Unanimous support with good confidence; essential for plant growth in hydroponic setups.",
+              "round": 3,
+              "normalized_component": "LED Grow Lighting Fixture"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Structural Frame/Support System",
+              "confidence": 0.86,
+              "reasoning": "Selected by two agents with good confidence and peer critiques favoring this over the isolated similar component; provides necessary physical support.",
+              "round": 3,
+              "normalized_component": "Structural Frame/Support System"
+            }
+          ]
+        },
+        "rounds_completed": 3,
+        "support_analysis": {
+          "consensus": [
+            "nutrient reservoir tank",
+            "lighting fixtures (led grow lights)",
+            "structural frame/support"
+          ],
+          "majority": [],
+          "isolated": []
+        },
+        "critiques": [
+          {
+            "item_name": "Nutrient Reservoir Tank",
+            "normalized_name": "nutrient reservoir tank",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.9499999999999998,
+            "critique_text": "Strong consensus on 'Nutrient Reservoir Tank': all 3 agents support with avg confidence 0.95. Preserve this component."
+          },
+          {
+            "item_name": "Lighting Fixtures (LED Grow Lights)",
+            "normalized_name": "lighting fixtures (led grow lights)",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.82,
+            "critique_text": "Strong consensus on 'Lighting Fixtures (LED Grow Lights)': all 3 agents support with avg confidence 0.82. Preserve this component."
+          },
+          {
+            "item_name": "Structural Frame/Support System",
+            "normalized_name": "structural frame/support",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.86,
+            "critique_text": "Strong consensus on 'Structural Frame/Support System': all 3 agents support with avg confidence 0.86. Preserve this component."
+          }
+        ],
+        "changes_from_previous": {
+          "items_added": [],
+          "items_removed": [
+            "support structure or frame"
+          ],
+          "confidence_changes": {}
+        }
+      }
+    ],
+    "phase3_final_consensus": {
+      "technology": "Hydroponic Systems",
+      "technology_specification": "Hydroponic Systems",
+      "technology_reasoning": "",
+      "components": [
+        "Nutrient Reservoir",
+        "Structural Frame/support System",
+        "Led Grow Lighting Fixture"
+      ],
+      "confidence": 1.0,
+      "rounds": 3,
+      "convergence_score": 1.0
+    }
+  },
+  "materials_debate": {
+    "debate_rounds": [],
+    "final_consensus": {
+      "components": 3,
+      "unique_materials": 10,
+      "total_assignments": 13,
+      "materials_by_component": {
+        "Nutrient Reservoir": [
+          {
+            "name": "Polyethylene",
+            "confidence": 0.95,
+            "reasoning": "Common polymer used for manufacturing nutrient reservoirs due to chemical resistance and durability; widely standard in hydroponic systems."
+          },
+          {
+            "name": "Polypropylene",
+            "confidence": 0.9,
+            "reasoning": "Another standard polymer choice for reservoirs offering chemical resistance and mechanical strength; often substituted with polyethylene but both are industry standards."
+          },
+          {
+            "name": "Stainless steel",
+            "confidence": 0.65,
+            "reasoning": "Sometimes used for high-end or commercial nutrient reservoirs for corrosion resistance and structural strength; less common than plastics but important in some applications."
+          },
+          {
+            "name": "Glass",
+            "confidence": 0.5,
+            "reasoning": "Glass reservoirs are used occasionally for transparency and chemical inertness but less common due to fragility and weight; substitute to polymers in niche cases."
+          }
+        ],
+        "Structural Frame/support System": [
+          {
+            "name": "Aluminum",
+            "confidence": 0.9,
+            "reasoning": "Aluminum is widely used for structural frames due to its light weight, corrosion resistance, and machinability; standard industry material for hydroponic supports."
+          },
+          {
+            "name": "Steel Ingots",
+            "confidence": 0.8,
+            "reasoning": "Steel, especially stainless steel or galvanized steel, is commonly used for structural frames needing higher strength; heavier than aluminum but very durable."
+          },
+          {
+            "name": "Stainless steel",
+            "confidence": 0.85,
+            "reasoning": "Commonly used stainless steel grades (such as SS 304/316) provide corrosion resistance and structural strength; often preferred over plain steel for hydroponic support frames."
+          },
+          {
+            "name": "Fiberglass",
+            "confidence": 0.6,
+            "reasoning": "Fiberglass composites are sometimes used for corrosion resistant and lightweight structures; less common than metals but important for certain designs."
+          }
+        ],
+        "Led Grow Lighting Fixture": [
+          {
+            "name": "Aluminum",
+            "confidence": 0.9,
+            "reasoning": "Aluminum is extensively used for LED heat sinks and structural parts for its excellent thermal conductivity and light weight; industry standard."
+          },
+          {
+            "name": "Glass",
+            "confidence": 0.75,
+            "reasoning": "Glass is used for protective covers or lenses over LED arrays providing optical clarity and protection; common but some plastics may substitute."
+          },
+          {
+            "name": "Silicon",
+            "confidence": 0.95,
+            "reasoning": "Silicon is the base semiconductor material in LEDs essential for light emission and device functionality; absolutely critical and irreplaceable."
+          },
+          {
+            "name": "Aluminum gallium arsenide",
+            "confidence": 0.8,
+            "reasoning": "Aluminum gallium arsenide is a key compound semiconductor material used in some high efficiency red LEDs; standard in certain LED types but alternatives exist."
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.85,
+            "reasoning": "Copper is essential for electrical wiring and PCB traces to conduct electricity in LED fixtures; universally used."
+          }
+        ]
+      }
+    }
+  }
+}

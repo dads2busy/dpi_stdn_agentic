@@ -1,0 +1,1885 @@
+{
+  "version": "2.0",
+  "metadata": {
+    "technology": "Computer Graphics Processing Units (GPUs)",
+    "technology_specification": "Computer Graphics Processing Units (GPUs)",
+    "technology_reasoning": "",
+    "timestamp": "2026-02-12T16:07:37.801819",
+    "format_version": "2.0"
+  },
+  "config": {
+    "num_agents": 5,
+    "max_rounds": 3
+  },
+  "component_stage": {
+    "phase1_initial_proposals": [
+      {
+        "agent_id": "Agent_1",
+        "components": [
+          {
+            "name": "GPU die (silicon chip)",
+            "confidence": 1.0,
+            "reasoning": "The central semiconductor processor chip is the core functional element of any GPU card and always procured as a discrete die from semiconductor fabs."
+          },
+          {
+            "name": "Graphics memory modules (GDDR6/GDDR6X/HSRAM)",
+            "confidence": 0.98,
+            "reasoning": "Volatile high-speed memory chips specifically chosen and sourced separately, mounted on the GPU PCB to provide frame buffer and fast data access; these modules have distinct supply chains."
+          },
+          {
+            "name": "Printed Circuit Board (PCB)",
+            "confidence": 0.95,
+            "reasoning": "Custom multi-layer PCB that houses the GPU die, memory chips, power delivery components, and connectors; procured from specialized PCB manufacturers."
+          },
+          {
+            "name": "Power delivery subsystem (VRM module)",
+            "confidence": 0.9,
+            "reasoning": "The voltage regulation module, including MOSFETs, capacitors, inductors arranged on PCB segments or daughterboards, is often procured or assembled as distinct power modules critical for stable GPU operation."
+          },
+          {
+            "name": "Cooling assembly (heatsink and fan module)",
+            "confidence": 0.98,
+            "reasoning": "Active cooling solutions combining heat pipes, aluminum or copper heatsink, and axial fans are generally sourced as a procured subassembly to manage GPU thermal loads."
+          },
+          {
+            "name": "Backplate",
+            "confidence": 0.75,
+            "reasoning": "Metal or composite structural plate attached to the card\u2019s backside for rigidity and thermal dissipation; often sourced separately though some designs omit it."
+          },
+          {
+            "name": "I/O bracket with display connectors",
+            "confidence": 0.85,
+            "reasoning": "The metal bracket with mounted DisplayPort/HDMI/USB-C connectors is a distinct manufactured subassembly secured to the PCB and chassis, procured separately."
+          },
+          {
+            "name": "Firmware/BIOS chip",
+            "confidence": 0.85,
+            "reasoning": "Non-volatile memory chip containing GPU firmware and initialization code, purchased as a separate component and soldered to the PCB."
+          },
+          {
+            "name": "Auxiliary power connectors (6-pin/8-pin PCIe power plugs)",
+            "confidence": 0.7,
+            "reasoning": "External power connectors mounted on the PCB providing auxiliary power from PSU, typically standard modules sourced separately but often integrated on the PCB."
+          }
+        ],
+        "technology_specification": "Discrete dedicated computer graphics processing unit (GPU) card featuring a high-performance silicon GPU chip with integrated memory and cooling solution, designed primarily for desktop and workstation PCs to accelerate rendering and compute tasks.",
+        "technology_reasoning": "Discrete GPU cards are the industry-standard form for high-end graphics processing as of 2024 due to their superior computational performance, modularity, and ease of upgrading compared to integrated graphics solutions. Dedicated GPU cards constitute the vast majority in markets such as gaming, professional visualization, and AI workloads."
+      },
+      {
+        "agent_id": "Agent_2",
+        "components": [
+          {
+            "name": "GPU Die (Graphics Processing Silicon)",
+            "confidence": 1.0,
+            "reasoning": "The central semiconductor chip responsible for graphics computation, always a distinct manufactured component procured from foundries or fabs."
+          },
+          {
+            "name": "Printed Circuit Board (PCB) Assembly",
+            "confidence": 0.98,
+            "reasoning": "The main physical substrate hosting the GPU die, memory chips, power delivery, and interconnection circuits, manufactured as a discrete, complex assembly."
+          },
+          {
+            "name": "Graphics Memory Modules (GDDR6/GDDR6X DRAM)",
+            "confidence": 0.95,
+            "reasoning": "High-speed memory chips mounted on the PCB to support GPU processing, typically procured separately as packaged DRAM modules before PCB assembly."
+          },
+          {
+            "name": "Power Delivery Circuitry (VRMs)",
+            "confidence": 0.9,
+            "reasoning": "Voltage regulator modules and associated power stages are distinct electronic subassemblies responsible for stable power supply, often procured as separate components or modules."
+          },
+          {
+            "name": "Thermal Solution (Heatsink and Fan Assembly)",
+            "confidence": 0.98,
+            "reasoning": "Cooling system composed of metal heatsinks and fans, procured as integrated assemblies to manage GPU thermal dissipation."
+          },
+          {
+            "name": "Backplate (Structural Metal Plate)",
+            "confidence": 0.75,
+            "reasoning": "Rigid metal plate affixed to the rear of the PCB providing mechanical support and sometimes thermal dissipation, frequently sourced as a separate component but absent in some budget designs."
+          },
+          {
+            "name": "Connector Interface (PCIe Bracket and Slot Connectors)",
+            "confidence": 0.9,
+            "reasoning": "Physical electrical interface components for connecting the GPU card to the motherboard, typically supplied by specialized electronic connector manufacturers."
+          },
+          {
+            "name": "VRAM Thermal Pads and Interface Materials",
+            "confidence": 0.4,
+            "reasoning": "Thermal interface materials uniquely procured and installed for heat conduction between memory chips and heat spreaders, but generally considered consumables, thus lower confidence."
+          }
+        ],
+        "technology_specification": "Discrete graphics processing unit (GPU) card featuring a dedicated PCB assembly, high-performance GPU silicon die, and supporting physical and thermal management components.",
+        "technology_reasoning": "Discrete GPUs in the form of dedicated expansion cards dominate the graphics processing market for desktops and workstations due to their superior graphics performance, flexibility, and separate cooling requirements. This form factor integrates multiple functional and structural components as distinct procurable units assembled together."
+      },
+      {
+        "agent_id": "Agent_3",
+        "components": [
+          {
+            "name": "GPU Die (Graphics Processing Chip)",
+            "confidence": 1.0,
+            "reasoning": "The primary silicon chip responsible for graphics processing, manufactured separately by semiconductor fabs and the core functional element of the GPU card."
+          },
+          {
+            "name": "VRAM Modules (GDDR6 or GDDR6X Memory Chips)",
+            "confidence": 0.98,
+            "reasoning": "Dedicated high-speed video memory chips mounted separately on the PCB, sourced from distinct semiconductor suppliers specializing in graphics memory."
+          },
+          {
+            "name": "PCB Assembly (Printed Circuit Board)",
+            "confidence": 1.0,
+            "reasoning": "The multi-layer PCB hosts all electronic components including the GPU die, VRAM, voltage regulators, power delivery, and interface connectors; it is a distinct manufactured subassembly."
+          },
+          {
+            "name": "VRM (Voltage Regulator Module)",
+            "confidence": 0.92,
+            "reasoning": "Power regulation circuitry typically sourced as discrete modules or integrated subassemblies mounted on the PCB to ensure stable power to the GPU and memory."
+          },
+          {
+            "name": "Cooling System (Heatsink and Fan Assembly)",
+            "confidence": 0.9,
+            "reasoning": "Mechanical assembly responsible for thermal management of the GPU card, usually procured as a separate component consisting of heatsinks, fans, and heat pipes."
+          },
+          {
+            "name": "GPU Card Enclosure/Shroud",
+            "confidence": 0.85,
+            "reasoning": "Plastic or metal structural housing that covers the PCB and cooling system providing mechanical protection and aesthetics, generally sourced as a separate manufactured part."
+          },
+          {
+            "name": "Display Output Connectors (HDMI, DisplayPort)",
+            "confidence": 0.8,
+            "reasoning": "Electrical connectors mounted on the PCB as separate components facilitating external display connections; procured from specialized connector manufacturers."
+          },
+          {
+            "name": "Power Connector Interface",
+            "confidence": 0.78,
+            "reasoning": "Standard PCIe power connectors (6-pin, 8-pin) mounted on the PCB or bracket, procured separately for power delivery from the PSU to the GPU card."
+          },
+          {
+            "name": "BIOS Chip (EEPROM)",
+            "confidence": 0.75,
+            "reasoning": "Non-volatile memory chip storing firmware for GPU initialization and operation, mounted on the PCB and sourced separately."
+          }
+        ],
+        "technology_specification": "Discrete Computer Graphics Processing Unit (GPU) card featuring a dedicated GPU die, VRAM modules, and supporting printed circuit board (PCB) assembly.",
+        "technology_reasoning": "Discrete GPUs are the dominant form in the graphics market for desktops and workstations due to their high performance and flexibility, accounting for the majority of GPU sales outside integrated solutions. These cards consist of individually manufactured subassemblies including the GPU chip, VRAM, PCB, cooling solution, and power management components, each with distinct suppliers and supply chains."
+      },
+      {
+        "agent_id": "Agent_4",
+        "components": [
+          {
+            "name": "GPU Die (Graphics Processing Chip)",
+            "confidence": 1.0,
+            "reasoning": "The core silicon chip responsible for parallel graphics computation and rendering; universally present and the defining element of all GPUs."
+          },
+          {
+            "name": "Video Memory (GDDR6 or GDDR6X VRAM Modules)",
+            "confidence": 0.98,
+            "reasoning": "Dedicated high-speed memory modules physically separate from the GPU die, crucial for storing frame buffers and textures, are always procured separately."
+          },
+          {
+            "name": "Printed Circuit Board (PCB) Substrate",
+            "confidence": 0.95,
+            "reasoning": "The multi-layer substrate onto which GPU die, memory modules, and other components are mounted; supplied and manufactured as a discrete assembly."
+          },
+          {
+            "name": "Voltage Regulation Module (VRM)",
+            "confidence": 0.92,
+            "reasoning": "An electronic power delivery subassembly providing stable voltage to the GPU and VRAM; typically modular and sourced from specialist suppliers."
+          },
+          {
+            "name": "Cooling System (Heatsink and Fan Assembly)",
+            "confidence": 0.95,
+            "reasoning": "Essential for dissipating heat from the GPU die and memory; usually procured as a separate manufactured cooling solution."
+          },
+          {
+            "name": "Power Connector Interface",
+            "confidence": 0.85,
+            "reasoning": "The external connectors (6-pin, 8-pin PCIe power connectors) designed for GPU power delivery, procured as distinct components."
+          },
+          {
+            "name": "PCIe Interface Connector",
+            "confidence": 0.9,
+            "reasoning": "The edge connector for interfacing the GPU card with the motherboard slot; a distinct manufactured component."
+          },
+          {
+            "name": "Memory Controller and Sensor Board (or Sub-board)",
+            "confidence": 0.6,
+            "reasoning": "Some designs include a dedicated small PCB or sub-board hosting memory controllers or sensors; present in some but not all designs."
+          },
+          {
+            "name": "Firmware/BIOS Chip",
+            "confidence": 0.85,
+            "reasoning": "Non-volatile memory storing GPU boot firmware; usually a separate, procurable chip on the PCB."
+          }
+        ],
+        "technology_specification": "Discrete Computer Graphics Processing Unit (GPU) card featuring an integrated graphics processing chip, dedicated VRAM (Video RAM), and supporting power and data management subsystems designed primarily for high-performance graphics computation in PCs and servers.",
+        "technology_reasoning": "Discrete GPUs are the dominant form factor for graphics processing in desktops, gaming, and data centers, with NVIDIA and AMD leading the market. These GPUs consist of a GPU die chip, dedicated memory, power delivery, and cooling systems on a PCB, making this specification the clear industry standard as of 2024."
+      },
+      {
+        "agent_id": "Agent_5",
+        "components": [
+          {
+            "name": "Graphics Processing Unit (GPU) Die",
+            "confidence": 1.0,
+            "reasoning": "The silicon die is the core processing component of the GPU card responsible for all rendering and compute tasks; it is a distinct high-value manufactured component procured by GPU manufacturers from semiconductor fabs."
+          },
+          {
+            "name": "High-Bandwidth Memory Modules (GDDR6 or GDDR6X)",
+            "confidence": 0.98,
+            "reasoning": "Dedicated VRAM modules are critical for GPU operation and are separate components procured from specialized memory suppliers, physically mounted on the PCB."
+          },
+          {
+            "name": "Printed Circuit Board (PCB) Assembly",
+            "confidence": 0.95,
+            "reasoning": "The PCB forms the structural and electrical base for the GPU card, including traces and mounting for all components; it is produced separately and assembled with electronics."
+          },
+          {
+            "name": "Voltage Regulation Module (VRM) / Power Delivery Subsystem",
+            "confidence": 0.93,
+            "reasoning": "This subsystem manages stable power to the GPU and memory, composed of multiple discrete components (MOSFETs, controllers) often procured and integrated as a dedicated module."
+          },
+          {
+            "name": "Cooling Solution (Heatsink and Fan Assembly)",
+            "confidence": 0.9,
+            "reasoning": "Necessary for thermal management, this mechanical and electromechanical assembly is typically a separately fabricated component sourced from thermal solutions suppliers."
+          },
+          {
+            "name": "Video Output Interface Board",
+            "confidence": 0.85,
+            "reasoning": "Contains connectors (HDMI, DisplayPort) and associated circuitry, often a separate small PCB subassembly attached to the main board."
+          },
+          {
+            "name": "Firmware Storage Module (e.g., SPI Flash)",
+            "confidence": 0.8,
+            "reasoning": "Non-volatile memory that stores GPU firmware; procured as a discrete electronic component mounted on the PCB."
+          },
+          {
+            "name": "Backplate / Structural Frame",
+            "confidence": 0.75,
+            "reasoning": "Typically a metal or composite structural element providing mechanical rigidity and protection; often coordinated with manufacturing but procured separately as an assembly."
+          }
+        ],
+        "technology_specification": "Discrete graphics processing unit (GPU) card featuring an integrated graphics processor die with dedicated memory and power delivery subsystems, typically used as a plug-in card for desktop computers or servers.",
+        "technology_reasoning": "Discrete GPUs with integrated processor dies have dominated the computer graphics market for years due to superior performance and flexibility compared to integrated solutions. These cards include several major procurements like GPU silicon dies, dedicated high-speed memory modules (such as GDDR6), printed circuit boards (PCBs), power delivery components, and cooling subsystems, each having separate supply chains and standard manufacturing practices in 2024."
+      }
+    ],
+    "phase2_debate_rounds": [
+      {
+        "round_num": 1,
+        "convergence": 0.437995337995338,
+        "threshold": 0.7,
+        "threshold_reached": false,
+        "proposals": {
+          "Agent_1": [
+            {
+              "name": "GPU die (silicon chip)",
+              "confidence": 1.0,
+              "reasoning": "The central semiconductor processor chip is the core functional element of any GPU card and always procured as a discrete die from semiconductor fabs.",
+              "component": "GPU die (silicon chip)",
+              "normalized_component": "graphics processing unit (gpu) die"
+            },
+            {
+              "name": "Graphics memory modules (GDDR6/GDDR6X/HSRAM)",
+              "confidence": 0.98,
+              "reasoning": "Volatile high-speed memory chips specifically chosen and sourced separately, mounted on the GPU PCB to provide frame buffer and fast data access; these modules have distinct supply chains.",
+              "component": "Graphics memory modules (GDDR6/GDDR6X/HSRAM)",
+              "normalized_component": "gddr6/gddr6x/hsram memory modules"
+            },
+            {
+              "name": "Printed Circuit Board (PCB)",
+              "confidence": 0.95,
+              "reasoning": "Custom multi-layer PCB that houses the GPU die, memory chips, power delivery components, and connectors; procured from specialized PCB manufacturers.",
+              "component": "Printed Circuit Board (PCB)",
+              "normalized_component": "printed circuit board (pcb)"
+            },
+            {
+              "name": "Power delivery subsystem (VRM module)",
+              "confidence": 0.9,
+              "reasoning": "The voltage regulation module, including MOSFETs, capacitors, inductors arranged on PCB segments or daughterboards, is often procured or assembled as distinct power modules critical for stable GPU operation.",
+              "component": "Power delivery subsystem (VRM module)",
+              "normalized_component": "voltage regulator module (vrm)"
+            },
+            {
+              "name": "Cooling assembly (heatsink and fan module)",
+              "confidence": 0.98,
+              "reasoning": "Active cooling solutions combining heat pipes, aluminum or copper heatsink, and axial fans are generally sourced as a procured subassembly to manage GPU thermal loads.",
+              "component": "Cooling assembly (heatsink and fan module)",
+              "normalized_component": "heatsink and fan"
+            },
+            {
+              "name": "Backplate",
+              "confidence": 0.75,
+              "reasoning": "Metal or composite structural plate attached to the card\u2019s backside for rigidity and thermal dissipation; often sourced separately though some designs omit it.",
+              "component": "Backplate",
+              "normalized_component": "backplate"
+            },
+            {
+              "name": "I/O bracket with display connectors",
+              "confidence": 0.85,
+              "reasoning": "The metal bracket with mounted DisplayPort/HDMI/USB-C connectors is a distinct manufactured subassembly secured to the PCB and chassis, procured separately.",
+              "component": "I/O bracket with display connectors",
+              "normalized_component": "display output bracket"
+            },
+            {
+              "name": "Firmware/BIOS chip",
+              "confidence": 0.85,
+              "reasoning": "Non-volatile memory chip containing GPU firmware and initialization code, purchased as a separate component and soldered to the PCB.",
+              "component": "Firmware/BIOS chip",
+              "normalized_component": "bios/firmware chip"
+            },
+            {
+              "name": "Auxiliary power connectors (6-pin/8-pin PCIe power plugs)",
+              "confidence": 0.7,
+              "reasoning": "External power connectors mounted on the PCB providing auxiliary power from PSU, typically standard modules sourced separately but often integrated on the PCB.",
+              "component": "Auxiliary power connectors (6-pin/8-pin PCIe power plugs)",
+              "normalized_component": "pcie auxiliary power connectors"
+            }
+          ],
+          "Agent_2": [
+            {
+              "name": "GPU Die (Graphics Processing Silicon)",
+              "confidence": 1.0,
+              "reasoning": "The central semiconductor chip responsible for graphics computation, always a distinct manufactured component procured from foundries or fabs.",
+              "component": "GPU Die (Graphics Processing Silicon)",
+              "normalized_component": "graphics processing unit (gpu) die"
+            },
+            {
+              "name": "Printed Circuit Board (PCB) Assembly",
+              "confidence": 0.98,
+              "reasoning": "The main physical substrate hosting the GPU die, memory chips, power delivery, and interconnection circuits, manufactured as a discrete, complex assembly.",
+              "component": "Printed Circuit Board (PCB) Assembly",
+              "normalized_component": "printed circuit board (pcb)"
+            },
+            {
+              "name": "Graphics Memory Modules (GDDR6/GDDR6X DRAM)",
+              "confidence": 0.95,
+              "reasoning": "High-speed memory chips mounted on the PCB to support GPU processing, typically procured separately as packaged DRAM modules before PCB assembly.",
+              "component": "Graphics Memory Modules (GDDR6/GDDR6X DRAM)",
+              "normalized_component": "gddr6/gddr6x dram modules"
+            },
+            {
+              "name": "Power Delivery Circuitry (VRMs)",
+              "confidence": 0.9,
+              "reasoning": "Voltage regulator modules and associated power stages are distinct electronic subassemblies responsible for stable power supply, often procured as separate components or modules.",
+              "component": "Power Delivery Circuitry (VRMs)",
+              "normalized_component": "voltage regulator module (vrm)"
+            },
+            {
+              "name": "Thermal Solution (Heatsink and Fan Assembly)",
+              "confidence": 0.98,
+              "reasoning": "Cooling system composed of metal heatsinks and fans, procured as integrated assemblies to manage GPU thermal dissipation.",
+              "component": "Thermal Solution (Heatsink and Fan Assembly)",
+              "normalized_component": "heatsink and fan"
+            },
+            {
+              "name": "Backplate (Structural Metal Plate)",
+              "confidence": 0.75,
+              "reasoning": "Rigid metal plate affixed to the rear of the PCB providing mechanical support and sometimes thermal dissipation, frequently sourced as a separate component but absent in some budget designs.",
+              "component": "Backplate (Structural Metal Plate)",
+              "normalized_component": "backplate"
+            },
+            {
+              "name": "Connector Interface (PCIe Bracket and Slot Connectors)",
+              "confidence": 0.9,
+              "reasoning": "Physical electrical interface components for connecting the GPU card to the motherboard, typically supplied by specialized electronic connector manufacturers.",
+              "component": "Connector Interface (PCIe Bracket and Slot Connectors)",
+              "normalized_component": "pcie connector interface"
+            },
+            {
+              "name": "VRAM Thermal Pads and Interface Materials",
+              "confidence": 0.4,
+              "reasoning": "Thermal interface materials uniquely procured and installed for heat conduction between memory chips and heat spreaders, but generally considered consumables, thus lower confidence.",
+              "component": "VRAM Thermal Pads and Interface Materials",
+              "normalized_component": "vram thermal pads"
+            }
+          ],
+          "Agent_3": [
+            {
+              "name": "GPU Die (Graphics Processing Chip)",
+              "confidence": 1.0,
+              "reasoning": "The primary silicon chip responsible for graphics processing, manufactured separately by semiconductor fabs and the core functional element of the GPU card.",
+              "component": "GPU Die (Graphics Processing Chip)",
+              "normalized_component": "graphics processing unit (gpu) die"
+            },
+            {
+              "name": "VRAM Modules (GDDR6 or GDDR6X Memory Chips)",
+              "confidence": 0.98,
+              "reasoning": "Dedicated high-speed video memory chips mounted separately on the PCB, sourced from distinct semiconductor suppliers specializing in graphics memory.",
+              "component": "VRAM Modules (GDDR6 or GDDR6X Memory Chips)",
+              "normalized_component": "gddr6/gddr6x vram modules"
+            },
+            {
+              "name": "PCB Assembly (Printed Circuit Board)",
+              "confidence": 1.0,
+              "reasoning": "The multi-layer PCB hosts all electronic components including the GPU die, VRAM, voltage regulators, power delivery, and interface connectors; it is a distinct manufactured subassembly.",
+              "component": "PCB Assembly (Printed Circuit Board)",
+              "normalized_component": "printed circuit board (pcb)"
+            },
+            {
+              "name": "VRM (Voltage Regulator Module)",
+              "confidence": 0.92,
+              "reasoning": "Power regulation circuitry typically sourced as discrete modules or integrated subassemblies mounted on the PCB to ensure stable power to the GPU and memory.",
+              "component": "VRM (Voltage Regulator Module)",
+              "normalized_component": "voltage regulator module (vrm)"
+            },
+            {
+              "name": "Cooling System (Heatsink and Fan Assembly)",
+              "confidence": 0.9,
+              "reasoning": "Mechanical assembly responsible for thermal management of the GPU card, usually procured as a separate component consisting of heatsinks, fans, and heat pipes.",
+              "component": "Cooling System (Heatsink and Fan Assembly)",
+              "normalized_component": "heatsink and fan"
+            },
+            {
+              "name": "GPU Card Enclosure/Shroud",
+              "confidence": 0.85,
+              "reasoning": "Plastic or metal structural housing that covers the PCB and cooling system providing mechanical protection and aesthetics, generally sourced as a separate manufactured part.",
+              "component": "GPU Card Enclosure/Shroud",
+              "normalized_component": "card enclosure/shroud"
+            },
+            {
+              "name": "Display Output Connectors (HDMI, DisplayPort)",
+              "confidence": 0.8,
+              "reasoning": "Electrical connectors mounted on the PCB as separate components facilitating external display connections; procured from specialized connector manufacturers.",
+              "component": "Display Output Connectors (HDMI, DisplayPort)",
+              "normalized_component": "display output connectors"
+            },
+            {
+              "name": "Power Connector Interface",
+              "confidence": 0.78,
+              "reasoning": "Standard PCIe power connectors (6-pin, 8-pin) mounted on the PCB or bracket, procured separately for power delivery from the PSU to the GPU card.",
+              "component": "Power Connector Interface",
+              "normalized_component": "power connector interface"
+            },
+            {
+              "name": "BIOS Chip (EEPROM)",
+              "confidence": 0.75,
+              "reasoning": "Non-volatile memory chip storing firmware for GPU initialization and operation, mounted on the PCB and sourced separately.",
+              "component": "BIOS Chip (EEPROM)",
+              "normalized_component": "bios/firmware chip"
+            }
+          ],
+          "Agent_4": [
+            {
+              "name": "GPU Die (Graphics Processing Chip)",
+              "confidence": 1.0,
+              "reasoning": "The core silicon chip responsible for parallel graphics computation and rendering; universally present and the defining element of all GPUs.",
+              "component": "GPU Die (Graphics Processing Chip)",
+              "normalized_component": "graphics processing unit (gpu) die"
+            },
+            {
+              "name": "Video Memory (GDDR6 or GDDR6X VRAM Modules)",
+              "confidence": 0.98,
+              "reasoning": "Dedicated high-speed memory modules physically separate from the GPU die, crucial for storing frame buffers and textures, are always procured separately.",
+              "component": "Video Memory (GDDR6 or GDDR6X VRAM Modules)",
+              "normalized_component": "gddr6/gddr6x vram modules"
+            },
+            {
+              "name": "Printed Circuit Board (PCB) Substrate",
+              "confidence": 0.95,
+              "reasoning": "The multi-layer substrate onto which GPU die, memory modules, and other components are mounted; supplied and manufactured as a discrete assembly.",
+              "component": "Printed Circuit Board (PCB) Substrate",
+              "normalized_component": "printed circuit board (pcb)"
+            },
+            {
+              "name": "Voltage Regulation Module (VRM)",
+              "confidence": 0.92,
+              "reasoning": "An electronic power delivery subassembly providing stable voltage to the GPU and VRAM; typically modular and sourced from specialist suppliers.",
+              "component": "Voltage Regulation Module (VRM)",
+              "normalized_component": "voltage regulator module (vrm)"
+            },
+            {
+              "name": "Cooling System (Heatsink and Fan Assembly)",
+              "confidence": 0.95,
+              "reasoning": "Essential for dissipating heat from the GPU die and memory; usually procured as a separate manufactured cooling solution.",
+              "component": "Cooling System (Heatsink and Fan Assembly)",
+              "normalized_component": "heatsink and fan"
+            },
+            {
+              "name": "Power Connector Interface",
+              "confidence": 0.85,
+              "reasoning": "The external connectors (6-pin, 8-pin PCIe power connectors) designed for GPU power delivery, procured as distinct components.",
+              "component": "Power Connector Interface",
+              "normalized_component": "power connector interface"
+            },
+            {
+              "name": "PCIe Interface Connector",
+              "confidence": 0.9,
+              "reasoning": "The edge connector for interfacing the GPU card with the motherboard slot; a distinct manufactured component.",
+              "component": "PCIe Interface Connector",
+              "normalized_component": "pcie connector interface"
+            },
+            {
+              "name": "Memory Controller and Sensor Board (or Sub-board)",
+              "confidence": 0.6,
+              "reasoning": "Some designs include a dedicated small PCB or sub-board hosting memory controllers or sensors; present in some but not all designs.",
+              "component": "Memory Controller and Sensor Board (or Sub-board)",
+              "normalized_component": "memory controller and sensor board"
+            },
+            {
+              "name": "Firmware/BIOS Chip",
+              "confidence": 0.85,
+              "reasoning": "Non-volatile memory storing GPU boot firmware; usually a separate, procurable chip on the PCB.",
+              "component": "Firmware/BIOS Chip",
+              "normalized_component": "bios/firmware chip"
+            }
+          ],
+          "Agent_5": [
+            {
+              "name": "Graphics Processing Unit (GPU) Die",
+              "confidence": 1.0,
+              "reasoning": "The silicon die is the core processing component of the GPU card responsible for all rendering and compute tasks; it is a distinct high-value manufactured component procured by GPU manufacturers from semiconductor fabs.",
+              "component": "Graphics Processing Unit (GPU) Die",
+              "normalized_component": "graphics processing unit (gpu) die"
+            },
+            {
+              "name": "High-Bandwidth Memory Modules (GDDR6 or GDDR6X)",
+              "confidence": 0.98,
+              "reasoning": "Dedicated VRAM modules are critical for GPU operation and are separate components procured from specialized memory suppliers, physically mounted on the PCB.",
+              "component": "High-Bandwidth Memory Modules (GDDR6 or GDDR6X)",
+              "normalized_component": "gddr6/gddr6x memory modules"
+            },
+            {
+              "name": "Printed Circuit Board (PCB) Assembly",
+              "confidence": 0.95,
+              "reasoning": "The PCB forms the structural and electrical base for the GPU card, including traces and mounting for all components; it is produced separately and assembled with electronics.",
+              "component": "Printed Circuit Board (PCB) Assembly",
+              "normalized_component": "printed circuit board (pcb)"
+            },
+            {
+              "name": "Voltage Regulation Module (VRM) / Power Delivery Subsystem",
+              "confidence": 0.93,
+              "reasoning": "This subsystem manages stable power to the GPU and memory, composed of multiple discrete components (MOSFETs, controllers) often procured and integrated as a dedicated module.",
+              "component": "Voltage Regulation Module (VRM) / Power Delivery Subsystem",
+              "normalized_component": "voltage regulator module (vrm)"
+            },
+            {
+              "name": "Cooling Solution (Heatsink and Fan Assembly)",
+              "confidence": 0.9,
+              "reasoning": "Necessary for thermal management, this mechanical and electromechanical assembly is typically a separately fabricated component sourced from thermal solutions suppliers.",
+              "component": "Cooling Solution (Heatsink and Fan Assembly)",
+              "normalized_component": "heatsink and fan"
+            },
+            {
+              "name": "Video Output Interface Board",
+              "confidence": 0.85,
+              "reasoning": "Contains connectors (HDMI, DisplayPort) and associated circuitry, often a separate small PCB subassembly attached to the main board.",
+              "component": "Video Output Interface Board",
+              "normalized_component": "video output interface board"
+            },
+            {
+              "name": "Firmware Storage Module (e.g., SPI Flash)",
+              "confidence": 0.8,
+              "reasoning": "Non-volatile memory that stores GPU firmware; procured as a discrete electronic component mounted on the PCB.",
+              "component": "Firmware Storage Module (e.g., SPI Flash)",
+              "normalized_component": "bios/firmware chip"
+            },
+            {
+              "name": "Backplate / Structural Frame",
+              "confidence": 0.75,
+              "reasoning": "Typically a metal or composite structural element providing mechanical rigidity and protection; often coordinated with manufacturing but procured separately as an assembly.",
+              "component": "Backplate / Structural Frame",
+              "normalized_component": "backplate"
+            }
+          ]
+        },
+        "rounds_completed": 1,
+        "support_analysis": {
+          "consensus": [
+            "backplate"
+          ],
+          "majority": [
+            "graphics processing unit (gpu) die",
+            "printed circuit board (pcb)",
+            "voltage regulator module (vrm)",
+            "heatsink and fan",
+            "bios/firmware chip",
+            "pcie connector interface",
+            "gddr6/gddr6x vram modules",
+            "power connector interface"
+          ],
+          "isolated": [
+            "gddr6/gddr6x/hsram memory modules",
+            "display output bracket",
+            "pcie auxiliary power connectors",
+            "gddr6/gddr6x dram modules",
+            "vram thermal pads",
+            "card enclosure/shroud",
+            "display output connectors",
+            "memory controller and sensor board",
+            "gddr6/gddr6x memory modules",
+            "video output interface board"
+          ]
+        },
+        "critiques": [
+          {
+            "item_name": "graphics processing unit (gpu) die",
+            "normalized_name": "graphics processing unit (gpu) die",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_5",
+              "Agent_1",
+              "Agent_2",
+              "Agent_4"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 1.0,
+            "critique_text": "Majority support for 'graphics processing unit (gpu) die': 5/3 agents agree (conf: 1.00). Consider strengthening consensus."
+          },
+          {
+            "item_name": "gddr6/gddr6x/hsram memory modules",
+            "normalized_name": "gddr6/gddr6x/hsram memory modules",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_5",
+              "Agent_2",
+              "Agent_3",
+              "Agent_4"
+            ],
+            "avg_confidence": 0.98,
+            "critique_text": "Isolated proposal 'gddr6/gddr6x/hsram memory modules' from 1 agent(s) (conf: 0.98). Requires justification or peer validation."
+          },
+          {
+            "item_name": "printed circuit board (pcb)",
+            "normalized_name": "printed circuit board (pcb)",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_5",
+              "Agent_1",
+              "Agent_2",
+              "Agent_4"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.966,
+            "critique_text": "Majority support for 'printed circuit board (pcb)': 5/3 agents agree (conf: 0.97). Consider strengthening consensus."
+          },
+          {
+            "item_name": "voltage regulator module (vrm)",
+            "normalized_name": "voltage regulator module (vrm)",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_5",
+              "Agent_1",
+              "Agent_2",
+              "Agent_4"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.914,
+            "critique_text": "Majority support for 'voltage regulator module (vrm)': 5/3 agents agree (conf: 0.91). Consider strengthening consensus."
+          },
+          {
+            "item_name": "heatsink and fan",
+            "normalized_name": "heatsink and fan",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_5",
+              "Agent_1",
+              "Agent_2",
+              "Agent_4"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.942,
+            "critique_text": "Majority support for 'heatsink and fan': 5/3 agents agree (conf: 0.94). Consider strengthening consensus."
+          },
+          {
+            "item_name": "backplate",
+            "normalized_name": "backplate",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_5",
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_4",
+              "Agent_3"
+            ],
+            "avg_confidence": 0.75,
+            "critique_text": "Strong consensus on 'backplate': all 3 agents support with avg confidence 0.75. Preserve this component."
+          },
+          {
+            "item_name": "display output bracket",
+            "normalized_name": "display output bracket",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_5",
+              "Agent_2",
+              "Agent_3",
+              "Agent_4"
+            ],
+            "avg_confidence": 0.85,
+            "critique_text": "Isolated proposal 'display output bracket' from 1 agent(s) (conf: 0.85). Requires justification or peer validation."
+          },
+          {
+            "item_name": "bios/firmware chip",
+            "normalized_name": "bios/firmware chip",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_5",
+              "Agent_1",
+              "Agent_4",
+              "Agent_3"
+            ],
+            "opposing_agents": [
+              "Agent_2"
+            ],
+            "avg_confidence": 0.8125,
+            "critique_text": "Majority support for 'bios/firmware chip': 4/3 agents agree (conf: 0.81). Consider strengthening consensus."
+          },
+          {
+            "item_name": "pcie auxiliary power connectors",
+            "normalized_name": "pcie auxiliary power connectors",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_5",
+              "Agent_2",
+              "Agent_3",
+              "Agent_4"
+            ],
+            "avg_confidence": 0.7,
+            "critique_text": "Isolated proposal 'pcie auxiliary power connectors' from 1 agent(s) (conf: 0.70). Requires justification or peer validation."
+          },
+          {
+            "item_name": "gddr6/gddr6x dram modules",
+            "normalized_name": "gddr6/gddr6x dram modules",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_5",
+              "Agent_1",
+              "Agent_4",
+              "Agent_3"
+            ],
+            "avg_confidence": 0.95,
+            "critique_text": "Isolated proposal 'gddr6/gddr6x dram modules' from 1 agent(s) (conf: 0.95). Requires justification or peer validation."
+          },
+          {
+            "item_name": "pcie connector interface",
+            "normalized_name": "pcie connector interface",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_4"
+            ],
+            "opposing_agents": [
+              "Agent_5",
+              "Agent_1",
+              "Agent_3"
+            ],
+            "avg_confidence": 0.9,
+            "critique_text": "Majority support for 'pcie connector interface': 2/3 agents agree (conf: 0.90). Consider strengthening consensus."
+          },
+          {
+            "item_name": "vram thermal pads",
+            "normalized_name": "vram thermal pads",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_5",
+              "Agent_1",
+              "Agent_4",
+              "Agent_3"
+            ],
+            "avg_confidence": 0.4,
+            "critique_text": "Isolated proposal 'vram thermal pads' from 1 agent(s) (conf: 0.40). Requires justification or peer validation."
+          },
+          {
+            "item_name": "gddr6/gddr6x vram modules",
+            "normalized_name": "gddr6/gddr6x vram modules",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_4",
+              "Agent_3"
+            ],
+            "opposing_agents": [
+              "Agent_5",
+              "Agent_1",
+              "Agent_2"
+            ],
+            "avg_confidence": 0.98,
+            "critique_text": "Majority support for 'gddr6/gddr6x vram modules': 2/3 agents agree (conf: 0.98). Consider strengthening consensus."
+          },
+          {
+            "item_name": "card enclosure/shroud",
+            "normalized_name": "card enclosure/shroud",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_3"
+            ],
+            "opposing_agents": [
+              "Agent_5",
+              "Agent_1",
+              "Agent_2",
+              "Agent_4"
+            ],
+            "avg_confidence": 0.85,
+            "critique_text": "Isolated proposal 'card enclosure/shroud' from 1 agent(s) (conf: 0.85). Requires justification or peer validation."
+          },
+          {
+            "item_name": "display output connectors",
+            "normalized_name": "display output connectors",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_3"
+            ],
+            "opposing_agents": [
+              "Agent_5",
+              "Agent_1",
+              "Agent_2",
+              "Agent_4"
+            ],
+            "avg_confidence": 0.8,
+            "critique_text": "Isolated proposal 'display output connectors' from 1 agent(s) (conf: 0.80). Requires justification or peer validation."
+          },
+          {
+            "item_name": "power connector interface",
+            "normalized_name": "power connector interface",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_4",
+              "Agent_3"
+            ],
+            "opposing_agents": [
+              "Agent_5",
+              "Agent_1",
+              "Agent_2"
+            ],
+            "avg_confidence": 0.815,
+            "critique_text": "Majority support for 'power connector interface': 2/3 agents agree (conf: 0.81). Consider strengthening consensus."
+          },
+          {
+            "item_name": "memory controller and sensor board",
+            "normalized_name": "memory controller and sensor board",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_4"
+            ],
+            "opposing_agents": [
+              "Agent_5",
+              "Agent_1",
+              "Agent_2",
+              "Agent_3"
+            ],
+            "avg_confidence": 0.6,
+            "critique_text": "Isolated proposal 'memory controller and sensor board' from 1 agent(s) (conf: 0.60). Requires justification or peer validation."
+          },
+          {
+            "item_name": "gddr6/gddr6x memory modules",
+            "normalized_name": "gddr6/gddr6x memory modules",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_5"
+            ],
+            "opposing_agents": [
+              "Agent_4",
+              "Agent_1",
+              "Agent_2",
+              "Agent_3"
+            ],
+            "avg_confidence": 0.98,
+            "critique_text": "Isolated proposal 'gddr6/gddr6x memory modules' from 1 agent(s) (conf: 0.98). Requires justification or peer validation."
+          },
+          {
+            "item_name": "video output interface board",
+            "normalized_name": "video output interface board",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_5"
+            ],
+            "opposing_agents": [
+              "Agent_4",
+              "Agent_1",
+              "Agent_2",
+              "Agent_3"
+            ],
+            "avg_confidence": 0.85,
+            "critique_text": "Isolated proposal 'video output interface board' from 1 agent(s) (conf: 0.85). Requires justification or peer validation."
+          }
+        ],
+        "changes_from_previous": null
+      },
+      {
+        "round_num": 2,
+        "convergence": 0.6523809523809524,
+        "threshold": 0.7,
+        "threshold_reached": false,
+        "proposals": {
+          "Agent_1": [
+            {
+              "agent_id": "Agent_1",
+              "component": "Graphics Processing Unit (GPU) Die",
+              "confidence": 1.0,
+              "reasoning": "Unanimous support from all agents with maximum confidence, critical component of GPU hardware.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Printed Circuit Board (PCB) Assembly",
+              "confidence": 0.97,
+              "reasoning": "Strong consensus among all agents, slightly varied naming but consistent inclusion and high confidence; essential underlying hardware.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Voltage Regulation Module (VRM)",
+              "confidence": 0.91,
+              "reasoning": "All agents support it with strong consensus, essential for power delivery to the GPU components.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Cooling Solution (Heatsink and Fan Assembly)",
+              "confidence": 0.94,
+              "reasoning": "Unanimous agreement across all agents, critical for thermal management of GPU hardware.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Backplate / Structural Frame",
+              "confidence": 0.75,
+              "reasoning": "Supported by multiple agents with moderate confidence; provides structural integrity and some thermal benefits.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Firmware/BIOS Chip",
+              "confidence": 0.81,
+              "reasoning": "Strong majority support with good confidence; required for firmware storage and GPU initialization.",
+              "round": 2
+            }
+          ],
+          "Agent_2": [
+            {
+              "agent_id": "Agent_2",
+              "component": "Graphics Processing Unit (GPU) Die",
+              "confidence": 1.0,
+              "reasoning": "Unanimous strong support from all agents at highest confidence; core component of any GPU.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Printed Circuit Board (PCB) Assembly",
+              "confidence": 0.97,
+              "reasoning": "Strong consensus among all agents with high confidence; essential substrate for component integration.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Voltage Regulation Module (VRM) / Power Delivery Subsystem",
+              "confidence": 0.91,
+              "reasoning": "Strong multi-agent agreement with consistent confidence around 0.9+; critical for stable power delivery.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Cooling Solution (Heatsink and Fan Assembly)",
+              "confidence": 0.94,
+              "reasoning": "Strong consensus and high importance due to thermal management criticality in GPUs.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Backplate / Structural Frame",
+              "confidence": 0.75,
+              "reasoning": "Moderate consensus and support; important for structural integrity but less critical functionally.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Firmware/BIOS Chip",
+              "confidence": 0.81,
+              "reasoning": "Good support from majority with moderate to high confidence; essential for device initialization and control.",
+              "round": 2
+            }
+          ],
+          "Agent_3": [
+            {
+              "agent_id": "Agent_3",
+              "component": "Graphics Processing Unit (GPU) Die",
+              "confidence": 1.0,
+              "reasoning": "Unanimous support from all agents with the highest average confidence (1.00). This is unquestionably the core of the GPU.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "PCB Assembly (Printed Circuit Board)",
+              "confidence": 0.97,
+              "reasoning": "Strong consensus with all agents supporting PCB or PCB assembly variations with high confidence, averaging near 0.97. Essential for all GPU components integration.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Voltage Regulation Module (VRM)",
+              "confidence": 0.91,
+              "reasoning": "Supported by all agents with average confidence around 0.91, critical for stable power delivery to the GPU.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Cooling Solution (Heatsink and Fan Assembly)",
+              "confidence": 0.94,
+              "reasoning": "All agents selected a form of the cooling assembly with an average confidence about 0.94. Essential to prevent thermal throttling and damage.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Backplate (Structural Metal Plate)",
+              "confidence": 0.75,
+              "reasoning": "Moderate support from three agents averaging confidence 0.75, generally included for structural rigidity and cooling support.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Firmware/BIOS Chip",
+              "confidence": 0.81,
+              "reasoning": "Four agents supported firmware/BIOS chip with average confidence ~0.81. Crucial for booting and GPU configuration.",
+              "round": 2
+            }
+          ],
+          "Agent_4": [
+            {
+              "agent_id": "Agent_4",
+              "component": "Graphics Processing Unit (GPU) Die",
+              "confidence": 1.0,
+              "reasoning": "Universal strong consensus across all agents with perfect confidence; core component of GPU.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "Printed Circuit Board (PCB) Assembly",
+              "confidence": 0.97,
+              "reasoning": "Strong consensus with consistently high confidence; foundational physical substrate for GPU components.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "Voltage Regulation Module (VRM) / Power Delivery Subsystem",
+              "confidence": 0.91,
+              "reasoning": "Supported by all agents with high confidence; critical for stable power delivery to GPU.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "Cooling Solution (Heatsink and Fan Assembly)",
+              "confidence": 0.94,
+              "reasoning": "Unanimous support with high confidence; necessary for thermal management.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "Backplate / Structural Frame",
+              "confidence": 0.75,
+              "reasoning": "Moderate consensus with decent confidence; provides structural stability and some cooling benefits.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "Firmware/BIOS Chip",
+              "confidence": 0.81,
+              "reasoning": "Broad support with reasonable confidence; essential for booting and configuring GPU hardware.",
+              "round": 2
+            }
+          ],
+          "Agent_5": [
+            {
+              "agent_id": "Agent_5",
+              "component": "Graphics Processing Unit (GPU) Die",
+              "confidence": 1.0,
+              "reasoning": "Unanimous agreement among all agents with the highest confidence. Core essential silicon chip component of the GPU.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_5",
+              "component": "Printed Circuit Board (PCB) Assembly",
+              "confidence": 0.97,
+              "reasoning": "Strong consensus with high confidence across all agents. Fundamental substrate and circuitry base for GPU assembly.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_5",
+              "component": "Voltage Regulation Module (VRM)",
+              "confidence": 0.91,
+              "reasoning": "Consistently selected by all agents with high confidence. Critical for stable power delivery to GPU components.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_5",
+              "component": "Cooling Solution (Heatsink and Fan Assembly)",
+              "confidence": 0.94,
+              "reasoning": "Strongly supported by all agents as vital for thermal management of GPU during operation.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_5",
+              "component": "Backplate / Structural Frame",
+              "confidence": 0.75,
+              "reasoning": "Moderate support from multiple agents. Provides structural support and cooling benefits, deemed important but less critical than core electronics.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_5",
+              "component": "Firmware/BIOS Chip",
+              "confidence": 0.81,
+              "reasoning": "Good consensus with multiple agents selecting this component. Essential for GPU initialization and configuration.",
+              "round": 2
+            }
+          ]
+        },
+        "rounds_completed": 2,
+        "support_analysis": {
+          "consensus": [
+            "voltage regulation module (vrm)"
+          ],
+          "majority": [
+            "graphics processing unit (gpu) die",
+            "printed circuit board (pcb)",
+            "cooling solution (heatsink and fan assembly)",
+            "backplate / structural frame",
+            "firmware/bios chip",
+            "voltage regulation module (vrm) / power delivery"
+          ],
+          "isolated": [
+            "pcb assembly (printed circuit board)",
+            "backplate (structural metal plate)"
+          ]
+        },
+        "critiques": [
+          {
+            "item_name": "Graphics Processing Unit (GPU) Die",
+            "normalized_name": "graphics processing unit (gpu) die",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_5",
+              "Agent_1",
+              "Agent_2",
+              "Agent_4"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 1.0,
+            "critique_text": "Majority support for 'Graphics Processing Unit (GPU) Die': 5/3 agents agree (conf: 1.00). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Printed Circuit Board (PCB) Assembly",
+            "normalized_name": "printed circuit board (pcb)",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_5",
+              "Agent_1",
+              "Agent_2",
+              "Agent_4"
+            ],
+            "opposing_agents": [
+              "Agent_3"
+            ],
+            "avg_confidence": 0.97,
+            "critique_text": "Majority support for 'Printed Circuit Board (PCB) Assembly': 4/3 agents agree (conf: 0.97). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Voltage Regulation Module (VRM)",
+            "normalized_name": "voltage regulation module (vrm)",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_5",
+              "Agent_1",
+              "Agent_3"
+            ],
+            "opposing_agents": [
+              "Agent_2",
+              "Agent_4"
+            ],
+            "avg_confidence": 0.91,
+            "critique_text": "Strong consensus on 'Voltage Regulation Module (VRM)': all 3 agents support with avg confidence 0.91. Preserve this component."
+          },
+          {
+            "item_name": "Cooling Solution (Heatsink and Fan Assembly)",
+            "normalized_name": "cooling solution (heatsink and fan assembly)",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_5",
+              "Agent_1",
+              "Agent_2",
+              "Agent_4"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.9399999999999998,
+            "critique_text": "Majority support for 'Cooling Solution (Heatsink and Fan Assembly)': 5/3 agents agree (conf: 0.94). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Backplate / Structural Frame",
+            "normalized_name": "backplate / structural frame",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_5",
+              "Agent_1",
+              "Agent_2",
+              "Agent_4"
+            ],
+            "opposing_agents": [
+              "Agent_3"
+            ],
+            "avg_confidence": 0.75,
+            "critique_text": "Majority support for 'Backplate / Structural Frame': 4/3 agents agree (conf: 0.75). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Firmware/BIOS Chip",
+            "normalized_name": "firmware/bios chip",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_5",
+              "Agent_1",
+              "Agent_2",
+              "Agent_4"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.8100000000000002,
+            "critique_text": "Majority support for 'Firmware/BIOS Chip': 5/3 agents agree (conf: 0.81). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Voltage Regulation Module (VRM) / Power Delivery Subsystem",
+            "normalized_name": "voltage regulation module (vrm) / power delivery",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_4"
+            ],
+            "opposing_agents": [
+              "Agent_5",
+              "Agent_1",
+              "Agent_3"
+            ],
+            "avg_confidence": 0.91,
+            "critique_text": "Majority support for 'Voltage Regulation Module (VRM) / Power Delivery Subsystem': 2/3 agents agree (conf: 0.91). Consider strengthening consensus."
+          },
+          {
+            "item_name": "PCB Assembly (Printed Circuit Board)",
+            "normalized_name": "pcb assembly (printed circuit board)",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_3"
+            ],
+            "opposing_agents": [
+              "Agent_5",
+              "Agent_1",
+              "Agent_2",
+              "Agent_4"
+            ],
+            "avg_confidence": 0.97,
+            "critique_text": "Isolated proposal 'PCB Assembly (Printed Circuit Board)' from 1 agent(s) (conf: 0.97). Requires justification or peer validation."
+          },
+          {
+            "item_name": "Backplate (Structural Metal Plate)",
+            "normalized_name": "backplate (structural metal plate)",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_3"
+            ],
+            "opposing_agents": [
+              "Agent_5",
+              "Agent_1",
+              "Agent_2",
+              "Agent_4"
+            ],
+            "avg_confidence": 0.75,
+            "critique_text": "Isolated proposal 'Backplate (Structural Metal Plate)' from 1 agent(s) (conf: 0.75). Requires justification or peer validation."
+          }
+        ],
+        "changes_from_previous": {
+          "items_added": [
+            "cooling solution (heatsink and fan assembly)",
+            "backplate (structural metal plate)",
+            "voltage regulation module (vrm) / power delivery",
+            "pcb assembly (printed circuit board)",
+            "voltage regulation module (vrm)",
+            "backplate / structural frame",
+            "firmware/bios chip"
+          ],
+          "items_removed": [
+            "pcie auxiliary power connectors",
+            "card enclosure/shroud",
+            "backplate",
+            "heatsink and fan",
+            "gddr6/gddr6x memory modules",
+            "pcie connector interface",
+            "power connector interface",
+            "memory controller and sensor board",
+            "voltage regulator module (vrm)",
+            "gddr6/gddr6x vram modules",
+            "display output bracket",
+            "bios/firmware chip",
+            "gddr6/gddr6x dram modules",
+            "video output interface board",
+            "gddr6/gddr6x/hsram memory modules",
+            "vram thermal pads",
+            "display output connectors"
+          ],
+          "confidence_changes": {}
+        }
+      },
+      {
+        "round_num": 3,
+        "convergence": 1.0,
+        "threshold": 0.7,
+        "threshold_reached": true,
+        "proposals": {
+          "Agent_1": [
+            {
+              "agent_id": "Agent_1",
+              "component": "Graphics Processing Unit (GPU) Die",
+              "confidence": 1.0,
+              "reasoning": "All 5 agents strongly support this component with maximum confidence; it is fundamental as the core processing unit.",
+              "round": 3,
+              "normalized_component": "Graphics Processing Unit (GPU) Die"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Printed Circuit Board (PCB) Assembly",
+              "confidence": 0.97,
+              "reasoning": "Strong multi-agent consensus (4 agents) with high confidence; critical as the physical platform that interconnects components.",
+              "round": 3,
+              "normalized_component": "Printed Circuit Board Assembly"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Voltage Regulation Module (VRM)",
+              "confidence": 0.91,
+              "reasoning": "Supported by multiple agents with consistent confidence; essential for stable power delivery to the GPU.",
+              "round": 3,
+              "normalized_component": "Voltage Regulator Module"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Cooling Solution (Heatsink and Fan Assembly)",
+              "confidence": 0.94,
+              "reasoning": "Unanimously supported by all agents at high confidence; vital for thermal management of the GPU.",
+              "round": 3,
+              "normalized_component": "Cooling Solution (Heatsink and Fan Assembly)"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Backplate / Structural Frame",
+              "confidence": 0.75,
+              "reasoning": "Majority of agents support it at moderate confidence; important for structural integrity and heat dissipation.",
+              "round": 3,
+              "normalized_component": "Support Structure or Frame"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Firmware/BIOS Chip",
+              "confidence": 0.81,
+              "reasoning": "All agents agree on its inclusion with solid confidence; necessary for hardware initialization and control.",
+              "round": 3,
+              "normalized_component": "Firmware/Bios Chip"
+            }
+          ],
+          "Agent_2": [
+            {
+              "agent_id": "Agent_2",
+              "component": "Graphics Processing Unit (GPU) Die",
+              "confidence": 1.0,
+              "reasoning": "Unanimous support from all agents with perfect confidence. It is the core component of the GPU.",
+              "round": 3,
+              "normalized_component": "Graphics Processing Unit (GPU) Die"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Printed Circuit Board (PCB) Assembly",
+              "confidence": 0.97,
+              "reasoning": "Strong consensus from 4 agents with high confidence. Essential for providing the platform and electrical connections for all other components.",
+              "round": 3,
+              "normalized_component": "Printed Circuit Board Assembly"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Voltage Regulation Module (VRM)",
+              "confidence": 0.91,
+              "reasoning": "Strong backing from multiple agents, critical for stable power delivery to GPU components.",
+              "round": 3,
+              "normalized_component": "Voltage Regulator Module"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Cooling Solution (Heatsink and Fan Assembly)",
+              "confidence": 0.94,
+              "reasoning": "Unanimous support with high confidence. Necessary for thermal management of the GPU.",
+              "round": 3,
+              "normalized_component": "Cooling Solution (Heatsink and Fan Assembly)"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Backplate / Structural Frame",
+              "confidence": 0.75,
+              "reasoning": "Majority of agents support this, providing structural integrity and protection to the GPU card.",
+              "round": 3,
+              "normalized_component": "Support Structure or Frame"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Firmware/BIOS Chip",
+              "confidence": 0.81,
+              "reasoning": "All agents support this with moderate-high confidence; necessary for controlling GPU startup and low-level operation.",
+              "round": 3,
+              "normalized_component": "Firmware/Bios Chip"
+            }
+          ],
+          "Agent_3": [
+            {
+              "agent_id": "Agent_3",
+              "component": "Graphics Processing Unit (GPU) Die",
+              "confidence": 1.0,
+              "reasoning": "Unanimous support from all agents with highest confidence, critical core component of GPU technology.",
+              "round": 3,
+              "normalized_component": "Graphics Processing Unit (GPU) Die"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Printed Circuit Board (PCB) Assembly",
+              "confidence": 0.97,
+              "reasoning": "Strong consensus with four agents supporting it and high confidence; essential as it hosts the GPU die and other components.",
+              "round": 3,
+              "normalized_component": "Printed Circuit Board Assembly"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Voltage Regulation Module (VRM)",
+              "confidence": 0.91,
+              "reasoning": "Strong support from multiple agents and crucial for stable power delivery to the GPU die.",
+              "round": 3,
+              "normalized_component": "Voltage Regulator Module"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Cooling Solution (Heatsink and Fan Assembly)",
+              "confidence": 0.94,
+              "reasoning": "Unanimous support with high confidence; vital for thermal management of GPU operations.",
+              "round": 3,
+              "normalized_component": "Cooling Solution (Heatsink and Fan Assembly)"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Backplate / Structural Frame",
+              "confidence": 0.75,
+              "reasoning": "Strong support from majority of agents with moderate confidence; important for structural integrity and heat dissipation.",
+              "round": 3,
+              "normalized_component": "Support Structure or Frame"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Firmware/BIOS Chip",
+              "confidence": 0.81,
+              "reasoning": "Supported by all agents and essential for GPU initialization and configuration.",
+              "round": 3,
+              "normalized_component": "Firmware/Bios Chip"
+            }
+          ],
+          "Agent_4": [
+            {
+              "agent_id": "Agent_4",
+              "component": "Graphics Processing Unit (GPU) Die",
+              "confidence": 1.0,
+              "reasoning": "Unanimous support from all agents with highest confidence, critical core component in GPU.",
+              "round": 3,
+              "normalized_component": "Graphics Processing Unit (GPU) Die"
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "Printed Circuit Board (PCB) Assembly",
+              "confidence": 0.97,
+              "reasoning": "Strong multi-agent support (4 agents) with high confidence, fundamental substrate for components mounting.",
+              "round": 3,
+              "normalized_component": "Printed Circuit Board Assembly"
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "Voltage Regulation Module (VRM)",
+              "confidence": 0.91,
+              "reasoning": "Strong consensus from 3 agents, essential for stable power delivery to GPU die and other components.",
+              "round": 3,
+              "normalized_component": "Voltage Regulator Module"
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "Cooling Solution (Heatsink and Fan Assembly)",
+              "confidence": 0.94,
+              "reasoning": "Unanimous support; critical for thermal management of GPU under load.",
+              "round": 3,
+              "normalized_component": "Cooling Solution (Heatsink and Fan Assembly)"
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "Backplate / Structural Frame",
+              "confidence": 0.75,
+              "reasoning": "Strong support from 4 agents; important for mechanical stability and protection.",
+              "round": 3,
+              "normalized_component": "Support Structure or Frame"
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "Firmware/BIOS Chip",
+              "confidence": 0.81,
+              "reasoning": "Unanimous support; vital for initialization and control of GPU operations.",
+              "round": 3,
+              "normalized_component": "Firmware/Bios Chip"
+            }
+          ],
+          "Agent_5": [
+            {
+              "agent_id": "Agent_5",
+              "component": "Graphics Processing Unit (GPU) Die",
+              "confidence": 1.0,
+              "reasoning": "Unanimous support from all agents with the highest confidence, essential core component of the GPU.",
+              "round": 3,
+              "normalized_component": "Graphics Processing Unit (GPU) Die"
+            },
+            {
+              "agent_id": "Agent_5",
+              "component": "Printed Circuit Board (PCB) Assembly",
+              "confidence": 0.97,
+              "reasoning": "Strong majority support with high confidence. It is critical as the physical platform hosting GPU and peripheral components.",
+              "round": 3,
+              "normalized_component": "Printed Circuit Board Assembly"
+            },
+            {
+              "agent_id": "Agent_5",
+              "component": "Voltage Regulation Module (VRM)",
+              "confidence": 0.91,
+              "reasoning": "Consistently selected by majority with good confidence. Key for stable power delivery critical to GPU operation.",
+              "round": 3,
+              "normalized_component": "Voltage Regulator Module"
+            },
+            {
+              "agent_id": "Agent_5",
+              "component": "Cooling Solution (Heatsink and Fan Assembly)",
+              "confidence": 0.94,
+              "reasoning": "Unanimous strong support. Fundamental for thermal management of GPU, ensuring reliable performance and longevity.",
+              "round": 3,
+              "normalized_component": "Cooling Solution (Heatsink and Fan Assembly)"
+            },
+            {
+              "agent_id": "Agent_5",
+              "component": "Backplate / Structural Frame",
+              "confidence": 0.75,
+              "reasoning": "Majority choice with moderate confidence. Provides structural integrity and additional cooling benefits.",
+              "round": 3,
+              "normalized_component": "Support Structure or Frame"
+            },
+            {
+              "agent_id": "Agent_5",
+              "component": "Firmware/BIOS Chip",
+              "confidence": 0.81,
+              "reasoning": "Unanimous inclusion from all agents with solid confidence. Essential for GPU initialization and configuration.",
+              "round": 3,
+              "normalized_component": "Firmware/Bios Chip"
+            }
+          ]
+        },
+        "rounds_completed": 3,
+        "support_analysis": {
+          "consensus": [],
+          "majority": [
+            "graphics processing unit (gpu) die",
+            "printed circuit board (pcb)",
+            "voltage regulation module (vrm)",
+            "cooling solution (heatsink and fan assembly)",
+            "backplate / structural frame",
+            "firmware/bios chip"
+          ],
+          "isolated": []
+        },
+        "critiques": [
+          {
+            "item_name": "Graphics Processing Unit (GPU) Die",
+            "normalized_name": "graphics processing unit (gpu) die",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_5",
+              "Agent_1",
+              "Agent_2",
+              "Agent_4"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 1.0,
+            "critique_text": "Majority support for 'Graphics Processing Unit (GPU) Die': 5/3 agents agree (conf: 1.00). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Printed Circuit Board (PCB) Assembly",
+            "normalized_name": "printed circuit board (pcb)",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_5",
+              "Agent_1",
+              "Agent_2",
+              "Agent_4"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.97,
+            "critique_text": "Majority support for 'Printed Circuit Board (PCB) Assembly': 5/3 agents agree (conf: 0.97). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Voltage Regulation Module (VRM)",
+            "normalized_name": "voltage regulation module (vrm)",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_5",
+              "Agent_1",
+              "Agent_2",
+              "Agent_4"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.9099999999999999,
+            "critique_text": "Majority support for 'Voltage Regulation Module (VRM)': 5/3 agents agree (conf: 0.91). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Cooling Solution (Heatsink and Fan Assembly)",
+            "normalized_name": "cooling solution (heatsink and fan assembly)",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_5",
+              "Agent_1",
+              "Agent_2",
+              "Agent_4"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.9399999999999998,
+            "critique_text": "Majority support for 'Cooling Solution (Heatsink and Fan Assembly)': 5/3 agents agree (conf: 0.94). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Backplate / Structural Frame",
+            "normalized_name": "backplate / structural frame",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_5",
+              "Agent_1",
+              "Agent_2",
+              "Agent_4"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.75,
+            "critique_text": "Majority support for 'Backplate / Structural Frame': 5/3 agents agree (conf: 0.75). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Firmware/BIOS Chip",
+            "normalized_name": "firmware/bios chip",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_5",
+              "Agent_1",
+              "Agent_2",
+              "Agent_4"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.8100000000000002,
+            "critique_text": "Majority support for 'Firmware/BIOS Chip': 5/3 agents agree (conf: 0.81). Consider strengthening consensus."
+          }
+        ],
+        "changes_from_previous": {
+          "items_added": [],
+          "items_removed": [
+            "voltage regulation module (vrm) / power delivery",
+            "pcb assembly (printed circuit board)",
+            "backplate (structural metal plate)"
+          ],
+          "confidence_changes": {}
+        }
+      }
+    ],
+    "phase3_final_consensus": {
+      "technology": "Computer Graphics Processing Units (GPUs)",
+      "technology_specification": "Computer Graphics Processing Units (GPUs)",
+      "technology_reasoning": "",
+      "components": [
+        "Graphics Processing Unit (gpu) Die",
+        "Printed Circuit Board Assembly",
+        "Cooling Solution (heatsink And Fan Assembly)",
+        "Voltage Regulator Module",
+        "Firmware/bios Chip",
+        "Support Structure Or Frame"
+      ],
+      "confidence": 1.0,
+      "rounds": 3,
+      "convergence_score": 1.0
+    }
+  },
+  "materials_debate": {
+    "debate_rounds": [],
+    "final_consensus": {
+      "components": 6,
+      "unique_materials": 10,
+      "total_assignments": 27,
+      "materials_by_component": {
+        "Graphics Processing Unit (gpu) Die": [
+          {
+            "name": "Silicon",
+            "confidence": 0.98,
+            "reasoning": "Silicon is the fundamental semiconductor material for the GPU die, absolutely essential for the integrated circuit function and used universally in GPU fabrication."
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.9,
+            "reasoning": "Copper is used for the interconnects and wiring within the silicon die and the package, providing excellent electrical conductivity, standard in GPU design."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.85,
+            "reasoning": "Aluminum is commonly used for metallization layers and heat spreaders within the GPU die and package; it is a prevalent material in semiconductor fabrication."
+          },
+          {
+            "name": "Gold",
+            "confidence": 0.7,
+            "reasoning": "Gold is often used in bond wires and contacts for its excellent conductivity and resistance to oxidation, commonly but not universally used."
+          },
+          {
+            "name": "Titanium",
+            "confidence": 0.6,
+            "reasoning": "Titanium can be used as an adhesion layer or barrier metal in semiconductor fabrication, moderately common but alternatives exist."
+          },
+          {
+            "name": "Nickel",
+            "confidence": 0.6,
+            "reasoning": "Nickel may be used as a plating or barrier layer in the GPU die packaging, alternatives may exist but it's commonly employed."
+          }
+        ],
+        "Printed Circuit Board Assembly": [
+          {
+            "name": "Copper",
+            "confidence": 0.95,
+            "reasoning": "Copper is universally used for PCB traces and power distribution due to its superior electrical conductivity, absolutely essential."
+          },
+          {
+            "name": "Fiberglass",
+            "confidence": 0.9,
+            "reasoning": "Fiberglass serves as the structural reinforcement in PCB substrate materials (e.g., FR-4), very standard with few substitutes."
+          },
+          {
+            "name": "Epoxy resins",
+            "confidence": 0.9,
+            "reasoning": "Epoxy resins act as the matrix binder in PCB laminates and solder mask, standard and essential for PCB structure."
+          },
+          {
+            "name": "Tin",
+            "confidence": 0.85,
+            "reasoning": "Tin is commonly used as solder and plating material for component soldering on the PCB, a standard choice."
+          },
+          {
+            "name": "Gold",
+            "confidence": 0.7,
+            "reasoning": "Gold is sometimes used for edge connector plating and critical contacts due to corrosion resistance, common but alternatives like nickel exist."
+          },
+          {
+            "name": "Nickel",
+            "confidence": 0.65,
+            "reasoning": "Nickel often serves as underlayer plating for gold or tin finishes on PCBs, moderately common with substitutes."
+          }
+        ],
+        "Cooling Solution (heatsink And Fan Assembly)": [
+          {
+            "name": "Aluminum",
+            "confidence": 0.95,
+            "reasoning": "Aluminum is the primary material for heatsinks due to its good thermal conductivity and light weight, almost universally used."
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.85,
+            "reasoning": "Copper may be used in heat pipes or base plates for higher thermal performance, common but more expensive than aluminum."
+          },
+          {
+            "name": "Steel Ingots",
+            "confidence": 0.5,
+            "reasoning": "Steel may be used for mounting brackets or screws, somewhat common but substitutes (aluminum or plastic) exist."
+          }
+        ],
+        "Voltage Regulator Module": [
+          {
+            "name": "Copper",
+            "confidence": 0.9,
+            "reasoning": "Copper is essential for the power traces and inductors in VRMs, standard due to excellent conductivity."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.8,
+            "reasoning": "Aluminum is commonly used for heat sinks and components in VRMs, standard but other metals occasionally used."
+          },
+          {
+            "name": "Epoxy resins",
+            "confidence": 0.85,
+            "reasoning": "Epoxy resins are used in PCB and encapsulation materials within the VRM assembly, standard."
+          },
+          {
+            "name": "Silicon",
+            "confidence": 0.95,
+            "reasoning": "Silicon semiconductor devices are the core switching components in VRMs, absolutely essential."
+          },
+          {
+            "name": "Tin",
+            "confidence": 0.85,
+            "reasoning": "Tin is used in soldering VRM components onto PCBs, a standard material."
+          }
+        ],
+        "Firmware/bios Chip": [
+          {
+            "name": "Silicon",
+            "confidence": 0.98,
+            "reasoning": "Silicon is the core semiconductor material for the firmware chip die, absolutely essential."
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.9,
+            "reasoning": "Copper is used for internal wiring and interconnects within the chip packaging, standard."
+          },
+          {
+            "name": "Gold",
+            "confidence": 0.7,
+            "reasoning": "Gold is often employed for bonding wires and contacts due to conductivity and oxidation resistance, commonly used."
+          },
+          {
+            "name": "Epoxy resins",
+            "confidence": 0.85,
+            "reasoning": "Epoxy resins are used in chip encapsulation and PCB mountings, very common."
+          },
+          {
+            "name": "Tin",
+            "confidence": 0.8,
+            "reasoning": "Tin is used in solder for packaging and component assembly, widely used."
+          }
+        ],
+        "Support Structure Or Frame": [
+          {
+            "name": "Aluminum",
+            "confidence": 0.9,
+            "reasoning": "Aluminum is commonly used for structural frames due to its strength-to-weight ratio and corrosion resistance, industry standard."
+          },
+          {
+            "name": "Steel Ingots",
+            "confidence": 0.8,
+            "reasoning": "Steel is often used for support and mounting brackets in the frame for added strength, widely used with some substitution by aluminum."
+          }
+        ]
+      }
+    }
+  }
+}

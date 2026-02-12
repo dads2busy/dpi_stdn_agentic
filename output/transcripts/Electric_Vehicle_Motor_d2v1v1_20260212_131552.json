@@ -1,0 +1,613 @@
+{
+  "version": "2.0",
+  "metadata": {
+    "technology": "Electric Vehicle Motor",
+    "technology_specification": "Electric Vehicle Motor",
+    "technology_reasoning": "",
+    "timestamp": "2026-02-12T13:19:10.715083",
+    "format_version": "2.0"
+  },
+  "config": {
+    "num_agents": 2,
+    "max_rounds": 1
+  },
+  "component_stage": {
+    "phase1_initial_proposals": [
+      {
+        "agent_id": "Agent_1",
+        "components": [
+          {
+            "name": "Rotor Assembly",
+            "confidence": 0.98,
+            "reasoning": "The rotor is a distinct, procurable subassembly containing permanent magnets and a steel core, critical for motor function and often sourced separately due to specialized magnet procurement."
+          },
+          {
+            "name": "Stator Assembly",
+            "confidence": 0.98,
+            "reasoning": "The stator includes laminated steel sheets with copper windings and forms the electromagnetic stator core; it's a primary subassembly procured or manufactured as a complete unit."
+          },
+          {
+            "name": "Housing or Motor Frame",
+            "confidence": 0.9,
+            "reasoning": "The external structural casing, typically aluminum or cast iron, supports internal components and provides mounting interfaces, often purchased separately as a mechanical subassembly."
+          },
+          {
+            "name": "Bearing Assemblies",
+            "confidence": 0.85,
+            "reasoning": "High-precision ball or roller bearings support rotor rotation; bearings are standard components sourced from specialized suppliers and procured independently from other motor parts."
+          },
+          {
+            "name": "Shaft",
+            "confidence": 0.88,
+            "reasoning": "The rotor shaft transmits mechanical torque to the drivetrain and is a manufactured mechanical component procured as a separate part."
+          },
+          {
+            "name": "Cooling System Components",
+            "confidence": 0.8,
+            "reasoning": "Includes integrated cooling jackets or plates (liquid or air cooling subsystems) that are modular for thermal management, commonly supplied by specialized vendors as separate assemblies."
+          },
+          {
+            "name": "End Bells (End Covers)",
+            "confidence": 0.75,
+            "reasoning": "These close the motor at each end, support bearings, and provide mounting points; often manufactured independently and sourced as separate parts."
+          },
+          {
+            "name": "Encoder or Resolver Assembly",
+            "confidence": 0.7,
+            "reasoning": "Rotational position sensors like encoders or resolvers enable motor control; these are distinct sensing modules procured separately and integrated into the motor."
+          }
+        ],
+        "technology_specification": "Permanent magnet synchronous motor (PMSM) designed for electric vehicles (EVs), typically featuring a rotor with high-strength rare-earth magnets and a stator with multi-phase copper windings, optimized for efficiency, power density, and thermal management.",
+        "technology_reasoning": "PMSMs dominate the EV motor market due to superior torque density and efficiency compared to induction or switched reluctance motors, with over 70% market share in passenger EVs as of 2024. Their design separates rotor and stator assemblies, enabling specialized supply chains."
+      },
+      {
+        "agent_id": "Agent_2",
+        "components": [
+          {
+            "name": "Stator Assembly",
+            "confidence": 0.98,
+            "reasoning": "The stator with laminated steel cores and copper windings is a core functional component, manufactured as a complete assembly and procured separately in all EV motors."
+          },
+          {
+            "name": "Rotor Assembly",
+            "confidence": 0.98,
+            "reasoning": "The rotor, often with embedded permanent magnets in PMSMs, is a principal rotating part and distinct procured assembly critical for motor operation."
+          },
+          {
+            "name": "Motor Housing (Case)",
+            "confidence": 0.95,
+            "reasoning": "The structural enclosure that holds and protects internal motor components, often cast or machined aluminum, normally supplied as a separate component."
+          },
+          {
+            "name": "Bearings (Bearing Assembly)",
+            "confidence": 0.9,
+            "reasoning": "Bearings support rotor rotation within the housing; typically procured as a precise manufactured subassembly separate from the motor core."
+          },
+          {
+            "name": "End Bells (End Covers)",
+            "confidence": 0.85,
+            "reasoning": "End bells provide mechanical support and sealing at motor ends; they are usually distinct cast or machined parts procured separately."
+          },
+          {
+            "name": "Cooling Jacket or System",
+            "confidence": 0.8,
+            "reasoning": "Thermal management components including liquid cooling jackets or integrated cooling channels are major subassemblies often sourced separately to maintain motor temperature."
+          },
+          {
+            "name": "Shaft",
+            "confidence": 0.85,
+            "reasoning": "The shaft transfers mechanical torque from rotor to drivetrain; it is a separately manufactured and procured structural element."
+          },
+          {
+            "name": "Terminal Box or Connection Housing",
+            "confidence": 0.75,
+            "reasoning": "Housing for electrical connections and wiring interfaces, typically a separately manufactured enclosure part on the motor."
+          }
+        ],
+        "technology_specification": "Electric vehicle motor typically refers to a traction motor assembly that converts electrical energy into mechanical propulsion power in battery electric vehicles, predominantly using permanent magnet synchronous motor (PMSM) technology.",
+        "technology_reasoning": "Permanent magnet synchronous motors are the industry standard for electric vehicles as of 2024 due to their high efficiency, power density, and compact size, representing the vast majority of EV traction motors across global manufacturers."
+      }
+    ],
+    "phase2_debate_rounds": [
+      {
+        "round_num": 1,
+        "convergence": 0.7777777777777778,
+        "threshold": 0.7,
+        "threshold_reached": true,
+        "proposals": {
+          "Agent_1": [
+            {
+              "name": "Rotor Assembly",
+              "confidence": 0.98,
+              "reasoning": "The rotor is a distinct, procurable subassembly containing permanent magnets and a steel core, critical for motor function and often sourced separately due to specialized magnet procurement.",
+              "component": "Rotor Assembly",
+              "normalized_component": "Gearbox"
+            },
+            {
+              "name": "Stator Assembly",
+              "confidence": 0.98,
+              "reasoning": "The stator includes laminated steel sheets with copper windings and forms the electromagnetic stator core; it's a primary subassembly procured or manufactured as a complete unit.",
+              "component": "Stator Assembly",
+              "normalized_component": "Motor Components"
+            },
+            {
+              "name": "Housing or Motor Frame",
+              "confidence": 0.9,
+              "reasoning": "The external structural casing, typically aluminum or cast iron, supports internal components and provides mounting interfaces, often purchased separately as a mechanical subassembly.",
+              "component": "Housing or Motor Frame",
+              "normalized_component": "Motor Housing"
+            },
+            {
+              "name": "Bearing Assemblies",
+              "confidence": 0.85,
+              "reasoning": "High-precision ball or roller bearings support rotor rotation; bearings are standard components sourced from specialized suppliers and procured independently from other motor parts.",
+              "component": "Bearing Assemblies",
+              "normalized_component": "Bearing Assemblies"
+            },
+            {
+              "name": "Shaft",
+              "confidence": 0.88,
+              "reasoning": "The rotor shaft transmits mechanical torque to the drivetrain and is a manufactured mechanical component procured as a separate part.",
+              "component": "Shaft",
+              "normalized_component": "Motor Assembly"
+            },
+            {
+              "name": "Cooling System Components",
+              "confidence": 0.8,
+              "reasoning": "Includes integrated cooling jackets or plates (liquid or air cooling subsystems) that are modular for thermal management, commonly supplied by specialized vendors as separate assemblies.",
+              "component": "Cooling System Components",
+              "normalized_component": "Cooling System"
+            },
+            {
+              "name": "End Bells (End Covers)",
+              "confidence": 0.75,
+              "reasoning": "These close the motor at each end, support bearings, and provide mounting points; often manufactured independently and sourced as separate parts.",
+              "component": "End Bells (End Covers)",
+              "normalized_component": "End Bell (End Cover)"
+            },
+            {
+              "name": "Encoder or Resolver Assembly",
+              "confidence": 0.7,
+              "reasoning": "Rotational position sensors like encoders or resolvers enable motor control; these are distinct sensing modules procured separately and integrated into the motor.",
+              "component": "Encoder or Resolver Assembly",
+              "normalized_component": "Encoder/Resolver Assembly"
+            }
+          ],
+          "Agent_2": [
+            {
+              "name": "Stator Assembly",
+              "confidence": 0.98,
+              "reasoning": "The stator with laminated steel cores and copper windings is a core functional component, manufactured as a complete assembly and procured separately in all EV motors.",
+              "component": "Stator Assembly",
+              "normalized_component": "Motor Components"
+            },
+            {
+              "name": "Rotor Assembly",
+              "confidence": 0.98,
+              "reasoning": "The rotor, often with embedded permanent magnets in PMSMs, is a principal rotating part and distinct procured assembly critical for motor operation.",
+              "component": "Rotor Assembly",
+              "normalized_component": "Gearbox"
+            },
+            {
+              "name": "Motor Housing (Case)",
+              "confidence": 0.95,
+              "reasoning": "The structural enclosure that holds and protects internal motor components, often cast or machined aluminum, normally supplied as a separate component.",
+              "component": "Motor Housing (Case)",
+              "normalized_component": "Motor Housing"
+            },
+            {
+              "name": "Bearings (Bearing Assembly)",
+              "confidence": 0.9,
+              "reasoning": "Bearings support rotor rotation within the housing; typically procured as a precise manufactured subassembly separate from the motor core.",
+              "component": "Bearings (Bearing Assembly)",
+              "normalized_component": "Bearing Assembly"
+            },
+            {
+              "name": "End Bells (End Covers)",
+              "confidence": 0.85,
+              "reasoning": "End bells provide mechanical support and sealing at motor ends; they are usually distinct cast or machined parts procured separately.",
+              "component": "End Bells (End Covers)",
+              "normalized_component": "End Bell (End Cover)"
+            },
+            {
+              "name": "Cooling Jacket or System",
+              "confidence": 0.8,
+              "reasoning": "Thermal management components including liquid cooling jackets or integrated cooling channels are major subassemblies often sourced separately to maintain motor temperature.",
+              "component": "Cooling Jacket or System",
+              "normalized_component": "Cooling System"
+            },
+            {
+              "name": "Shaft",
+              "confidence": 0.85,
+              "reasoning": "The shaft transfers mechanical torque from rotor to drivetrain; it is a separately manufactured and procured structural element.",
+              "component": "Shaft",
+              "normalized_component": "Motor Assembly"
+            },
+            {
+              "name": "Terminal Box or Connection Housing",
+              "confidence": 0.75,
+              "reasoning": "Housing for electrical connections and wiring interfaces, typically a separately manufactured enclosure part on the motor.",
+              "component": "Terminal Box or Connection Housing",
+              "normalized_component": "Terminal Box"
+            }
+          ]
+        },
+        "rounds_completed": 1,
+        "support_analysis": {
+          "consensus": [],
+          "majority": [
+            "rotor",
+            "stator",
+            "motor housing",
+            "bearing",
+            "shaft",
+            "cooling",
+            "end bell"
+          ],
+          "isolated": [
+            "encoder/resolver",
+            "terminal box"
+          ]
+        },
+        "critiques": [
+          {
+            "item_name": "rotor",
+            "normalized_name": "rotor",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.98,
+            "critique_text": "Majority support for 'rotor': 2/3 agents agree (conf: 0.98). Consider strengthening consensus."
+          },
+          {
+            "item_name": "stator",
+            "normalized_name": "stator",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.98,
+            "critique_text": "Majority support for 'stator': 2/3 agents agree (conf: 0.98). Consider strengthening consensus."
+          },
+          {
+            "item_name": "motor housing",
+            "normalized_name": "motor housing",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.925,
+            "critique_text": "Majority support for 'motor housing': 2/3 agents agree (conf: 0.93). Consider strengthening consensus."
+          },
+          {
+            "item_name": "bearing",
+            "normalized_name": "bearing",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.875,
+            "critique_text": "Majority support for 'bearing': 2/3 agents agree (conf: 0.88). Consider strengthening consensus."
+          },
+          {
+            "item_name": "shaft",
+            "normalized_name": "shaft",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.865,
+            "critique_text": "Majority support for 'shaft': 2/3 agents agree (conf: 0.86). Consider strengthening consensus."
+          },
+          {
+            "item_name": "cooling",
+            "normalized_name": "cooling",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.8,
+            "critique_text": "Majority support for 'cooling': 2/3 agents agree (conf: 0.80). Consider strengthening consensus."
+          },
+          {
+            "item_name": "end bell",
+            "normalized_name": "end bell",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.8,
+            "critique_text": "Majority support for 'end bell': 2/3 agents agree (conf: 0.80). Consider strengthening consensus."
+          },
+          {
+            "item_name": "encoder/resolver",
+            "normalized_name": "encoder/resolver",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2"
+            ],
+            "avg_confidence": 0.7,
+            "critique_text": "Isolated proposal 'encoder/resolver' from 1 agent(s) (conf: 0.70). Requires justification or peer validation."
+          },
+          {
+            "item_name": "terminal box",
+            "normalized_name": "terminal box",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_1"
+            ],
+            "avg_confidence": 0.75,
+            "critique_text": "Isolated proposal 'terminal box' from 1 agent(s) (conf: 0.75). Requires justification or peer validation."
+          }
+        ],
+        "changes_from_previous": null
+      }
+    ],
+    "phase3_final_consensus": {
+      "technology": "Electric Vehicle Motor",
+      "technology_specification": "Electric Vehicle Motor",
+      "technology_reasoning": "",
+      "components": [
+        "Gearbox",
+        "Motor Components",
+        "Motor Housing",
+        "Bearing Assembly",
+        "Motor Assembly",
+        "Bearing Assemblies",
+        "Cooling System",
+        "End Bell (end Cover)",
+        "Terminal Box",
+        "Encoder/resolver Assembly"
+      ],
+      "confidence": 0.7777777777777778,
+      "rounds": 1,
+      "convergence_score": 0.7777777777777778
+    }
+  },
+  "materials_debate": {
+    "debate_rounds": [],
+    "final_consensus": {
+      "components": 10,
+      "unique_materials": 8,
+      "total_assignments": 39,
+      "materials_by_component": {
+        "Gearbox": [
+          {
+            "name": "Steel Ingots",
+            "confidence": 0.95,
+            "reasoning": "Primary raw material for gearbox gears and casing due to its mechanical strength and durability; universally essential and standard in gearbox manufacturing."
+          },
+          {
+            "name": "Chromium",
+            "confidence": 0.85,
+            "reasoning": "Used for plating or alloying to enhance wear resistance and corrosion protection of gearbox components; standard practice with few substitutes for corrosion resistance."
+          },
+          {
+            "name": "Nickel",
+            "confidence": 0.8,
+            "reasoning": "Alloyed with steel for improving toughness and corrosion resistance in gear and shaft materials; commonly used though alternative alloys exist."
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.7,
+            "reasoning": "Sometimes used in bushings or electrical grounding in gearbox assemblies; not always present but common due to good conductivity and lubrication compatibility."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.6,
+            "reasoning": "Used selectively for lightweight gearbox housings or covers; alternatives exist but aluminum is a preferred low-weight material."
+          }
+        ],
+        "Motor Components": [
+          {
+            "name": "Copper",
+            "confidence": 0.98,
+            "reasoning": "Primary raw material for motor windings due to high electrical conductivity; absolutely essential for motor function."
+          },
+          {
+            "name": "Steel Ingots",
+            "confidence": 0.9,
+            "reasoning": "Form core and rotor lamination sheets for magnetic flux conduction; standard steel grades used for electromagnetic properties and structural support."
+          },
+          {
+            "name": "Silicon",
+            "confidence": 0.85,
+            "reasoning": "Used in electrical steel alloys to improve magnetic properties in motor cores; industry standard with few substitutes."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.7,
+            "reasoning": "Used for conductor bars in squirrel cage rotors and housing parts; common material though copper can substitute in some designs."
+          },
+          {
+            "name": "Iron",
+            "confidence": 0.8,
+            "reasoning": "Base metal for core laminations and rotor shafts; essential for magnetic and mechanical properties with limited alternatives."
+          }
+        ],
+        "Motor Housing": [
+          {
+            "name": "Aluminum",
+            "confidence": 0.9,
+            "reasoning": "Widely used for motor housings due to its light weight, strength, and thermal conductivity; conventional and preferred material."
+          },
+          {
+            "name": "Steel Ingots",
+            "confidence": 0.7,
+            "reasoning": "Alternative housing material for strength and cost reasons; used depending on application requirements but less common than aluminum."
+          },
+          {
+            "name": "Iron",
+            "confidence": 0.6,
+            "reasoning": "Sometimes used in housing or frame parts for magnetic shielding and structural strength; alternatives exist."
+          },
+          {
+            "name": "Aluminum oxide",
+            "confidence": 0.5,
+            "reasoning": "Used as coatings for electrical insulation or surface hardness enhancement on motor housing surfaces; optional but common."
+          }
+        ],
+        "Bearing Assembly": [
+          {
+            "name": "Steel Ingots",
+            "confidence": 0.95,
+            "reasoning": "Primary material for bearing races and rolling elements due to high hardness and fatigue resistance; universally essential in bearing manufacture."
+          },
+          {
+            "name": "Nickel",
+            "confidence": 0.7,
+            "reasoning": "Alloyed to improve corrosion resistance and mechanical strength in specialized bearings; commonly used but alternatives exist."
+          },
+          {
+            "name": "Iron",
+            "confidence": 0.65,
+            "reasoning": "Base metal in bearings and shaft materials; essential component, though sometimes substituted with alloyed steels."
+          }
+        ],
+        "Motor Assembly": [
+          {
+            "name": "Copper",
+            "confidence": 0.9,
+            "reasoning": "Essential for all electrical connections and windings within the motor assembly; standard and indispensable."
+          },
+          {
+            "name": "Steel Ingots",
+            "confidence": 0.85,
+            "reasoning": "Structural frames, shafts, and lamination cores rely on steel; standard and widely used."
+          },
+          {
+            "name": "Silicon",
+            "confidence": 0.75,
+            "reasoning": "Used primarily in electrical steel for motor cores; common but not exclusive to all motor assemblies."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.65,
+            "reasoning": "Used in some conducting parts and structural housings; alternatives exist but aluminum is common."
+          }
+        ],
+        "Bearing Assemblies": [
+          {
+            "name": "Steel Ingots",
+            "confidence": 0.95,
+            "reasoning": "Steel is essential for bearing races and balls or rollers due to mechanical strength and fatigue resistance; universally used."
+          },
+          {
+            "name": "Chromium",
+            "confidence": 0.85,
+            "reasoning": "Chromium alloying in bearing steel improves hardness and corrosion resistance, a standard industry practice."
+          },
+          {
+            "name": "Nickel",
+            "confidence": 0.7,
+            "reasoning": "Used to enhance bearing steel properties in some specialized applications; alternatives exist but nickel is frequent."
+          },
+          {
+            "name": "Iron",
+            "confidence": 0.65,
+            "reasoning": "Iron as base component in steel for bearing assemblies; important but may be alloyed or substituted in certain cases."
+          }
+        ],
+        "Cooling System": [
+          {
+            "name": "Copper",
+            "confidence": 0.85,
+            "reasoning": "Widely used for cooling pipes, radiators, and heat exchangers due to excellent thermal conductivity; standard material."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.8,
+            "reasoning": "Often used as alternative or complementary material in heat exchangers and fan housings because of light weight and good thermal properties; very common."
+          },
+          {
+            "name": "Steel Ingots",
+            "confidence": 0.6,
+            "reasoning": "Used sometimes in structural parts of cooling systems; alternatives exist but steel offers strength."
+          },
+          {
+            "name": "Silicon",
+            "confidence": 0.5,
+            "reasoning": "May be present in sensor substrates or in electronic cooling components; less common but possible."
+          }
+        ],
+        "End Bell (end Cover)": [
+          {
+            "name": "Aluminum",
+            "confidence": 0.9,
+            "reasoning": "Usually manufactured from aluminum for its light weight and strength; standard in end bell fabrication."
+          },
+          {
+            "name": "Steel Ingots",
+            "confidence": 0.7,
+            "reasoning": "Alternative material for end bells offering robustness; commonly used but less frequent than aluminum."
+          },
+          {
+            "name": "Iron",
+            "confidence": 0.6,
+            "reasoning": "Sometimes used for strength or magnetic shielding; not as common but possible."
+          }
+        ],
+        "Terminal Box": [
+          {
+            "name": "Aluminum",
+            "confidence": 0.85,
+            "reasoning": "Commonly used for terminal box housing due to light weight and corrosion resistance; industry standard."
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.8,
+            "reasoning": "Essential for internal electrical connectors and terminals; universally required for conduction."
+          },
+          {
+            "name": "Steel Ingots",
+            "confidence": 0.6,
+            "reasoning": "Used sometimes for terminal box structures or brackets; alternatives exist but steel is common."
+          }
+        ],
+        "Encoder/resolver Assembly": [
+          {
+            "name": "Steel Ingots",
+            "confidence": 0.75,
+            "reasoning": "Structural frames and magnetic core parts commonly made from steel; standard but alternatives exist."
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.7,
+            "reasoning": "Used for wiring and coils in encoders and resolvers; essential for electromagnetics but some variants may use aluminum."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.65,
+            "reasoning": "Used for housing and lightweight structural parts; common but substitutable."
+          },
+          {
+            "name": "Silicon",
+            "confidence": 0.68,
+            "reasoning": "Semiconductor material in resolver electronics and sensor chips; commonly used, though other semiconductors could be possible substitutes."
+          }
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,709 @@
+{
+  "version": "2.0",
+  "metadata": {
+    "technology": "Solar Panel",
+    "technology_specification": "Solar Panel",
+    "technology_reasoning": "",
+    "timestamp": "2026-02-12T13:19:42.966304",
+    "format_version": "2.0"
+  },
+  "config": {
+    "num_agents": 2,
+    "max_rounds": 2
+  },
+  "component_stage": {
+    "phase1_initial_proposals": [
+      {
+        "agent_id": "Agent_1",
+        "components": [
+          {
+            "name": "Solar Cells (Monocrystalline Silicon)",
+            "confidence": 0.98,
+            "reasoning": "These are the core photovoltaic elements converting sunlight to electricity and are always provided as a distinct module or assembled string within the panel."
+          },
+          {
+            "name": "Tempered Glass Cover",
+            "confidence": 0.95,
+            "reasoning": "This is the transparent front layer providing physical protection and durability, typically procured separately and laminated onto the module."
+          },
+          {
+            "name": "Aluminum Frame",
+            "confidence": 0.9,
+            "reasoning": "The structural frame supports the panel, provides mounting interfaces, and is almost universally a separate procured component."
+          },
+          {
+            "name": "Junction Box",
+            "confidence": 0.92,
+            "reasoning": "Houses electrical connections and bypass diodes, enabling safe and efficient module interconnection; commonly a separately assembled unit mounted on the back."
+          },
+          {
+            "name": "Encapsulation Material (EVA Sheets)",
+            "confidence": 0.88,
+            "reasoning": "Encapsulant sheets secure and protect solar cells within the module, procured separately as polymer films typically used in lamination."
+          },
+          {
+            "name": "Backsheet",
+            "confidence": 0.85,
+            "reasoning": "The rear protective layer provides moisture and electrical insulation, is a distinct laminate or polymer sheet procured separately, though some premium modules use glass-glass construction."
+          }
+        ],
+        "technology_specification": "Monocrystalline silicon photovoltaic (PV) module",
+        "technology_reasoning": "Monocrystalline silicon PV modules dominate over 80% of the global solar panel market in 2024 due to their high efficiency (around 20-22%) and cost-effective manufacturing, making them the industry standard for residential, commercial, and utility-scale applications."
+      },
+      {
+        "agent_id": "Agent_2",
+        "components": [
+          {
+            "name": "Monocrystalline Silicon Solar Cells",
+            "confidence": 0.98,
+            "reasoning": "These are the core functional elements converting sunlight to electricity, universally present and procured as part of cell strings or wafers before module assembly."
+          },
+          {
+            "name": "Tempered Glass Cover",
+            "confidence": 0.95,
+            "reasoning": "High-strength tempered glass protects the solar cells from environmental damage and is a separate, standardized component fitted to the front of nearly all PV modules."
+          },
+          {
+            "name": "Aluminum Frame",
+            "confidence": 0.92,
+            "reasoning": "Aluminum framing provides mechanical support, mounting points and structural integrity to the panel; it is a distinct manufactured assembly standard across the industry."
+          },
+          {
+            "name": "Encapsulation Layers (EVA or POE)",
+            "confidence": 0.88,
+            "reasoning": "Encapsulant films are manufactured polymer sheets layered to protect cells electrically and mechanically; procured as separate lamination materials."
+          },
+          {
+            "name": "Backsheet",
+            "confidence": 0.85,
+            "reasoning": "The backsheet is a protective polymer layer that provides moisture resistance and electrical insulation, supplied as a discrete sheet component."
+          },
+          {
+            "name": "Junction Box",
+            "confidence": 0.92,
+            "reasoning": "The junction box houses electrical connections and bypass diodes, is mounted on the rear of the panel, and is a separately procured electrical assembly."
+          },
+          {
+            "name": "Bypass Diode Assembly (within Junction Box)",
+            "confidence": 0.82,
+            "reasoning": "Though usually integrated inside the junction box, bypass diodes are critical distinct components protecting cell strings from shading loss and are specifically procured electronic parts."
+          },
+          {
+            "name": "Mounting Brackets/Clips",
+            "confidence": 0.75,
+            "reasoning": "Mounting hardware is commonly procured separately to secure panels to racking systems, varying by installation but standard in construction."
+          },
+          {
+            "name": "Interconnect Ribbon Wire (pre-tabbed strings)",
+            "confidence": 0.65,
+            "reasoning": "These are conductive ribbon assemblies connecting cells; they are semi-standardized components often purchased pre-tabbed but not as raw wire."
+          }
+        ],
+        "technology_specification": "Monocrystalline silicon photovoltaic (PV) module primarily designed for rooftop or ground-mount solar energy generation with standard framed assembly.",
+        "technology_reasoning": "Monocrystalline silicon PV modules dominate global solar panel production (>85%) due to their high efficiency and cost-effectiveness, and their construction includes well-defined structural components essential for durability and installation."
+      }
+    ],
+    "phase2_debate_rounds": [
+      {
+        "round_num": 1,
+        "convergence": 0.5,
+        "threshold": 0.7,
+        "threshold_reached": false,
+        "proposals": {
+          "Agent_1": [
+            {
+              "name": "Solar Cells (Monocrystalline Silicon)",
+              "confidence": 0.98,
+              "reasoning": "These are the core photovoltaic elements converting sunlight to electricity and are always provided as a distinct module or assembled string within the panel.",
+              "component": "Solar Cells (Monocrystalline Silicon)",
+              "normalized_component": "monocrystalline silicon solar cell"
+            },
+            {
+              "name": "Tempered Glass Cover",
+              "confidence": 0.95,
+              "reasoning": "This is the transparent front layer providing physical protection and durability, typically procured separately and laminated onto the module.",
+              "component": "Tempered Glass Cover",
+              "normalized_component": "tempered glass cover"
+            },
+            {
+              "name": "Aluminum Frame",
+              "confidence": 0.9,
+              "reasoning": "The structural frame supports the panel, provides mounting interfaces, and is almost universally a separate procured component.",
+              "component": "Aluminum Frame",
+              "normalized_component": "aluminum frame"
+            },
+            {
+              "name": "Junction Box",
+              "confidence": 0.92,
+              "reasoning": "Houses electrical connections and bypass diodes, enabling safe and efficient module interconnection; commonly a separately assembled unit mounted on the back.",
+              "component": "Junction Box",
+              "normalized_component": "junction box"
+            },
+            {
+              "name": "Encapsulation Material (EVA Sheets)",
+              "confidence": 0.88,
+              "reasoning": "Encapsulant sheets secure and protect solar cells within the module, procured separately as polymer films typically used in lamination.",
+              "component": "Encapsulation Material (EVA Sheets)",
+              "normalized_component": "eva encapsulation sheet"
+            },
+            {
+              "name": "Backsheet",
+              "confidence": 0.85,
+              "reasoning": "The rear protective layer provides moisture and electrical insulation, is a distinct laminate or polymer sheet procured separately, though some premium modules use glass-glass construction.",
+              "component": "Backsheet",
+              "normalized_component": "backsheet"
+            }
+          ],
+          "Agent_2": [
+            {
+              "name": "Monocrystalline Silicon Solar Cells",
+              "confidence": 0.98,
+              "reasoning": "These are the core functional elements converting sunlight to electricity, universally present and procured as part of cell strings or wafers before module assembly.",
+              "component": "Monocrystalline Silicon Solar Cells",
+              "normalized_component": "monocrystalline silicon solar cell"
+            },
+            {
+              "name": "Tempered Glass Cover",
+              "confidence": 0.95,
+              "reasoning": "High-strength tempered glass protects the solar cells from environmental damage and is a separate, standardized component fitted to the front of nearly all PV modules.",
+              "component": "Tempered Glass Cover",
+              "normalized_component": "tempered glass cover"
+            },
+            {
+              "name": "Aluminum Frame",
+              "confidence": 0.92,
+              "reasoning": "Aluminum framing provides mechanical support, mounting points and structural integrity to the panel; it is a distinct manufactured assembly standard across the industry.",
+              "component": "Aluminum Frame",
+              "normalized_component": "aluminum frame"
+            },
+            {
+              "name": "Encapsulation Layers (EVA or POE)",
+              "confidence": 0.88,
+              "reasoning": "Encapsulant films are manufactured polymer sheets layered to protect cells electrically and mechanically; procured as separate lamination materials.",
+              "component": "Encapsulation Layers (EVA or POE)",
+              "normalized_component": "encapsulation layer (eva or poe)"
+            },
+            {
+              "name": "Backsheet",
+              "confidence": 0.85,
+              "reasoning": "The backsheet is a protective polymer layer that provides moisture resistance and electrical insulation, supplied as a discrete sheet component.",
+              "component": "Backsheet",
+              "normalized_component": "backsheet"
+            },
+            {
+              "name": "Junction Box",
+              "confidence": 0.92,
+              "reasoning": "The junction box houses electrical connections and bypass diodes, is mounted on the rear of the panel, and is a separately procured electrical assembly.",
+              "component": "Junction Box",
+              "normalized_component": "junction box"
+            },
+            {
+              "name": "Bypass Diode Assembly (within Junction Box)",
+              "confidence": 0.82,
+              "reasoning": "Though usually integrated inside the junction box, bypass diodes are critical distinct components protecting cell strings from shading loss and are specifically procured electronic parts.",
+              "component": "Bypass Diode Assembly (within Junction Box)",
+              "normalized_component": "bypass diode"
+            },
+            {
+              "name": "Mounting Brackets/Clips",
+              "confidence": 0.75,
+              "reasoning": "Mounting hardware is commonly procured separately to secure panels to racking systems, varying by installation but standard in construction.",
+              "component": "Mounting Brackets/Clips",
+              "normalized_component": "mounting bracket"
+            },
+            {
+              "name": "Interconnect Ribbon Wire (pre-tabbed strings)",
+              "confidence": 0.65,
+              "reasoning": "These are conductive ribbon assemblies connecting cells; they are semi-standardized components often purchased pre-tabbed but not as raw wire.",
+              "component": "Interconnect Ribbon Wire (pre-tabbed strings)",
+              "normalized_component": "interconnect ribbon wire"
+            }
+          ]
+        },
+        "rounds_completed": 1,
+        "support_analysis": {
+          "consensus": [],
+          "majority": [
+            "monocrystalline silicon solar cell",
+            "tempered glass cover",
+            "aluminum frame",
+            "junction box",
+            "backsheet"
+          ],
+          "isolated": [
+            "eva encapsulation sheet",
+            "encapsulation layer (eva or poe)",
+            "bypass diode",
+            "mounting bracket",
+            "interconnect ribbon wire"
+          ]
+        },
+        "critiques": [
+          {
+            "item_name": "monocrystalline silicon solar cell",
+            "normalized_name": "monocrystalline silicon solar cell",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.98,
+            "critique_text": "Majority support for 'monocrystalline silicon solar cell': 2/3 agents agree (conf: 0.98). Consider strengthening consensus."
+          },
+          {
+            "item_name": "tempered glass cover",
+            "normalized_name": "tempered glass cover",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.95,
+            "critique_text": "Majority support for 'tempered glass cover': 2/3 agents agree (conf: 0.95). Consider strengthening consensus."
+          },
+          {
+            "item_name": "aluminum frame",
+            "normalized_name": "aluminum frame",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.91,
+            "critique_text": "Majority support for 'aluminum frame': 2/3 agents agree (conf: 0.91). Consider strengthening consensus."
+          },
+          {
+            "item_name": "junction box",
+            "normalized_name": "junction box",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.92,
+            "critique_text": "Majority support for 'junction box': 2/3 agents agree (conf: 0.92). Consider strengthening consensus."
+          },
+          {
+            "item_name": "eva encapsulation sheet",
+            "normalized_name": "eva encapsulation sheet",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2"
+            ],
+            "avg_confidence": 0.88,
+            "critique_text": "Isolated proposal 'eva encapsulation sheet' from 1 agent(s) (conf: 0.88). Requires justification or peer validation."
+          },
+          {
+            "item_name": "backsheet",
+            "normalized_name": "backsheet",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.85,
+            "critique_text": "Majority support for 'backsheet': 2/3 agents agree (conf: 0.85). Consider strengthening consensus."
+          },
+          {
+            "item_name": "encapsulation layer (eva or poe)",
+            "normalized_name": "encapsulation layer (eva or poe)",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_1"
+            ],
+            "avg_confidence": 0.88,
+            "critique_text": "Isolated proposal 'encapsulation layer (eva or poe)' from 1 agent(s) (conf: 0.88). Requires justification or peer validation."
+          },
+          {
+            "item_name": "bypass diode",
+            "normalized_name": "bypass diode",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_1"
+            ],
+            "avg_confidence": 0.82,
+            "critique_text": "Isolated proposal 'bypass diode' from 1 agent(s) (conf: 0.82). Requires justification or peer validation."
+          },
+          {
+            "item_name": "mounting bracket",
+            "normalized_name": "mounting bracket",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_1"
+            ],
+            "avg_confidence": 0.75,
+            "critique_text": "Isolated proposal 'mounting bracket' from 1 agent(s) (conf: 0.75). Requires justification or peer validation."
+          },
+          {
+            "item_name": "interconnect ribbon wire",
+            "normalized_name": "interconnect ribbon wire",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_1"
+            ],
+            "avg_confidence": 0.65,
+            "critique_text": "Isolated proposal 'interconnect ribbon wire' from 1 agent(s) (conf: 0.65). Requires justification or peer validation."
+          }
+        ],
+        "changes_from_previous": null
+      },
+      {
+        "round_num": 2,
+        "convergence": 1.0,
+        "threshold": 0.7,
+        "threshold_reached": true,
+        "proposals": {
+          "Agent_1": [
+            {
+              "agent_id": "Agent_1",
+              "component": "Monocrystalline Silicon Solar Cells",
+              "confidence": 0.98,
+              "reasoning": "Unanimous strong support from both agents with highest confidence. Essential primary component for the solar panel.",
+              "round": 2,
+              "normalized_component": "Solar Cell"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Tempered Glass Cover",
+              "confidence": 0.95,
+              "reasoning": "Both agents strongly agree on this component with high confidence. Critical for protection and light transmission.",
+              "round": 2,
+              "normalized_component": "Glass Cover"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Aluminum Frame",
+              "confidence": 0.91,
+              "reasoning": "Both agents support this with high confidence and it is important for structural integrity.",
+              "round": 2,
+              "normalized_component": "Chassis Assembly"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Junction Box",
+              "confidence": 0.92,
+              "reasoning": "Strong consensus and high confidence from both agents. Essential for electrical connections and safety.",
+              "round": 2,
+              "normalized_component": "Junction Box"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Backsheet",
+              "confidence": 0.85,
+              "reasoning": "Agreed upon by both agents with moderate confidence. Important for protection against environmental damage.",
+              "round": 2,
+              "normalized_component": "High-Conductivity Cable"
+            }
+          ],
+          "Agent_2": [
+            {
+              "agent_id": "Agent_2",
+              "component": "Monocrystalline Silicon Solar Cells",
+              "confidence": 0.98,
+              "reasoning": "Both agents selected this component with very high confidence (0.98), with strong peer support. It is clearly the primary active component providing solar energy conversion.",
+              "round": 2,
+              "normalized_component": "Solar Cell"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Tempered Glass Cover",
+              "confidence": 0.95,
+              "reasoning": "Both agents selected this with high confidence (0.95). It is essential for protecting the solar cells while allowing light penetration, making it a key structural and protective component.",
+              "round": 2,
+              "normalized_component": "Glass Cover"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Aluminum Frame",
+              "confidence": 0.91,
+              "reasoning": "Both agents agree on this component with high confidence, and peer guidance confirms it as an important mechanical support structure for durability and mounting.",
+              "round": 2,
+              "normalized_component": "Chassis Assembly"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Junction Box",
+              "confidence": 0.92,
+              "reasoning": "Both agents selected this with high confidence (0.92). It houses electrical components and wiring junctions needed for safe and efficient power output.",
+              "round": 2,
+              "normalized_component": "Junction Box"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Backsheet",
+              "confidence": 0.85,
+              "reasoning": "Both agents agree on this component with moderate to high confidence (0.85). It provides vital insulation and protection for the back of the solar panel.",
+              "round": 2,
+              "normalized_component": "High-Conductivity Cable"
+            }
+          ],
+          "Agent_3": [
+            {
+              "agent_id": "Agent_3",
+              "component": "Monocrystalline Silicon Solar Cells",
+              "confidence": 0.98,
+              "reasoning": "Strong consensus from both agents with highest confidence; it is the primary active component for solar energy conversion.",
+              "round": 2,
+              "normalized_component": "Solar Cell"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Tempered Glass Cover",
+              "confidence": 0.95,
+              "reasoning": "Strong consensus from both agents with equally high confidence; vital for protecting cells while allowing sunlight penetration.",
+              "round": 2,
+              "normalized_component": "Glass Cover"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Aluminum Frame",
+              "confidence": 0.91,
+              "reasoning": "Strong consensus from both agents and critique guidance; necessary for structural integrity and mounting.",
+              "round": 2,
+              "normalized_component": "Chassis Assembly"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Junction Box",
+              "confidence": 0.92,
+              "reasoning": "Strongly supported by both agents and critiques; essential for electrical connection and safety.",
+              "round": 2,
+              "normalized_component": "Junction Box"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Backsheet",
+              "confidence": 0.85,
+              "reasoning": "Agreed by both agents and critiques; important for protecting the rear of the panel from environmental damage.",
+              "round": 2,
+              "normalized_component": "High-Conductivity Cable"
+            }
+          ]
+        },
+        "rounds_completed": 2,
+        "support_analysis": {
+          "consensus": [
+            "monocrystalline silicon solar cells",
+            "tempered glass cover",
+            "aluminum frame",
+            "junction box",
+            "backsheet"
+          ],
+          "majority": [],
+          "isolated": []
+        },
+        "critiques": [
+          {
+            "item_name": "Monocrystalline Silicon Solar Cells",
+            "normalized_name": "monocrystalline silicon solar cells",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_3",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.98,
+            "critique_text": "Strong consensus on 'Monocrystalline Silicon Solar Cells': all 3 agents support with avg confidence 0.98. Preserve this component."
+          },
+          {
+            "item_name": "Tempered Glass Cover",
+            "normalized_name": "tempered glass cover",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_3",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.9499999999999998,
+            "critique_text": "Strong consensus on 'Tempered Glass Cover': all 3 agents support with avg confidence 0.95. Preserve this component."
+          },
+          {
+            "item_name": "Aluminum Frame",
+            "normalized_name": "aluminum frame",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_3",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.91,
+            "critique_text": "Strong consensus on 'Aluminum Frame': all 3 agents support with avg confidence 0.91. Preserve this component."
+          },
+          {
+            "item_name": "Junction Box",
+            "normalized_name": "junction box",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_3",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.92,
+            "critique_text": "Strong consensus on 'Junction Box': all 3 agents support with avg confidence 0.92. Preserve this component."
+          },
+          {
+            "item_name": "Backsheet",
+            "normalized_name": "backsheet",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_3",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.85,
+            "critique_text": "Strong consensus on 'Backsheet': all 3 agents support with avg confidence 0.85. Preserve this component."
+          }
+        ],
+        "changes_from_previous": {
+          "items_added": [
+            "monocrystalline silicon solar cells"
+          ],
+          "items_removed": [
+            "eva encapsulation sheet",
+            "bypass diode",
+            "monocrystalline silicon solar cell",
+            "interconnect ribbon wire",
+            "encapsulation layer (eva or poe)",
+            "mounting bracket"
+          ],
+          "confidence_changes": {}
+        }
+      }
+    ],
+    "phase3_final_consensus": {
+      "technology": "Solar Panel",
+      "technology_specification": "Solar Panel",
+      "technology_reasoning": "",
+      "components": [
+        "Solar Cell",
+        "Glass Cover",
+        "Junction Box",
+        "Chassis Assembly",
+        "High-conductivity Cable"
+      ],
+      "confidence": 1.0,
+      "rounds": 2,
+      "convergence_score": 1.0
+    }
+  },
+  "materials_debate": {
+    "debate_rounds": [],
+    "final_consensus": {
+      "components": 5,
+      "unique_materials": 12,
+      "total_assignments": 15,
+      "materials_by_component": {
+        "Solar Cell": [
+          {
+            "name": "Silicon",
+            "confidence": 0.98,
+            "reasoning": "Primary semiconductor material for photovoltaic conversion, absolutely essential and defines solar cell function."
+          },
+          {
+            "name": "Silver",
+            "confidence": 0.85,
+            "reasoning": "Used in front contact metallization for current collection, industry standard though copper alternatives exist."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.9,
+            "reasoning": "Used for back contact and frame material, universal in solar cell design."
+          },
+          {
+            "name": "Phosphorus",
+            "confidence": 0.75,
+            "reasoning": "N-type dopant in silicon to create PN junction, standard but arsenic can be an alternative."
+          },
+          {
+            "name": "Boron",
+            "confidence": 0.75,
+            "reasoning": "P-type dopant in silicon, commonly used though gallium is an alternative."
+          }
+        ],
+        "Glass Cover": [
+          {
+            "name": "Glass",
+            "confidence": 0.95,
+            "reasoning": "Structural and protective cover providing transparency and durability, universally used in solar panels."
+          },
+          {
+            "name": "Borosilicate glass",
+            "confidence": 0.7,
+            "reasoning": "Often used for enhanced thermal and mechanical stability, common alternative to standard glass."
+          },
+          {
+            "name": "Silicon dioxide",
+            "confidence": 0.65,
+            "reasoning": "Constituent material in glass and coatings, commonly present though less emphasized."
+          }
+        ],
+        "Junction Box": [
+          {
+            "name": "Polyethylene terephthalate",
+            "confidence": 0.75,
+            "reasoning": "Used as insulating and protective polymer material for junction box components, standard with some alternatives."
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.9,
+            "reasoning": "Primary conductor material for electrical wiring inside junction box, industry standard."
+          },
+          {
+            "name": "Silicon",
+            "confidence": 0.5,
+            "reasoning": "Used in semiconductor-based protection devices or diodes within junction box; however, alternative components may exist."
+          }
+        ],
+        "Chassis Assembly": [
+          {
+            "name": "Aluminum",
+            "confidence": 0.9,
+            "reasoning": "Primary structural material for the chassis due to strength and light weight, industry standard."
+          },
+          {
+            "name": "Stainless steel",
+            "confidence": 0.7,
+            "reasoning": "Alternately used for structural parts, corrosion resistance and strength make it a common substitute."
+          }
+        ],
+        "High-conductivity Cable": [
+          {
+            "name": "Copper",
+            "confidence": 0.95,
+            "reasoning": "Primary conductor material due to excellent electrical conductivity and availability."
+          },
+          {
+            "name": "Polyvinyl chloride",
+            "confidence": 0.8,
+            "reasoning": "Common insulation material for electrical cables providing good dielectric properties and flexibility."
+          }
+        ]
+      }
+    }
+  }
+}

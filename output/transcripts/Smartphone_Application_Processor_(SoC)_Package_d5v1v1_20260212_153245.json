@@ -1,0 +1,1329 @@
+{
+  "version": "2.0",
+  "metadata": {
+    "technology": "Smartphone Application Processor (SoC) Package",
+    "technology_specification": "Smartphone Application Processor (SoC) Package",
+    "technology_reasoning": "",
+    "timestamp": "2026-02-12T15:48:38.103688",
+    "format_version": "2.0"
+  },
+  "config": {
+    "num_agents": 5,
+    "max_rounds": 2
+  },
+  "component_stage": {
+    "phase1_initial_proposals": [
+      {
+        "agent_id": "Agent_1",
+        "components": [
+          {
+            "name": "Application Processor SoC Die",
+            "confidence": 1.0,
+            "reasoning": "The central silicon chip containing CPU, GPU, and other cores is the core functional unit and always procured as a separate die before packaging."
+          },
+          {
+            "name": "Package Substrate",
+            "confidence": 0.95,
+            "reasoning": "A multi-layer PCB or organic substrate providing electrical connections and mechanical support, typically procured from specialized substrate manufacturers."
+          },
+          {
+            "name": "Encapsulation Mold Compound",
+            "confidence": 0.9,
+            "reasoning": "Used to physically protect the die and package internals, and though materials, the molded encapsulation is considered a processed subassembly by package assemblers."
+          },
+          {
+            "name": "Solder Balls (BGA array)",
+            "confidence": 0.92,
+            "reasoning": "The array of solder balls forming the ball grid array provides the electrical and mechanical interface between the package and the smartphone PCB; these are procured and applied separately by packaging assembly houses."
+          },
+          {
+            "name": "Package on Package (PoP) Memory Module",
+            "confidence": 0.98,
+            "reasoning": "PoP memory is a distinct procured subassembly stacked on top of the application processor to provide DRAM/Flash, with a separate supply chain."
+          },
+          {
+            "name": "Thermal Interface Material (TIM)",
+            "confidence": 0.85,
+            "reasoning": "Applied between the SoC package and smartphone heat spreaders, this is a separate product procured for thermal management."
+          },
+          {
+            "name": "Integrated Passive Devices (IPD) Module",
+            "confidence": 0.75,
+            "reasoning": "Some advanced SoC packages include integrated passive components or separate IPD submodules procured from specialized suppliers for filtering and power management."
+          }
+        ],
+        "technology_specification": "Smartphone Application Processor (SoC) Package refers to the complete packaged semiconductor module containing the main integrated circuit chip designed for smartphone processing functions, typically utilizing advanced system-on-chip designs with advanced packaging technologies such as PoP (Package on Package).",
+        "technology_reasoning": "This specification is the industry standard as smartphone application processors are almost universally implemented as SoC packages combining CPU, GPU, and other cores, and are procured as packaged modules from semiconductor foundries or OSAT providers. The PoP form factor is dominant to integrate memory on top, conserving space and enabling easy assembly in smartphone manufacturing."
+      },
+      {
+        "agent_id": "Agent_2",
+        "components": [
+          {
+            "name": "Silicon Die (Application Processor IC)",
+            "confidence": 1.0,
+            "reasoning": "Central active semiconductor component fabricated on silicon wafer; absolutely essential and procured as a processed die before packaging."
+          },
+          {
+            "name": "Organic Substrate (Package Substrate)",
+            "confidence": 0.95,
+            "reasoning": "Multi-layer organic PCB hosting metal interconnect traces; distinct assembly providing electrical connections and mechanical support, sourced separately from other parts."
+          },
+          {
+            "name": "Flip-Chip Solder Balls",
+            "confidence": 0.9,
+            "reasoning": "Array of solder spheres or bumps enabling electrical and mechanical interface between substrate and smartphone main PCB; considered a distinct assembly step and component in package supply chains."
+          },
+          {
+            "name": "Encapsulation Mold Compound",
+            "confidence": 0.85,
+            "reasoning": "Protective molded polymer encapsulating the silicon die and substrate, forming the base structure of the package; typically procured or processed as a distinct material and step in packaging."
+          },
+          {
+            "name": "Heat Spreader (Copper or Alloy Lid)",
+            "confidence": 0.9,
+            "reasoning": "Metal heat spreader attached atop the silicon die substrate assembly to dissipate heat efficiently, commonly procured as a separate mechanical component."
+          },
+          {
+            "name": "Underfill Adhesive",
+            "confidence": 0.65,
+            "reasoning": "Epoxy resin applied between die and substrate to reinforce mechanical bonding and stress relief; procured separately but sometimes integrated by assembly houses."
+          },
+          {
+            "name": "Thermal Interface Material (TIM)",
+            "confidence": 0.7,
+            "reasoning": "Material layer placed between heat spreader and die or substrate to improve thermal conduction; often procured as a preform or paste separately, but sometimes integrated or applied during final assembly."
+          }
+        ],
+        "technology_specification": "Smartphone Application Processor (SoC) Package in industry-standard flip-chip ball grid array (FC-BGA) format with integrated substrate and heat spreader.",
+        "technology_reasoning": "This specification reflects the dominant commercial form factor for smartphone SoC packages as of 2024, used by leading chip manufacturers like Qualcomm, Apple, and MediaTek. The FC-BGA is the market standard due to its superior electrical performance, heat dissipation, and compact size fitting smartphone PCB assembly processes."
+      },
+      {
+        "agent_id": "Agent_3",
+        "components": [
+          {
+            "name": "Silicon Die (SoC Chip)",
+            "confidence": 1.0,
+            "reasoning": "The central semiconductor chip containing the integrated circuits is always procured as a separate, critical manufactured component distinct from packaging materials."
+          },
+          {
+            "name": "Substrate (Organic or Ceramic)",
+            "confidence": 0.95,
+            "reasoning": "The multi-layer substrate provides electrical interconnect and mechanical support; typically manufactured separately and sourced distinctly from the die, foundational to the package."
+          },
+          {
+            "name": "Wire Bonds or Flip-Chip Bumps",
+            "confidence": 0.9,
+            "reasoning": "These are critical electrical interconnects between the die and substrate, generally procured as discrete materials or components during assembly though sometimes integrated, reflecting a primary manufactured element."
+          },
+          {
+            "name": "Encapsulation Mold Compound",
+            "confidence": 0.92,
+            "reasoning": "The protective encapsulation is a separate component added post-assembly to protect the die and substrate, produced by specialized suppliers."
+          },
+          {
+            "name": "Package Leads or Ball Grid Array (BGA) Balls",
+            "confidence": 0.9,
+            "reasoning": "Leads or solder balls provide the physical and electrical interface for mounting on the PCB; they are procured and applied as distinct components during packaging."
+          },
+          {
+            "name": "Die Attach Material (Preform or Paste)",
+            "confidence": 0.6,
+            "reasoning": "Although it is a consumable adhesive material, the die attach preform or paste is procured as a distinct item critical to assembly, sometimes considered a separate component in manufacturing."
+          },
+          {
+            "name": "Heat Spreader or Heat Sink (if included)",
+            "confidence": 0.7,
+            "reasoning": "Some SoC packages include integrated heat spreaders as separate metallic components to manage thermal loads; not universal but common enough to be considered primary in those designs."
+          }
+        ],
+        "technology_specification": "Smartphone Application Processor (SoC) Package consisting of an integrated system-on-chip mounted on a substrate with interconnects, encapsulated in a protective mold compound, designed for integration into mobile devices.",
+        "technology_reasoning": "This specification reflects the typical commercial SoC package used in smartphones as of 2024, where the semiconductor die is combined with a multi-layer substrate, bond wires or flip-chip bumps for signal routing, and encapsulation for protection, representing the industry-standard physical packaging form factor."
+      },
+      {
+        "agent_id": "Agent_4",
+        "components": [
+          {
+            "name": "Processor Die (Application Processor)",
+            "confidence": 1.0,
+            "reasoning": "The core silicon chip that contains the central processing units and GPUs, distinctly procured and packaged into the SoC; it is the fundamental part of the package."
+          },
+          {
+            "name": "Package Substrate",
+            "confidence": 0.95,
+            "reasoning": "A multilayer organic substrate that provides mechanical support and electrical interconnects between the processor die and the smartphone PCB; it is a separately manufactured component with a distinct supply chain."
+          },
+          {
+            "name": "Wire Bonds or Flip-Chip Microbumps",
+            "confidence": 0.9,
+            "reasoning": "Physical electrical connections between the die and the substrate; these interconnect technologies are critical distinct process steps and often sourced via specialized suppliers or internal manufacturing."
+          },
+          {
+            "name": "Encapsulation/ Molding Compound",
+            "confidence": 0.85,
+            "reasoning": "Protective polymer mold compound that shields the die and wire bonds from mechanical and environmental damage; packaged as a separate manufacturing step and component in the assembly."
+          },
+          {
+            "name": "Integrated Passive Components (Embedded Passives)",
+            "confidence": 0.75,
+            "reasoning": "Capacitors, resistors, and inductors embedded in the substrate or as discrete passive chips within the package; often separately procured from specialized suppliers or integrated into the substrate."
+          },
+          {
+            "name": "Thermal Interface Material (TIM)",
+            "confidence": 0.7,
+            "reasoning": "Layer materials, such as thermal pads or grease, applied between the die and heatsink/external heat spreader; often supplied separately but essential for thermal management in the package."
+          },
+          {
+            "name": "Heat Spreader or Lid (Metal Cover)",
+            "confidence": 0.8,
+            "reasoning": "A metallic lid attached on top of the package to protect and help dissipate heat from the die; this is a manufactured subassembly typically supplied from a separate supply chain."
+          },
+          {
+            "name": "Solder Balls or BGA Ball Grid Array",
+            "confidence": 0.9,
+            "reasoning": "Solder balls applied on the underside of the package for electrical connection to the smartphone PCB; a standardized physical component procured and integrated into the package."
+          }
+        ],
+        "technology_specification": "Smartphone Application Processor (SoC) Package as a fully assembled, substrate-based semiconductor package integrating the application processor die and supporting components for integration onto a smartphone motherboard.",
+        "technology_reasoning": "The SoC package is the most common and standardized form in microelectronics for smartphones, as it combines the processor die, memory (sometimes), and passive components into a single physically packaged module supplied to device manufacturers, simplifying assembly and enhancing performance and reliability."
+      },
+      {
+        "agent_id": "Agent_5",
+        "components": [
+          {
+            "name": "Silicon Die (SoC Chip)",
+            "confidence": 1.0,
+            "reasoning": "The core semiconductor chip containing the integrated circuits for processing; always the primary component of the package."
+          },
+          {
+            "name": "Multi-layer Organic Substrate",
+            "confidence": 0.95,
+            "reasoning": "Provides the physical and electrical interconnections for the die; procured as a separate manufactured component, ubiquitous in SoC packages."
+          },
+          {
+            "name": "Solder Bump Array (Flip-chip Interconnects)",
+            "confidence": 0.9,
+            "reasoning": "Enables electrical and mechanical connection between the die and substrate; standardized as a separate procured or formed component."
+          },
+          {
+            "name": "Encapsulation Mold Compound",
+            "confidence": 0.85,
+            "reasoning": "Protects the die and substrate from mechanical and environmental damage; typically supplied as a separate material but forms a distinct package assembly."
+          },
+          {
+            "name": "Passive Components (Embedded or Discrete Capacitors and Resistors)",
+            "confidence": 0.8,
+            "reasoning": "Capacitors and resistors are integrated or mounted on the substrate to enable signal conditioning and power integrity; often supplied separately or embedded differently by substrate suppliers."
+          },
+          {
+            "name": "Thermal Interface Material (TIM)",
+            "confidence": 0.75,
+            "reasoning": "Material placed between the die and external heat spreader or package lid; a distinct component to enhance heat dissipation."
+          },
+          {
+            "name": "Package Lid or Heat Spreader",
+            "confidence": 0.7,
+            "reasoning": "Metal or composite cover to protect and dissipate heat from the SoC; sometimes omitted or integrated, but commonly a separate component."
+          },
+          {
+            "name": "Underfill Adhesive",
+            "confidence": 0.6,
+            "reasoning": "Material used to reinforce solder bump connections between die and substrate; procured separately though often applied during assembly."
+          }
+        ],
+        "technology_specification": "Smartphone Application Processor (SoC) Package consisting of a semiconductor die encapsulated within a multi-layer substrate, integrated with passive components and connected through solder bumps for system-level integration.",
+        "technology_reasoning": "The SoC package is the industry-standard form as of 2024-2025 for housing the complex integrated circuits of smartphone processors, providing electrical, mechanical, and thermal interfaces. Multi-layer substrate packages with solder bump interconnects dominate due to high pin counts, miniaturization, and performance requirements in mobile devices."
+      }
+    ],
+    "phase2_debate_rounds": [
+      {
+        "round_num": 1,
+        "convergence": 0.45553030303030306,
+        "threshold": 0.7,
+        "threshold_reached": false,
+        "proposals": {
+          "Agent_1": [
+            {
+              "name": "Application Processor SoC Die",
+              "confidence": 1.0,
+              "reasoning": "The central silicon chip containing CPU, GPU, and other cores is the core functional unit and always procured as a separate die before packaging.",
+              "component": "Application Processor SoC Die",
+              "normalized_component": "application processor die"
+            },
+            {
+              "name": "Package Substrate",
+              "confidence": 0.95,
+              "reasoning": "A multi-layer PCB or organic substrate providing electrical connections and mechanical support, typically procured from specialized substrate manufacturers.",
+              "component": "Package Substrate",
+              "normalized_component": "organic substrate"
+            },
+            {
+              "name": "Encapsulation Mold Compound",
+              "confidence": 0.9,
+              "reasoning": "Used to physically protect the die and package internals, and though materials, the molded encapsulation is considered a processed subassembly by package assemblers.",
+              "component": "Encapsulation Mold Compound",
+              "normalized_component": "encapsulation mold compound"
+            },
+            {
+              "name": "Solder Balls (BGA array)",
+              "confidence": 0.92,
+              "reasoning": "The array of solder balls forming the ball grid array provides the electrical and mechanical interface between the package and the smartphone PCB; these are procured and applied separately by packaging assembly houses.",
+              "component": "Solder Balls (BGA array)",
+              "normalized_component": "bga solder balls"
+            },
+            {
+              "name": "Package on Package (PoP) Memory Module",
+              "confidence": 0.98,
+              "reasoning": "PoP memory is a distinct procured subassembly stacked on top of the application processor to provide DRAM/Flash, with a separate supply chain.",
+              "component": "Package on Package (PoP) Memory Module",
+              "normalized_component": "pop memory"
+            },
+            {
+              "name": "Thermal Interface Material (TIM)",
+              "confidence": 0.85,
+              "reasoning": "Applied between the SoC package and smartphone heat spreaders, this is a separate product procured for thermal management.",
+              "component": "Thermal Interface Material (TIM)",
+              "normalized_component": "thermal interface material"
+            },
+            {
+              "name": "Integrated Passive Devices (IPD) Module",
+              "confidence": 0.75,
+              "reasoning": "Some advanced SoC packages include integrated passive components or separate IPD submodules procured from specialized suppliers for filtering and power management.",
+              "component": "Integrated Passive Devices (IPD) Module",
+              "normalized_component": "integrated passive devices"
+            }
+          ],
+          "Agent_2": [
+            {
+              "name": "Silicon Die (Application Processor IC)",
+              "confidence": 1.0,
+              "reasoning": "Central active semiconductor component fabricated on silicon wafer; absolutely essential and procured as a processed die before packaging.",
+              "component": "Silicon Die (Application Processor IC)",
+              "normalized_component": "application processor die"
+            },
+            {
+              "name": "Organic Substrate (Package Substrate)",
+              "confidence": 0.95,
+              "reasoning": "Multi-layer organic PCB hosting metal interconnect traces; distinct assembly providing electrical connections and mechanical support, sourced separately from other parts.",
+              "component": "Organic Substrate (Package Substrate)",
+              "normalized_component": "organic substrate"
+            },
+            {
+              "name": "Flip-Chip Solder Balls",
+              "confidence": 0.9,
+              "reasoning": "Array of solder spheres or bumps enabling electrical and mechanical interface between substrate and smartphone main PCB; considered a distinct assembly step and component in package supply chains.",
+              "component": "Flip-Chip Solder Balls",
+              "normalized_component": "flip chip solder bumps"
+            },
+            {
+              "name": "Encapsulation Mold Compound",
+              "confidence": 0.85,
+              "reasoning": "Protective molded polymer encapsulating the silicon die and substrate, forming the base structure of the package; typically procured or processed as a distinct material and step in packaging.",
+              "component": "Encapsulation Mold Compound",
+              "normalized_component": "encapsulation mold compound"
+            },
+            {
+              "name": "Heat Spreader (Copper or Alloy Lid)",
+              "confidence": 0.9,
+              "reasoning": "Metal heat spreader attached atop the silicon die substrate assembly to dissipate heat efficiently, commonly procured as a separate mechanical component.",
+              "component": "Heat Spreader (Copper or Alloy Lid)",
+              "normalized_component": "heat spreader"
+            },
+            {
+              "name": "Underfill Adhesive",
+              "confidence": 0.65,
+              "reasoning": "Epoxy resin applied between die and substrate to reinforce mechanical bonding and stress relief; procured separately but sometimes integrated by assembly houses.",
+              "component": "Underfill Adhesive",
+              "normalized_component": "underfill adhesive"
+            },
+            {
+              "name": "Thermal Interface Material (TIM)",
+              "confidence": 0.7,
+              "reasoning": "Material layer placed between heat spreader and die or substrate to improve thermal conduction; often procured as a preform or paste separately, but sometimes integrated or applied during final assembly.",
+              "component": "Thermal Interface Material (TIM)",
+              "normalized_component": "thermal interface material"
+            }
+          ],
+          "Agent_3": [
+            {
+              "name": "Silicon Die (SoC Chip)",
+              "confidence": 1.0,
+              "reasoning": "The central semiconductor chip containing the integrated circuits is always procured as a separate, critical manufactured component distinct from packaging materials.",
+              "component": "Silicon Die (SoC Chip)",
+              "normalized_component": "application processor die"
+            },
+            {
+              "name": "Substrate (Organic or Ceramic)",
+              "confidence": 0.95,
+              "reasoning": "The multi-layer substrate provides electrical interconnect and mechanical support; typically manufactured separately and sourced distinctly from the die, foundational to the package.",
+              "component": "Substrate (Organic or Ceramic)",
+              "normalized_component": "organic substrate / ceramic substrate"
+            },
+            {
+              "name": "Wire Bonds or Flip-Chip Bumps",
+              "confidence": 0.9,
+              "reasoning": "These are critical electrical interconnects between the die and substrate, generally procured as discrete materials or components during assembly though sometimes integrated, reflecting a primary manufactured element.",
+              "component": "Wire Bonds or Flip-Chip Bumps",
+              "normalized_component": "wire bonds / flip chip microbumps"
+            },
+            {
+              "name": "Encapsulation Mold Compound",
+              "confidence": 0.92,
+              "reasoning": "The protective encapsulation is a separate component added post-assembly to protect the die and substrate, produced by specialized suppliers.",
+              "component": "Encapsulation Mold Compound",
+              "normalized_component": "encapsulation mold compound"
+            },
+            {
+              "name": "Package Leads or Ball Grid Array (BGA) Balls",
+              "confidence": 0.9,
+              "reasoning": "Leads or solder balls provide the physical and electrical interface for mounting on the PCB; they are procured and applied as distinct components during packaging.",
+              "component": "Package Leads or Ball Grid Array (BGA) Balls",
+              "normalized_component": "bga solder balls"
+            },
+            {
+              "name": "Die Attach Material (Preform or Paste)",
+              "confidence": 0.6,
+              "reasoning": "Although it is a consumable adhesive material, the die attach preform or paste is procured as a distinct item critical to assembly, sometimes considered a separate component in manufacturing.",
+              "component": "Die Attach Material (Preform or Paste)",
+              "normalized_component": "die attach material"
+            },
+            {
+              "name": "Heat Spreader or Heat Sink (if included)",
+              "confidence": 0.7,
+              "reasoning": "Some SoC packages include integrated heat spreaders as separate metallic components to manage thermal loads; not universal but common enough to be considered primary in those designs.",
+              "component": "Heat Spreader or Heat Sink (if included)",
+              "normalized_component": "heat spreader"
+            }
+          ],
+          "Agent_4": [
+            {
+              "name": "Processor Die (Application Processor)",
+              "confidence": 1.0,
+              "reasoning": "The core silicon chip that contains the central processing units and GPUs, distinctly procured and packaged into the SoC; it is the fundamental part of the package.",
+              "component": "Processor Die (Application Processor)",
+              "normalized_component": "application processor die"
+            },
+            {
+              "name": "Package Substrate",
+              "confidence": 0.95,
+              "reasoning": "A multilayer organic substrate that provides mechanical support and electrical interconnects between the processor die and the smartphone PCB; it is a separately manufactured component with a distinct supply chain.",
+              "component": "Package Substrate",
+              "normalized_component": "organic substrate"
+            },
+            {
+              "name": "Wire Bonds or Flip-Chip Microbumps",
+              "confidence": 0.9,
+              "reasoning": "Physical electrical connections between the die and the substrate; these interconnect technologies are critical distinct process steps and often sourced via specialized suppliers or internal manufacturing.",
+              "component": "Wire Bonds or Flip-Chip Microbumps",
+              "normalized_component": "wire bonds / flip chip microbumps"
+            },
+            {
+              "name": "Encapsulation/ Molding Compound",
+              "confidence": 0.85,
+              "reasoning": "Protective polymer mold compound that shields the die and wire bonds from mechanical and environmental damage; packaged as a separate manufacturing step and component in the assembly.",
+              "component": "Encapsulation/ Molding Compound",
+              "normalized_component": "encapsulation mold compound"
+            },
+            {
+              "name": "Integrated Passive Components (Embedded Passives)",
+              "confidence": 0.75,
+              "reasoning": "Capacitors, resistors, and inductors embedded in the substrate or as discrete passive chips within the package; often separately procured from specialized suppliers or integrated into the substrate.",
+              "component": "Integrated Passive Components (Embedded Passives)",
+              "normalized_component": "integrated passive devices"
+            },
+            {
+              "name": "Thermal Interface Material (TIM)",
+              "confidence": 0.7,
+              "reasoning": "Layer materials, such as thermal pads or grease, applied between the die and heatsink/external heat spreader; often supplied separately but essential for thermal management in the package.",
+              "component": "Thermal Interface Material (TIM)",
+              "normalized_component": "thermal interface material"
+            },
+            {
+              "name": "Heat Spreader or Lid (Metal Cover)",
+              "confidence": 0.8,
+              "reasoning": "A metallic lid attached on top of the package to protect and help dissipate heat from the die; this is a manufactured subassembly typically supplied from a separate supply chain.",
+              "component": "Heat Spreader or Lid (Metal Cover)",
+              "normalized_component": "heat spreader"
+            },
+            {
+              "name": "Solder Balls or BGA Ball Grid Array",
+              "confidence": 0.9,
+              "reasoning": "Solder balls applied on the underside of the package for electrical connection to the smartphone PCB; a standardized physical component procured and integrated into the package.",
+              "component": "Solder Balls or BGA Ball Grid Array",
+              "normalized_component": "bga solder balls"
+            }
+          ],
+          "Agent_5": [
+            {
+              "name": "Silicon Die (SoC Chip)",
+              "confidence": 1.0,
+              "reasoning": "The core semiconductor chip containing the integrated circuits for processing; always the primary component of the package.",
+              "component": "Silicon Die (SoC Chip)",
+              "normalized_component": "application processor die"
+            },
+            {
+              "name": "Multi-layer Organic Substrate",
+              "confidence": 0.95,
+              "reasoning": "Provides the physical and electrical interconnections for the die; procured as a separate manufactured component, ubiquitous in SoC packages.",
+              "component": "Multi-layer Organic Substrate",
+              "normalized_component": "organic substrate"
+            },
+            {
+              "name": "Solder Bump Array (Flip-chip Interconnects)",
+              "confidence": 0.9,
+              "reasoning": "Enables electrical and mechanical connection between the die and substrate; standardized as a separate procured or formed component.",
+              "component": "Solder Bump Array (Flip-chip Interconnects)",
+              "normalized_component": "flip chip solder bumps"
+            },
+            {
+              "name": "Encapsulation Mold Compound",
+              "confidence": 0.85,
+              "reasoning": "Protects the die and substrate from mechanical and environmental damage; typically supplied as a separate material but forms a distinct package assembly.",
+              "component": "Encapsulation Mold Compound",
+              "normalized_component": "encapsulation mold compound"
+            },
+            {
+              "name": "Passive Components (Embedded or Discrete Capacitors and Resistors)",
+              "confidence": 0.8,
+              "reasoning": "Capacitors and resistors are integrated or mounted on the substrate to enable signal conditioning and power integrity; often supplied separately or embedded differently by substrate suppliers.",
+              "component": "Passive Components (Embedded or Discrete Capacitors and Resistors)",
+              "normalized_component": "passive capacitors and resistors"
+            },
+            {
+              "name": "Thermal Interface Material (TIM)",
+              "confidence": 0.75,
+              "reasoning": "Material placed between the die and external heat spreader or package lid; a distinct component to enhance heat dissipation.",
+              "component": "Thermal Interface Material (TIM)",
+              "normalized_component": "thermal interface material"
+            },
+            {
+              "name": "Package Lid or Heat Spreader",
+              "confidence": 0.7,
+              "reasoning": "Metal or composite cover to protect and dissipate heat from the SoC; sometimes omitted or integrated, but commonly a separate component.",
+              "component": "Package Lid or Heat Spreader",
+              "normalized_component": "heat spreader"
+            },
+            {
+              "name": "Underfill Adhesive",
+              "confidence": 0.6,
+              "reasoning": "Material used to reinforce solder bump connections between die and substrate; procured separately though often applied during assembly.",
+              "component": "Underfill Adhesive",
+              "normalized_component": "underfill adhesive"
+            }
+          ]
+        },
+        "rounds_completed": 1,
+        "support_analysis": {
+          "consensus": [
+            "bga solder balls"
+          ],
+          "majority": [
+            "application processor die",
+            "organic substrate",
+            "encapsulation mold compound",
+            "thermal interface material",
+            "integrated passive devices",
+            "flip chip solder bumps",
+            "heat spreader",
+            "underfill adhesive",
+            "wire bonds / flip chip microbumps"
+          ],
+          "isolated": [
+            "pop memory",
+            "organic substrate / ceramic substrate",
+            "die attach material",
+            "passive capacitors and resistors"
+          ]
+        },
+        "critiques": [
+          {
+            "item_name": "application processor die",
+            "normalized_name": "application processor die",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_4",
+              "Agent_3",
+              "Agent_5",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 1.0,
+            "critique_text": "Majority support for 'application processor die': 5/3 agents agree (conf: 1.00). Consider strengthening consensus."
+          },
+          {
+            "item_name": "organic substrate",
+            "normalized_name": "organic substrate",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_5",
+              "Agent_1",
+              "Agent_2",
+              "Agent_4"
+            ],
+            "opposing_agents": [
+              "Agent_3"
+            ],
+            "avg_confidence": 0.95,
+            "critique_text": "Majority support for 'organic substrate': 4/3 agents agree (conf: 0.95). Consider strengthening consensus."
+          },
+          {
+            "item_name": "encapsulation mold compound",
+            "normalized_name": "encapsulation mold compound",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_4",
+              "Agent_3",
+              "Agent_5",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.874,
+            "critique_text": "Majority support for 'encapsulation mold compound': 5/3 agents agree (conf: 0.87). Consider strengthening consensus."
+          },
+          {
+            "item_name": "bga solder balls",
+            "normalized_name": "bga solder balls",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_4"
+            ],
+            "opposing_agents": [
+              "Agent_5",
+              "Agent_2"
+            ],
+            "avg_confidence": 0.9066666666666667,
+            "critique_text": "Strong consensus on 'bga solder balls': all 3 agents support with avg confidence 0.91. Preserve this component."
+          },
+          {
+            "item_name": "pop memory",
+            "normalized_name": "pop memory",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2",
+              "Agent_3",
+              "Agent_5",
+              "Agent_4"
+            ],
+            "avg_confidence": 0.98,
+            "critique_text": "Isolated proposal 'pop memory' from 1 agent(s) (conf: 0.98). Requires justification or peer validation."
+          },
+          {
+            "item_name": "thermal interface material",
+            "normalized_name": "thermal interface material",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_5",
+              "Agent_1",
+              "Agent_2",
+              "Agent_4"
+            ],
+            "opposing_agents": [
+              "Agent_3"
+            ],
+            "avg_confidence": 0.75,
+            "critique_text": "Majority support for 'thermal interface material': 4/3 agents agree (conf: 0.75). Consider strengthening consensus."
+          },
+          {
+            "item_name": "integrated passive devices",
+            "normalized_name": "integrated passive devices",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_4"
+            ],
+            "opposing_agents": [
+              "Agent_2",
+              "Agent_3",
+              "Agent_5"
+            ],
+            "avg_confidence": 0.75,
+            "critique_text": "Majority support for 'integrated passive devices': 2/3 agents agree (conf: 0.75). Consider strengthening consensus."
+          },
+          {
+            "item_name": "flip chip solder bumps",
+            "normalized_name": "flip chip solder bumps",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_5",
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_4"
+            ],
+            "avg_confidence": 0.9,
+            "critique_text": "Majority support for 'flip chip solder bumps': 2/3 agents agree (conf: 0.90). Consider strengthening consensus."
+          },
+          {
+            "item_name": "heat spreader",
+            "normalized_name": "heat spreader",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_5",
+              "Agent_3",
+              "Agent_2",
+              "Agent_4"
+            ],
+            "opposing_agents": [
+              "Agent_1"
+            ],
+            "avg_confidence": 0.775,
+            "critique_text": "Majority support for 'heat spreader': 4/3 agents agree (conf: 0.78). Consider strengthening consensus."
+          },
+          {
+            "item_name": "underfill adhesive",
+            "normalized_name": "underfill adhesive",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_5",
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_4"
+            ],
+            "avg_confidence": 0.625,
+            "critique_text": "Majority support for 'underfill adhesive': 2/3 agents agree (conf: 0.62). Consider strengthening consensus."
+          },
+          {
+            "item_name": "organic substrate / ceramic substrate",
+            "normalized_name": "organic substrate / ceramic substrate",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_3"
+            ],
+            "opposing_agents": [
+              "Agent_2",
+              "Agent_1",
+              "Agent_5",
+              "Agent_4"
+            ],
+            "avg_confidence": 0.95,
+            "critique_text": "Isolated proposal 'organic substrate / ceramic substrate' from 1 agent(s) (conf: 0.95). Requires justification or peer validation."
+          },
+          {
+            "item_name": "wire bonds / flip chip microbumps",
+            "normalized_name": "wire bonds / flip chip microbumps",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_4"
+            ],
+            "opposing_agents": [
+              "Agent_2",
+              "Agent_1",
+              "Agent_5"
+            ],
+            "avg_confidence": 0.9,
+            "critique_text": "Majority support for 'wire bonds / flip chip microbumps': 2/3 agents agree (conf: 0.90). Consider strengthening consensus."
+          },
+          {
+            "item_name": "die attach material",
+            "normalized_name": "die attach material",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_3"
+            ],
+            "opposing_agents": [
+              "Agent_2",
+              "Agent_1",
+              "Agent_5",
+              "Agent_4"
+            ],
+            "avg_confidence": 0.6,
+            "critique_text": "Isolated proposal 'die attach material' from 1 agent(s) (conf: 0.60). Requires justification or peer validation."
+          },
+          {
+            "item_name": "passive capacitors and resistors",
+            "normalized_name": "passive capacitors and resistors",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_5"
+            ],
+            "opposing_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_2",
+              "Agent_4"
+            ],
+            "avg_confidence": 0.8,
+            "critique_text": "Isolated proposal 'passive capacitors and resistors' from 1 agent(s) (conf: 0.80). Requires justification or peer validation."
+          }
+        ],
+        "changes_from_previous": null
+      },
+      {
+        "round_num": 2,
+        "convergence": 0.8857142857142858,
+        "threshold": 0.7,
+        "threshold_reached": true,
+        "proposals": {
+          "Agent_1": [
+            {
+              "agent_id": "Agent_1",
+              "component": "Application Processor SoC Die",
+              "confidence": 1.0,
+              "reasoning": "Unanimous strong support from all 5 agents with highest confidence, hence critical and must be included.",
+              "round": 2,
+              "normalized_component": "Application Processor SoC Die"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Organic Substrate (Package Substrate)",
+              "confidence": 0.95,
+              "reasoning": "Four agents selected variants of organic/package substrate with high confidence and peer critique confirms strong consensus. Essential primary substrate component.",
+              "round": 2,
+              "normalized_component": "Package Substrate"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Encapsulation Mold Compound",
+              "confidence": 0.87,
+              "reasoning": "High support by 5 agents with good confidence and peer feedback confirms strong consensus. Important for protection and packaging.",
+              "round": 2,
+              "normalized_component": "Encapsulation Mold Compound"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Solder Balls (BGA array)",
+              "confidence": 0.91,
+              "reasoning": "Chosen by 3 agents with high confidence and peer critique confirms strong consensus. Critical for interconnection to PCB.",
+              "round": 2,
+              "normalized_component": "Solder Balls"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Thermal Interface Material (TIM)",
+              "confidence": 0.75,
+              "reasoning": "Supported by 4 agents with averaged confidence around 0.75, peer critique agrees on preservation. Important for thermal management.",
+              "round": 2,
+              "normalized_component": "Thermal Interface Material"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Heat Spreader (Copper or Alloy Lid)",
+              "confidence": 0.78,
+              "reasoning": "4 agents support variants of heat spreader/lid with average confidence of ~0.78, peer critique supports preservation. Necessary for heat dissipation.",
+              "round": 2,
+              "normalized_component": "Heat Spreader"
+            }
+          ],
+          "Agent_2": [
+            {
+              "agent_id": "Agent_2",
+              "component": "Application Processor SoC Die",
+              "confidence": 1.0,
+              "reasoning": "Unanimous support from all agents with highest confidence, clearly the central component of the SoC package.",
+              "round": 2,
+              "normalized_component": "Application Processor SoC Die"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Organic Substrate (Package Substrate)",
+              "confidence": 0.95,
+              "reasoning": "Strong consensus among most agents with high confidence, recognized as the common substrate choice.",
+              "round": 2,
+              "normalized_component": "Package Substrate"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Encapsulation Mold Compound",
+              "confidence": 0.87,
+              "reasoning": "Strong consensus and peer support for protection and structural integrity of the package.",
+              "round": 2,
+              "normalized_component": "Encapsulation Mold Compound"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Solder Balls (BGA array)",
+              "confidence": 0.91,
+              "reasoning": "Multiple agents support this interconnection component with high confidence, essential for board mounting.",
+              "round": 2,
+              "normalized_component": "Solder Balls"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Thermal Interface Material (TIM)",
+              "confidence": 0.75,
+              "reasoning": "Important for heat dissipation with broad but slightly varied confidence, should be included.",
+              "round": 2,
+              "normalized_component": "Thermal Interface Material"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Heat Spreader (Copper or Alloy Lid)",
+              "confidence": 0.78,
+              "reasoning": "Widely supported as critical for thermal management, confidence adjusted to average peer level.",
+              "round": 2,
+              "normalized_component": "Heat Spreader"
+            }
+          ],
+          "Agent_3": [
+            {
+              "agent_id": "Agent_3",
+              "component": "Application Processor SoC Die",
+              "confidence": 1.0,
+              "reasoning": "Unanimous support across all agents with maximum confidence; clearly a primary component.",
+              "round": 2,
+              "normalized_component": "Application Processor SoC Die"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Organic Substrate (Package Substrate)",
+              "confidence": 0.95,
+              "reasoning": "Strong consensus among four agents with high confidence; substrate is critical in SoC package assembly.",
+              "round": 2,
+              "normalized_component": "Package Substrate"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Encapsulation Mold Compound",
+              "confidence": 0.87,
+              "reasoning": "Supported by all agents with a high average confidence; essential for protection of the die and interconnects.",
+              "round": 2,
+              "normalized_component": "Encapsulation Mold Compound"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Solder Balls (BGA array)",
+              "confidence": 0.91,
+              "reasoning": "Strong support from multiple agents with high confidence; crucial for electrical and mechanical connection.",
+              "round": 2,
+              "normalized_component": "Solder Balls"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Thermal Interface Material (TIM)",
+              "confidence": 0.75,
+              "reasoning": "Supported by most agents; important to manage heat in smartphone SoC packages.",
+              "round": 2,
+              "normalized_component": "Thermal Interface Material"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Heat Spreader (Copper or Alloy Lid)",
+              "confidence": 0.78,
+              "reasoning": "Good support and critique highlights the importance of this for thermal management.",
+              "round": 2,
+              "normalized_component": "Heat Spreader"
+            }
+          ],
+          "Agent_4": [
+            {
+              "agent_id": "Agent_4",
+              "component": "Application Processor SoC Die",
+              "confidence": 1.0,
+              "reasoning": "Unanimous support from all agents with maximum confidence; clearly fundamental component.",
+              "round": 2,
+              "normalized_component": "Application Processor SoC Die"
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "Organic Substrate (Package Substrate)",
+              "confidence": 0.95,
+              "reasoning": "Strong consensus among 4 agents with high confidence; crucial for SoC package structure.",
+              "round": 2,
+              "normalized_component": "Package Substrate"
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "Encapsulation Mold Compound",
+              "confidence": 0.87,
+              "reasoning": "Strong consensus from all 5 agents, average confidence is 0.87; essential for protection and reliability.",
+              "round": 2,
+              "normalized_component": "Encapsulation Mold Compound"
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "Solder Balls (BGA array)",
+              "confidence": 0.91,
+              "reasoning": "Supported by multiple agents with an average confidence of 0.91; vital for interconnection.",
+              "round": 2,
+              "normalized_component": "Solder Balls"
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "Thermal Interface Material (TIM)",
+              "confidence": 0.75,
+              "reasoning": "High consensus with four agents supporting, average confidence 0.75; important for thermal management.",
+              "round": 2,
+              "normalized_component": "Thermal Interface Material"
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "Heat Spreader (Copper or Alloy Lid)",
+              "confidence": 0.78,
+              "reasoning": "Strong support from 4 agents, with average confidence ~0.78; necessary for heat dissipation and mechanical integrity.",
+              "round": 2,
+              "normalized_component": "Heat Spreader"
+            }
+          ],
+          "Agent_5": [
+            {
+              "agent_id": "Agent_5",
+              "component": "Application Processor SoC Die",
+              "confidence": 1.0,
+              "reasoning": "Unanimous support from all agents with top confidence; critical primary component of the package.",
+              "round": 2,
+              "normalized_component": "Application Processor SoC Die"
+            },
+            {
+              "agent_id": "Agent_5",
+              "component": "Package Substrate",
+              "confidence": 0.95,
+              "reasoning": "Strong consensus from 4 agents with high confidence; indispensable substrate for the SoC package.",
+              "round": 2,
+              "normalized_component": "IC Package"
+            },
+            {
+              "agent_id": "Agent_5",
+              "component": "Encapsulation Mold Compound",
+              "confidence": 0.87,
+              "reasoning": "Included by all agents with good confidence; essential for protection and structural integrity.",
+              "round": 2,
+              "normalized_component": "Encapsulation Mold Compound"
+            },
+            {
+              "agent_id": "Agent_5",
+              "component": "Solder Balls (BGA array)",
+              "confidence": 0.91,
+              "reasoning": "Strong peer support from multiple agents; necessary for electrical connection to PCB.",
+              "round": 2,
+              "normalized_component": "Solder Balls"
+            },
+            {
+              "agent_id": "Agent_5",
+              "component": "Thermal Interface Material (TIM)",
+              "confidence": 0.75,
+              "reasoning": "Broad support from 4 agents and critique notes its importance; critical for thermal management.",
+              "round": 2,
+              "normalized_component": "Thermal Interface Material"
+            },
+            {
+              "agent_id": "Agent_5",
+              "component": "Heat Spreader (Copper or Alloy Lid)",
+              "confidence": 0.78,
+              "reasoning": "Multiple agents support this component with solid confidence; important for heat dissipation.",
+              "round": 2,
+              "normalized_component": "Heat Spreader"
+            }
+          ]
+        },
+        "rounds_completed": 2,
+        "support_analysis": {
+          "consensus": [],
+          "majority": [
+            "application processor soc die",
+            "organic substrate (package substrate)",
+            "encapsulation mold compound",
+            "solder balls (bga array)",
+            "thermal interface material (tim)",
+            "heat spreader (copper or alloy lid)"
+          ],
+          "isolated": [
+            "package substrate"
+          ]
+        },
+        "critiques": [
+          {
+            "item_name": "Application Processor SoC Die",
+            "normalized_name": "application processor soc die",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_4",
+              "Agent_3",
+              "Agent_5",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 1.0,
+            "critique_text": "Majority support for 'Application Processor SoC Die': 5/3 agents agree (conf: 1.00). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Organic Substrate (Package Substrate)",
+            "normalized_name": "organic substrate (package substrate)",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_2",
+              "Agent_4"
+            ],
+            "opposing_agents": [
+              "Agent_5"
+            ],
+            "avg_confidence": 0.95,
+            "critique_text": "Majority support for 'Organic Substrate (Package Substrate)': 4/3 agents agree (conf: 0.95). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Encapsulation Mold Compound",
+            "normalized_name": "encapsulation mold compound",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_4",
+              "Agent_3",
+              "Agent_5",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.8699999999999999,
+            "critique_text": "Majority support for 'Encapsulation Mold Compound': 5/3 agents agree (conf: 0.87). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Solder Balls (BGA array)",
+            "normalized_name": "solder balls (bga array)",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_4",
+              "Agent_3",
+              "Agent_5",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.9099999999999999,
+            "critique_text": "Majority support for 'Solder Balls (BGA array)': 5/3 agents agree (conf: 0.91). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Thermal Interface Material (TIM)",
+            "normalized_name": "thermal interface material (tim)",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_4",
+              "Agent_3",
+              "Agent_5",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.75,
+            "critique_text": "Majority support for 'Thermal Interface Material (TIM)': 5/3 agents agree (conf: 0.75). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Heat Spreader (Copper or Alloy Lid)",
+            "normalized_name": "heat spreader (copper or alloy lid)",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_4",
+              "Agent_3",
+              "Agent_5",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.78,
+            "critique_text": "Majority support for 'Heat Spreader (Copper or Alloy Lid)': 5/3 agents agree (conf: 0.78). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Package Substrate",
+            "normalized_name": "package substrate",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_5"
+            ],
+            "opposing_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_2",
+              "Agent_4"
+            ],
+            "avg_confidence": 0.95,
+            "critique_text": "Isolated proposal 'Package Substrate' from 1 agent(s) (conf: 0.95). Requires justification or peer validation."
+          }
+        ],
+        "changes_from_previous": {
+          "items_added": [
+            "thermal interface material (tim)",
+            "organic substrate (package substrate)",
+            "application processor soc die",
+            "package substrate",
+            "heat spreader (copper or alloy lid)",
+            "solder balls (bga array)"
+          ],
+          "items_removed": [
+            "integrated passive devices",
+            "wire bonds / flip chip microbumps",
+            "organic substrate / ceramic substrate",
+            "bga solder balls",
+            "underfill adhesive",
+            "application processor die",
+            "flip chip solder bumps",
+            "organic substrate",
+            "pop memory",
+            "heat spreader",
+            "thermal interface material",
+            "die attach material",
+            "passive capacitors and resistors"
+          ],
+          "confidence_changes": {}
+        }
+      }
+    ],
+    "phase3_final_consensus": {
+      "technology": "Smartphone Application Processor (SoC) Package",
+      "technology_specification": "Smartphone Application Processor (SoC) Package",
+      "technology_reasoning": "",
+      "components": [
+        "Application Processor Soc Die",
+        "Solder Balls",
+        "Encapsulation Mold Compound",
+        "Heat Spreader",
+        "Thermal Interface Material",
+        "Package Substrate"
+      ],
+      "confidence": 0.8857142857142858,
+      "rounds": 2,
+      "convergence_score": 0.8857142857142858
+    }
+  },
+  "materials_debate": {
+    "debate_rounds": [],
+    "final_consensus": {
+      "components": 5,
+      "unique_materials": 10,
+      "total_assignments": 24,
+      "materials_by_component": {
+        "Power Amplifier Module": [
+          {
+            "name": "Gallium nitride",
+            "confidence": 0.95,
+            "reasoning": "Gallium nitride is the primary semiconductor material used in power amplifiers for high-frequency efficiency and power handling; it is absolutely essential with no close substitutes for 5G/4G power amplifiers."
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.9,
+            "reasoning": "Copper is used for internal wiring, interconnects, and ground planes due to its excellent electrical conductivity; it is a standard material universally used in RF front-end modules."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.8,
+            "reasoning": "Aluminum is often used for heat sinks and structural casing because of its good thermal conductivity and lightweight properties; alternatives exist but aluminum is common and very reliable."
+          },
+          {
+            "name": "Silicon",
+            "confidence": 0.75,
+            "reasoning": "Silicon may be used for integrated control circuitry or driver transistors in the module; while GaN is primary for power devices, silicon is commonly found in support ICs."
+          },
+          {
+            "name": "Ceramic",
+            "confidence": 0.85,
+            "reasoning": "Ceramics are widely used in substrates and capacitors due to excellent dielectric properties and thermal stability, critical for RF performance."
+          }
+        ],
+        "Low Noise Amplifier (lna)": [
+          {
+            "name": "Gallium arsenide",
+            "confidence": 0.9,
+            "reasoning": "Gallium arsenide is the dominant semiconductor material for LNAs to achieve low noise figure and high frequency performance; it is industry standard with very few substitutes."
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.9,
+            "reasoning": "Copper is essential for electrical interconnections and ground planes in the amplifier and is universally used."
+          },
+          {
+            "name": "Ceramic",
+            "confidence": 0.85,
+            "reasoning": "Ceramic substrates provide stable dielectric properties and thermal management for LNAs; they are industry standard in module packaging."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.75,
+            "reasoning": "Aluminum is used for heat sinking and housing components; it is commonly used though other metals could be substituted."
+          },
+          {
+            "name": "Silicon",
+            "confidence": 0.6,
+            "reasoning": "Silicon may be used in integrated circuits associated with LNA control or biasing; not the main semiconductor but a common support material with some alternatives."
+          }
+        ],
+        "Rf Switch Module": [
+          {
+            "name": "Silicon",
+            "confidence": 0.85,
+            "reasoning": "Silicon is critical as the semiconductor for RF switches using CMOS or MEMS technology and is the industry standard material."
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.9,
+            "reasoning": "Copper is essential for conductive traces, interconnects, and ground planes in the switch module."
+          },
+          {
+            "name": "Ceramic",
+            "confidence": 0.8,
+            "reasoning": "Ceramic substrates support high frequency operation and provide insulation with thermal stability; common in switch packaging."
+          },
+          {
+            "name": "Gold",
+            "confidence": 0.65,
+            "reasoning": "Gold may be used for plating contacts in RF switches to provide reliable low-resistance connections; alternatives exist but gold is common."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.7,
+            "reasoning": "Aluminum is often used for packaging and heat dissipation; not essential but frequently utilized."
+          }
+        ],
+        "Duplexer/diplexer": [
+          {
+            "name": "Ceramic",
+            "confidence": 0.95,
+            "reasoning": "Ceramic is the primary material for duplexers and diplexers due to its excellent dielectric properties and frequency selectivity; it is absolutely essential."
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.9,
+            "reasoning": "Copper is used for internal conductors and electrodes within duplexers/diplexers for low loss signal routing; universally used."
+          },
+          {
+            "name": "Silver",
+            "confidence": 0.75,
+            "reasoning": "Silver may be used for plating conductive paths to enhance conductivity and reduce losses; common but some alternatives like copper exist."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.6,
+            "reasoning": "Aluminum may be part of the mechanical housing or casing; common but optional."
+          }
+        ],
+        "Module Substrate/packaging": [
+          {
+            "name": "Ceramic",
+            "confidence": 0.95,
+            "reasoning": "Ceramic substrates provide a stable, high-frequency capable platform with good thermal and dielectric properties; industry standard for packaging."
+          },
+          {
+            "name": "Silicon",
+            "confidence": 0.8,
+            "reasoning": "Silicon is used for integrated circuits embedded on the substrate and control electronics; common and important."
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.85,
+            "reasoning": "Copper is used extensively for metallization layers and interconnects on the substrate to enable electrical connectivity."
+          },
+          {
+            "name": "Aluminum oxide",
+            "confidence": 0.7,
+            "reasoning": "Aluminum oxide is a common ceramic material used in substrates for its electrical insulation and thermal conductivity, frequently utilized though alternatives exist."
+          },
+          {
+            "name": "Polyimide",
+            "confidence": 0.65,
+            "reasoning": "Polyimide is used as a dielectric layer or coating in substrates for flexibility and thermal stability; alternatives exist but it is common."
+          }
+        ]
+      }
+    }
+  }
+}

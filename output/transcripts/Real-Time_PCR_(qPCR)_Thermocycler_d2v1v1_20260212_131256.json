@@ -1,0 +1,701 @@
+{
+  "version": "2.0",
+  "metadata": {
+    "technology": "Real-Time PCR (qPCR) Thermocycler",
+    "technology_specification": "Real-Time PCR (qPCR) Thermocycler",
+    "technology_reasoning": "",
+    "timestamp": "2026-02-12T13:31:44.333804",
+    "format_version": "2.0"
+  },
+  "config": {
+    "num_agents": 2,
+    "max_rounds": 1
+  },
+  "component_stage": {
+    "phase1_initial_proposals": [
+      {
+        "agent_id": "Agent_1",
+        "components": [
+          {
+            "name": "Thermal Cycler Block Assembly",
+            "confidence": 0.98,
+            "reasoning": "Core functional component responsible for precise temperature cycling of samples; procured as a distinct subassembly including heating elements and temperature sensors."
+          },
+          {
+            "name": "Optical Detection Module",
+            "confidence": 0.95,
+            "reasoning": "Critical for real-time fluorescence signal acquisition; typically a separate, complex assembly including LEDs, photodiodes or CCD detectors, filters, and optics."
+          },
+          {
+            "name": "Control Electronics Board (Main PCB)",
+            "confidence": 0.92,
+            "reasoning": "Manages thermal cycling profiles, signal processing, and user interface control; a separate manufactured electronics assembly with distinct sourcing."
+          },
+          {
+            "name": "User Interface Module (Touchscreen Display Assembly)",
+            "confidence": 0.85,
+            "reasoning": "Includes the display and touch panel integrated with controller boards; often supplied separately for ease of customization and replacement."
+          },
+          {
+            "name": "Sample Holder/Plate Carrier Assembly",
+            "confidence": 0.88,
+            "reasoning": "Physical assembly holding reaction tubes or plates to the thermal block, designed for thermal contact and mechanical positioning; procured as a distinct mechanical subassembly."
+          },
+          {
+            "name": "Cooling Fan Module",
+            "confidence": 0.8,
+            "reasoning": "Essential for thermal regulation and heat dissipation; manufactured fan assemblies are standard procurable components in thermocyclers."
+          },
+          {
+            "name": "Power Supply Unit (PSU)",
+            "confidence": 0.9,
+            "reasoning": "Provides regulated electrical power to the system; typically a separate manufactured module from specialized suppliers."
+          },
+          {
+            "name": "Door or Lid Assembly with Heated Lid",
+            "confidence": 0.83,
+            "reasoning": "Mechanical assembly with integrated heating to prevent sample evaporation, distinct from the main thermal block and often procured separately."
+          },
+          {
+            "name": "Communication Interface Module (e.g., USB/Ethernet Board)",
+            "confidence": 0.7,
+            "reasoning": "Includes dedicated electronics for data transfer; present in most designs and sometimes modularized, though occasionally integrated within main control board."
+          }
+        ],
+        "technology_specification": "Real-Time PCR (qPCR) thermocycler system with integrated optical detection and thermal cycling modules designed for quantitative nucleic acid amplification.",
+        "technology_reasoning": "This specification reflects the industry-standard qPCR instrument in molecular biology labs worldwide as of 2024, characterized by thermal cyclers combined with fluorescence detection optics for real-time quantification, representing the dominant commercial configuration."
+      },
+      {
+        "agent_id": "Agent_2",
+        "components": [
+          {
+            "name": "Thermal Cycler Block Assembly",
+            "confidence": 0.98,
+            "reasoning": "The core component responsible for precise temperature cycling of samples; procured as a distinct module due to its complex manufacturing involving thermoelectric elements and metal blocks."
+          },
+          {
+            "name": "Optical Detection Module",
+            "confidence": 0.95,
+            "reasoning": "A specialized assembly containing excitation light sources, filters, photodetectors, and optics for fluorescence measurement; a distinct procurement item standard across qPCR instruments."
+          },
+          {
+            "name": "Control Electronics and PCB Assembly",
+            "confidence": 0.93,
+            "reasoning": "Includes microcontroller boards and driver circuits managing thermal cycling and optical data acquisition; a separate electronic subassembly typically sourced independently."
+          },
+          {
+            "name": "Instrument Enclosure / Chassis",
+            "confidence": 0.9,
+            "reasoning": "The structural housing providing mechanical support and environmental protection; usually a custom fabricated metal or plastic assembly procured as a complete unit."
+          },
+          {
+            "name": "User Interface Panel (Display and Keypad)",
+            "confidence": 0.88,
+            "reasoning": "The human-machine interface comprising a display screen and control buttons or touchscreen, procured as an integrated user input/display assembly."
+          },
+          {
+            "name": "Sample Holder / Rotor",
+            "confidence": 0.87,
+            "reasoning": "The physical assembly that holds PCR tubes or plates; often a separate, interchangeable component allowing compatibility with different consumables."
+          },
+          {
+            "name": "Cooling System Assembly",
+            "confidence": 0.85,
+            "reasoning": "Includes fans, heat sinks, and possibly liquid cooling elements that maintain instrument temperature stability; typically a distinct manufactured subsystem."
+          },
+          {
+            "name": "Power Supply Unit",
+            "confidence": 0.83,
+            "reasoning": "Converts mains electricity to instrument-specific voltages, procured as a commercial or custom power supply module."
+          }
+        ],
+        "technology_specification": "Real-Time PCR (qPCR) thermocycler, a benchtop molecular biology instrument designed for DNA amplification and quantification through precise thermal cycling and fluorescence detection.",
+        "technology_reasoning": "This specification is the industry standard form of qPCR instruments used worldwide in research and clinical labs. It integrates temperature-controlled sample blocks with optical detection systems to enable real-time monitoring of PCR amplification, making it the dominant qPCR technology architecture in 2024."
+      }
+    ],
+    "phase2_debate_rounds": [
+      {
+        "round_num": 1,
+        "convergence": 0.7,
+        "threshold": 0.7,
+        "threshold_reached": true,
+        "proposals": {
+          "Agent_1": [
+            {
+              "name": "Thermal Cycler Block Assembly",
+              "confidence": 0.98,
+              "reasoning": "Core functional component responsible for precise temperature cycling of samples; procured as a distinct subassembly including heating elements and temperature sensors.",
+              "component": "Thermal Cycler Block Assembly",
+              "normalized_component": "Thermal Cycler Block Assembly"
+            },
+            {
+              "name": "Optical Detection Module",
+              "confidence": 0.95,
+              "reasoning": "Critical for real-time fluorescence signal acquisition; typically a separate, complex assembly including LEDs, photodiodes or CCD detectors, filters, and optics.",
+              "component": "Optical Detection Module",
+              "normalized_component": "Optical Detection System"
+            },
+            {
+              "name": "Control Electronics Board (Main PCB)",
+              "confidence": 0.92,
+              "reasoning": "Manages thermal cycling profiles, signal processing, and user interface control; a separate manufactured electronics assembly with distinct sourcing.",
+              "component": "Control Electronics Board (Main PCB)",
+              "normalized_component": "Control Electronics PCB Assembly"
+            },
+            {
+              "name": "User Interface Module (Touchscreen Display Assembly)",
+              "confidence": 0.85,
+              "reasoning": "Includes the display and touch panel integrated with controller boards; often supplied separately for ease of customization and replacement.",
+              "component": "User Interface Module (Touchscreen Display Assembly)",
+              "normalized_component": "Touchscreen Display Assembly"
+            },
+            {
+              "name": "Sample Holder/Plate Carrier Assembly",
+              "confidence": 0.88,
+              "reasoning": "Physical assembly holding reaction tubes or plates to the thermal block, designed for thermal contact and mechanical positioning; procured as a distinct mechanical subassembly.",
+              "component": "Sample Holder/Plate Carrier Assembly",
+              "normalized_component": "Sample Holder/Plate Carrier Assembly"
+            },
+            {
+              "name": "Cooling Fan Module",
+              "confidence": 0.8,
+              "reasoning": "Essential for thermal regulation and heat dissipation; manufactured fan assemblies are standard procurable components in thermocyclers.",
+              "component": "Cooling Fan Module",
+              "normalized_component": "Cooling Fan"
+            },
+            {
+              "name": "Power Supply Unit (PSU)",
+              "confidence": 0.9,
+              "reasoning": "Provides regulated electrical power to the system; typically a separate manufactured module from specialized suppliers.",
+              "component": "Power Supply Unit (PSU)",
+              "normalized_component": "DC-DC Power Converter"
+            },
+            {
+              "name": "Door or Lid Assembly with Heated Lid",
+              "confidence": 0.83,
+              "reasoning": "Mechanical assembly with integrated heating to prevent sample evaporation, distinct from the main thermal block and often procured separately.",
+              "component": "Door or Lid Assembly with Heated Lid",
+              "normalized_component": "Heated Lid Assembly"
+            },
+            {
+              "name": "Communication Interface Module (e.g., USB/Ethernet Board)",
+              "confidence": 0.7,
+              "reasoning": "Includes dedicated electronics for data transfer; present in most designs and sometimes modularized, though occasionally integrated within main control board.",
+              "component": "Communication Interface Module (e.g., USB/Ethernet Board)",
+              "normalized_component": "Communication Interface Board"
+            }
+          ],
+          "Agent_2": [
+            {
+              "name": "Thermal Cycler Block Assembly",
+              "confidence": 0.98,
+              "reasoning": "The core component responsible for precise temperature cycling of samples; procured as a distinct module due to its complex manufacturing involving thermoelectric elements and metal blocks.",
+              "component": "Thermal Cycler Block Assembly",
+              "normalized_component": "Thermal Cycler Block Assembly"
+            },
+            {
+              "name": "Optical Detection Module",
+              "confidence": 0.95,
+              "reasoning": "A specialized assembly containing excitation light sources, filters, photodetectors, and optics for fluorescence measurement; a distinct procurement item standard across qPCR instruments.",
+              "component": "Optical Detection Module",
+              "normalized_component": "Optical Detection System"
+            },
+            {
+              "name": "Control Electronics and PCB Assembly",
+              "confidence": 0.93,
+              "reasoning": "Includes microcontroller boards and driver circuits managing thermal cycling and optical data acquisition; a separate electronic subassembly typically sourced independently.",
+              "component": "Control Electronics and PCB Assembly",
+              "normalized_component": "Control Electronics PCB Assembly"
+            },
+            {
+              "name": "Instrument Enclosure / Chassis",
+              "confidence": 0.9,
+              "reasoning": "The structural housing providing mechanical support and environmental protection; usually a custom fabricated metal or plastic assembly procured as a complete unit.",
+              "component": "Instrument Enclosure / Chassis",
+              "normalized_component": "Instrument Enclosure/Chassis"
+            },
+            {
+              "name": "User Interface Panel (Display and Keypad)",
+              "confidence": 0.88,
+              "reasoning": "The human-machine interface comprising a display screen and control buttons or touchscreen, procured as an integrated user input/display assembly.",
+              "component": "User Interface Panel (Display and Keypad)",
+              "normalized_component": "Display and Keypad Interface Panel"
+            },
+            {
+              "name": "Sample Holder / Rotor",
+              "confidence": 0.87,
+              "reasoning": "The physical assembly that holds PCR tubes or plates; often a separate, interchangeable component allowing compatibility with different consumables.",
+              "component": "Sample Holder / Rotor",
+              "normalized_component": "Sample Holder/Rotor"
+            },
+            {
+              "name": "Cooling System Assembly",
+              "confidence": 0.85,
+              "reasoning": "Includes fans, heat sinks, and possibly liquid cooling elements that maintain instrument temperature stability; typically a distinct manufactured subsystem.",
+              "component": "Cooling System Assembly",
+              "normalized_component": "Cooling System Assembly"
+            },
+            {
+              "name": "Power Supply Unit",
+              "confidence": 0.83,
+              "reasoning": "Converts mains electricity to instrument-specific voltages, procured as a commercial or custom power supply module.",
+              "component": "Power Supply Unit",
+              "normalized_component": "Power Management IC Controller"
+            }
+          ]
+        },
+        "rounds_completed": 1,
+        "support_analysis": {
+          "consensus": [],
+          "majority": [
+            "thermal cycler block",
+            "optical detection",
+            "control electronics pcb",
+            "touchscreen display",
+            "sample holder",
+            "cooling",
+            "power supply"
+          ],
+          "isolated": [
+            "heated lid",
+            "communication interface board",
+            "instrument enclosure/chassis"
+          ]
+        },
+        "critiques": [
+          {
+            "item_name": "thermal cycler block",
+            "normalized_name": "thermal cycler block",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.98,
+            "critique_text": "Majority support for 'thermal cycler block': 2/3 agents agree (conf: 0.98). Consider strengthening consensus."
+          },
+          {
+            "item_name": "optical detection",
+            "normalized_name": "optical detection",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.95,
+            "critique_text": "Majority support for 'optical detection': 2/3 agents agree (conf: 0.95). Consider strengthening consensus."
+          },
+          {
+            "item_name": "control electronics pcb",
+            "normalized_name": "control electronics pcb",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.925,
+            "critique_text": "Majority support for 'control electronics pcb': 2/3 agents agree (conf: 0.93). Consider strengthening consensus."
+          },
+          {
+            "item_name": "touchscreen display",
+            "normalized_name": "touchscreen display",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.865,
+            "critique_text": "Majority support for 'touchscreen display': 2/3 agents agree (conf: 0.86). Consider strengthening consensus."
+          },
+          {
+            "item_name": "sample holder",
+            "normalized_name": "sample holder",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.875,
+            "critique_text": "Majority support for 'sample holder': 2/3 agents agree (conf: 0.88). Consider strengthening consensus."
+          },
+          {
+            "item_name": "cooling",
+            "normalized_name": "cooling",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.825,
+            "critique_text": "Majority support for 'cooling': 2/3 agents agree (conf: 0.82). Consider strengthening consensus."
+          },
+          {
+            "item_name": "power supply",
+            "normalized_name": "power supply",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.865,
+            "critique_text": "Majority support for 'power supply': 2/3 agents agree (conf: 0.86). Consider strengthening consensus."
+          },
+          {
+            "item_name": "heated lid",
+            "normalized_name": "heated lid",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2"
+            ],
+            "avg_confidence": 0.83,
+            "critique_text": "Isolated proposal 'heated lid' from 1 agent(s) (conf: 0.83). Requires justification or peer validation."
+          },
+          {
+            "item_name": "communication interface board",
+            "normalized_name": "communication interface board",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2"
+            ],
+            "avg_confidence": 0.7,
+            "critique_text": "Isolated proposal 'communication interface board' from 1 agent(s) (conf: 0.70). Requires justification or peer validation."
+          },
+          {
+            "item_name": "instrument enclosure/chassis",
+            "normalized_name": "instrument enclosure/chassis",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_1"
+            ],
+            "avg_confidence": 0.9,
+            "critique_text": "Isolated proposal 'instrument enclosure/chassis' from 1 agent(s) (conf: 0.90). Requires justification or peer validation."
+          }
+        ],
+        "changes_from_previous": null
+      }
+    ],
+    "phase3_final_consensus": {
+      "technology": "Real-Time PCR (qPCR) Thermocycler",
+      "technology_specification": "Real-Time PCR (qPCR) Thermocycler",
+      "technology_reasoning": "",
+      "components": [
+        "Thermal Cycler Block Assembly",
+        "Optical Detection System",
+        "Control Electronics Pcb Assembly",
+        "Dc-dc Power Converter",
+        "Instrument Enclosure/chassis",
+        "Sample Holder/plate Carrier Assembly",
+        "Display And Keypad Interface Panel",
+        "Sample Holder/rotor",
+        "Touchscreen Display Assembly",
+        "Cooling System Assembly",
+        "Heated Lid Assembly",
+        "Power Management Ic Controller",
+        "Cooling Fan",
+        "Communication Interface Board"
+      ],
+      "confidence": 0.7,
+      "rounds": 1,
+      "convergence_score": 0.7
+    }
+  },
+  "materials_debate": {
+    "debate_rounds": [],
+    "final_consensus": {
+      "components": 14,
+      "unique_materials": 15,
+      "total_assignments": 49,
+      "materials_by_component": {
+        "Thermal Cycler Block Assembly": [
+          {
+            "name": "Aluminum",
+            "confidence": 0.95,
+            "reasoning": "Used for thermal block due to excellent thermal conductivity and lightweight properties; industry standard material for rapid heating and cooling."
+          },
+          {
+            "name": "Aluminum nitride",
+            "confidence": 0.85,
+            "reasoning": "Often used as electrically insulating but thermally conductive material in thermal blocks; standard in high-performance thermal cyclers."
+          },
+          {
+            "name": "Ceramic",
+            "confidence": 0.8,
+            "reasoning": "Used as insulation and structural component to manage heat flow; commonly used due to high temperature resistance and electrical insulation."
+          },
+          {
+            "name": "Stainless steel",
+            "confidence": 0.75,
+            "reasoning": "Used in some block parts for durability and corrosion resistance, less thermally conductive than aluminum but used for structural integrity."
+          }
+        ],
+        "Optical Detection System": [
+          {
+            "name": "Glass",
+            "confidence": 0.9,
+            "reasoning": "Lens and optical windows made from glass due to transparency and optical clarity."
+          },
+          {
+            "name": "Silicon",
+            "confidence": 0.85,
+            "reasoning": "Semiconductor used in photodetectors and sensors that detect fluorescence signals."
+          },
+          {
+            "name": "Indium gallium arsenide",
+            "confidence": 0.65,
+            "reasoning": "Used in photodetectors for near-infrared detection in advanced optical systems but less common than silicon."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.6,
+            "reasoning": "Used in housing or mounts for optical components due to lightweight and machinability."
+          }
+        ],
+        "Control Electronics Pcb Assembly": [
+          {
+            "name": "Silicon",
+            "confidence": 0.95,
+            "reasoning": "Primary semiconductor material for integrated circuits and microcontrollers critical to control functions."
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.9,
+            "reasoning": "Used for PCB traces and electrical interconnections universally in electronics."
+          },
+          {
+            "name": "Epoxy resins",
+            "confidence": 0.85,
+            "reasoning": "Material used in PCB substrate manufacture as the insulating matrix."
+          },
+          {
+            "name": "Gold",
+            "confidence": 0.7,
+            "reasoning": "Used in wire bonding and contacts for corrosion resistance though alternatives exist."
+          }
+        ],
+        "Dc-dc Power Converter": [
+          {
+            "name": "Silicon",
+            "confidence": 0.95,
+            "reasoning": "Used in power transistors and integrated circuits controlling voltage regulation, indispensable semiconductor."
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.9,
+            "reasoning": "Used extensively as conductor for transformers, inductors, and PCB traces within power converters."
+          },
+          {
+            "name": "Epoxy resins",
+            "confidence": 0.8,
+            "reasoning": "Used in PCB and encapsulants providing insulation and mechanical support."
+          }
+        ],
+        "Instrument Enclosure/chassis": [
+          {
+            "name": "Aluminum",
+            "confidence": 0.9,
+            "reasoning": "Widely used for instrument chassis due to strength, light weight, and ease of machining."
+          },
+          {
+            "name": "Stainless steel",
+            "confidence": 0.75,
+            "reasoning": "Alternative material providing high strength and corrosion resistance though heavier than aluminum."
+          },
+          {
+            "name": "Acrylic",
+            "confidence": 0.7,
+            "reasoning": "Used in transparent panels or decorative bezels but not primary structural material."
+          },
+          {
+            "name": "Polycarbonate",
+            "confidence": 0.65,
+            "reasoning": "Used in some cases for transparent windows and durable plastic housings."
+          }
+        ],
+        "Sample Holder/plate Carrier Assembly": [
+          {
+            "name": "Aluminum",
+            "confidence": 0.85,
+            "reasoning": "Commonly used lightweight metal for sample holder frames and carriers enabling efficient thermal conduction."
+          },
+          {
+            "name": "PTFE coating",
+            "confidence": 0.75,
+            "reasoning": "Used as non-stick surface coating to ease sample plate handling and cleaning."
+          },
+          {
+            "name": "Stainless steel",
+            "confidence": 0.7,
+            "reasoning": "Used in structural parts due to corrosion resistance and durability."
+          },
+          {
+            "name": "Polycarbonate",
+            "confidence": 0.6,
+            "reasoning": "Used where some transparency and mechanical strength are desired, but many plastic alternatives exist."
+          }
+        ],
+        "Display And Keypad Interface Panel": [
+          {
+            "name": "Polycarbonate",
+            "confidence": 0.85,
+            "reasoning": "Common plastic for display windows and keypad covers due to transparency and impact resistance."
+          },
+          {
+            "name": "Acrylic",
+            "confidence": 0.8,
+            "reasoning": "Used in display and panel covers for optical clarity and scratch resistance."
+          },
+          {
+            "name": "Silicon",
+            "confidence": 0.75,
+            "reasoning": "Used in semiconductor devices such as keypad controllers and electronics."
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.7,
+            "reasoning": "Used in PCB traces and electrical connectors within interface electronics."
+          }
+        ],
+        "Sample Holder/rotor": [
+          {
+            "name": "Aluminum",
+            "confidence": 0.9,
+            "reasoning": "Primary material for rotors due to lightweight, excellent thermal conductivity, and strength."
+          },
+          {
+            "name": "Stainless steel",
+            "confidence": 0.75,
+            "reasoning": "Used in bearing surfaces and structural reinforcement, corrosion resistant."
+          },
+          {
+            "name": "PTFE coating",
+            "confidence": 0.65,
+            "reasoning": "Applied as coating for low-friction surfaces to improve performance and durability."
+          }
+        ],
+        "Touchscreen Display Assembly": [
+          {
+            "name": "Glass",
+            "confidence": 0.95,
+            "reasoning": "Used as the touchscreen protective layer and optical substrate due to transparency and hardness."
+          },
+          {
+            "name": "Indium",
+            "confidence": 0.85,
+            "reasoning": "Critical component of ITO transparent conductive coatings enabling capacitive touchscreen functionality."
+          },
+          {
+            "name": "Silicon",
+            "confidence": 0.8,
+            "reasoning": "Semiconductor material for touch controller ICs and display electronics."
+          },
+          {
+            "name": "Polycarbonate",
+            "confidence": 0.7,
+            "reasoning": "Used in housing and interface components for mechanical protection."
+          }
+        ],
+        "Cooling System Assembly": [
+          {
+            "name": "Aluminum",
+            "confidence": 0.9,
+            "reasoning": "Used for heat sinks and cooling fins due to excellent thermal conductivity and light weight."
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.85,
+            "reasoning": "Used in heat pipes, tubing and some heat sink constructions for superior thermal conduction."
+          },
+          {
+            "name": "Stainless steel",
+            "confidence": 0.65,
+            "reasoning": "Used in structural or fastening components that require corrosion resistance."
+          }
+        ],
+        "Heated Lid Assembly": [
+          {
+            "name": "Aluminum",
+            "confidence": 0.9,
+            "reasoning": "Commonly used for heated lid bodies to provide uniform heat distribution and lightweight."
+          },
+          {
+            "name": "PTFE coating",
+            "confidence": 0.75,
+            "reasoning": "Applied as non-stick and chemical resistant surface coating."
+          },
+          {
+            "name": "Silicon",
+            "confidence": 0.7,
+            "reasoning": "Used in temperature sensors and semiconductor heaters integrated in the assembly."
+          }
+        ],
+        "Power Management Ic Controller": [
+          {
+            "name": "Silicon",
+            "confidence": 0.95,
+            "reasoning": "Primary semiconductor material for integrated circuits controlling power management functions."
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.9,
+            "reasoning": "Used for wiring and PCB traces within the IC package and board."
+          },
+          {
+            "name": "Gold",
+            "confidence": 0.7,
+            "reasoning": "Typical wire bonding material within ICs for electrical contacts."
+          }
+        ],
+        "Cooling Fan": [
+          {
+            "name": "Aluminum",
+            "confidence": 0.8,
+            "reasoning": "Used in fan blades and housing for lightweight and corrosion resistance."
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.75,
+            "reasoning": "Used in motor windings due to excellent electrical conductivity."
+          },
+          {
+            "name": "Steel Ingots",
+            "confidence": 0.7,
+            "reasoning": "Used to manufacture shafts and structural parts due to strength and durability."
+          }
+        ],
+        "Communication Interface Board": [
+          {
+            "name": "Silicon",
+            "confidence": 0.95,
+            "reasoning": "Primary semiconductor for ICs managing communication protocols and signal processing."
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.9,
+            "reasoning": "Universal electrical conductor in PCB traces and connectors."
+          },
+          {
+            "name": "Epoxy resins",
+            "confidence": 0.85,
+            "reasoning": "Used in PCB substrate to physically support and insulate circuitry."
+          }
+        ]
+      }
+    }
+  }
+}

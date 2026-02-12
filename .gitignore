@@ -24,7 +24,18 @@ htmlcov/
 #config.json
 
 # Generated outputs (runs, normalization, logs, manifests)
+# NOTE: We now COMMIT selected output artifacts for reproducibility.
+# Keep ignoring the general output directory, but explicitly include the subdirectories we want versioned.
 output/
+!output/raw/
+!output/raw/**
+
+!output/normalized/
+!output/normalized/**
+
+!output/transcripts/
+!output/transcripts/**
+
 logs/
 !output/.gitkeep
 

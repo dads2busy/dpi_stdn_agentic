@@ -1,0 +1,1065 @@
+{
+  "version": "2.0",
+  "metadata": {
+    "technology": "Computer Graphics Processing Units (GPUs)",
+    "technology_specification": "Computer Graphics Processing Units (GPUs)",
+    "technology_reasoning": "",
+    "timestamp": "2026-02-12T15:06:54.377827",
+    "format_version": "2.0"
+  },
+  "config": {
+    "num_agents": 4,
+    "max_rounds": 1
+  },
+  "component_stage": {
+    "phase1_initial_proposals": [
+      {
+        "agent_id": "Agent_1",
+        "components": [
+          {
+            "name": "GPU Die (Graphics Processing Die)",
+            "confidence": 1.0,
+            "reasoning": "The core semiconductor chip performing all graphics and compute processing, manufactured separately in foundries and mounted on the PCB; universally the central distinct component."
+          },
+          {
+            "name": "Graphics Memory Modules (GDDR6 or GDDR6X)",
+            "confidence": 0.98,
+            "reasoning": "Separate memory chips or modules attached on the GPU PCB to provide high bandwidth dedicated video memory; always distinct parts procured independently or from specialized memory suppliers."
+          },
+          {
+            "name": "Graphics Card Printed Circuit Board (PCB)",
+            "confidence": 0.95,
+            "reasoning": "The complex multi-layered PCB hosting the GPU die, memory chips, power delivery components, and circuitry; manufactured separately and serves as the structural and electrical backbone."
+          },
+          {
+            "name": "VRM (Voltage Regulator Module) or Power Delivery Subsystem",
+            "confidence": 0.92,
+            "reasoning": "Integrated or modular power regulation circuits (MOSFETs, inductors, capacitors) often procured as assemblies or modules; critical for stable GPU and memory power and often designed as distinct assemblies."
+          },
+          {
+            "name": "Cooling System (Heatsink and Fan Assembly)",
+            "confidence": 0.98,
+            "reasoning": "A complete cooling subassembly including heatsinks, fans, and sometimes heat pipes; sourced from cooling system suppliers and manufactured as a distinct module for thermal management."
+          },
+          {
+            "name": "Backplate or Structural Frame",
+            "confidence": 0.85,
+            "reasoning": "A structural metal or composite plate affixed to the back of the PCB to provide rigidity, enhance cooling, and protection; often procured separately or manufactured independently."
+          },
+          {
+            "name": "Connector Interface (PCIe Edge Connector and I/O Ports)",
+            "confidence": 0.9,
+            "reasoning": "The physical electrical interface that connects the GPU card to the motherboard and external display outputs; manufactured as a distinct part to industry specifications."
+          },
+          {
+            "name": "Thermal Interface Material (TIM) Assembly",
+            "confidence": 0.6,
+            "reasoning": "Pre-applied thermal pads or thermal paste delivered as subassemblies or kits; while critical for heat transfer, they are often procured separately or integrated, so confidence is moderate."
+          }
+        ],
+        "technology_specification": "Discrete computer graphics processing unit (GPU) card featuring an integrated GPU die on a printed circuit board (PCB) with dedicated memory and cooling system.",
+        "technology_reasoning": "Discrete GPUs, typically manufactured as PCIe expansion cards, dominate the PC graphics market due to their superior performance for gaming, professional visualization, and compute tasks. They consist of integrated GPU dies fabricated in advanced semiconductor processes, mounted on complex PCBs with dedicated GDDR memory, power delivery, and cooling solutions, which are procured as distinct components or modules."
+      },
+      {
+        "agent_id": "Agent_2",
+        "components": [
+          {
+            "name": "GPU Die (Graphics Processing Unit Chip)",
+            "confidence": 1.0,
+            "reasoning": "The central silicon chip responsible for graphics processing, always procured as a separate manufactured semiconductor die and mounted on the PCB."
+          },
+          {
+            "name": "PCB (Printed Circuit Board) Substrate",
+            "confidence": 0.98,
+            "reasoning": "The multi-layer board that holds and electrically connects all components; a core structural and functional carrier universally present and distinctly manufactured."
+          },
+          {
+            "name": "VRAM Memory Modules (e.g., GDDR6 or HBM)",
+            "confidence": 0.97,
+            "reasoning": "Dedicated high-speed video memory modules mounted on the PCB, essential for GPU function and procured as separate memory ICs or stacks."
+          },
+          {
+            "name": "Power Delivery Module (includes VRMs and inductors)",
+            "confidence": 0.92,
+            "reasoning": "Modules composed of voltage regulator modules and inductors supplying stable power; often procured or assembled as discrete subassemblies."
+          },
+          {
+            "name": "Thermal Cooling Assembly (Heatsink and/or Fan)",
+            "confidence": 0.95,
+            "reasoning": "Distinct physical assembly for heat dissipation, typically removable and procured separately from the PCB."
+          },
+          {
+            "name": "Interface Connector (PCI Express Slot Connector)",
+            "confidence": 0.9,
+            "reasoning": "Standard PCIe edge connector for motherboard interface, manufactured separately and soldered to the PCB as a discrete component."
+          },
+          {
+            "name": "Backplate / Structural Support Frame",
+            "confidence": 0.85,
+            "reasoning": "Rigid metal or composite plate providing mechanical rigidity and mounting points, typically procured separately and assembled onto the card."
+          },
+          {
+            "name": "Memory Controller Chip (if discrete from GPU)",
+            "confidence": 0.6,
+            "reasoning": "In some GPU designs, a separate memory controller IC is present; otherwise integrated into GPU die, so confidence moderate."
+          }
+        ],
+        "technology_specification": "Discrete graphics processing unit (GPU) card based on contemporary microelectronic design and assembly, featuring a dedicated GPU chip, VRAM memory modules, and integrated cooling and power delivery subsystems.",
+        "technology_reasoning": "Discrete GPU cards represent the industry standard for computer graphics acceleration as of 2024, widely used in desktops and workstations. They are standardized as modular PCBs integrating GPU silicon, memory, VR power delivery, cooling, and interfacing components, procured and assembled as distinct physical modules."
+      },
+      {
+        "agent_id": "Agent_3",
+        "components": [
+          {
+            "name": "GPU Die (Graphics Processing Chip)",
+            "confidence": 1.0,
+            "reasoning": "The core silicon chip that performs all graphics computations; universally present and purchased as a packaged die from semiconductor foundries or internal fabs."
+          },
+          {
+            "name": "GDDR Memory Modules",
+            "confidence": 0.98,
+            "reasoning": "Dedicated high-speed graphics DRAM chips mounted as separate modules or packages on the PCB, essential for frame buffer and texture storage."
+          },
+          {
+            "name": "Printed Circuit Board (PCB)",
+            "confidence": 0.95,
+            "reasoning": "The multi-layered board that hosts the GPU die, memory modules, VRMs, and connectors; manufactured as a complete assembly with distinct supply chains."
+          },
+          {
+            "name": "Voltage Regulator Module (VRM)",
+            "confidence": 0.92,
+            "reasoning": "Separate modular power delivery component responsible for converting power to appropriate voltages and currents for GPU and memory; typically procured as distinct subassemblies or sets of power stages."
+          },
+          {
+            "name": "Cooling Assembly (Heatsink and Fan)",
+            "confidence": 0.97,
+            "reasoning": "Mechanical and thermal management component to dissipate heat generated by the GPU; includes heatsink, heat pipes, fans, and sometimes liquid cooling blocks, sold as purchased complete cooling solutions."
+          },
+          {
+            "name": "PCI Express (PCIe) Connector",
+            "confidence": 0.9,
+            "reasoning": "Edge connector that interfaces the GPU card to the motherboard\u2019s PCI Express slot; typically a separate procurable component mounted on the PCB."
+          },
+          {
+            "name": "Backplate",
+            "confidence": 0.8,
+            "reasoning": "Metal or composite structural plate attached to the rear of the GPU card for mechanical support and heat dissipation; procurable as a separate manufactured part."
+          },
+          {
+            "name": "Display Output Connectors (HDMI, DisplayPort)",
+            "confidence": 0.85,
+            "reasoning": "Standardized video output interface ports mounted on the GPU card; distinct components sourced separately and assembled onto the PCB or enclosure."
+          }
+        ],
+        "technology_specification": "Discrete computer graphics processing unit (GPU) card featuring a dedicated GPU chip with GDDR memory, VRM circuitry, cooling assembly, and PCIe interface.",
+        "technology_reasoning": "Discrete GPUs in graphics cards remain the industry standard for high-performance graphics processing as of 2024, widely used in personal computers, workstations, and gaming systems due to their dedicated GPU silicon, separate memory, and integrated cooling and power modules which are procured as distinct assemblies."
+      },
+      {
+        "agent_id": "Agent_4",
+        "components": [
+          {
+            "name": "GPU Die (Graphics Processing Silicon)",
+            "confidence": 1.0,
+            "reasoning": "The core computing element responsible for graphics and compute workloads, always present as the primary functional semiconductor chip."
+          },
+          {
+            "name": "Graphics Memory Modules (GDDR or HBM)",
+            "confidence": 0.98,
+            "reasoning": "Dedicated high-speed memory chips mounted on the GPU card PCB essential for frame buffer and intermediate data storage, procured as distinct modules."
+          },
+          {
+            "name": "Power Delivery Subsystem (Voltage Regulator Module - VRM)",
+            "confidence": 0.95,
+            "reasoning": "A separate electronic subsystem on the PCB that regulates and supplies stable power to the GPU and memory, typically composed of MOSFETs, inductors, and controllers, procured or assembled as distinct modules."
+          },
+          {
+            "name": "Printed Circuit Board (PCB) Assembly",
+            "confidence": 0.9,
+            "reasoning": "Multi-layer PCB hosting the GPU die, memory modules, VRM components, and interface connectors, manufactured separately and specific to each GPU card design."
+          },
+          {
+            "name": "Cooling Solution (Heatsink and Fan Assembly)",
+            "confidence": 0.9,
+            "reasoning": "Mechanical thermal management assembly procured as discrete units to dissipate heat generated by the GPU and VRMs, standard for all discrete GPU cards."
+          },
+          {
+            "name": "Memory Controller and Interface Electronics",
+            "confidence": 0.7,
+            "reasoning": "While often integrated into the GPU die, in some high-end cards or designs, separate controller chips may be present; moderately confident due to design variations."
+          },
+          {
+            "name": "Connector Interface (PCIe Slot Connector)",
+            "confidence": 0.85,
+            "reasoning": "Standard interface connector for attaching the GPU card to the motherboard PCI Express slot, usually supplied as a separate component attached to the PCB."
+          },
+          {
+            "name": "Video Output Interfaces (Display Connectors)",
+            "confidence": 0.85,
+            "reasoning": "Physical connectors like HDMI, DisplayPort, procured separately and mounted on the card for signal output, essential for monitor connectivity."
+          },
+          {
+            "name": "Firmware/BIOS Chip",
+            "confidence": 0.8,
+            "reasoning": "Non-volatile memory storing the GPU firmware and startup BIOS, packaged as a separate integrated circuit on the PCB."
+          },
+          {
+            "name": "Backplate or Structural Frame",
+            "confidence": 0.65,
+            "reasoning": "Metal or composite plate for structural rigidity and aesthetic, procured separately but not always present in every model."
+          }
+        ],
+        "technology_specification": "Discrete Graphics Processing Unit (GPU) card assembly featuring a high-performance graphics processing silicon die on a multi-layer PCB with integrated memory and power delivery subsystems.",
+        "technology_reasoning": "Discrete GPUs are dominant in the market for PC gaming, professional graphics, and AI workloads, with major manufacturers producing standardized PCB assemblies containing GPU chips, dedicated GDDR or HBM memory modules, VRMs, and cooling solutions. This form factor and assembly format represent the industry standard for high-end graphics acceleration devices."
+      }
+    ],
+    "phase2_debate_rounds": [
+      {
+        "round_num": 1,
+        "convergence": 0.7616161616161617,
+        "threshold": 0.7,
+        "threshold_reached": true,
+        "proposals": {
+          "Agent_1": [
+            {
+              "name": "GPU Die (Graphics Processing Die)",
+              "confidence": 1.0,
+              "reasoning": "The core semiconductor chip performing all graphics and compute processing, manufactured separately in foundries and mounted on the PCB; universally the central distinct component.",
+              "component": "GPU Die (Graphics Processing Die)",
+              "normalized_component": "Graphics Processing Unit (GPU) Die"
+            },
+            {
+              "name": "Graphics Memory Modules (GDDR6 or GDDR6X)",
+              "confidence": 0.98,
+              "reasoning": "Separate memory chips or modules attached on the GPU PCB to provide high bandwidth dedicated video memory; always distinct parts procured independently or from specialized memory suppliers.",
+              "component": "Graphics Memory Modules (GDDR6 or GDDR6X)",
+              "normalized_component": "Graphics Memory Modules (GDDR6 Or GDDR6X)"
+            },
+            {
+              "name": "Graphics Card Printed Circuit Board (PCB)",
+              "confidence": 0.95,
+              "reasoning": "The complex multi-layered PCB hosting the GPU die, memory chips, power delivery components, and circuitry; manufactured separately and serves as the structural and electrical backbone.",
+              "component": "Graphics Card Printed Circuit Board (PCB)",
+              "normalized_component": "Graphics Card Printed Circuit Board"
+            },
+            {
+              "name": "VRM (Voltage Regulator Module) or Power Delivery Subsystem",
+              "confidence": 0.92,
+              "reasoning": "Integrated or modular power regulation circuits (MOSFETs, inductors, capacitors) often procured as assemblies or modules; critical for stable GPU and memory power and often designed as distinct assemblies.",
+              "component": "VRM (Voltage Regulator Module) or Power Delivery Subsystem",
+              "normalized_component": "Voltage Regulator Module (VRM)"
+            },
+            {
+              "name": "Cooling System (Heatsink and Fan Assembly)",
+              "confidence": 0.98,
+              "reasoning": "A complete cooling subassembly including heatsinks, fans, and sometimes heat pipes; sourced from cooling system suppliers and manufactured as a distinct module for thermal management.",
+              "component": "Cooling System (Heatsink and Fan Assembly)",
+              "normalized_component": "Cooling Fan"
+            },
+            {
+              "name": "Backplate or Structural Frame",
+              "confidence": 0.85,
+              "reasoning": "A structural metal or composite plate affixed to the back of the PCB to provide rigidity, enhance cooling, and protection; often procured separately or manufactured independently.",
+              "component": "Backplate or Structural Frame",
+              "normalized_component": "Base Frame and Support Structure"
+            },
+            {
+              "name": "Connector Interface (PCIe Edge Connector and I/O Ports)",
+              "confidence": 0.9,
+              "reasoning": "The physical electrical interface that connects the GPU card to the motherboard and external display outputs; manufactured as a distinct part to industry specifications.",
+              "component": "Connector Interface (PCIe Edge Connector and I/O Ports)",
+              "normalized_component": "PCI Express (PCIe) Connector"
+            },
+            {
+              "name": "Thermal Interface Material (TIM) Assembly",
+              "confidence": 0.6,
+              "reasoning": "Pre-applied thermal pads or thermal paste delivered as subassemblies or kits; while critical for heat transfer, they are often procured separately or integrated, so confidence is moderate.",
+              "component": "Thermal Interface Material (TIM) Assembly",
+              "normalized_component": "Thermal Interface Material (TIM)"
+            }
+          ],
+          "Agent_2": [
+            {
+              "name": "GPU Die (Graphics Processing Unit Chip)",
+              "confidence": 1.0,
+              "reasoning": "The central silicon chip responsible for graphics processing, always procured as a separate manufactured semiconductor die and mounted on the PCB.",
+              "component": "GPU Die (Graphics Processing Unit Chip)",
+              "normalized_component": "Graphics Processing Unit (GPU) Die"
+            },
+            {
+              "name": "PCB (Printed Circuit Board) Substrate",
+              "confidence": 0.98,
+              "reasoning": "The multi-layer board that holds and electrically connects all components; a core structural and functional carrier universally present and distinctly manufactured.",
+              "component": "PCB (Printed Circuit Board) Substrate",
+              "normalized_component": "Printed Circuit Board (PCB)"
+            },
+            {
+              "name": "VRAM Memory Modules (e.g., GDDR6 or HBM)",
+              "confidence": 0.97,
+              "reasoning": "Dedicated high-speed video memory modules mounted on the PCB, essential for GPU function and procured as separate memory ICs or stacks.",
+              "component": "VRAM Memory Modules (e.g., GDDR6 or HBM)",
+              "normalized_component": "Graphics Memory Module"
+            },
+            {
+              "name": "Power Delivery Module (includes VRMs and inductors)",
+              "confidence": 0.92,
+              "reasoning": "Modules composed of voltage regulator modules and inductors supplying stable power; often procured or assembled as discrete subassemblies.",
+              "component": "Power Delivery Module (includes VRMs and inductors)",
+              "normalized_component": "Voltage Regulator Module (VRM)"
+            },
+            {
+              "name": "Thermal Cooling Assembly (Heatsink and/or Fan)",
+              "confidence": 0.95,
+              "reasoning": "Distinct physical assembly for heat dissipation, typically removable and procured separately from the PCB.",
+              "component": "Thermal Cooling Assembly (Heatsink and/or Fan)",
+              "normalized_component": "Heatsink and Fan Assembly"
+            },
+            {
+              "name": "Interface Connector (PCI Express Slot Connector)",
+              "confidence": 0.9,
+              "reasoning": "Standard PCIe edge connector for motherboard interface, manufactured separately and soldered to the PCB as a discrete component.",
+              "component": "Interface Connector (PCI Express Slot Connector)",
+              "normalized_component": "PCI Express (PCIe) Connector"
+            },
+            {
+              "name": "Backplate / Structural Support Frame",
+              "confidence": 0.85,
+              "reasoning": "Rigid metal or composite plate providing mechanical rigidity and mounting points, typically procured separately and assembled onto the card.",
+              "component": "Backplate / Structural Support Frame",
+              "normalized_component": "Structural Support Frame"
+            },
+            {
+              "name": "Memory Controller Chip (if discrete from GPU)",
+              "confidence": 0.6,
+              "reasoning": "In some GPU designs, a separate memory controller IC is present; otherwise integrated into GPU die, so confidence moderate.",
+              "component": "Memory Controller Chip (if discrete from GPU)",
+              "normalized_component": "Memory Controller"
+            }
+          ],
+          "Agent_3": [
+            {
+              "name": "GPU Die (Graphics Processing Chip)",
+              "confidence": 1.0,
+              "reasoning": "The core silicon chip that performs all graphics computations; universally present and purchased as a packaged die from semiconductor foundries or internal fabs.",
+              "component": "GPU Die (Graphics Processing Chip)",
+              "normalized_component": "GPU"
+            },
+            {
+              "name": "GDDR Memory Modules",
+              "confidence": 0.98,
+              "reasoning": "Dedicated high-speed graphics DRAM chips mounted as separate modules or packages on the PCB, essential for frame buffer and texture storage.",
+              "component": "GDDR Memory Modules",
+              "normalized_component": "Gddr Memory Modules"
+            },
+            {
+              "name": "Printed Circuit Board (PCB)",
+              "confidence": 0.95,
+              "reasoning": "The multi-layered board that hosts the GPU die, memory modules, VRMs, and connectors; manufactured as a complete assembly with distinct supply chains.",
+              "component": "Printed Circuit Board (PCB)",
+              "normalized_component": "Main Board"
+            },
+            {
+              "name": "Voltage Regulator Module (VRM)",
+              "confidence": 0.92,
+              "reasoning": "Separate modular power delivery component responsible for converting power to appropriate voltages and currents for GPU and memory; typically procured as distinct subassemblies or sets of power stages.",
+              "component": "Voltage Regulator Module (VRM)",
+              "normalized_component": "Voltage Regulator Module"
+            },
+            {
+              "name": "Cooling Assembly (Heatsink and Fan)",
+              "confidence": 0.97,
+              "reasoning": "Mechanical and thermal management component to dissipate heat generated by the GPU; includes heatsink, heat pipes, fans, and sometimes liquid cooling blocks, sold as purchased complete cooling solutions.",
+              "component": "Cooling Assembly (Heatsink and Fan)",
+              "normalized_component": "Heatsink and Fan Assembly"
+            },
+            {
+              "name": "PCI Express (PCIe) Connector",
+              "confidence": 0.9,
+              "reasoning": "Edge connector that interfaces the GPU card to the motherboard\u2019s PCI Express slot; typically a separate procurable component mounted on the PCB.",
+              "component": "PCI Express (PCIe) Connector",
+              "normalized_component": "PCI Express (PCIe) Connector"
+            },
+            {
+              "name": "Backplate",
+              "confidence": 0.8,
+              "reasoning": "Metal or composite structural plate attached to the rear of the GPU card for mechanical support and heat dissipation; procurable as a separate manufactured part.",
+              "component": "Backplate",
+              "normalized_component": "Backplate"
+            },
+            {
+              "name": "Display Output Connectors (HDMI, DisplayPort)",
+              "confidence": 0.85,
+              "reasoning": "Standardized video output interface ports mounted on the GPU card; distinct components sourced separately and assembled onto the PCB or enclosure.",
+              "component": "Display Output Connectors (HDMI, DisplayPort)",
+              "normalized_component": "Display Output Connectors (HDMI, DisplayPort)"
+            }
+          ],
+          "Agent_4": [
+            {
+              "name": "GPU Die (Graphics Processing Silicon)",
+              "confidence": 1.0,
+              "reasoning": "The core computing element responsible for graphics and compute workloads, always present as the primary functional semiconductor chip.",
+              "component": "GPU Die (Graphics Processing Silicon)",
+              "normalized_component": "Graphics Processing Unit (GPU) Die"
+            },
+            {
+              "name": "Graphics Memory Modules (GDDR or HBM)",
+              "confidence": 0.98,
+              "reasoning": "Dedicated high-speed memory chips mounted on the GPU card PCB essential for frame buffer and intermediate data storage, procured as distinct modules.",
+              "component": "Graphics Memory Modules (GDDR or HBM)",
+              "normalized_component": "Graphics Memory Module"
+            },
+            {
+              "name": "Power Delivery Subsystem (Voltage Regulator Module - VRM)",
+              "confidence": 0.95,
+              "reasoning": "A separate electronic subsystem on the PCB that regulates and supplies stable power to the GPU and memory, typically composed of MOSFETs, inductors, and controllers, procured or assembled as distinct modules.",
+              "component": "Power Delivery Subsystem (Voltage Regulator Module - VRM)",
+              "normalized_component": "Voltage Regulator Module (VRM)"
+            },
+            {
+              "name": "Printed Circuit Board (PCB) Assembly",
+              "confidence": 0.9,
+              "reasoning": "Multi-layer PCB hosting the GPU die, memory modules, VRM components, and interface connectors, manufactured separately and specific to each GPU card design.",
+              "component": "Printed Circuit Board (PCB) Assembly",
+              "normalized_component": "Printed Circuit Board Assembly"
+            },
+            {
+              "name": "Cooling Solution (Heatsink and Fan Assembly)",
+              "confidence": 0.9,
+              "reasoning": "Mechanical thermal management assembly procured as discrete units to dissipate heat generated by the GPU and VRMs, standard for all discrete GPU cards.",
+              "component": "Cooling Solution (Heatsink and Fan Assembly)",
+              "normalized_component": "Cooling Solution (Heatsink and Fan Assembly)"
+            },
+            {
+              "name": "Memory Controller and Interface Electronics",
+              "confidence": 0.7,
+              "reasoning": "While often integrated into the GPU die, in some high-end cards or designs, separate controller chips may be present; moderately confident due to design variations.",
+              "component": "Memory Controller and Interface Electronics",
+              "normalized_component": "Memory Controller"
+            },
+            {
+              "name": "Connector Interface (PCIe Slot Connector)",
+              "confidence": 0.85,
+              "reasoning": "Standard interface connector for attaching the GPU card to the motherboard PCI Express slot, usually supplied as a separate component attached to the PCB.",
+              "component": "Connector Interface (PCIe Slot Connector)",
+              "normalized_component": "PCI Express (PCIe) Connector"
+            },
+            {
+              "name": "Video Output Interfaces (Display Connectors)",
+              "confidence": 0.85,
+              "reasoning": "Physical connectors like HDMI, DisplayPort, procured separately and mounted on the card for signal output, essential for monitor connectivity.",
+              "component": "Video Output Interfaces (Display Connectors)",
+              "normalized_component": "Display Connectors"
+            },
+            {
+              "name": "Firmware/BIOS Chip",
+              "confidence": 0.8,
+              "reasoning": "Non-volatile memory storing the GPU firmware and startup BIOS, packaged as a separate integrated circuit on the PCB.",
+              "component": "Firmware/BIOS Chip",
+              "normalized_component": "BIOS Chip"
+            },
+            {
+              "name": "Backplate or Structural Frame",
+              "confidence": 0.65,
+              "reasoning": "Metal or composite plate for structural rigidity and aesthetic, procured separately but not always present in every model.",
+              "component": "Backplate or Structural Frame",
+              "normalized_component": "Base Frame and Support Structure"
+            }
+          ]
+        },
+        "rounds_completed": 1,
+        "support_analysis": {
+          "consensus": [],
+          "majority": [
+            "gpu die",
+            "graphics memory modules",
+            "printed circuit board (pcb)",
+            "voltage regulator module (vrm)",
+            "cooling",
+            "backplate",
+            "pci express connector",
+            "memory controller",
+            "display output connectors"
+          ],
+          "isolated": [
+            "thermal interface material (tim)",
+            "bios chip"
+          ]
+        },
+        "critiques": [
+          {
+            "item_name": "gpu die",
+            "normalized_name": "gpu die",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_2",
+              "Agent_3",
+              "Agent_4"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 1.0,
+            "critique_text": "Majority support for 'gpu die': 4/3 agents agree (conf: 1.00). Consider strengthening consensus."
+          },
+          {
+            "item_name": "graphics memory modules",
+            "normalized_name": "graphics memory modules",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_2",
+              "Agent_3",
+              "Agent_4"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.9775,
+            "critique_text": "Majority support for 'graphics memory modules': 4/3 agents agree (conf: 0.98). Consider strengthening consensus."
+          },
+          {
+            "item_name": "printed circuit board (pcb)",
+            "normalized_name": "printed circuit board (pcb)",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_2",
+              "Agent_3",
+              "Agent_4"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.945,
+            "critique_text": "Majority support for 'printed circuit board (pcb)': 4/3 agents agree (conf: 0.94). Consider strengthening consensus."
+          },
+          {
+            "item_name": "voltage regulator module (vrm)",
+            "normalized_name": "voltage regulator module (vrm)",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_2",
+              "Agent_3",
+              "Agent_4"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.9275,
+            "critique_text": "Majority support for 'voltage regulator module (vrm)': 4/3 agents agree (conf: 0.93). Consider strengthening consensus."
+          },
+          {
+            "item_name": "cooling",
+            "normalized_name": "cooling",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_2",
+              "Agent_3",
+              "Agent_4"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.95,
+            "critique_text": "Majority support for 'cooling': 4/3 agents agree (conf: 0.95). Consider strengthening consensus."
+          },
+          {
+            "item_name": "backplate",
+            "normalized_name": "backplate",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_2",
+              "Agent_3",
+              "Agent_4"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.7875,
+            "critique_text": "Majority support for 'backplate': 4/3 agents agree (conf: 0.79). Consider strengthening consensus."
+          },
+          {
+            "item_name": "pci express connector",
+            "normalized_name": "pci express connector",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_2",
+              "Agent_3",
+              "Agent_4"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.8875,
+            "critique_text": "Majority support for 'pci express connector': 4/3 agents agree (conf: 0.89). Consider strengthening consensus."
+          },
+          {
+            "item_name": "thermal interface material (tim)",
+            "normalized_name": "thermal interface material (tim)",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2",
+              "Agent_3",
+              "Agent_4"
+            ],
+            "avg_confidence": 0.6,
+            "critique_text": "Isolated proposal 'thermal interface material (tim)' from 1 agent(s) (conf: 0.60). Requires justification or peer validation."
+          },
+          {
+            "item_name": "memory controller",
+            "normalized_name": "memory controller",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_4"
+            ],
+            "opposing_agents": [
+              "Agent_1",
+              "Agent_3"
+            ],
+            "avg_confidence": 0.6499999999999999,
+            "critique_text": "Majority support for 'memory controller': 2/3 agents agree (conf: 0.65). Consider strengthening consensus."
+          },
+          {
+            "item_name": "display output connectors",
+            "normalized_name": "display output connectors",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_4"
+            ],
+            "opposing_agents": [
+              "Agent_1",
+              "Agent_2"
+            ],
+            "avg_confidence": 0.85,
+            "critique_text": "Majority support for 'display output connectors': 2/3 agents agree (conf: 0.85). Consider strengthening consensus."
+          },
+          {
+            "item_name": "bios chip",
+            "normalized_name": "bios chip",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_4"
+            ],
+            "opposing_agents": [
+              "Agent_1",
+              "Agent_2",
+              "Agent_3"
+            ],
+            "avg_confidence": 0.8,
+            "critique_text": "Isolated proposal 'bios chip' from 1 agent(s) (conf: 0.80). Requires justification or peer validation."
+          }
+        ],
+        "changes_from_previous": null
+      }
+    ],
+    "phase3_final_consensus": {
+      "technology": "Computer Graphics Processing Units (GPUs)",
+      "technology_specification": "Computer Graphics Processing Units (GPUs)",
+      "technology_reasoning": "",
+      "components": [
+        "Graphics Processing Unit (gpu) Die",
+        "Gpu",
+        "Graphics Memory Modules (gddr6 Or Gddr6x)",
+        "Cooling Fan",
+        "Printed Circuit Board (pcb)",
+        "Gddr Memory Modules",
+        "Graphics Memory Module",
+        "Heatsink And Fan Assembly",
+        "Graphics Card Printed Circuit Board",
+        "Main Board",
+        "Voltage Regulator Module (vrm)",
+        "Voltage Regulator Module",
+        "Printed Circuit Board Assembly",
+        "Cooling Solution (heatsink And Fan Assembly)",
+        "Pci Express (pcie) Connector",
+        "Structural Support Frame",
+        "Display Output Connectors (hdmi, Displayport)",
+        "Display Connectors",
+        "Backplate",
+        "Bios Chip",
+        "Base Frame And Support Structure"
+      ],
+      "confidence": 0.7616161616161617,
+      "rounds": 1,
+      "convergence_score": 0.7616161616161617
+    }
+  },
+  "materials_debate": {
+    "debate_rounds": [],
+    "final_consensus": {
+      "components": 21,
+      "unique_materials": 9,
+      "total_assignments": 66,
+      "materials_by_component": {
+        "Graphics Processing Unit (gpu) Die": [
+          {
+            "name": "Silicon",
+            "confidence": 0.98,
+            "reasoning": "Silicon is the fundamental semiconductor material for GPU dies, essential for transistor function with no commercial substitutes."
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.9,
+            "reasoning": "Copper is universally used for interconnects and wiring within the GPU die due to excellent conductivity."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.85,
+            "reasoning": "Aluminum is commonly used in certain metallization layers and interconnects in semiconductor devices; alternatives exist but less common."
+          },
+          {
+            "name": "Phosphorus",
+            "confidence": 0.75,
+            "reasoning": "Phosphorus is a standard n-type dopant for silicon wafers in semiconductor fabrication, critical for device function though arsenic can be substituted."
+          },
+          {
+            "name": "Boron",
+            "confidence": 0.75,
+            "reasoning": "Boron serves as a standard p-type dopant for silicon wafers, essential in creating the transistor junctions; gallium can be an alternative but less common."
+          }
+        ],
+        "Gpu": [
+          {
+            "name": "Silicon",
+            "confidence": 0.98,
+            "reasoning": "Silicon is the fundamental semiconductor base for all GPUs, absolutely necessary for transistor fabrication."
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.9,
+            "reasoning": "Copper is used extensively for electrical interconnections, power delivery, and PCB traces integrated within GPU components."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.85,
+            "reasoning": "Aluminum often used in heat sinks and as interconnects or bonding wires in chips; common standard material."
+          },
+          {
+            "name": "Phosphorus",
+            "confidence": 0.75,
+            "reasoning": "Phosphorus dopant for creating n-type regions in semiconductors to establish transistor function; standard in industry."
+          },
+          {
+            "name": "Boron",
+            "confidence": 0.75,
+            "reasoning": "Boron dopant for p-type regions, essential for transistor operation; widely used in semiconductor manufacturing."
+          },
+          {
+            "name": "Gold",
+            "confidence": 0.65,
+            "reasoning": "Gold is often used for wire bonding and contacts due to corrosion resistance, though other metals like copper sometimes substitute."
+          }
+        ],
+        "Graphics Memory Modules (gddr6 Or Gddr6x)": [
+          {
+            "name": "Silicon",
+            "confidence": 0.95,
+            "reasoning": "Silicon is the principal semiconductor material in GDDR6 and GDDR6X memory chips essential for memory function."
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.88,
+            "reasoning": "Copper is used for internal wiring and PCB traces of memory modules, standard for electrical conduction."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.75,
+            "reasoning": "Aluminum may be used in some interconnections or heat spreaders but is less common than copper."
+          },
+          {
+            "name": "Phosphorus",
+            "confidence": 0.7,
+            "reasoning": "Phosphorus dopant for n-type semiconductor regions in memory chips, commonly standard but possible variations exist."
+          },
+          {
+            "name": "Boron",
+            "confidence": 0.7,
+            "reasoning": "Boron for p-type dopant in memory chip fabrication; standard but alternatives are possible."
+          }
+        ],
+        "Cooling Fan": [
+          {
+            "name": "Copper",
+            "confidence": 0.8,
+            "reasoning": "Copper is commonly used in motor windings due to high electrical conductivity, critical for fan motor operation."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.85,
+            "reasoning": "Aluminum is widely used in fan housings and blades because of light weight and corrosion resistance."
+          }
+        ],
+        "Printed Circuit Board (pcb)": [
+          {
+            "name": "Copper",
+            "confidence": 0.95,
+            "reasoning": "Copper is the universally essential conductor material used in PCB traces and planes."
+          },
+          {
+            "name": "Fiberglass",
+            "confidence": 0.9,
+            "reasoning": "Fiberglass is the standard reinforcing material in PCB substrates providing mechanical strength and insulation."
+          },
+          {
+            "name": "Epoxy resins",
+            "confidence": 0.85,
+            "reasoning": "Epoxy resins are the primary resin system used to bind fiberglass and form the PCB laminate."
+          }
+        ],
+        "Gddr Memory Modules": [
+          {
+            "name": "Silicon",
+            "confidence": 0.95,
+            "reasoning": "Silicon is the base semiconductor material of GDDR memory chips, essential for operation."
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.88,
+            "reasoning": "Copper used for internal wiring and PCB level traces in memory modules, standard."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.75,
+            "reasoning": "Aluminum occasionally used in heat spreaders or bonding wires but less common than copper."
+          },
+          {
+            "name": "Phosphorus",
+            "confidence": 0.7,
+            "reasoning": "Phosphorus for n-type doping of silicon in memory fabrication, standard but some variations may occur."
+          },
+          {
+            "name": "Boron",
+            "confidence": 0.7,
+            "reasoning": "Boron for p-type doping, standard in silicon device manufacture."
+          }
+        ],
+        "Graphics Memory Module": [
+          {
+            "name": "Silicon",
+            "confidence": 0.95,
+            "reasoning": "Silicon semiconductor is core to memory module function, irreplaceable in current tech."
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.88,
+            "reasoning": "Copper widely used for electrical conduction in memory devices and PCB traces."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.75,
+            "reasoning": "Aluminum may be present in heat spreaders and interconnects, common but not exclusive."
+          },
+          {
+            "name": "Phosphorus",
+            "confidence": 0.7,
+            "reasoning": "Phosphorus often used as n-type dopant in silicon wafer for memory chips."
+          },
+          {
+            "name": "Boron",
+            "confidence": 0.7,
+            "reasoning": "Boron for p-type doping, creating transistor junctions in silicon memory chips."
+          }
+        ],
+        "Heatsink And Fan Assembly": [
+          {
+            "name": "Aluminum",
+            "confidence": 0.9,
+            "reasoning": "Aluminum is the dominant material for heatsinks due to excellent thermal conductivity and light weight."
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.8,
+            "reasoning": "Copper is used in heat pipes or baseplates in advanced cooling assemblies for superior heat conduction."
+          },
+          {
+            "name": "Steel Ingots",
+            "confidence": 0.5,
+            "reasoning": "Steel may be used for frame or mounting brackets but is not primary material."
+          }
+        ],
+        "Graphics Card Printed Circuit Board": [
+          {
+            "name": "Copper",
+            "confidence": 0.95,
+            "reasoning": "Copper is essential for conductive PCB traces and power planes on the graphics card PCB."
+          },
+          {
+            "name": "Fiberglass",
+            "confidence": 0.9,
+            "reasoning": "Fiberglass provides mechanical rigidity and insulating substrate for multilayer PCBs."
+          },
+          {
+            "name": "Epoxy resins",
+            "confidence": 0.85,
+            "reasoning": "Epoxy resin is the binder and matrix material in most PCBs."
+          }
+        ],
+        "Main Board": [
+          {
+            "name": "Copper",
+            "confidence": 0.95,
+            "reasoning": "Copper conducts traces and planes on the mainboard PCB, globally standard."
+          },
+          {
+            "name": "Fiberglass",
+            "confidence": 0.9,
+            "reasoning": "Fiberglass provides structural support and insulation for PCB layers."
+          },
+          {
+            "name": "Epoxy resins",
+            "confidence": 0.85,
+            "reasoning": "Epoxy resin binds fiberglass layers and laminates the substrate, a standard industry material."
+          }
+        ],
+        "Voltage Regulator Module (vrm)": [
+          {
+            "name": "Silicon",
+            "confidence": 0.9,
+            "reasoning": "Silicon is critical semiconductor material for transistors and control ICs in VRM."
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.88,
+            "reasoning": "Copper is widely used for electrical connections and power transmission in VRM circuit paths."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.75,
+            "reasoning": "Aluminum often used for heat dissipation components and interconnections in VRMs."
+          }
+        ],
+        "Voltage Regulator Module": [
+          {
+            "name": "Silicon",
+            "confidence": 0.9,
+            "reasoning": "Silicon semiconductors are essential in voltage regulation transistors and integrated circuits."
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.88,
+            "reasoning": "Copper is the standard conductor for VRM power and control circuitry."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.75,
+            "reasoning": "Aluminum used in heat spreaders and some interconnects in VRM assemblies."
+          }
+        ],
+        "Printed Circuit Board Assembly": [
+          {
+            "name": "Copper",
+            "confidence": 0.95,
+            "reasoning": "Copper used for circuit traces and planes essential in PCB assemblies."
+          },
+          {
+            "name": "Fiberglass",
+            "confidence": 0.9,
+            "reasoning": "Fiberglass is the primary substrate reinforcement material in PCB assemblies."
+          },
+          {
+            "name": "Epoxy resins",
+            "confidence": 0.85,
+            "reasoning": "Epoxy resin matrix binds substrate layers together."
+          }
+        ],
+        "Cooling Solution (heatsink And Fan Assembly)": [
+          {
+            "name": "Aluminum",
+            "confidence": 0.9,
+            "reasoning": "Aluminum is the primary heatsink and fan housing material for cooling solutions due to thermal conductivity and light weight."
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.8,
+            "reasoning": "Copper is used in heat pipes or bases to enhance heat transfer."
+          }
+        ],
+        "Pci Express (pcie) Connector": [
+          {
+            "name": "Copper",
+            "confidence": 0.9,
+            "reasoning": "Copper is universally used as the electrical conductor for PCIe connectors."
+          },
+          {
+            "name": "Gold",
+            "confidence": 0.7,
+            "reasoning": "Gold plating is standard for connector contacts to prevent corrosion and enhance conductivity, though some connectors may use other plating."
+          }
+        ],
+        "Structural Support Frame": [
+          {
+            "name": "Steel Ingots",
+            "confidence": 0.85,
+            "reasoning": "Steel is commonly used for structural frames providing rigidity and mechanical support."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.75,
+            "reasoning": "Aluminum may be used for lightweight frames but steel is more common for support structure."
+          }
+        ],
+        "Display Output Connectors (hdmi, Displayport)": [
+          {
+            "name": "Copper",
+            "confidence": 0.85,
+            "reasoning": "Copper is primary conductor material for HDMI and DisplayPort signal paths."
+          },
+          {
+            "name": "Gold",
+            "confidence": 0.7,
+            "reasoning": "Gold plating on contacts prevents corrosion and maintains signal integrity."
+          }
+        ],
+        "Display Connectors": [
+          {
+            "name": "Copper",
+            "confidence": 0.85,
+            "reasoning": "Copper is essential for electrical conductors in display connectors."
+          },
+          {
+            "name": "Gold",
+            "confidence": 0.7,
+            "reasoning": "Gold plating is standard to enhance contact reliability and resist corrosion."
+          }
+        ],
+        "Backplate": [
+          {
+            "name": "Aluminum",
+            "confidence": 0.9,
+            "reasoning": "Aluminum is commonly used as backplate material for structural rigidity and heat dissipation due to lightweight and thermal conductivity."
+          },
+          {
+            "name": "Steel Ingots",
+            "confidence": 0.6,
+            "reasoning": "Steel may be used in some backplates for structural support though less common than aluminum."
+          }
+        ],
+        "Bios Chip": [
+          {
+            "name": "Silicon",
+            "confidence": 0.95,
+            "reasoning": "Silicon is the base semiconductor material for BIOS ICs essential for function."
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.85,
+            "reasoning": "Copper is used for internal wiring and interconnects in BIOS chips."
+          },
+          {
+            "name": "Gold",
+            "confidence": 0.65,
+            "reasoning": "Gold often used for bonding wires and contact pads in semiconductor ICs to improve reliability."
+          }
+        ],
+        "Base Frame And Support Structure": [
+          {
+            "name": "Steel Ingots",
+            "confidence": 0.85,
+            "reasoning": "Steel provides structural rigidity and durability as primary material for base frames."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.75,
+            "reasoning": "Aluminum is used for lighter weight frames and support structures as an alternative to steel."
+          }
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,1146 @@
+{
+  "version": "2.0",
+  "metadata": {
+    "technology": "MRI Machine",
+    "technology_specification": "MRI Machine",
+    "technology_reasoning": "",
+    "timestamp": "2026-02-12T13:20:04.451846",
+    "format_version": "2.0"
+  },
+  "config": {
+    "num_agents": 2,
+    "max_rounds": 3
+  },
+  "component_stage": {
+    "phase1_initial_proposals": [
+      {
+        "agent_id": "Agent_1",
+        "components": [
+          {
+            "name": "Superconducting Magnet Assembly",
+            "confidence": 0.98,
+            "reasoning": "Core component generating the strong static magnetic field; superconducting magnets are procured as complete assemblies from a few specialized suppliers."
+          },
+          {
+            "name": "Gradient Coil System",
+            "confidence": 0.95,
+            "reasoning": "Essential for spatial encoding by rapidly changing magnetic fields; gradient coils are distinct modules supplied separately from the magnet."
+          },
+          {
+            "name": "Radiofrequency (RF) Coil Assemblies",
+            "confidence": 0.95,
+            "reasoning": "Modules used to transmit RF pulses and receive MRI signals; different coil arrays exist for various anatomical regions and are typically procured independently."
+          },
+          {
+            "name": "Magnet Cryostat and Cooling System",
+            "confidence": 0.92,
+            "reasoning": "Encloses the superconducting magnet and maintains cryogenic temperatures; usually a distinct manufactured assembly including vacuum vessel and cryocoolers."
+          },
+          {
+            "name": "MRI Console / Electronics Unit",
+            "confidence": 0.9,
+            "reasoning": "Includes patient control interface, system control boards, and signal processing units; procured as integrated electronics subsystems."
+          },
+          {
+            "name": "Patient Table/Bed Assembly",
+            "confidence": 0.85,
+            "reasoning": "Mechanized table that positions and moves the patient within the bore; manufactured as a separate assembly with motorized control."
+          },
+          {
+            "name": "Power Supply Units",
+            "confidence": 0.8,
+            "reasoning": "High power supplies for magnet energization and gradient coil driving; typically procured as complete modules from specialized suppliers."
+          },
+          {
+            "name": "Magnet Shim System",
+            "confidence": 0.75,
+            "reasoning": "Sets of shim coils or passive shims to improve magnetic field homogeneity; procured separately but sometimes integrated with gradient coil or magnet system."
+          },
+          {
+            "name": "RF Shielding Enclosure (Faraday Cage)",
+            "confidence": 0.7,
+            "reasoning": "Enclosure to block external RF interference; often procured as prefabricated panels and installed as a separate system."
+          }
+        ],
+        "technology_specification": "Superconducting magnetic resonance imaging (MRI) system with closed-bore, high-field superconducting magnet and integrated gradient and RF subsystems for clinical diagnostic imaging.",
+        "technology_reasoning": "The superconducting MRI system with a closed bore and high-field magnet (typically 1.5T or 3T) is the dominant commercial standard globally for hospital and diagnostic use as of 2024 due to its superior image resolution and patient throughput compared to open or low-field systems."
+      },
+      {
+        "agent_id": "Agent_2",
+        "components": [
+          {
+            "name": "Superconducting Magnet Assembly",
+            "confidence": 1.0,
+            "reasoning": "The core component generating the magnetic field, procured as a complete cryogenically cooled assembly, is universally present and distinct in all superconducting MRI machines."
+          },
+          {
+            "name": "Gradient Coil System",
+            "confidence": 0.97,
+            "reasoning": "Separate manufactured module that produces spatially varying magnetic fields for image encoding, critical and always present as an independent subsystem."
+          },
+          {
+            "name": "RF Transmit and Receive Coil Assembly",
+            "confidence": 0.95,
+            "reasoning": "Physical coil assemblies designed to transmit and receive radio frequency signals, custom procured for different anatomical imaging, separate from main electronics and magnet."
+          },
+          {
+            "name": "Cryostat and Vacuum Vessel",
+            "confidence": 0.93,
+            "reasoning": "Structural and thermal insulation assembly housing the superconducting magnet coils under vacuum and cryogenic conditions, a procurable major subassembly."
+          },
+          {
+            "name": "Magnet Cooling System (Helium Recondensor and Compressor)",
+            "confidence": 0.9,
+            "reasoning": "Dedicated cooling subsystem responsible for maintaining superconducting magnet temperature, typically procured as a distinct manufactured assembly."
+          },
+          {
+            "name": "Patient Table Assembly",
+            "confidence": 0.9,
+            "reasoning": "Mechanical component enabling patient positioning and movement into the bore, a distinct structural assembly with separate procurement."
+          },
+          {
+            "name": "Main Magnet Bore Tube (Magnet Housing Tube)",
+            "confidence": 0.85,
+            "reasoning": "Structural cylindrical tube forming the opening where the patient is scanned, a separate structural component integrated but procure independently in assembly."
+          },
+          {
+            "name": "MRI System Electronics Enclosure (Control and Interface Cabinet)",
+            "confidence": 0.85,
+            "reasoning": "Houses the MRI system electronics and user interface hardware, a manufactured cabinet or chassis procured separately from core magnet and coils."
+          },
+          {
+            "name": "Magnet Shim System (Passive and Active Shim Plates)",
+            "confidence": 0.75,
+            "reasoning": "Subassemblies used to correct magnetic field inhomogeneities, often procured as separate shim components or plates, though sometimes integrated depending on design."
+          }
+        ],
+        "technology_specification": "Superconducting magnetic resonance imaging (MRI) machine with a closed-bore, high-field (1.5 to 3 Tesla) superconducting magnet assembly.",
+        "technology_reasoning": "This specification represents the predominant clinical MRI technology as of 2024, with superconducting magnets being the industry standard due to their high magnetic field strength and stable imaging performance. The closed-bore design remains dominant for diagnostic imaging due to image quality and patient throughput, and 1.5T to 3T field strength are the most widely adopted configurations globally."
+      }
+    ],
+    "phase2_debate_rounds": [
+      {
+        "round_num": 1,
+        "convergence": 0.5,
+        "threshold": 0.7,
+        "threshold_reached": false,
+        "proposals": {
+          "Agent_1": [
+            {
+              "name": "Superconducting Magnet Assembly",
+              "confidence": 0.98,
+              "reasoning": "Core component generating the strong static magnetic field; superconducting magnets are procured as complete assemblies from a few specialized suppliers.",
+              "component": "Superconducting Magnet Assembly",
+              "normalized_component": "superconducting magnet"
+            },
+            {
+              "name": "Gradient Coil System",
+              "confidence": 0.95,
+              "reasoning": "Essential for spatial encoding by rapidly changing magnetic fields; gradient coils are distinct modules supplied separately from the magnet.",
+              "component": "Gradient Coil System",
+              "normalized_component": "gradient coil"
+            },
+            {
+              "name": "Radiofrequency (RF) Coil Assemblies",
+              "confidence": 0.95,
+              "reasoning": "Modules used to transmit RF pulses and receive MRI signals; different coil arrays exist for various anatomical regions and are typically procured independently.",
+              "component": "Radiofrequency (RF) Coil Assemblies",
+              "normalized_component": "rf coil assemblies"
+            },
+            {
+              "name": "Magnet Cryostat and Cooling System",
+              "confidence": 0.92,
+              "reasoning": "Encloses the superconducting magnet and maintains cryogenic temperatures; usually a distinct manufactured assembly including vacuum vessel and cryocoolers.",
+              "component": "Magnet Cryostat and Cooling System",
+              "normalized_component": "magnet cooling"
+            },
+            {
+              "name": "MRI Console / Electronics Unit",
+              "confidence": 0.9,
+              "reasoning": "Includes patient control interface, system control boards, and signal processing units; procured as integrated electronics subsystems.",
+              "component": "MRI Console / Electronics Unit",
+              "normalized_component": "mri console"
+            },
+            {
+              "name": "Patient Table/Bed Assembly",
+              "confidence": 0.85,
+              "reasoning": "Mechanized table that positions and moves the patient within the bore; manufactured as a separate assembly with motorized control.",
+              "component": "Patient Table/Bed Assembly",
+              "normalized_component": "patient table"
+            },
+            {
+              "name": "Power Supply Units",
+              "confidence": 0.8,
+              "reasoning": "High power supplies for magnet energization and gradient coil driving; typically procured as complete modules from specialized suppliers.",
+              "component": "Power Supply Units",
+              "normalized_component": "power supply units"
+            },
+            {
+              "name": "Magnet Shim System",
+              "confidence": 0.75,
+              "reasoning": "Sets of shim coils or passive shims to improve magnetic field homogeneity; procured separately but sometimes integrated with gradient coil or magnet system.",
+              "component": "Magnet Shim System",
+              "normalized_component": "magnet shim"
+            },
+            {
+              "name": "RF Shielding Enclosure (Faraday Cage)",
+              "confidence": 0.7,
+              "reasoning": "Enclosure to block external RF interference; often procured as prefabricated panels and installed as a separate system.",
+              "component": "RF Shielding Enclosure (Faraday Cage)",
+              "normalized_component": "rf shielding enclosure"
+            }
+          ],
+          "Agent_2": [
+            {
+              "name": "Superconducting Magnet Assembly",
+              "confidence": 1.0,
+              "reasoning": "The core component generating the magnetic field, procured as a complete cryogenically cooled assembly, is universally present and distinct in all superconducting MRI machines.",
+              "component": "Superconducting Magnet Assembly",
+              "normalized_component": "superconducting magnet"
+            },
+            {
+              "name": "Gradient Coil System",
+              "confidence": 0.97,
+              "reasoning": "Separate manufactured module that produces spatially varying magnetic fields for image encoding, critical and always present as an independent subsystem.",
+              "component": "Gradient Coil System",
+              "normalized_component": "gradient coil"
+            },
+            {
+              "name": "RF Transmit and Receive Coil Assembly",
+              "confidence": 0.95,
+              "reasoning": "Physical coil assemblies designed to transmit and receive radio frequency signals, custom procured for different anatomical imaging, separate from main electronics and magnet.",
+              "component": "RF Transmit and Receive Coil Assembly",
+              "normalized_component": "rf coil assemblies"
+            },
+            {
+              "name": "Cryostat and Vacuum Vessel",
+              "confidence": 0.93,
+              "reasoning": "Structural and thermal insulation assembly housing the superconducting magnet coils under vacuum and cryogenic conditions, a procurable major subassembly.",
+              "component": "Cryostat and Vacuum Vessel",
+              "normalized_component": "cryostat and vacuum vessel"
+            },
+            {
+              "name": "Magnet Cooling System (Helium Recondensor and Compressor)",
+              "confidence": 0.9,
+              "reasoning": "Dedicated cooling subsystem responsible for maintaining superconducting magnet temperature, typically procured as a distinct manufactured assembly.",
+              "component": "Magnet Cooling System (Helium Recondensor and Compressor)",
+              "normalized_component": "magnet cooling"
+            },
+            {
+              "name": "Patient Table Assembly",
+              "confidence": 0.9,
+              "reasoning": "Mechanical component enabling patient positioning and movement into the bore, a distinct structural assembly with separate procurement.",
+              "component": "Patient Table Assembly",
+              "normalized_component": "patient table"
+            },
+            {
+              "name": "Main Magnet Bore Tube (Magnet Housing Tube)",
+              "confidence": 0.85,
+              "reasoning": "Structural cylindrical tube forming the opening where the patient is scanned, a separate structural component integrated but procure independently in assembly.",
+              "component": "Main Magnet Bore Tube (Magnet Housing Tube)",
+              "normalized_component": "main magnet bore tube"
+            },
+            {
+              "name": "MRI System Electronics Enclosure (Control and Interface Cabinet)",
+              "confidence": 0.85,
+              "reasoning": "Houses the MRI system electronics and user interface hardware, a manufactured cabinet or chassis procured separately from core magnet and coils.",
+              "component": "MRI System Electronics Enclosure (Control and Interface Cabinet)",
+              "normalized_component": "mri system electronics enclosure"
+            },
+            {
+              "name": "Magnet Shim System (Passive and Active Shim Plates)",
+              "confidence": 0.75,
+              "reasoning": "Subassemblies used to correct magnetic field inhomogeneities, often procured as separate shim components or plates, though sometimes integrated depending on design.",
+              "component": "Magnet Shim System (Passive and Active Shim Plates)",
+              "normalized_component": "magnet shim"
+            }
+          ]
+        },
+        "rounds_completed": 1,
+        "support_analysis": {
+          "consensus": [],
+          "majority": [
+            "superconducting magnet",
+            "gradient coil",
+            "rf coil assemblies",
+            "magnet cooling",
+            "patient table",
+            "magnet shim"
+          ],
+          "isolated": [
+            "mri console",
+            "power supply units",
+            "rf shielding enclosure",
+            "cryostat and vacuum vessel",
+            "main magnet bore tube",
+            "mri system electronics enclosure"
+          ]
+        },
+        "critiques": [
+          {
+            "item_name": "superconducting magnet",
+            "normalized_name": "superconducting magnet",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.99,
+            "critique_text": "Majority support for 'superconducting magnet': 2/3 agents agree (conf: 0.99). Consider strengthening consensus."
+          },
+          {
+            "item_name": "gradient coil",
+            "normalized_name": "gradient coil",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.96,
+            "critique_text": "Majority support for 'gradient coil': 2/3 agents agree (conf: 0.96). Consider strengthening consensus."
+          },
+          {
+            "item_name": "rf coil assemblies",
+            "normalized_name": "rf coil assemblies",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.95,
+            "critique_text": "Majority support for 'rf coil assemblies': 2/3 agents agree (conf: 0.95). Consider strengthening consensus."
+          },
+          {
+            "item_name": "magnet cooling",
+            "normalized_name": "magnet cooling",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.91,
+            "critique_text": "Majority support for 'magnet cooling': 2/3 agents agree (conf: 0.91). Consider strengthening consensus."
+          },
+          {
+            "item_name": "mri console",
+            "normalized_name": "mri console",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2"
+            ],
+            "avg_confidence": 0.9,
+            "critique_text": "Isolated proposal 'mri console' from 1 agent(s) (conf: 0.90). Requires justification or peer validation."
+          },
+          {
+            "item_name": "patient table",
+            "normalized_name": "patient table",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.875,
+            "critique_text": "Majority support for 'patient table': 2/3 agents agree (conf: 0.88). Consider strengthening consensus."
+          },
+          {
+            "item_name": "power supply units",
+            "normalized_name": "power supply units",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2"
+            ],
+            "avg_confidence": 0.8,
+            "critique_text": "Isolated proposal 'power supply units' from 1 agent(s) (conf: 0.80). Requires justification or peer validation."
+          },
+          {
+            "item_name": "magnet shim",
+            "normalized_name": "magnet shim",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.75,
+            "critique_text": "Majority support for 'magnet shim': 2/3 agents agree (conf: 0.75). Consider strengthening consensus."
+          },
+          {
+            "item_name": "rf shielding enclosure",
+            "normalized_name": "rf shielding enclosure",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2"
+            ],
+            "avg_confidence": 0.7,
+            "critique_text": "Isolated proposal 'rf shielding enclosure' from 1 agent(s) (conf: 0.70). Requires justification or peer validation."
+          },
+          {
+            "item_name": "cryostat and vacuum vessel",
+            "normalized_name": "cryostat and vacuum vessel",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_1"
+            ],
+            "avg_confidence": 0.93,
+            "critique_text": "Isolated proposal 'cryostat and vacuum vessel' from 1 agent(s) (conf: 0.93). Requires justification or peer validation."
+          },
+          {
+            "item_name": "main magnet bore tube",
+            "normalized_name": "main magnet bore tube",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_1"
+            ],
+            "avg_confidence": 0.85,
+            "critique_text": "Isolated proposal 'main magnet bore tube' from 1 agent(s) (conf: 0.85). Requires justification or peer validation."
+          },
+          {
+            "item_name": "mri system electronics enclosure",
+            "normalized_name": "mri system electronics enclosure",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_1"
+            ],
+            "avg_confidence": 0.85,
+            "critique_text": "Isolated proposal 'mri system electronics enclosure' from 1 agent(s) (conf: 0.85). Requires justification or peer validation."
+          }
+        ],
+        "changes_from_previous": null
+      },
+      {
+        "round_num": 2,
+        "convergence": 0.5555555555555555,
+        "threshold": 0.7,
+        "threshold_reached": false,
+        "proposals": {
+          "Agent_1": [
+            {
+              "agent_id": "Agent_1",
+              "component": "Superconducting Magnet Assembly",
+              "confidence": 0.99,
+              "reasoning": "Strong consensus with very high average confidence (0.99) across agents; fundamental primary component of MRI machine.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Gradient Coil System",
+              "confidence": 0.96,
+              "reasoning": "Strong consensus with very high average confidence (0.96); essential for spatial encoding of MRI signals.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Radiofrequency (RF) Coil Assemblies",
+              "confidence": 0.95,
+              "reasoning": "Strong consensus with high confidence (0.95) and critical for signal transmission and reception.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Magnet Cooling System (Helium Recondensor and Compressor)",
+              "confidence": 0.91,
+              "reasoning": "Strong consensus on magnet cooling with average confidence (0.91); critical to maintain superconducting state.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Patient Table Assembly",
+              "confidence": 0.88,
+              "reasoning": "Unanimous support with average confidence (0.88); necessary for patient positioning during scanning.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Magnet Shim System (Passive and Active Shim Plates)",
+              "confidence": 0.75,
+              "reasoning": "Strong consensus with lower confidence (0.75) but necessary to improve magnetic field homogeneity.",
+              "round": 2
+            }
+          ],
+          "Agent_2": [
+            {
+              "agent_id": "Agent_2",
+              "component": "Superconducting Magnet Assembly",
+              "confidence": 0.99,
+              "reasoning": "Strong consensus from both agents with average confidence 0.99; critical primary component of MRI.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Gradient Coil System",
+              "confidence": 0.96,
+              "reasoning": "Strong consensus from both agents with average confidence 0.96; essential for MRI spatial encoding.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Radiofrequency (RF) Coil Assemblies",
+              "confidence": 0.95,
+              "reasoning": "Strong consensus from both agents with average confidence 0.95; key for RF signal transmission and reception.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Magnet Cryostat and Cooling System",
+              "confidence": 0.91,
+              "reasoning": "Strong consensus on importance of magnet cooling systems with average confidence 0.91; crucial for maintaining magnet superconductivity.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Patient Table/Bed Assembly",
+              "confidence": 0.88,
+              "reasoning": "Both agents support patient table with average confidence 0.88; necessary for patient positioning.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Magnet Shim System",
+              "confidence": 0.75,
+              "reasoning": "Both agents support magnet shim system with confidence 0.75; important for magnetic field homogeneity.",
+              "round": 2
+            }
+          ],
+          "Agent_3": [
+            {
+              "agent_id": "Agent_3",
+              "component": "Superconducting Magnet Assembly",
+              "confidence": 0.99,
+              "reasoning": "Strong consensus from both agents with average confidence 0.99; critical core MRI component.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Gradient Coil System",
+              "confidence": 0.96,
+              "reasoning": "Strong consensus with average confidence 0.96; essential for spatial encoding in MRI.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Radiofrequency (RF) Coil Assemblies",
+              "confidence": 0.95,
+              "reasoning": "Strong consensus with average confidence 0.95; vital for RF signal transmission and reception.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Magnet Cryostat and Cooling System",
+              "confidence": 0.91,
+              "reasoning": "Strong consensus on magnet cooling components with average confidence 0.91; crucial to maintaining superconducting state.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Patient Table/Bed Assembly",
+              "confidence": 0.88,
+              "reasoning": "Both agents agree with average confidence 0.88; important for patient positioning and comfort.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Magnet Shim System",
+              "confidence": 0.75,
+              "reasoning": "Consensus at average 0.75 confidence; needed to improve magnetic field homogeneity.",
+              "round": 2
+            }
+          ]
+        },
+        "rounds_completed": 2,
+        "support_analysis": {
+          "consensus": [
+            "superconducting magnet",
+            "gradient coil",
+            "radiofrequency (rf) coil assemblies"
+          ],
+          "majority": [
+            "magnet cryostat and cooling",
+            "patient table/bed",
+            "magnet shim"
+          ],
+          "isolated": [
+            "magnet cooling system (helium recondensor and compressor)",
+            "patient table",
+            "magnet shim system (passive and active shim plates)"
+          ]
+        },
+        "critiques": [
+          {
+            "item_name": "Superconducting Magnet Assembly",
+            "normalized_name": "superconducting magnet",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_2",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.9899999999999999,
+            "critique_text": "Strong consensus on 'Superconducting Magnet Assembly': all 3 agents support with avg confidence 0.99. Preserve this component."
+          },
+          {
+            "item_name": "Gradient Coil System",
+            "normalized_name": "gradient coil",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_2",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.96,
+            "critique_text": "Strong consensus on 'Gradient Coil System': all 3 agents support with avg confidence 0.96. Preserve this component."
+          },
+          {
+            "item_name": "Radiofrequency (RF) Coil Assemblies",
+            "normalized_name": "radiofrequency (rf) coil assemblies",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_2",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.9499999999999998,
+            "critique_text": "Strong consensus on 'Radiofrequency (RF) Coil Assemblies': all 3 agents support with avg confidence 0.95. Preserve this component."
+          },
+          {
+            "item_name": "Magnet Cooling System (Helium Recondensor and Compressor)",
+            "normalized_name": "magnet cooling system (helium recondensor and compressor)",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2",
+              "Agent_3"
+            ],
+            "avg_confidence": 0.91,
+            "critique_text": "Isolated proposal 'Magnet Cooling System (Helium Recondensor and Compressor)' from 1 agent(s) (conf: 0.91). Requires justification or peer validation."
+          },
+          {
+            "item_name": "Patient Table Assembly",
+            "normalized_name": "patient table",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2",
+              "Agent_3"
+            ],
+            "avg_confidence": 0.88,
+            "critique_text": "Isolated proposal 'Patient Table Assembly' from 1 agent(s) (conf: 0.88). Requires justification or peer validation."
+          },
+          {
+            "item_name": "Magnet Shim System (Passive and Active Shim Plates)",
+            "normalized_name": "magnet shim system (passive and active shim plates)",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2",
+              "Agent_3"
+            ],
+            "avg_confidence": 0.75,
+            "critique_text": "Isolated proposal 'Magnet Shim System (Passive and Active Shim Plates)' from 1 agent(s) (conf: 0.75). Requires justification or peer validation."
+          },
+          {
+            "item_name": "Magnet Cryostat and Cooling System",
+            "normalized_name": "magnet cryostat and cooling",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_3"
+            ],
+            "opposing_agents": [
+              "Agent_1"
+            ],
+            "avg_confidence": 0.91,
+            "critique_text": "Majority support for 'Magnet Cryostat and Cooling System': 2/3 agents agree (conf: 0.91). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Patient Table/Bed Assembly",
+            "normalized_name": "patient table/bed",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_3"
+            ],
+            "opposing_agents": [
+              "Agent_1"
+            ],
+            "avg_confidence": 0.88,
+            "critique_text": "Majority support for 'Patient Table/Bed Assembly': 2/3 agents agree (conf: 0.88). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Magnet Shim System",
+            "normalized_name": "magnet shim",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_3"
+            ],
+            "opposing_agents": [
+              "Agent_1"
+            ],
+            "avg_confidence": 0.75,
+            "critique_text": "Majority support for 'Magnet Shim System': 2/3 agents agree (conf: 0.75). Consider strengthening consensus."
+          }
+        ],
+        "changes_from_previous": {
+          "items_added": [
+            "radiofrequency (rf) coil assemblies",
+            "magnet cooling system (helium recondensor and compressor)",
+            "patient table/bed",
+            "magnet cryostat and cooling",
+            "magnet shim system (passive and active shim plates)"
+          ],
+          "items_removed": [
+            "mri console",
+            "rf coil assemblies",
+            "cryostat and vacuum vessel",
+            "mri system electronics enclosure",
+            "rf shielding enclosure",
+            "magnet cooling",
+            "power supply units",
+            "main magnet bore tube"
+          ],
+          "confidence_changes": {}
+        }
+      },
+      {
+        "round_num": 3,
+        "convergence": 1.0,
+        "threshold": 0.7,
+        "threshold_reached": true,
+        "proposals": {
+          "Agent_1": [
+            {
+              "agent_id": "Agent_1",
+              "component": "Superconducting Magnet Assembly",
+              "confidence": 0.99,
+              "reasoning": "Unanimous support from all agents with very high confidence; fundamental and critical component of MRI machine.",
+              "round": 3,
+              "normalized_component": "Superconducting Magnet"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Gradient Coil System",
+              "confidence": 0.96,
+              "reasoning": "Unanimous support from all agents with high confidence; essential for spatial encoding in MRI imaging.",
+              "round": 3,
+              "normalized_component": "Gradient Coil"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Radiofrequency (RF) Coil Assemblies",
+              "confidence": 0.95,
+              "reasoning": "Unanimous support from all agents with high confidence; crucial for signal transmission and reception in MRI.",
+              "round": 3,
+              "normalized_component": "Radiofrequency (RF) Coil Assembly"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Magnet Cryostat and Cooling System",
+              "confidence": 0.91,
+              "reasoning": "Supported by multiple agents with high confidence; vital for maintaining superconducting magnet operational temperature.",
+              "round": 3,
+              "normalized_component": "Cryostat"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Patient Table/Bed Assembly",
+              "confidence": 0.88,
+              "reasoning": "Supported by multiple agents with consistent confidence; necessary for patient positioning during scans.",
+              "round": 3,
+              "normalized_component": "Patient Table/Bed Assembly"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Magnet Shim System",
+              "confidence": 0.75,
+              "reasoning": "Supported by multiple agents; important for magnetic field homogeneity and image quality, thus justified inclusion.",
+              "round": 3,
+              "normalized_component": "Magnet Shim System"
+            }
+          ],
+          "Agent_2": [
+            {
+              "agent_id": "Agent_2",
+              "component": "Superconducting Magnet Assembly",
+              "confidence": 0.99,
+              "reasoning": "Strong consensus among all agents with highest confidence; fundamental component of MRI.",
+              "round": 3,
+              "normalized_component": "Superconducting Magnet"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Gradient Coil System",
+              "confidence": 0.96,
+              "reasoning": "Unanimous support with high confidence; essential for spatial encoding in MRI.",
+              "round": 3,
+              "normalized_component": "Gradient Coil"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Radiofrequency (RF) Coil Assemblies",
+              "confidence": 0.95,
+              "reasoning": "All agents support it highly; critical for transmitting and receiving signals in MRI.",
+              "round": 3,
+              "normalized_component": "Radiofrequency (RF) Coil Assembly"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Magnet Cryostat and Cooling System",
+              "confidence": 0.91,
+              "reasoning": "Chosen by majority and confirmed important; supports magnet operation by maintaining low temperatures.",
+              "round": 3,
+              "normalized_component": "Cryostat"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Patient Table/Bed Assembly",
+              "confidence": 0.88,
+              "reasoning": "Strong multi-agent agreement with good confidence; necessary to position and move patients during scanning.",
+              "round": 3,
+              "normalized_component": "Patient Table/Bed Assembly"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Magnet Shim System",
+              "confidence": 0.75,
+              "reasoning": "Consensus among multiple agents with moderate confidence; important for magnetic field homogeneity.",
+              "round": 3,
+              "normalized_component": "Magnet Shim System"
+            }
+          ],
+          "Agent_3": [
+            {
+              "agent_id": "Agent_3",
+              "component": "Superconducting Magnet Assembly",
+              "confidence": 0.99,
+              "reasoning": "Unanimous support from all agents, highest confidence, and critical component for MRI functionality.",
+              "round": 3,
+              "normalized_component": "Superconducting Magnet"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Gradient Coil System",
+              "confidence": 0.96,
+              "reasoning": "Strong consensus among all agents with high confidence, essential for spatial encoding in MRI.",
+              "round": 3,
+              "normalized_component": "Gradient Coil"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Radiofrequency (RF) Coil Assemblies",
+              "confidence": 0.95,
+              "reasoning": "Consistently selected by all agents, fundamental for transmitting and receiving RF signals in MRI.",
+              "round": 3,
+              "normalized_component": "Radiofrequency (RF) Coil Assembly"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Magnet Cryostat and Cooling System",
+              "confidence": 0.91,
+              "reasoning": "Supported by two agents with strong average confidence; critical to maintaining superconducting magnet temperature.",
+              "round": 3,
+              "normalized_component": "Cryostat"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Patient Table/Bed Assembly",
+              "confidence": 0.88,
+              "reasoning": "Included by two agents with decent confidence; crucial for patient positioning and comfort during scans.",
+              "round": 3,
+              "normalized_component": "Patient Table/Bed Assembly"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Magnet Shim System",
+              "confidence": 0.75,
+              "reasoning": "Supported by two agents and consistent across selections, important for magnetic field homogeneity.",
+              "round": 3,
+              "normalized_component": "Magnet Shim System"
+            }
+          ]
+        },
+        "rounds_completed": 3,
+        "support_analysis": {
+          "consensus": [
+            "superconducting magnet",
+            "gradient coil",
+            "radiofrequency (rf) coil assemblies",
+            "magnet cryostat and cooling",
+            "patient table/bed",
+            "magnet shim"
+          ],
+          "majority": [],
+          "isolated": []
+        },
+        "critiques": [
+          {
+            "item_name": "Superconducting Magnet Assembly",
+            "normalized_name": "superconducting magnet",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_2",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.9899999999999999,
+            "critique_text": "Strong consensus on 'Superconducting Magnet Assembly': all 3 agents support with avg confidence 0.99. Preserve this component."
+          },
+          {
+            "item_name": "Gradient Coil System",
+            "normalized_name": "gradient coil",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_2",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.96,
+            "critique_text": "Strong consensus on 'Gradient Coil System': all 3 agents support with avg confidence 0.96. Preserve this component."
+          },
+          {
+            "item_name": "Radiofrequency (RF) Coil Assemblies",
+            "normalized_name": "radiofrequency (rf) coil assemblies",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_2",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.9499999999999998,
+            "critique_text": "Strong consensus on 'Radiofrequency (RF) Coil Assemblies': all 3 agents support with avg confidence 0.95. Preserve this component."
+          },
+          {
+            "item_name": "Magnet Cryostat and Cooling System",
+            "normalized_name": "magnet cryostat and cooling",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_2",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.91,
+            "critique_text": "Strong consensus on 'Magnet Cryostat and Cooling System': all 3 agents support with avg confidence 0.91. Preserve this component."
+          },
+          {
+            "item_name": "Patient Table/Bed Assembly",
+            "normalized_name": "patient table/bed",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_2",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.88,
+            "critique_text": "Strong consensus on 'Patient Table/Bed Assembly': all 3 agents support with avg confidence 0.88. Preserve this component."
+          },
+          {
+            "item_name": "Magnet Shim System",
+            "normalized_name": "magnet shim",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_2",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.75,
+            "critique_text": "Strong consensus on 'Magnet Shim System': all 3 agents support with avg confidence 0.75. Preserve this component."
+          }
+        ],
+        "changes_from_previous": {
+          "items_added": [],
+          "items_removed": [
+            "magnet cooling system (helium recondensor and compressor)",
+            "magnet shim system (passive and active shim plates)",
+            "patient table"
+          ],
+          "confidence_changes": {}
+        }
+      }
+    ],
+    "phase3_final_consensus": {
+      "technology": "MRI Machine",
+      "technology_specification": "MRI Machine",
+      "technology_reasoning": "",
+      "components": [
+        "Superconducting Magnet",
+        "Gradient Coil",
+        "Radiofrequency (rf) Coil Assembly",
+        "Cryostat",
+        "Patient Table/bed Assembly",
+        "Magnet Shim System"
+      ],
+      "confidence": 1.0,
+      "rounds": 3,
+      "convergence_score": 1.0
+    }
+  },
+  "materials_debate": {
+    "debate_rounds": [],
+    "final_consensus": {
+      "components": 6,
+      "unique_materials": 11,
+      "total_assignments": 22,
+      "materials_by_component": {
+        "Superconducting Magnet": [
+          {
+            "name": "Niobium",
+            "confidence": 0.95,
+            "reasoning": "Niobium is a primary material in niobium-titanium superconducting wires used in MRI superconducting magnets for generating a strong magnetic field; essential and industry standard."
+          },
+          {
+            "name": "Titanium",
+            "confidence": 0.7,
+            "reasoning": "Titanium is often used for structural support due to its strength and corrosion resistance; commonly used but some alternatives exist."
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.9,
+            "reasoning": "Copper is used as a stabilizing and conducting material in superconducting wires and magnet coils; universally essential for electrical conduction."
+          },
+          {
+            "name": "Helium",
+            "confidence": 0.95,
+            "reasoning": "Helium is the primary cryogenic coolant used to maintain superconductivity by cooling magnet below critical temperature; absolutely essential with no substitutes."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.7,
+            "reasoning": "Aluminum is commonly used in magnet coil formers and structural parts due to low weight and good conductivity; alternatives exist but widely used."
+          }
+        ],
+        "Gradient Coil": [
+          {
+            "name": "Copper",
+            "confidence": 0.95,
+            "reasoning": "Copper is the standard conductor material for gradient coils providing fast switching magnetic field gradients; universally essential."
+          },
+          {
+            "name": "Epoxy resins",
+            "confidence": 0.8,
+            "reasoning": "Epoxy resins are used as insulative and structural matrix materials embedding the copper windings; industry standard with few alternatives."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.6,
+            "reasoning": "Aluminum may be used in coil supports and formers for light weight; common but alternatives exist."
+          }
+        ],
+        "Radiofrequency (rf) Coil Assembly": [
+          {
+            "name": "Copper",
+            "confidence": 0.95,
+            "reasoning": "Copper is the primary conductor in RF coils providing the radiofrequency magnetic fields; absolutely essential and universal use."
+          },
+          {
+            "name": "Epoxy resins",
+            "confidence": 0.8,
+            "reasoning": "Epoxy resins are used for insulation, support, and protection of coil windings; standard industry material."
+          },
+          {
+            "name": "PTFE",
+            "confidence": 0.7,
+            "reasoning": "PTFE is used as an insulating material due to its electrical properties and chemical resistance; common choice though some polymers may substitute."
+          }
+        ],
+        "Cryostat": [
+          {
+            "name": "Stainless steel",
+            "confidence": 0.9,
+            "reasoning": "Stainless steel (typically SS 304/316) is universally used for vacuum chambers and structural cryostat walls due to strength and low thermal conductivity."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.7,
+            "reasoning": "Aluminum is commonly used in parts of the cryostat for structural supports and radiation shields; alternatives exist."
+          },
+          {
+            "name": "Helium",
+            "confidence": 0.95,
+            "reasoning": "Helium is used as a cryogenic coolant stored and managed by the cryostat to maintain low temperatures; essential and irreplaceable."
+          },
+          {
+            "name": "Epoxy resins",
+            "confidence": 0.5,
+            "reasoning": "Epoxy resins may be used in insulating and bonding applications in the cryostat but alternatives are available; somewhat uncertain."
+          }
+        ],
+        "Patient Table/bed Assembly": [
+          {
+            "name": "Aluminum",
+            "confidence": 0.8,
+            "reasoning": "Aluminum is widely used for structural parts of patient tables due to light weight and strength; very common with some alternatives."
+          },
+          {
+            "name": "Polyethylene terephthalate",
+            "confidence": 0.7,
+            "reasoning": "Polyethylene terephthalate is used in surface covers and cushioning layers for durability and cleanliness; common but alternatives exist."
+          },
+          {
+            "name": "Polypropylene",
+            "confidence": 0.6,
+            "reasoning": "Polypropylene may be used in padding and non-structural components due to lightweight and ease of molding; alternatives possible."
+          },
+          {
+            "name": "Steel Ingots",
+            "confidence": 0.7,
+            "reasoning": "Steel, often derived from steel ingots, is used in some structural and mechanical parts for strength; common with alternatives."
+          }
+        ],
+        "Magnet Shim System": [
+          {
+            "name": "Stainless steel",
+            "confidence": 0.9,
+            "reasoning": "Stainless steel is commonly used for shim plates and adjustment hardware due to stability and magnetic properties; industry standard."
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.5,
+            "reasoning": "Copper may be used in shim electrical components but this is less common and some alternatives exist; uncertain."
+          },
+          {
+            "name": "Epoxy resins",
+            "confidence": 0.6,
+            "reasoning": "Epoxy resins might be used for bonding shim materials or insulation; material use varies and alternatives exist."
+          }
+        ]
+      }
+    }
+  }
+}

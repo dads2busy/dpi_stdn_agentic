@@ -1,0 +1,1558 @@
+{
+  "version": "2.0",
+  "metadata": {
+    "technology": "Real-Time PCR (qPCR) Thermocycler",
+    "technology_specification": "Real-Time PCR (qPCR) Thermocycler",
+    "technology_reasoning": "",
+    "timestamp": "2026-02-12T15:10:11.604808",
+    "format_version": "2.0"
+  },
+  "config": {
+    "num_agents": 4,
+    "max_rounds": 2
+  },
+  "component_stage": {
+    "phase1_initial_proposals": [
+      {
+        "agent_id": "Agent_1",
+        "components": [
+          {
+            "name": "Thermal Cycler Block (Peltier-based)",
+            "confidence": 0.98,
+            "reasoning": "This is the core component providing precise temperature cycling with rapid ramp-up and cooldown, procured as a distinct manufactured assembly with integrated heaters and sensors."
+          },
+          {
+            "name": "Optical Detection Module (Fluorescence Excitation and Detection)",
+            "confidence": 0.95,
+            "reasoning": "The fluorescence excitation source (LED/laser) and photodetector array form a dedicated optical subsystem procured separately, key for real-time DNA quantification."
+          },
+          {
+            "name": "Control Electronics Board (Main PCB)",
+            "confidence": 0.95,
+            "reasoning": "This bespoke printed circuit board hosts the microcontroller and interface electronics, controlling temperature profiles and data acquisition, typically procured as a unique assembly."
+          },
+          {
+            "name": "User Interface Module (Touchscreen Display with Embedded Controls)",
+            "confidence": 0.85,
+            "reasoning": "The touchscreen interface combined with input controls constitutes a separate component often sourced as a module for user interaction and instrument programming."
+          },
+          {
+            "name": "Sample Holder/Reaction Plate Carrier",
+            "confidence": 0.9,
+            "reasoning": "The physical assembly that holds reaction tubes or plates within the thermal cycler block is a distinct mechanical subassembly procured separately."
+          },
+          {
+            "name": "Optical Filters and Lenses Assembly",
+            "confidence": 0.88,
+            "reasoning": "Specialized optical filters and lenses needed for excitation wavelength selection and emission separation are typically supplied as a packaged optical subassembly."
+          },
+          {
+            "name": "Communication Interface Module (USB/Ethernet/Wifi)",
+            "confidence": 0.75,
+            "reasoning": "Networking and data transfer hardware form a separate module in many models, enabling external control and data export."
+          },
+          {
+            "name": "Thermal Insulation Housing/Internal Structural Frame",
+            "confidence": 0.7,
+            "reasoning": "The internal mechanical support and insulation structure are often procured as a matched subassembly to ensure thermal efficiency and instrument robustness."
+          }
+        ],
+        "technology_specification": "Real-Time PCR (qPCR) thermocycler system with integrated optical detection and precise thermal cycling control",
+        "technology_reasoning": "This specification reflects the industry-standard qPCR instrument widely used in research and diagnostics, combining rapid thermal cycling with fluorescence-based real-time DNA amplification monitoring, representing the dominant market technology as of 2024."
+      },
+      {
+        "agent_id": "Agent_2",
+        "components": [
+          {
+            "name": "Thermal Cycler Block (Heating/Cooling Block)",
+            "confidence": 0.98,
+            "reasoning": "This is the core structural component that holds PCR tubes or plates and precisely controls temperature cycles, procured as a specialized machined and engineered assembly."
+          },
+          {
+            "name": "Peltier Thermoelectric Temperature Control Module",
+            "confidence": 0.95,
+            "reasoning": "Used for precise heating and cooling of the thermal cycler block, this module is a distinct, procurable component critical for rapid temperature changes required in PCR."
+          },
+          {
+            "name": "Optical Detection Module (Fluorescence Detection System)",
+            "confidence": 0.95,
+            "reasoning": "This subassembly includes detectors, excitation light sources, filters, and optics, enabling real-time fluorescence measurement; a specialized, separately sourced manufactured module."
+          },
+          {
+            "name": "Main Control Printed Circuit Board (PCB)",
+            "confidence": 0.9,
+            "reasoning": "The main electronic controller responsible for system operation, temperature regulation, and data acquisition, typically manufactured and procured as a distinct PCB assembly."
+          },
+          {
+            "name": "Sample Holder (Rotor or Plate Carrier)",
+            "confidence": 0.85,
+            "reasoning": "Physical assembly designed to securely hold reaction tubes or plates within the thermal cycler block, procured as a separate manufactured component due to compatibility and material requirements."
+          },
+          {
+            "name": "Thermal Insulation Assembly",
+            "confidence": 0.8,
+            "reasoning": "Structural assembly around the thermal block to maintain temperature uniformity and reduce heat loss, often a separate manufactured insulating enclosure or panel."
+          },
+          {
+            "name": "Instrument Enclosure (Outer Housing)",
+            "confidence": 0.9,
+            "reasoning": "The physical outer casing that provides structural support, user interface mounting, and environmental protection, manufactured as a distinct assembly."
+          },
+          {
+            "name": "Display and User Interface Module",
+            "confidence": 0.85,
+            "reasoning": "Includes LCD or touch panel display with embedded electronics, procured as a packaged subassembly for user control and data display."
+          },
+          {
+            "name": "Cooling Fan and Air Flow Assembly",
+            "confidence": 0.75,
+            "reasoning": "Fan and ducting components to dissipate heat and maintain internal temperatures, commonly a distinct modular assembly but design may vary by model."
+          }
+        ],
+        "technology_specification": "Real-Time PCR (qPCR) Thermocycler is a laboratory instrument designed to amplify and simultaneously quantify targeted DNA molecules by thermal cycling and fluorescent signal detection in real time, using precise temperature control and optical detection systems.",
+        "technology_reasoning": "This specification reflects how qPCR thermocyclers have become industry-standard instruments combining thermal cyclers with integrated fluorescence detection, enabling quantitative molecular biology analysis widely used in clinical and research molecular diagnostics."
+      },
+      {
+        "agent_id": "Agent_3",
+        "components": [
+          {
+            "name": "Thermal Cycler Block (Peltier-based)",
+            "confidence": 1.0,
+            "reasoning": "This is the core component that performs rapid and precise temperature changes for DNA amplification, procured as a specialized manufactured assembly including the heating/cooling elements."
+          },
+          {
+            "name": "Optical Detection Module (Excitation and Emission Optics with Photodetectors)",
+            "confidence": 0.98,
+            "reasoning": "Essential for measuring fluorescence signals during amplification, this module includes light sources, filters, and detectors, and is a distinct procurable assembly."
+          },
+          {
+            "name": "Control Electronics Board (PCR Controller PCB)",
+            "confidence": 0.95,
+            "reasoning": "This printed circuit board hosts the microcontroller and interface circuits managing temperature cycling and data acquisition, a standard separate electronic assembly."
+          },
+          {
+            "name": "User Interface Display and Keypad Assembly",
+            "confidence": 0.9,
+            "reasoning": "Integral for operator interaction, this includes an LCD or touchscreen display and keypad, typically a separate manufactured module."
+          },
+          {
+            "name": "Sample Holder/Plate Adapter (Thermal Block Interface)",
+            "confidence": 0.85,
+            "reasoning": "A mechanical subassembly that securely holds reaction vessels or plates and interfaces with the thermal block, usually a separate manufactured component."
+          },
+          {
+            "name": "Power Supply Unit (PSU)",
+            "confidence": 0.9,
+            "reasoning": "Supplies regulated power to internal components and is commonly a distinct procurable electrical module."
+          },
+          {
+            "name": "Enclosure Housing",
+            "confidence": 0.9,
+            "reasoning": "The outer structural casing providing protection and user safety, typically manufactured separately and procured from specialized suppliers."
+          },
+          {
+            "name": "Cooling Fan or Thermal Management Subsystem",
+            "confidence": 0.8,
+            "reasoning": "Used to dissipate heat from electronics and thermal elements, usually a separate assembly in most advanced qPCR systems."
+          }
+        ],
+        "technology_specification": "Real-Time PCR (qPCR) Thermocycler is a laboratory instrument that automates the amplification and simultaneous quantification of DNA sequences by cycling samples through precise temperature changes and detecting fluorescence signals in real time.",
+        "technology_reasoning": "This specification reflects the dominant industry-standard qPCR instrument used globally in molecular diagnostics and research laboratories. Its key function is precise thermal cycling combined with optical detection, which distinguishes it from conventional PCR machines and simpler thermal cyclers."
+      },
+      {
+        "agent_id": "Agent_4",
+        "components": [
+          {
+            "name": "Thermal Cycler Block (Heating/Cooling Module)",
+            "confidence": 0.98,
+            "reasoning": "This is the core subsystem responsible for controlled temperature cycling of samples, universally present and often procured as a distinct assembly integrating Peltier elements or other temperature control hardware."
+          },
+          {
+            "name": "Optical Detection Module (Fluorescence Excitation and Emission System)",
+            "confidence": 0.96,
+            "reasoning": "Essential for real-time quantification, this module typically includes LEDs, filters, lenses, and photodetectors, procured separately due to its specialized optical components."
+          },
+          {
+            "name": "PCR Sample Holder (Rotor or Block Plate)",
+            "confidence": 0.93,
+            "reasoning": "A distinct, manufactured part that holds the reaction tubes or plates securely during cycling, often available as a separate machined or injection-molded assembly."
+          },
+          {
+            "name": "Control Electronics Assembly (Main PCB)",
+            "confidence": 0.95,
+            "reasoning": "Contains the microcontroller or processor and the electronics that regulate thermal cycling, data acquisition, and user interface, universally required and procured as a separate assembly."
+          },
+          {
+            "name": "User Interface Module (Display and Keypad/Touchscreen)",
+            "confidence": 0.87,
+            "reasoning": "A distinct manufactured unit that enables operator interaction, usually procured separately for customization and maintenance purposes."
+          },
+          {
+            "name": "Cooling System (Fan and Heat Sink Assembly)",
+            "confidence": 0.85,
+            "reasoning": "Necessary to dissipate heat during cycling, typically a distinct subassembly with separate suppliers in many qPCR thermocyclers."
+          },
+          {
+            "name": "Power Supply Unit (PSU)",
+            "confidence": 0.9,
+            "reasoning": "A distinct electrical subassembly providing regulated power, standardized and often procured separately."
+          },
+          {
+            "name": "Data Interface Module (USB/Ethernet Ports and Controller)",
+            "confidence": 0.75,
+            "reasoning": "Provides communication interfaces for data transfer, commonly a modular printed circuit or connector assembly though occasionally integrated into the main control board."
+          }
+        ],
+        "technology_specification": "Real-Time PCR (qPCR) Thermocycler, a laboratory instrument designed to amplify and simultaneously quantify targeted DNA sequences using fluorescence-based detection during thermal cycling.",
+        "technology_reasoning": "qPCR thermocyclers are widely adopted in molecular biology due to their ability to provide rapid, quantitative DNA analysis by integrating precise thermal cycling with real-time fluorescence detection. This combination sets them apart from conventional PCR machines and makes this form the industry standard for gene expression analysis, diagnostics, and pathogen detection."
+      }
+    ],
+    "phase2_debate_rounds": [
+      {
+        "round_num": 1,
+        "convergence": 0.022222222222222223,
+        "threshold": 0.7,
+        "threshold_reached": false,
+        "proposals": {
+          "Agent_1": [
+            {
+              "name": "Thermal Cycler Block (Peltier-based)",
+              "confidence": 0.98,
+              "reasoning": "This is the core component providing precise temperature cycling with rapid ramp-up and cooldown, procured as a distinct manufactured assembly with integrated heaters and sensors.",
+              "component": "Thermal Cycler Block (Peltier-based)",
+              "normalized_component": "thermal cycler block (peltier based)"
+            },
+            {
+              "name": "Optical Detection Module (Fluorescence Excitation and Detection)",
+              "confidence": 0.95,
+              "reasoning": "The fluorescence excitation source (LED/laser) and photodetector array form a dedicated optical subsystem procured separately, key for real-time DNA quantification.",
+              "component": "Optical Detection Module (Fluorescence Excitation and Detection)",
+              "normalized_component": "optical detection module (fluorescence excitation and detection)"
+            },
+            {
+              "name": "Control Electronics Board (Main PCB)",
+              "confidence": 0.95,
+              "reasoning": "This bespoke printed circuit board hosts the microcontroller and interface electronics, controlling temperature profiles and data acquisition, typically procured as a unique assembly.",
+              "component": "Control Electronics Board (Main PCB)",
+              "normalized_component": "control electronics board (main pcb)"
+            },
+            {
+              "name": "User Interface Module (Touchscreen Display with Embedded Controls)",
+              "confidence": 0.85,
+              "reasoning": "The touchscreen interface combined with input controls constitutes a separate component often sourced as a module for user interaction and instrument programming.",
+              "component": "User Interface Module (Touchscreen Display with Embedded Controls)",
+              "normalized_component": "user interface module (touchscreen display with embedded controls)"
+            },
+            {
+              "name": "Sample Holder/Reaction Plate Carrier",
+              "confidence": 0.9,
+              "reasoning": "The physical assembly that holds reaction tubes or plates within the thermal cycler block is a distinct mechanical subassembly procured separately.",
+              "component": "Sample Holder/Reaction Plate Carrier",
+              "normalized_component": "sample holder/reaction plate carrier"
+            },
+            {
+              "name": "Optical Filters and Lenses Assembly",
+              "confidence": 0.88,
+              "reasoning": "Specialized optical filters and lenses needed for excitation wavelength selection and emission separation are typically supplied as a packaged optical subassembly.",
+              "component": "Optical Filters and Lenses Assembly",
+              "normalized_component": "optical filters and lenses"
+            },
+            {
+              "name": "Communication Interface Module (USB/Ethernet/Wifi)",
+              "confidence": 0.75,
+              "reasoning": "Networking and data transfer hardware form a separate module in many models, enabling external control and data export.",
+              "component": "Communication Interface Module (USB/Ethernet/Wifi)",
+              "normalized_component": "communication interface module (usb/ethernet/wifi)"
+            },
+            {
+              "name": "Thermal Insulation Housing/Internal Structural Frame",
+              "confidence": 0.7,
+              "reasoning": "The internal mechanical support and insulation structure are often procured as a matched subassembly to ensure thermal efficiency and instrument robustness.",
+              "component": "Thermal Insulation Housing/Internal Structural Frame",
+              "normalized_component": "thermal insulation housing/internal structural frame"
+            }
+          ],
+          "Agent_2": [
+            {
+              "name": "Thermal Cycler Block (Heating/Cooling Block)",
+              "confidence": 0.98,
+              "reasoning": "This is the core structural component that holds PCR tubes or plates and precisely controls temperature cycles, procured as a specialized machined and engineered assembly.",
+              "component": "Thermal Cycler Block (Heating/Cooling Block)",
+              "normalized_component": "thermal cycler block (heating/cooling block)"
+            },
+            {
+              "name": "Peltier Thermoelectric Temperature Control Module",
+              "confidence": 0.95,
+              "reasoning": "Used for precise heating and cooling of the thermal cycler block, this module is a distinct, procurable component critical for rapid temperature changes required in PCR.",
+              "component": "Peltier Thermoelectric Temperature Control Module",
+              "normalized_component": "peltier thermoelectric temperature control"
+            },
+            {
+              "name": "Optical Detection Module (Fluorescence Detection System)",
+              "confidence": 0.95,
+              "reasoning": "This subassembly includes detectors, excitation light sources, filters, and optics, enabling real-time fluorescence measurement; a specialized, separately sourced manufactured module.",
+              "component": "Optical Detection Module (Fluorescence Detection System)",
+              "normalized_component": "optical detection module (fluorescence detection system)"
+            },
+            {
+              "name": "Main Control Printed Circuit Board (PCB)",
+              "confidence": 0.9,
+              "reasoning": "The main electronic controller responsible for system operation, temperature regulation, and data acquisition, typically manufactured and procured as a distinct PCB assembly.",
+              "component": "Main Control Printed Circuit Board (PCB)",
+              "normalized_component": "main control printed circuit board (pcb)"
+            },
+            {
+              "name": "Sample Holder (Rotor or Plate Carrier)",
+              "confidence": 0.85,
+              "reasoning": "Physical assembly designed to securely hold reaction tubes or plates within the thermal cycler block, procured as a separate manufactured component due to compatibility and material requirements.",
+              "component": "Sample Holder (Rotor or Plate Carrier)",
+              "normalized_component": "sample holder (rotor or plate carrier)"
+            },
+            {
+              "name": "Thermal Insulation Assembly",
+              "confidence": 0.8,
+              "reasoning": "Structural assembly around the thermal block to maintain temperature uniformity and reduce heat loss, often a separate manufactured insulating enclosure or panel.",
+              "component": "Thermal Insulation Assembly",
+              "normalized_component": "thermal insulation"
+            },
+            {
+              "name": "Instrument Enclosure (Outer Housing)",
+              "confidence": 0.9,
+              "reasoning": "The physical outer casing that provides structural support, user interface mounting, and environmental protection, manufactured as a distinct assembly.",
+              "component": "Instrument Enclosure (Outer Housing)",
+              "normalized_component": "instrument enclosure (outer housing)"
+            },
+            {
+              "name": "Display and User Interface Module",
+              "confidence": 0.85,
+              "reasoning": "Includes LCD or touch panel display with embedded electronics, procured as a packaged subassembly for user control and data display.",
+              "component": "Display and User Interface Module",
+              "normalized_component": "display and user interface"
+            },
+            {
+              "name": "Cooling Fan and Air Flow Assembly",
+              "confidence": 0.75,
+              "reasoning": "Fan and ducting components to dissipate heat and maintain internal temperatures, commonly a distinct modular assembly but design may vary by model.",
+              "component": "Cooling Fan and Air Flow Assembly",
+              "normalized_component": "cooling fan and air flow"
+            }
+          ],
+          "Agent_3": [
+            {
+              "name": "Thermal Cycler Block (Peltier-based)",
+              "confidence": 1.0,
+              "reasoning": "This is the core component that performs rapid and precise temperature changes for DNA amplification, procured as a specialized manufactured assembly including the heating/cooling elements.",
+              "component": "Thermal Cycler Block (Peltier-based)",
+              "normalized_component": "thermal cycler block (peltier based)"
+            },
+            {
+              "name": "Optical Detection Module (Excitation and Emission Optics with Photodetectors)",
+              "confidence": 0.98,
+              "reasoning": "Essential for measuring fluorescence signals during amplification, this module includes light sources, filters, and detectors, and is a distinct procurable assembly.",
+              "component": "Optical Detection Module (Excitation and Emission Optics with Photodetectors)",
+              "normalized_component": "optical detection module (excitation and emission optics with photodetectors)"
+            },
+            {
+              "name": "Control Electronics Board (PCR Controller PCB)",
+              "confidence": 0.95,
+              "reasoning": "This printed circuit board hosts the microcontroller and interface circuits managing temperature cycling and data acquisition, a standard separate electronic assembly.",
+              "component": "Control Electronics Board (PCR Controller PCB)",
+              "normalized_component": "control electronics board (pcr controller pcb)"
+            },
+            {
+              "name": "User Interface Display and Keypad Assembly",
+              "confidence": 0.9,
+              "reasoning": "Integral for operator interaction, this includes an LCD or touchscreen display and keypad, typically a separate manufactured module.",
+              "component": "User Interface Display and Keypad Assembly",
+              "normalized_component": "user interface display and keypad"
+            },
+            {
+              "name": "Sample Holder/Plate Adapter (Thermal Block Interface)",
+              "confidence": 0.85,
+              "reasoning": "A mechanical subassembly that securely holds reaction vessels or plates and interfaces with the thermal block, usually a separate manufactured component.",
+              "component": "Sample Holder/Plate Adapter (Thermal Block Interface)",
+              "normalized_component": "sample holder/plate adapter (thermal block interface)"
+            },
+            {
+              "name": "Power Supply Unit (PSU)",
+              "confidence": 0.9,
+              "reasoning": "Supplies regulated power to internal components and is commonly a distinct procurable electrical module.",
+              "component": "Power Supply Unit (PSU)",
+              "normalized_component": "power supply unit (psu)"
+            },
+            {
+              "name": "Enclosure Housing",
+              "confidence": 0.9,
+              "reasoning": "The outer structural casing providing protection and user safety, typically manufactured separately and procured from specialized suppliers.",
+              "component": "Enclosure Housing",
+              "normalized_component": "enclosure housing"
+            },
+            {
+              "name": "Cooling Fan or Thermal Management Subsystem",
+              "confidence": 0.8,
+              "reasoning": "Used to dissipate heat from electronics and thermal elements, usually a separate assembly in most advanced qPCR systems.",
+              "component": "Cooling Fan or Thermal Management Subsystem",
+              "normalized_component": "cooling fan or thermal management"
+            }
+          ],
+          "Agent_4": [
+            {
+              "name": "Thermal Cycler Block (Heating/Cooling Module)",
+              "confidence": 0.98,
+              "reasoning": "This is the core subsystem responsible for controlled temperature cycling of samples, universally present and often procured as a distinct assembly integrating Peltier elements or other temperature control hardware.",
+              "component": "Thermal Cycler Block (Heating/Cooling Module)",
+              "normalized_component": "thermal cycler block (heating/cooling module)"
+            },
+            {
+              "name": "Optical Detection Module (Fluorescence Excitation and Emission System)",
+              "confidence": 0.96,
+              "reasoning": "Essential for real-time quantification, this module typically includes LEDs, filters, lenses, and photodetectors, procured separately due to its specialized optical components.",
+              "component": "Optical Detection Module (Fluorescence Excitation and Emission System)",
+              "normalized_component": "optical detection module (fluorescence excitation and emission system)"
+            },
+            {
+              "name": "PCR Sample Holder (Rotor or Block Plate)",
+              "confidence": 0.93,
+              "reasoning": "A distinct, manufactured part that holds the reaction tubes or plates securely during cycling, often available as a separate machined or injection-molded assembly.",
+              "component": "PCR Sample Holder (Rotor or Block Plate)",
+              "normalized_component": "pcr sample holder (rotor or block plate)"
+            },
+            {
+              "name": "Control Electronics Assembly (Main PCB)",
+              "confidence": 0.95,
+              "reasoning": "Contains the microcontroller or processor and the electronics that regulate thermal cycling, data acquisition, and user interface, universally required and procured as a separate assembly.",
+              "component": "Control Electronics Assembly (Main PCB)",
+              "normalized_component": "control electronics assembly (main pcb)"
+            },
+            {
+              "name": "User Interface Module (Display and Keypad/Touchscreen)",
+              "confidence": 0.87,
+              "reasoning": "A distinct manufactured unit that enables operator interaction, usually procured separately for customization and maintenance purposes.",
+              "component": "User Interface Module (Display and Keypad/Touchscreen)",
+              "normalized_component": "user interface module (display and keypad/touchscreen)"
+            },
+            {
+              "name": "Cooling System (Fan and Heat Sink Assembly)",
+              "confidence": 0.85,
+              "reasoning": "Necessary to dissipate heat during cycling, typically a distinct subassembly with separate suppliers in many qPCR thermocyclers.",
+              "component": "Cooling System (Fan and Heat Sink Assembly)",
+              "normalized_component": "cooling system (fan and heat sink assembly)"
+            },
+            {
+              "name": "Power Supply Unit (PSU)",
+              "confidence": 0.9,
+              "reasoning": "A distinct electrical subassembly providing regulated power, standardized and often procured separately.",
+              "component": "Power Supply Unit (PSU)",
+              "normalized_component": "power supply unit (psu)"
+            },
+            {
+              "name": "Data Interface Module (USB/Ethernet Ports and Controller)",
+              "confidence": 0.75,
+              "reasoning": "Provides communication interfaces for data transfer, commonly a modular printed circuit or connector assembly though occasionally integrated into the main control board.",
+              "component": "Data Interface Module (USB/Ethernet Ports and Controller)",
+              "normalized_component": "data interface module (usb/ethernet ports and controller)"
+            }
+          ]
+        },
+        "rounds_completed": 1,
+        "support_analysis": {
+          "consensus": [],
+          "majority": [
+            "thermal cycler block (peltier based)",
+            "power supply unit (psu)"
+          ],
+          "isolated": [
+            "optical detection module (fluorescence excitation and detection)",
+            "control electronics board (main pcb)",
+            "user interface module (touchscreen display with embedded controls)",
+            "sample holder/reaction plate carrier",
+            "optical filters and lenses",
+            "communication interface module (usb/ethernet/wifi)",
+            "thermal insulation housing/internal structural frame",
+            "thermal cycler block (heating/cooling block)",
+            "peltier thermoelectric temperature control",
+            "optical detection module (fluorescence detection system)",
+            "main control printed circuit board (pcb)",
+            "sample holder (rotor or plate carrier)",
+            "thermal insulation",
+            "instrument enclosure (outer housing)",
+            "display and user interface",
+            "cooling fan and air flow",
+            "optical detection module (excitation and emission optics with photodetectors)",
+            "control electronics board (pcr controller pcb)",
+            "user interface display and keypad",
+            "sample holder/plate adapter (thermal block interface)",
+            "enclosure housing",
+            "cooling fan or thermal management",
+            "thermal cycler block (heating/cooling module)",
+            "optical detection module (fluorescence excitation and emission system)",
+            "pcr sample holder (rotor or block plate)",
+            "control electronics assembly (main pcb)",
+            "user interface module (display and keypad/touchscreen)",
+            "cooling system (fan and heat sink assembly)",
+            "data interface module (usb/ethernet ports and controller)"
+          ]
+        },
+        "critiques": [
+          {
+            "item_name": "thermal cycler block (peltier based)",
+            "normalized_name": "thermal cycler block (peltier based)",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2",
+              "Agent_4"
+            ],
+            "avg_confidence": 0.99,
+            "critique_text": "Majority support for 'thermal cycler block (peltier based)': 2/3 agents agree (conf: 0.99). Consider strengthening consensus."
+          },
+          {
+            "item_name": "optical detection module (fluorescence excitation and detection)",
+            "normalized_name": "optical detection module (fluorescence excitation and detection)",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2",
+              "Agent_3",
+              "Agent_4"
+            ],
+            "avg_confidence": 0.95,
+            "critique_text": "Isolated proposal 'optical detection module (fluorescence excitation and detection)' from 1 agent(s) (conf: 0.95). Requires justification or peer validation."
+          },
+          {
+            "item_name": "control electronics board (main pcb)",
+            "normalized_name": "control electronics board (main pcb)",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2",
+              "Agent_3",
+              "Agent_4"
+            ],
+            "avg_confidence": 0.95,
+            "critique_text": "Isolated proposal 'control electronics board (main pcb)' from 1 agent(s) (conf: 0.95). Requires justification or peer validation."
+          },
+          {
+            "item_name": "user interface module (touchscreen display with embedded controls)",
+            "normalized_name": "user interface module (touchscreen display with embedded controls)",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2",
+              "Agent_3",
+              "Agent_4"
+            ],
+            "avg_confidence": 0.85,
+            "critique_text": "Isolated proposal 'user interface module (touchscreen display with embedded controls)' from 1 agent(s) (conf: 0.85). Requires justification or peer validation."
+          },
+          {
+            "item_name": "sample holder/reaction plate carrier",
+            "normalized_name": "sample holder/reaction plate carrier",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2",
+              "Agent_3",
+              "Agent_4"
+            ],
+            "avg_confidence": 0.9,
+            "critique_text": "Isolated proposal 'sample holder/reaction plate carrier' from 1 agent(s) (conf: 0.90). Requires justification or peer validation."
+          },
+          {
+            "item_name": "optical filters and lenses",
+            "normalized_name": "optical filters and lenses",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2",
+              "Agent_3",
+              "Agent_4"
+            ],
+            "avg_confidence": 0.88,
+            "critique_text": "Isolated proposal 'optical filters and lenses' from 1 agent(s) (conf: 0.88). Requires justification or peer validation."
+          },
+          {
+            "item_name": "communication interface module (usb/ethernet/wifi)",
+            "normalized_name": "communication interface module (usb/ethernet/wifi)",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2",
+              "Agent_3",
+              "Agent_4"
+            ],
+            "avg_confidence": 0.75,
+            "critique_text": "Isolated proposal 'communication interface module (usb/ethernet/wifi)' from 1 agent(s) (conf: 0.75). Requires justification or peer validation."
+          },
+          {
+            "item_name": "thermal insulation housing/internal structural frame",
+            "normalized_name": "thermal insulation housing/internal structural frame",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2",
+              "Agent_3",
+              "Agent_4"
+            ],
+            "avg_confidence": 0.7,
+            "critique_text": "Isolated proposal 'thermal insulation housing/internal structural frame' from 1 agent(s) (conf: 0.70). Requires justification or peer validation."
+          },
+          {
+            "item_name": "thermal cycler block (heating/cooling block)",
+            "normalized_name": "thermal cycler block (heating/cooling block)",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_4"
+            ],
+            "avg_confidence": 0.98,
+            "critique_text": "Isolated proposal 'thermal cycler block (heating/cooling block)' from 1 agent(s) (conf: 0.98). Requires justification or peer validation."
+          },
+          {
+            "item_name": "peltier thermoelectric temperature control",
+            "normalized_name": "peltier thermoelectric temperature control",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_4"
+            ],
+            "avg_confidence": 0.95,
+            "critique_text": "Isolated proposal 'peltier thermoelectric temperature control' from 1 agent(s) (conf: 0.95). Requires justification or peer validation."
+          },
+          {
+            "item_name": "optical detection module (fluorescence detection system)",
+            "normalized_name": "optical detection module (fluorescence detection system)",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_4"
+            ],
+            "avg_confidence": 0.95,
+            "critique_text": "Isolated proposal 'optical detection module (fluorescence detection system)' from 1 agent(s) (conf: 0.95). Requires justification or peer validation."
+          },
+          {
+            "item_name": "main control printed circuit board (pcb)",
+            "normalized_name": "main control printed circuit board (pcb)",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_4"
+            ],
+            "avg_confidence": 0.9,
+            "critique_text": "Isolated proposal 'main control printed circuit board (pcb)' from 1 agent(s) (conf: 0.90). Requires justification or peer validation."
+          },
+          {
+            "item_name": "sample holder (rotor or plate carrier)",
+            "normalized_name": "sample holder (rotor or plate carrier)",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_4"
+            ],
+            "avg_confidence": 0.85,
+            "critique_text": "Isolated proposal 'sample holder (rotor or plate carrier)' from 1 agent(s) (conf: 0.85). Requires justification or peer validation."
+          },
+          {
+            "item_name": "thermal insulation",
+            "normalized_name": "thermal insulation",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_4"
+            ],
+            "avg_confidence": 0.8,
+            "critique_text": "Isolated proposal 'thermal insulation' from 1 agent(s) (conf: 0.80). Requires justification or peer validation."
+          },
+          {
+            "item_name": "instrument enclosure (outer housing)",
+            "normalized_name": "instrument enclosure (outer housing)",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_4"
+            ],
+            "avg_confidence": 0.9,
+            "critique_text": "Isolated proposal 'instrument enclosure (outer housing)' from 1 agent(s) (conf: 0.90). Requires justification or peer validation."
+          },
+          {
+            "item_name": "display and user interface",
+            "normalized_name": "display and user interface",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_4"
+            ],
+            "avg_confidence": 0.85,
+            "critique_text": "Isolated proposal 'display and user interface' from 1 agent(s) (conf: 0.85). Requires justification or peer validation."
+          },
+          {
+            "item_name": "cooling fan and air flow",
+            "normalized_name": "cooling fan and air flow",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_4"
+            ],
+            "avg_confidence": 0.75,
+            "critique_text": "Isolated proposal 'cooling fan and air flow' from 1 agent(s) (conf: 0.75). Requires justification or peer validation."
+          },
+          {
+            "item_name": "optical detection module (excitation and emission optics with photodetectors)",
+            "normalized_name": "optical detection module (excitation and emission optics with photodetectors)",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_3"
+            ],
+            "opposing_agents": [
+              "Agent_2",
+              "Agent_1",
+              "Agent_4"
+            ],
+            "avg_confidence": 0.98,
+            "critique_text": "Isolated proposal 'optical detection module (excitation and emission optics with photodetectors)' from 1 agent(s) (conf: 0.98). Requires justification or peer validation."
+          },
+          {
+            "item_name": "control electronics board (pcr controller pcb)",
+            "normalized_name": "control electronics board (pcr controller pcb)",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_3"
+            ],
+            "opposing_agents": [
+              "Agent_2",
+              "Agent_1",
+              "Agent_4"
+            ],
+            "avg_confidence": 0.95,
+            "critique_text": "Isolated proposal 'control electronics board (pcr controller pcb)' from 1 agent(s) (conf: 0.95). Requires justification or peer validation."
+          },
+          {
+            "item_name": "user interface display and keypad",
+            "normalized_name": "user interface display and keypad",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_3"
+            ],
+            "opposing_agents": [
+              "Agent_2",
+              "Agent_1",
+              "Agent_4"
+            ],
+            "avg_confidence": 0.9,
+            "critique_text": "Isolated proposal 'user interface display and keypad' from 1 agent(s) (conf: 0.90). Requires justification or peer validation."
+          },
+          {
+            "item_name": "sample holder/plate adapter (thermal block interface)",
+            "normalized_name": "sample holder/plate adapter (thermal block interface)",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_3"
+            ],
+            "opposing_agents": [
+              "Agent_2",
+              "Agent_1",
+              "Agent_4"
+            ],
+            "avg_confidence": 0.85,
+            "critique_text": "Isolated proposal 'sample holder/plate adapter (thermal block interface)' from 1 agent(s) (conf: 0.85). Requires justification or peer validation."
+          },
+          {
+            "item_name": "power supply unit (psu)",
+            "normalized_name": "power supply unit (psu)",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_4"
+            ],
+            "opposing_agents": [
+              "Agent_2",
+              "Agent_1"
+            ],
+            "avg_confidence": 0.9,
+            "critique_text": "Majority support for 'power supply unit (psu)': 2/3 agents agree (conf: 0.90). Consider strengthening consensus."
+          },
+          {
+            "item_name": "enclosure housing",
+            "normalized_name": "enclosure housing",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_3"
+            ],
+            "opposing_agents": [
+              "Agent_2",
+              "Agent_1",
+              "Agent_4"
+            ],
+            "avg_confidence": 0.9,
+            "critique_text": "Isolated proposal 'enclosure housing' from 1 agent(s) (conf: 0.90). Requires justification or peer validation."
+          },
+          {
+            "item_name": "cooling fan or thermal management",
+            "normalized_name": "cooling fan or thermal management",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_3"
+            ],
+            "opposing_agents": [
+              "Agent_2",
+              "Agent_1",
+              "Agent_4"
+            ],
+            "avg_confidence": 0.8,
+            "critique_text": "Isolated proposal 'cooling fan or thermal management' from 1 agent(s) (conf: 0.80). Requires justification or peer validation."
+          },
+          {
+            "item_name": "thermal cycler block (heating/cooling module)",
+            "normalized_name": "thermal cycler block (heating/cooling module)",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_4"
+            ],
+            "opposing_agents": [
+              "Agent_2",
+              "Agent_3",
+              "Agent_1"
+            ],
+            "avg_confidence": 0.98,
+            "critique_text": "Isolated proposal 'thermal cycler block (heating/cooling module)' from 1 agent(s) (conf: 0.98). Requires justification or peer validation."
+          },
+          {
+            "item_name": "optical detection module (fluorescence excitation and emission system)",
+            "normalized_name": "optical detection module (fluorescence excitation and emission system)",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_4"
+            ],
+            "opposing_agents": [
+              "Agent_2",
+              "Agent_3",
+              "Agent_1"
+            ],
+            "avg_confidence": 0.96,
+            "critique_text": "Isolated proposal 'optical detection module (fluorescence excitation and emission system)' from 1 agent(s) (conf: 0.96). Requires justification or peer validation."
+          },
+          {
+            "item_name": "pcr sample holder (rotor or block plate)",
+            "normalized_name": "pcr sample holder (rotor or block plate)",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_4"
+            ],
+            "opposing_agents": [
+              "Agent_2",
+              "Agent_3",
+              "Agent_1"
+            ],
+            "avg_confidence": 0.93,
+            "critique_text": "Isolated proposal 'pcr sample holder (rotor or block plate)' from 1 agent(s) (conf: 0.93). Requires justification or peer validation."
+          },
+          {
+            "item_name": "control electronics assembly (main pcb)",
+            "normalized_name": "control electronics assembly (main pcb)",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_4"
+            ],
+            "opposing_agents": [
+              "Agent_2",
+              "Agent_3",
+              "Agent_1"
+            ],
+            "avg_confidence": 0.95,
+            "critique_text": "Isolated proposal 'control electronics assembly (main pcb)' from 1 agent(s) (conf: 0.95). Requires justification or peer validation."
+          },
+          {
+            "item_name": "user interface module (display and keypad/touchscreen)",
+            "normalized_name": "user interface module (display and keypad/touchscreen)",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_4"
+            ],
+            "opposing_agents": [
+              "Agent_2",
+              "Agent_3",
+              "Agent_1"
+            ],
+            "avg_confidence": 0.87,
+            "critique_text": "Isolated proposal 'user interface module (display and keypad/touchscreen)' from 1 agent(s) (conf: 0.87). Requires justification or peer validation."
+          },
+          {
+            "item_name": "cooling system (fan and heat sink assembly)",
+            "normalized_name": "cooling system (fan and heat sink assembly)",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_4"
+            ],
+            "opposing_agents": [
+              "Agent_2",
+              "Agent_3",
+              "Agent_1"
+            ],
+            "avg_confidence": 0.85,
+            "critique_text": "Isolated proposal 'cooling system (fan and heat sink assembly)' from 1 agent(s) (conf: 0.85). Requires justification or peer validation."
+          },
+          {
+            "item_name": "data interface module (usb/ethernet ports and controller)",
+            "normalized_name": "data interface module (usb/ethernet ports and controller)",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_4"
+            ],
+            "opposing_agents": [
+              "Agent_2",
+              "Agent_3",
+              "Agent_1"
+            ],
+            "avg_confidence": 0.75,
+            "critique_text": "Isolated proposal 'data interface module (usb/ethernet ports and controller)' from 1 agent(s) (conf: 0.75). Requires justification or peer validation."
+          }
+        ],
+        "changes_from_previous": null
+      },
+      {
+        "round_num": 2,
+        "convergence": 0.8333333333333334,
+        "threshold": 0.7,
+        "threshold_reached": true,
+        "proposals": {
+          "Agent_1": [
+            {
+              "agent_id": "Agent_1",
+              "component": "Thermal Cycler Block (Peltier-based)",
+              "confidence": 0.99,
+              "reasoning": "Strong consensus across multiple agents with very high confidence, critical primary component for thermal cycling in qPCR.",
+              "round": 2,
+              "normalized_component": "Peltier Thermal Cycler Block"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Optical Detection Module (Excitation and Emission Optics with Photodetectors)",
+              "confidence": 0.96,
+              "reasoning": "Selected by multiple agents with very high confidence; essential for fluorescence detection in qPCR, aligning well with peer feedback suggesting to keep the most supported optical detection option.",
+              "round": 2,
+              "normalized_component": "Optical Detection Module"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Control Electronics Board (PCR Controller PCB)",
+              "confidence": 0.95,
+              "reasoning": "Multiple agents support similar control electronics components with high confidence; crucial for system operation and control, justifying inclusion despite naming variations.",
+              "round": 2,
+              "normalized_component": "Control Electronics Board"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "User Interface Display and Keypad Assembly",
+              "confidence": 0.88,
+              "reasoning": "User interface components are supported by several agents with good confidence scores; needed for user interaction and control, selected the component with highest confidence among similar options.",
+              "round": 2,
+              "normalized_component": "User Interface Display and Keypad Assembly"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "PCR Sample Holder (Rotor or Block Plate)",
+              "confidence": 0.92,
+              "reasoning": "Strong peer support and very high confidence; vital for holding samples correctly during cycling, preferred highest confidence named variant.",
+              "round": 2,
+              "normalized_component": "Sample Holder/Plate Adapter"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Power Supply Unit (PSU)",
+              "confidence": 0.9,
+              "reasoning": "Critical for providing stable power to the instrument; supported by multiple agents with high confidence.",
+              "round": 2,
+              "normalized_component": "DC-DC Power Converter"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Enclosure Housing",
+              "confidence": 0.9,
+              "reasoning": "Necessary for instrument protection and structural support; supported by several agents with high confidence.",
+              "round": 2,
+              "normalized_component": "Enclosure Housing"
+            }
+          ],
+          "Agent_2": [
+            {
+              "agent_id": "Agent_2",
+              "component": "Thermal Cycler Block (Peltier-based)",
+              "confidence": 0.99,
+              "reasoning": "Strong consensus across agents with multiple selections and peer feedback supports retaining it. Critical primary component for qPCR thermocycling.",
+              "round": 2,
+              "normalized_component": "Peltier Thermal Cycler Block"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Optical Detection Module (Excitation and Emission Optics with Photodetectors)",
+              "confidence": 0.97,
+              "reasoning": "High confidence selection by one agent and aligned with function of qPCR, slight preference over variant optical modules due to highest confidence and comprehensive description.",
+              "round": 2,
+              "normalized_component": "Optical Detection Module"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Control Electronics Board (PCR Controller PCB)",
+              "confidence": 0.95,
+              "reasoning": "Chosen by multiple agents under slightly different names; this version merged and selected with high confidence as it is essential for controlling thermocycling and optics.",
+              "round": 2,
+              "normalized_component": "Control Electronics Board"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "User Interface Display and Keypad Assembly",
+              "confidence": 0.88,
+              "reasoning": "Moderate consensus for user interface variants, this one has slightly higher confidence and better peer acceptance than isolated touchscreen only options.",
+              "round": 2,
+              "normalized_component": "User Interface Display and Keypad Assembly"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Sample Holder/Plate Adapter (Thermal Block Interface)",
+              "confidence": 0.86,
+              "reasoning": "Sample holder acceptance varies, selected version with highest confidence and peer support reflecting mechanical interface for samples.",
+              "round": 2,
+              "normalized_component": "Sample Holder/Plate Adapter"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Power Supply Unit (PSU)",
+              "confidence": 0.9,
+              "reasoning": "Strong consensus and peer feedback confirming its critical role in supplying power to the instrument.",
+              "round": 2,
+              "normalized_component": "DC-DC Power Converter"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Enclosure Housing",
+              "confidence": 0.9,
+              "reasoning": "Essential for housing and structural integrity, consensus across different enclosure terms and peer feedback supports inclusion.",
+              "round": 2,
+              "normalized_component": "Enclosure Housing"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Cooling Fan or Thermal Management Subsystem",
+              "confidence": 0.8,
+              "reasoning": "Cooling subsystem important to maintain temperature control and device stability; selected with moderate confidence following peer support and critique.",
+              "round": 2,
+              "normalized_component": "Thermal Management Subsystem"
+            }
+          ],
+          "Agent_3": [
+            {
+              "agent_id": "Agent_3",
+              "component": "Thermal Cycler Block (Peltier-based)",
+              "confidence": 0.99,
+              "reasoning": "High consensus among 3 agents with very high confidence; fundamental component for qPCR thermal cycling.",
+              "round": 2,
+              "normalized_component": "Peltier Thermal Cycler Block"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Optical Detection Module (Excitation and Emission Optics with Photodetectors)",
+              "confidence": 0.98,
+              "reasoning": "Strong support from one agent with very high confidence and closely relates to other optical detection proposals; critical for real-time fluorescence detection.",
+              "round": 2,
+              "normalized_component": "Optical Detection Module"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Control Electronics Board (PCR Controller PCB)",
+              "confidence": 0.95,
+              "reasoning": "Consensus on control electronics essential for PCR control, multiple variants of naming refer to the same key subsystem; high confidence justified.",
+              "round": 2,
+              "normalized_component": "Control Electronics Board"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "User Interface Display and Keypad Assembly",
+              "confidence": 0.88,
+              "reasoning": "Moderate consensus across agents indicating UI is essential for user operation; multiple UI proposals suggest it is expected.",
+              "round": 2,
+              "normalized_component": "User Interface Display and Keypad Assembly"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "PCR Sample Holder (Rotor or Block Plate)",
+              "confidence": 0.9,
+              "reasoning": "Sample holder critical to hold reaction samples for thermal cycling; different naming variants point to this essential role.",
+              "round": 2,
+              "normalized_component": "Sample Holder/Plate Adapter"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Power Supply Unit (PSU)",
+              "confidence": 0.9,
+              "reasoning": "Essential for powering the instrument; supported by multiple agents with high confidence.",
+              "round": 2,
+              "normalized_component": "DC-DC Power Converter"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Enclosure Housing",
+              "confidence": 0.9,
+              "reasoning": "Provides structural and protective housing; consensus on enclosing the instrument is important for practical usability.",
+              "round": 2,
+              "normalized_component": "Enclosure Housing"
+            }
+          ],
+          "Agent_4": [
+            {
+              "agent_id": "Agent_4",
+              "component": "Thermal Cycler Block (Peltier-based)",
+              "confidence": 0.99,
+              "reasoning": "Strong consensus from multiple agents with very high confidence. Essential for precise thermal cycling in qPCR.",
+              "round": 2,
+              "normalized_component": "Peltier Thermal Cycler Block"
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "Optical Detection Module (Excitation and Emission Optics with Photodetectors)",
+              "confidence": 0.98,
+              "reasoning": "Highest confidence among varied optical module proposals and critical for accurate fluorescence detection in qPCR.",
+              "round": 2,
+              "normalized_component": "Optical Detection Module"
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "Control Electronics Board (PCR Controller PCB)",
+              "confidence": 0.95,
+              "reasoning": "Selected by multiple agents with consistent high confidence, vital for controlling thermal cycles and data processing.",
+              "round": 2,
+              "normalized_component": "Control Electronics Board"
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "User Interface Display and Keypad Assembly",
+              "confidence": 0.89,
+              "reasoning": "Chosen by multiple agents with good confidence, provides necessary user interaction capability.",
+              "round": 2,
+              "normalized_component": "User Interface Display and Keypad Assembly"
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "PCR Sample Holder (Rotor or Block Plate)",
+              "confidence": 0.92,
+              "reasoning": "Strongly supported with high confidence, key for holding samples in thermal cycling zone.",
+              "round": 2,
+              "normalized_component": "Sample Holder/Plate Adapter"
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "Power Supply Unit (PSU)",
+              "confidence": 0.9,
+              "reasoning": "Consistently selected and necessary for stable power delivery to all components.",
+              "round": 2,
+              "normalized_component": "DC-DC Power Converter"
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "Enclosure Housing",
+              "confidence": 0.9,
+              "reasoning": "Vital for mechanical integrity and protective housing, agreed upon by agents with high confidence.",
+              "round": 2,
+              "normalized_component": "Enclosure Housing"
+            }
+          ]
+        },
+        "rounds_completed": 2,
+        "support_analysis": {
+          "consensus": [
+            "pcr sample holder (rotor or block plate)"
+          ],
+          "majority": [
+            "thermal cycler block (peltier based)",
+            "optical detection module (excitation and emission optics with photodetectors)",
+            "control electronics board (pcr controller pcb)",
+            "user interface display and keypad",
+            "power supply unit (psu)",
+            "enclosure housing"
+          ],
+          "isolated": [
+            "sample holder/plate adapter (thermal block interface)",
+            "cooling fan or thermal management"
+          ]
+        },
+        "critiques": [
+          {
+            "item_name": "Thermal Cycler Block (Peltier-based)",
+            "normalized_name": "thermal cycler block (peltier based)",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_2",
+              "Agent_1",
+              "Agent_4"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.99,
+            "critique_text": "Majority support for 'Thermal Cycler Block (Peltier-based)': 4/3 agents agree (conf: 0.99). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Optical Detection Module (Excitation and Emission Optics with Photodetectors)",
+            "normalized_name": "optical detection module (excitation and emission optics with photodetectors)",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_2",
+              "Agent_1",
+              "Agent_4"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.9724999999999999,
+            "critique_text": "Majority support for 'Optical Detection Module (Excitation and Emission Optics with Photodetectors)': 4/3 agents agree (conf: 0.97). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Control Electronics Board (PCR Controller PCB)",
+            "normalized_name": "control electronics board (pcr controller pcb)",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_2",
+              "Agent_1",
+              "Agent_4"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.95,
+            "critique_text": "Majority support for 'Control Electronics Board (PCR Controller PCB)': 4/3 agents agree (conf: 0.95). Consider strengthening consensus."
+          },
+          {
+            "item_name": "User Interface Display and Keypad Assembly",
+            "normalized_name": "user interface display and keypad",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_2",
+              "Agent_1",
+              "Agent_4"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.8825000000000001,
+            "critique_text": "Majority support for 'User Interface Display and Keypad Assembly': 4/3 agents agree (conf: 0.88). Consider strengthening consensus."
+          },
+          {
+            "item_name": "PCR Sample Holder (Rotor or Block Plate)",
+            "normalized_name": "pcr sample holder (rotor or block plate)",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_4"
+            ],
+            "opposing_agents": [
+              "Agent_2"
+            ],
+            "avg_confidence": 0.9133333333333334,
+            "critique_text": "Strong consensus on 'PCR Sample Holder (Rotor or Block Plate)': all 3 agents support with avg confidence 0.91. Preserve this component."
+          },
+          {
+            "item_name": "Power Supply Unit (PSU)",
+            "normalized_name": "power supply unit (psu)",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_2",
+              "Agent_1",
+              "Agent_4"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.9,
+            "critique_text": "Majority support for 'Power Supply Unit (PSU)': 4/3 agents agree (conf: 0.90). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Enclosure Housing",
+            "normalized_name": "enclosure housing",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_2",
+              "Agent_1",
+              "Agent_4"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.9,
+            "critique_text": "Majority support for 'Enclosure Housing': 4/3 agents agree (conf: 0.90). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Sample Holder/Plate Adapter (Thermal Block Interface)",
+            "normalized_name": "sample holder/plate adapter (thermal block interface)",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_4"
+            ],
+            "avg_confidence": 0.86,
+            "critique_text": "Isolated proposal 'Sample Holder/Plate Adapter (Thermal Block Interface)' from 1 agent(s) (conf: 0.86). Requires justification or peer validation."
+          },
+          {
+            "item_name": "Cooling Fan or Thermal Management Subsystem",
+            "normalized_name": "cooling fan or thermal management",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_4"
+            ],
+            "avg_confidence": 0.8,
+            "critique_text": "Isolated proposal 'Cooling Fan or Thermal Management Subsystem' from 1 agent(s) (conf: 0.80). Requires justification or peer validation."
+          }
+        ],
+        "changes_from_previous": {
+          "items_added": [],
+          "items_removed": [
+            "thermal insulation",
+            "thermal insulation housing/internal structural frame",
+            "communication interface module (usb/ethernet/wifi)",
+            "optical detection module (fluorescence detection system)",
+            "cooling fan and air flow",
+            "optical detection module (fluorescence excitation and emission system)",
+            "control electronics assembly (main pcb)",
+            "peltier thermoelectric temperature control",
+            "sample holder/reaction plate carrier",
+            "optical detection module (fluorescence excitation and detection)",
+            "cooling system (fan and heat sink assembly)",
+            "data interface module (usb/ethernet ports and controller)",
+            "thermal cycler block (heating/cooling module)",
+            "user interface module (touchscreen display with embedded controls)",
+            "user interface module (display and keypad/touchscreen)",
+            "main control printed circuit board (pcb)",
+            "thermal cycler block (heating/cooling block)",
+            "instrument enclosure (outer housing)",
+            "sample holder (rotor or plate carrier)",
+            "optical filters and lenses",
+            "display and user interface",
+            "control electronics board (main pcb)"
+          ],
+          "confidence_changes": {}
+        }
+      }
+    ],
+    "phase3_final_consensus": {
+      "technology": "Real-Time PCR (qPCR) Thermocycler",
+      "technology_specification": "Real-Time PCR (qPCR) Thermocycler",
+      "technology_reasoning": "",
+      "components": [
+        "Peltier Thermal Cycler Block",
+        "Optical Detection Module",
+        "Control Electronics Board",
+        "Sample Holder/plate Adapter",
+        "Dc-dc Power Converter",
+        "Enclosure Housing",
+        "User Interface Display And Keypad Assembly"
+      ],
+      "confidence": 0.8333333333333334,
+      "rounds": 2,
+      "convergence_score": 0.8333333333333334
+    }
+  },
+  "materials_debate": {
+    "debate_rounds": [],
+    "final_consensus": {
+      "components": 7,
+      "unique_materials": 11,
+      "total_assignments": 25,
+      "materials_by_component": {
+        "Peltier Thermal Cycler Block": [
+          {
+            "name": "Peltier elements",
+            "confidence": 0.95,
+            "reasoning": "Core functional material enabling thermoelectric heating and cooling essential to temperature cycling, specific to Peltier thermal control technology with no equivalent substitutes."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.85,
+            "reasoning": "Commonly used for heat sink and block construction due to its excellent thermal conductivity and light weight, industry standard though copper may also be used."
+          },
+          {
+            "name": "Ceramic",
+            "confidence": 0.78,
+            "reasoning": "Used for electrical insulation in Peltier elements and as a substrate material; commonly employed due to high thermal stability and insulating properties, alternatives like polymers are rare in this role."
+          }
+        ],
+        "Optical Detection Module": [
+          {
+            "name": "Glass",
+            "confidence": 0.9,
+            "reasoning": "Optical lenses and windows are generally constructed from glass for high optical clarity and durability, standard industry substrate material."
+          },
+          {
+            "name": "Silicon",
+            "confidence": 0.88,
+            "reasoning": "Semiconductor base for photodiodes or CCD sensors detecting fluorescence signal, industry standard for photodetectors."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.7,
+            "reasoning": "Used in housing, heat sinking or reflective coatings within optical assembly, common choice but alternatives like plastics can sometimes be used."
+          },
+          {
+            "name": "Laser diode materials",
+            "confidence": 0.85,
+            "reasoning": "Key materials for laser light sources used in excitation of fluorescent dyes, essential for optical detection modules."
+          }
+        ],
+        "Control Electronics Board": [
+          {
+            "name": "Silicon",
+            "confidence": 0.95,
+            "reasoning": "Fundamental semiconductor material for integrated circuits and microcontrollers controlling thermal cycling and data processing, universally essential."
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.9,
+            "reasoning": "Primary conductor for printed circuit board traces for electrical connectivity, universal in electronics fabrication."
+          },
+          {
+            "name": "Epoxy resins",
+            "confidence": 0.85,
+            "reasoning": "Used as PCB substrate and encapsulant for mechanical support and electrical insulation, standard in electronics manufacturing."
+          },
+          {
+            "name": "Gold",
+            "confidence": 0.65,
+            "reasoning": "Used for high-reliability contacts and bonding wires, common but some boards omit or substitute with other metals."
+          }
+        ],
+        "Sample Holder/plate Adapter": [
+          {
+            "name": "Aluminum",
+            "confidence": 0.8,
+            "reasoning": "Widely used for mechanical structure of sample holders due to good thermal conductivity and machinability, common material though plastic alternatives exist."
+          },
+          {
+            "name": "Polycarbonate",
+            "confidence": 0.75,
+            "reasoning": "Used for transparent or structural parts allowing visibility and durability, common thermoplastic with good mechanical properties."
+          },
+          {
+            "name": "Glass",
+            "confidence": 0.7,
+            "reasoning": "Sometimes used for sample wells or windows for optical access, but plastic alternatives are frequent."
+          }
+        ],
+        "Dc-dc Power Converter": [
+          {
+            "name": "Silicon",
+            "confidence": 0.9,
+            "reasoning": "Semiconductor material for transistors and ICs used in power regulation, essential and standard in power electronics."
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.85,
+            "reasoning": "Used extensively for wiring and coil windings for inductors and transformers within power converter, universal conductor."
+          },
+          {
+            "name": "Epoxy resins",
+            "confidence": 0.75,
+            "reasoning": "Used for encapsulating components and PCB substrate for insulation and mechanical support, standard but with alternatives."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.6,
+            "reasoning": "Often used for heat sinks or shield enclosures in power converters; alternatives like plastics or steel exist."
+          }
+        ],
+        "Enclosure Housing": [
+          {
+            "name": "Acrylonitrile butadiene styrene",
+            "confidence": 0.85,
+            "reasoning": "Common plastic material for durable and impact-resistant housings, widely used in electronic device enclosures."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.8,
+            "reasoning": "Used for robust, lightweight metal enclosures with good thermal dissipation properties, common alternative to plastic housings."
+          },
+          {
+            "name": "Epoxy resins",
+            "confidence": 0.5,
+            "reasoning": "May be used in coatings or structural components inside enclosure; less commonly a primary material for housing but possible."
+          }
+        ],
+        "User Interface Display And Keypad Assembly": [
+          {
+            "name": "Glass",
+            "confidence": 0.9,
+            "reasoning": "Display screen substrate providing optical clarity and structural stability, standard for displays requiring durability and optical properties."
+          },
+          {
+            "name": "Polycarbonate",
+            "confidence": 0.8,
+            "reasoning": "Keypad buttons and display covers often use polycarbonate for impact resistance and transparency, common in UI assemblies."
+          },
+          {
+            "name": "Silicon",
+            "confidence": 0.75,
+            "reasoning": "Used in semiconductor displays and touch sensors in some user interface technologies, commonly integrated into display modules."
+          },
+          {
+            "name": "Epoxy resins",
+            "confidence": 0.6,
+            "reasoning": "Used for adhesives or encapsulants in keypad assemblies and display lamination, though alternatives exist."
+          }
+        ]
+      }
+    }
+  }
+}

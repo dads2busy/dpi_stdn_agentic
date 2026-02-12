@@ -1,0 +1,1918 @@
+{
+  "version": "2.0",
+  "metadata": {
+    "technology": "Flow Cytometer",
+    "technology_specification": "Flow Cytometer",
+    "technology_reasoning": "",
+    "timestamp": "2026-02-12T15:57:41.920525",
+    "format_version": "2.0"
+  },
+  "config": {
+    "num_agents": 5,
+    "max_rounds": 3
+  },
+  "component_stage": {
+    "phase1_initial_proposals": [
+      {
+        "agent_id": "Agent_1",
+        "components": [
+          {
+            "name": "Optical Laser System (Laser Modules)",
+            "confidence": 0.98,
+            "reasoning": "The laser system is a distinct, critical assembly procured separately for excitation of fluorophores and scatter measurement; this is universally present in flow cytometers and involves specialized supplier chains."
+          },
+          {
+            "name": "Fluidics System (Pump and Flow Cell Assembly)",
+            "confidence": 0.95,
+            "reasoning": "Includes fluid pumps, tubing, and flow cell, forming an integrated subassembly responsible for hydrodynamic focusing and sample transport, typically sourced as a modular unit."
+          },
+          {
+            "name": "Optical Detection Module (Photomultiplier Tubes or Photodiode Arrays)",
+            "confidence": 0.96,
+            "reasoning": "This module contains detectors and associated optics who convert optical signals to electronic signals; it is a key, separable component often procured separately due to its complexity."
+          },
+          {
+            "name": "Main Electronic Control Board (Microcontroller/FPGA Board)",
+            "confidence": 0.92,
+            "reasoning": "Core processing and control electronics obtained as a separate PCB assembly, essential for instrument operation and distinct in supply chain."
+          },
+          {
+            "name": "Fluidic Valve Assembly",
+            "confidence": 0.85,
+            "reasoning": "Critical for directing fluid paths and sample routing, valves are a standard separate mechanical subassembly with a distinct procurement source."
+          },
+          {
+            "name": "Sample Injection Port (Autosampler Module)",
+            "confidence": 0.8,
+            "reasoning": "An optional but common module in many research flow cytometers, this subassembly automates and controls sample loading and is procured separately."
+          },
+          {
+            "name": "User Interface Display Module (Touchscreen LCD)",
+            "confidence": 0.78,
+            "reasoning": "The touchscreen display is often a supplier-procured module, providing the human-machine interface, though some instruments may integrate it differently."
+          },
+          {
+            "name": "Power Supply Unit",
+            "confidence": 0.88,
+            "reasoning": "Provides conditioned power to instrument components; it is a standard separate electrical module procured from specialized suppliers."
+          },
+          {
+            "name": "Enclosure/Chassis Assembly",
+            "confidence": 0.83,
+            "reasoning": "The structural housing protects and supports components, usually manufactured or procured as a single assembly, distinct from internal modules."
+          }
+        ],
+        "technology_specification": "Benchtop or high-end research flow cytometer instrument utilizing laser-based optical detection, fluidic sample handling, and electronic signal processing to analyze suspended cells or particles.",
+        "technology_reasoning": "This specification captures the industry-standard flow cytometer design as widely adopted in pharmaceutical and biomedical research applications by 2024, where laser excitation, hydrodynamic focusing fluidics, and optical detection are core features enabling rapid multiparameter analysis."
+      },
+      {
+        "agent_id": "Agent_2",
+        "components": [
+          {
+            "name": "Fluidics System Module",
+            "confidence": 0.95,
+            "reasoning": "This module manages sample and sheath fluid flow through microfluidic channels and is a distinct assembly procured or manufactured separately due to its complexity and critical role."
+          },
+          {
+            "name": "Optical Detection Assembly with Lasers and Photodetectors",
+            "confidence": 0.98,
+            "reasoning": "This includes laser sources, lenses, mirrors, filters, and photomultiplier tubes (PMTs) or photodiodes housed as a discrete optical module, an essential and separate functional unit."
+          },
+          {
+            "name": "Sample Injection Port and Flow Cell",
+            "confidence": 0.9,
+            "reasoning": "The flow cell where cells pass single-file through the laser interrogation zone is a specific, physically distinct subassembly typically replaced or serviced independently."
+          },
+          {
+            "name": "Electronics Control and Data Acquisition Board",
+            "confidence": 0.93,
+            "reasoning": "This PCB assembly controls the instrument operation and signals from detectors, a central procurable module independent from other physical components."
+          },
+          {
+            "name": "Mechanical Chassis and Enclosure",
+            "confidence": 0.92,
+            "reasoning": "The structural frame and protective housing form a distinct physical subassembly, often standardized and procured as a complete unit."
+          },
+          {
+            "name": "Cooling System Assembly",
+            "confidence": 0.8,
+            "reasoning": "A dedicated cooling subsystem (fans, heat sinks, or liquid cooling) is common for laser and electronics thermal management, procured separately in many designs."
+          },
+          {
+            "name": "Waste Collection System",
+            "confidence": 0.75,
+            "reasoning": "This physical assembly handles disposal of fluid waste and is often a separate module with tubing and reservoir, although some integrated designs exist."
+          }
+        ],
+        "technology_specification": "Flow Cytometer system consisting of fluidics module, optical detection unit with lasers and photodetectors, and electronic data acquisition assemblies designed for rapid, multiparametric cell analysis.",
+        "technology_reasoning": "This comprehensive specification reflects the industry-standard benchtop flow cytometers widely used in clinical and research laboratories as of 2024, focusing on structural and physical subassemblies. These integrated modules represent the core functional and physical architecture of modern flow cytometers that enable precise cell sample analysis."
+      },
+      {
+        "agent_id": "Agent_3",
+        "components": [
+          {
+            "name": "Fluidics System Module",
+            "confidence": 0.95,
+            "reasoning": "The fluidics system directs the sample and sheath fluid through the flow cell; it is a distinct assembly procured or manufactured separately, essential to flow cytometry operation."
+          },
+          {
+            "name": "Laser Excitation Module",
+            "confidence": 1.0,
+            "reasoning": "Laser modules providing excitation light at specific wavelengths are core components usually procured as distinct units from specialized suppliers."
+          },
+          {
+            "name": "Optical Detection Assembly (Photodetectors and Filters)",
+            "confidence": 0.95,
+            "reasoning": "This integrated assembly includes photomultiplier tubes or photodiodes with optical filters and lenses, purchased or assembled separately to detect fluorescence and scatter signals."
+          },
+          {
+            "name": "Flow Cell (Cuvette or Microfluidic Flow Chamber)",
+            "confidence": 0.92,
+            "reasoning": "The flow cell is the precise fluid channel where interrogation occurs; it is a manufactured component replaced or serviced independently."
+          },
+          {
+            "name": "Signal Processing Electronics Board",
+            "confidence": 0.9,
+            "reasoning": "Dedicated electronics boards for signal amplification and digitization form distinct component assemblies critical to data acquisition."
+          },
+          {
+            "name": "User Interface Display Module",
+            "confidence": 0.85,
+            "reasoning": "Touchscreen or LCD display units for user interaction are usually procured separately with their own supply chain."
+          },
+          {
+            "name": "Sample Injection Port Assembly",
+            "confidence": 0.8,
+            "reasoning": "The mechanical and fluidic interface allowing sample introduction is commonly a discrete manufactured subassembly."
+          },
+          {
+            "name": "Instrument Chassis and Enclosure",
+            "confidence": 0.88,
+            "reasoning": "The structural housing that integrates all subsystems is typically manufactured as a distinct module, often procured from specialized suppliers."
+          },
+          {
+            "name": "Cooling System (Fan or Thermoelectric Cooler)",
+            "confidence": 0.75,
+            "reasoning": "Active cooling subsystems are commonly integrated units procured to maintain laser and electronics temperature, essential but can vary by design."
+          },
+          {
+            "name": "Power Supply Unit",
+            "confidence": 0.9,
+            "reasoning": "The power supply providing regulated voltages is a distinct and standardized component procured separately."
+          }
+        ],
+        "technology_specification": "Automated flow cytometer instrument integrating laser-based optical detection and fluidic sample handling subsystems for multiparametric analysis of cells or particles suspended in fluid.",
+        "technology_reasoning": "Flow cytometers as of 2024 are industry-standard diagnostic and research instruments characterized by their integration of optical, fluidic, and electronic modules to analyze physical and chemical characteristics of cells in suspension. The specification captures the dominant variant combining lasers, photodetectors, fluidic handling, and signal processing electronics."
+      },
+      {
+        "agent_id": "Agent_4",
+        "components": [
+          {
+            "name": "Fluidics System (including sample injection, sheath fluid delivery, and flow cell)",
+            "confidence": 0.98,
+            "reasoning": "Core component responsible for hydrodynamically focusing cells in single file for interrogation; typically a complex assembly procured or manufactured separately."
+          },
+          {
+            "name": "Optical Excitation Module (Multi-laser assembly)",
+            "confidence": 0.95,
+            "reasoning": "Provides specific wavelength laser light sources necessary for excitation of fluorescent markers; procured as specialized laser units or modules."
+          },
+          {
+            "name": "Optical Detection Module (Photomultiplier tubes and photodiodes with filters and mirrors)",
+            "confidence": 0.95,
+            "reasoning": "Collects and detects emitted fluorescence and scattered light signals; a distinct subassembly with its own supply chain of photodetectors and optics."
+          },
+          {
+            "name": "Signal Processing Electronics and Data Acquisition Board",
+            "confidence": 0.93,
+            "reasoning": "Processes photodetector signals, digitizes data, and interfaces with software; an essential distinct circuit board assembly."
+          },
+          {
+            "name": "Sample Handling and Loading Interface",
+            "confidence": 0.85,
+            "reasoning": "Mechanism or subsystem enabling the introduction and routing of biological samples; often modular and procured separately though some integration varies."
+          },
+          {
+            "name": "User Interface Module (Touchscreen display and control electronics)",
+            "confidence": 0.8,
+            "reasoning": "Provides operator control and data visualization; typically a separate manufactured unit or module mounted on the instrument."
+          },
+          {
+            "name": "Enclosure and Structural Framework",
+            "confidence": 0.9,
+            "reasoning": "Physical housing and mechanical framework protecting and supporting internal components; manufactured as a distinct assembly."
+          },
+          {
+            "name": "Fluidics Pumping System (Syringe pumps, peristaltic pumps or pressure regulators)",
+            "confidence": 0.88,
+            "reasoning": "Controls fluid flow rates within the cytometer; generally procured as a separate mechanical/electromechanical component."
+          },
+          {
+            "name": "Laser Safety and Beam Steering Optics",
+            "confidence": 0.75,
+            "reasoning": "Includes shutters, beam expanders, mirrors that are sometimes modularized; less consistently procured separately as a stand-alone."
+          }
+        ],
+        "technology_specification": "Benchtop or flow cell-based flow cytometer with multi-laser optical excitation and multi-parameter fluorescence and scatter detection subsystem designed for high-throughput single-cell analysis.",
+        "technology_reasoning": "Flow cytometers of this type dominate the research and clinical market due to their ability to rapidly analyze thousands of cells per second with multi-parameter readouts. The key innovations focus on fluidics, optical detection with lasers and photodetectors, and electronics for signal processing, which are distinct procurements in the supply chain."
+      },
+      {
+        "agent_id": "Agent_5",
+        "components": [
+          {
+            "name": "Fluidics System",
+            "confidence": 0.95,
+            "reasoning": "Essential for hydrodynamic focusing and transporting cells in a fluid stream; a complex manufactured subsystem with separate supply chains for pumps, tubing, and flow cells."
+          },
+          {
+            "name": "Laser Excitation Module",
+            "confidence": 0.95,
+            "reasoning": "Core optical component delivering specific wavelength lasers to excite fluorochromes; typically procured as discrete laser assemblies."
+          },
+          {
+            "name": "Optical Detection Module",
+            "confidence": 0.93,
+            "reasoning": "Includes photomultiplier tubes (PMTs) or photodiodes and associated optics for fluorescence and scatter detection; a key separate subsystem."
+          },
+          {
+            "name": "Fluidics Control Electronics",
+            "confidence": 0.9,
+            "reasoning": "Dedicated electronics controlling pumps and valves for fluid handling; a distinct circuit and control subsystem."
+          },
+          {
+            "name": "Signal Processing Electronics",
+            "confidence": 0.92,
+            "reasoning": "Electronics for amplifying, digitizing, and processing optical signals; typically a separate module or board."
+          },
+          {
+            "name": "Sample Injection Port / Sample Handling Module",
+            "confidence": 0.85,
+            "reasoning": "Mechanical assembly allowing safe and precise introduction of samples, often procured separately especially in clinical systems."
+          },
+          {
+            "name": "Data Acquisition and Analysis Computer Interface",
+            "confidence": 0.88,
+            "reasoning": "Integrated or external computing system with software for data acquisition, storage, and analysis; often a modular purchased solution."
+          },
+          {
+            "name": "Cuvette / Flow Cell",
+            "confidence": 0.89,
+            "reasoning": "Disposable or reusable optical flow chamber essential for aligning the sample stream with laser and detectors; manufactured and procured separately."
+          },
+          {
+            "name": "Chassis / Instrument Enclosure",
+            "confidence": 0.8,
+            "reasoning": "Structural housing supporting and protecting internal modules; procured or manufactured as a complete assembly."
+          }
+        ],
+        "technology_specification": "Benchtop or clinical flow cytometer system integrating laser-based optical modules, fluidics for hydrodynamic focusing, and electronic data acquisition for cellular analysis.",
+        "technology_reasoning": "The most common form of flow cytometers used in pharmaceutical and clinical labs are benchtop instruments combining multiple lasers, fluidics systems, optics, and electronics. This specification covers the core functions of cell analysis and sorting through fluorescence and light scattering, which are industry standards as of 2024."
+      }
+    ],
+    "phase2_debate_rounds": [
+      {
+        "round_num": 1,
+        "convergence": 0.34062271062271066,
+        "threshold": 0.7,
+        "threshold_reached": false,
+        "proposals": {
+          "Agent_1": [
+            {
+              "name": "Optical Laser System (Laser Modules)",
+              "confidence": 0.98,
+              "reasoning": "The laser system is a distinct, critical assembly procured separately for excitation of fluorophores and scatter measurement; this is universally present in flow cytometers and involves specialized supplier chains.",
+              "component": "Optical Laser System (Laser Modules)",
+              "normalized_component": "laser excitation"
+            },
+            {
+              "name": "Fluidics System (Pump and Flow Cell Assembly)",
+              "confidence": 0.95,
+              "reasoning": "Includes fluid pumps, tubing, and flow cell, forming an integrated subassembly responsible for hydrodynamic focusing and sample transport, typically sourced as a modular unit.",
+              "component": "Fluidics System (Pump and Flow Cell Assembly)",
+              "normalized_component": "fluidics"
+            },
+            {
+              "name": "Optical Detection Module (Photomultiplier Tubes or Photodiode Arrays)",
+              "confidence": 0.96,
+              "reasoning": "This module contains detectors and associated optics who convert optical signals to electronic signals; it is a key, separable component often procured separately due to its complexity.",
+              "component": "Optical Detection Module (Photomultiplier Tubes or Photodiode Arrays)",
+              "normalized_component": "optical detection"
+            },
+            {
+              "name": "Main Electronic Control Board (Microcontroller/FPGA Board)",
+              "confidence": 0.92,
+              "reasoning": "Core processing and control electronics obtained as a separate PCB assembly, essential for instrument operation and distinct in supply chain.",
+              "component": "Main Electronic Control Board (Microcontroller/FPGA Board)",
+              "normalized_component": "main electronic control board"
+            },
+            {
+              "name": "Fluidic Valve Assembly",
+              "confidence": 0.85,
+              "reasoning": "Critical for directing fluid paths and sample routing, valves are a standard separate mechanical subassembly with a distinct procurement source.",
+              "component": "Fluidic Valve Assembly",
+              "normalized_component": "fluidic valve"
+            },
+            {
+              "name": "Sample Injection Port (Autosampler Module)",
+              "confidence": 0.8,
+              "reasoning": "An optional but common module in many research flow cytometers, this subassembly automates and controls sample loading and is procured separately.",
+              "component": "Sample Injection Port (Autosampler Module)",
+              "normalized_component": "sample injection port"
+            },
+            {
+              "name": "User Interface Display Module (Touchscreen LCD)",
+              "confidence": 0.78,
+              "reasoning": "The touchscreen display is often a supplier-procured module, providing the human-machine interface, though some instruments may integrate it differently.",
+              "component": "User Interface Display Module (Touchscreen LCD)",
+              "normalized_component": "user interface display and control electronics"
+            },
+            {
+              "name": "Power Supply Unit",
+              "confidence": 0.88,
+              "reasoning": "Provides conditioned power to instrument components; it is a standard separate electrical module procured from specialized suppliers.",
+              "component": "Power Supply Unit",
+              "normalized_component": "power supply"
+            },
+            {
+              "name": "Enclosure/Chassis Assembly",
+              "confidence": 0.83,
+              "reasoning": "The structural housing protects and supports components, usually manufactured or procured as a single assembly, distinct from internal modules.",
+              "component": "Enclosure/Chassis Assembly",
+              "normalized_component": "instrument chassis and enclosure"
+            }
+          ],
+          "Agent_2": [
+            {
+              "name": "Fluidics System Module",
+              "confidence": 0.95,
+              "reasoning": "This module manages sample and sheath fluid flow through microfluidic channels and is a distinct assembly procured or manufactured separately due to its complexity and critical role.",
+              "component": "Fluidics System Module",
+              "normalized_component": "fluidics"
+            },
+            {
+              "name": "Optical Detection Assembly with Lasers and Photodetectors",
+              "confidence": 0.98,
+              "reasoning": "This includes laser sources, lenses, mirrors, filters, and photomultiplier tubes (PMTs) or photodiodes housed as a discrete optical module, an essential and separate functional unit.",
+              "component": "Optical Detection Assembly with Lasers and Photodetectors",
+              "normalized_component": "optical detection"
+            },
+            {
+              "name": "Sample Injection Port and Flow Cell",
+              "confidence": 0.9,
+              "reasoning": "The flow cell where cells pass single-file through the laser interrogation zone is a specific, physically distinct subassembly typically replaced or serviced independently.",
+              "component": "Sample Injection Port and Flow Cell",
+              "normalized_component": "sample injection port and flow cell"
+            },
+            {
+              "name": "Electronics Control and Data Acquisition Board",
+              "confidence": 0.93,
+              "reasoning": "This PCB assembly controls the instrument operation and signals from detectors, a central procurable module independent from other physical components.",
+              "component": "Electronics Control and Data Acquisition Board",
+              "normalized_component": "signal processing and data acquisition board"
+            },
+            {
+              "name": "Mechanical Chassis and Enclosure",
+              "confidence": 0.92,
+              "reasoning": "The structural frame and protective housing form a distinct physical subassembly, often standardized and procured as a complete unit.",
+              "component": "Mechanical Chassis and Enclosure",
+              "normalized_component": "instrument chassis and enclosure"
+            },
+            {
+              "name": "Cooling System Assembly",
+              "confidence": 0.8,
+              "reasoning": "A dedicated cooling subsystem (fans, heat sinks, or liquid cooling) is common for laser and electronics thermal management, procured separately in many designs.",
+              "component": "Cooling System Assembly",
+              "normalized_component": "cooling"
+            },
+            {
+              "name": "Waste Collection System",
+              "confidence": 0.75,
+              "reasoning": "This physical assembly handles disposal of fluid waste and is often a separate module with tubing and reservoir, although some integrated designs exist.",
+              "component": "Waste Collection System",
+              "normalized_component": "waste collection"
+            }
+          ],
+          "Agent_3": [
+            {
+              "name": "Fluidics System Module",
+              "confidence": 0.95,
+              "reasoning": "The fluidics system directs the sample and sheath fluid through the flow cell; it is a distinct assembly procured or manufactured separately, essential to flow cytometry operation.",
+              "component": "Fluidics System Module",
+              "normalized_component": "fluidics"
+            },
+            {
+              "name": "Laser Excitation Module",
+              "confidence": 1.0,
+              "reasoning": "Laser modules providing excitation light at specific wavelengths are core components usually procured as distinct units from specialized suppliers.",
+              "component": "Laser Excitation Module",
+              "normalized_component": "laser excitation"
+            },
+            {
+              "name": "Optical Detection Assembly (Photodetectors and Filters)",
+              "confidence": 0.95,
+              "reasoning": "This integrated assembly includes photomultiplier tubes or photodiodes with optical filters and lenses, purchased or assembled separately to detect fluorescence and scatter signals.",
+              "component": "Optical Detection Assembly (Photodetectors and Filters)",
+              "normalized_component": "optical detection"
+            },
+            {
+              "name": "Flow Cell (Cuvette or Microfluidic Flow Chamber)",
+              "confidence": 0.92,
+              "reasoning": "The flow cell is the precise fluid channel where interrogation occurs; it is a manufactured component replaced or serviced independently.",
+              "component": "Flow Cell (Cuvette or Microfluidic Flow Chamber)",
+              "normalized_component": "flow cell"
+            },
+            {
+              "name": "Signal Processing Electronics Board",
+              "confidence": 0.9,
+              "reasoning": "Dedicated electronics boards for signal amplification and digitization form distinct component assemblies critical to data acquisition.",
+              "component": "Signal Processing Electronics Board",
+              "normalized_component": "signal processing electronics"
+            },
+            {
+              "name": "User Interface Display Module",
+              "confidence": 0.85,
+              "reasoning": "Touchscreen or LCD display units for user interaction are usually procured separately with their own supply chain.",
+              "component": "User Interface Display Module",
+              "normalized_component": "user interface display and control electronics"
+            },
+            {
+              "name": "Sample Injection Port Assembly",
+              "confidence": 0.8,
+              "reasoning": "The mechanical and fluidic interface allowing sample introduction is commonly a discrete manufactured subassembly.",
+              "component": "Sample Injection Port Assembly",
+              "normalized_component": "sample injection port"
+            },
+            {
+              "name": "Instrument Chassis and Enclosure",
+              "confidence": 0.88,
+              "reasoning": "The structural housing that integrates all subsystems is typically manufactured as a distinct module, often procured from specialized suppliers.",
+              "component": "Instrument Chassis and Enclosure",
+              "normalized_component": "instrument chassis and enclosure"
+            },
+            {
+              "name": "Cooling System (Fan or Thermoelectric Cooler)",
+              "confidence": 0.75,
+              "reasoning": "Active cooling subsystems are commonly integrated units procured to maintain laser and electronics temperature, essential but can vary by design.",
+              "component": "Cooling System (Fan or Thermoelectric Cooler)",
+              "normalized_component": "cooling"
+            },
+            {
+              "name": "Power Supply Unit",
+              "confidence": 0.9,
+              "reasoning": "The power supply providing regulated voltages is a distinct and standardized component procured separately.",
+              "component": "Power Supply Unit",
+              "normalized_component": "power supply"
+            }
+          ],
+          "Agent_4": [
+            {
+              "name": "Fluidics System (including sample injection, sheath fluid delivery, and flow cell)",
+              "confidence": 0.98,
+              "reasoning": "Core component responsible for hydrodynamically focusing cells in single file for interrogation; typically a complex assembly procured or manufactured separately.",
+              "component": "Fluidics System (including sample injection, sheath fluid delivery, and flow cell)",
+              "normalized_component": "fluidics"
+            },
+            {
+              "name": "Optical Excitation Module (Multi-laser assembly)",
+              "confidence": 0.95,
+              "reasoning": "Provides specific wavelength laser light sources necessary for excitation of fluorescent markers; procured as specialized laser units or modules.",
+              "component": "Optical Excitation Module (Multi-laser assembly)",
+              "normalized_component": "optical excitation"
+            },
+            {
+              "name": "Optical Detection Module (Photomultiplier tubes and photodiodes with filters and mirrors)",
+              "confidence": 0.95,
+              "reasoning": "Collects and detects emitted fluorescence and scattered light signals; a distinct subassembly with its own supply chain of photodetectors and optics.",
+              "component": "Optical Detection Module (Photomultiplier tubes and photodiodes with filters and mirrors)",
+              "normalized_component": "optical detection"
+            },
+            {
+              "name": "Signal Processing Electronics and Data Acquisition Board",
+              "confidence": 0.93,
+              "reasoning": "Processes photodetector signals, digitizes data, and interfaces with software; an essential distinct circuit board assembly.",
+              "component": "Signal Processing Electronics and Data Acquisition Board",
+              "normalized_component": "signal processing and data acquisition board"
+            },
+            {
+              "name": "Sample Handling and Loading Interface",
+              "confidence": 0.85,
+              "reasoning": "Mechanism or subsystem enabling the introduction and routing of biological samples; often modular and procured separately though some integration varies.",
+              "component": "Sample Handling and Loading Interface",
+              "normalized_component": "sample handling and loading interface"
+            },
+            {
+              "name": "User Interface Module (Touchscreen display and control electronics)",
+              "confidence": 0.8,
+              "reasoning": "Provides operator control and data visualization; typically a separate manufactured unit or module mounted on the instrument.",
+              "component": "User Interface Module (Touchscreen display and control electronics)",
+              "normalized_component": "user interface display and control electronics"
+            },
+            {
+              "name": "Enclosure and Structural Framework",
+              "confidence": 0.9,
+              "reasoning": "Physical housing and mechanical framework protecting and supporting internal components; manufactured as a distinct assembly.",
+              "component": "Enclosure and Structural Framework",
+              "normalized_component": "instrument chassis and enclosure"
+            },
+            {
+              "name": "Fluidics Pumping System (Syringe pumps, peristaltic pumps or pressure regulators)",
+              "confidence": 0.88,
+              "reasoning": "Controls fluid flow rates within the cytometer; generally procured as a separate mechanical/electromechanical component.",
+              "component": "Fluidics Pumping System (Syringe pumps, peristaltic pumps or pressure regulators)",
+              "normalized_component": "fluidics pumping"
+            },
+            {
+              "name": "Laser Safety and Beam Steering Optics",
+              "confidence": 0.75,
+              "reasoning": "Includes shutters, beam expanders, mirrors that are sometimes modularized; less consistently procured separately as a stand-alone.",
+              "component": "Laser Safety and Beam Steering Optics",
+              "normalized_component": "laser safety and beam steering optics"
+            }
+          ],
+          "Agent_5": [
+            {
+              "name": "Fluidics System",
+              "confidence": 0.95,
+              "reasoning": "Essential for hydrodynamic focusing and transporting cells in a fluid stream; a complex manufactured subsystem with separate supply chains for pumps, tubing, and flow cells.",
+              "component": "Fluidics System",
+              "normalized_component": "fluidics"
+            },
+            {
+              "name": "Laser Excitation Module",
+              "confidence": 0.95,
+              "reasoning": "Core optical component delivering specific wavelength lasers to excite fluorochromes; typically procured as discrete laser assemblies.",
+              "component": "Laser Excitation Module",
+              "normalized_component": "laser excitation"
+            },
+            {
+              "name": "Optical Detection Module",
+              "confidence": 0.93,
+              "reasoning": "Includes photomultiplier tubes (PMTs) or photodiodes and associated optics for fluorescence and scatter detection; a key separate subsystem.",
+              "component": "Optical Detection Module",
+              "normalized_component": "optical detection"
+            },
+            {
+              "name": "Fluidics Control Electronics",
+              "confidence": 0.9,
+              "reasoning": "Dedicated electronics controlling pumps and valves for fluid handling; a distinct circuit and control subsystem.",
+              "component": "Fluidics Control Electronics",
+              "normalized_component": "fluidics control electronics"
+            },
+            {
+              "name": "Signal Processing Electronics",
+              "confidence": 0.92,
+              "reasoning": "Electronics for amplifying, digitizing, and processing optical signals; typically a separate module or board.",
+              "component": "Signal Processing Electronics",
+              "normalized_component": "signal processing electronics"
+            },
+            {
+              "name": "Sample Injection Port / Sample Handling Module",
+              "confidence": 0.85,
+              "reasoning": "Mechanical assembly allowing safe and precise introduction of samples, often procured separately especially in clinical systems.",
+              "component": "Sample Injection Port / Sample Handling Module",
+              "normalized_component": "sample injection port"
+            },
+            {
+              "name": "Data Acquisition and Analysis Computer Interface",
+              "confidence": 0.88,
+              "reasoning": "Integrated or external computing system with software for data acquisition, storage, and analysis; often a modular purchased solution.",
+              "component": "Data Acquisition and Analysis Computer Interface",
+              "normalized_component": "data acquisition and analysis computer interface"
+            },
+            {
+              "name": "Cuvette / Flow Cell",
+              "confidence": 0.89,
+              "reasoning": "Disposable or reusable optical flow chamber essential for aligning the sample stream with laser and detectors; manufactured and procured separately.",
+              "component": "Cuvette / Flow Cell",
+              "normalized_component": "flow cell"
+            },
+            {
+              "name": "Chassis / Instrument Enclosure",
+              "confidence": 0.8,
+              "reasoning": "Structural housing supporting and protecting internal modules; procured or manufactured as a complete assembly.",
+              "component": "Chassis / Instrument Enclosure",
+              "normalized_component": "instrument chassis and enclosure"
+            }
+          ]
+        },
+        "rounds_completed": 1,
+        "support_analysis": {
+          "consensus": [
+            "laser excitation",
+            "sample injection port",
+            "user interface display and control electronics"
+          ],
+          "majority": [
+            "fluidics",
+            "optical detection",
+            "power supply",
+            "instrument chassis and enclosure",
+            "signal processing and data acquisition board",
+            "cooling",
+            "flow cell",
+            "signal processing electronics"
+          ],
+          "isolated": [
+            "main electronic control board",
+            "fluidic valve",
+            "sample injection port and flow cell",
+            "waste collection",
+            "optical excitation",
+            "sample handling and loading interface",
+            "fluidics pumping",
+            "laser safety and beam steering optics",
+            "fluidics control electronics",
+            "data acquisition and analysis computer interface"
+          ]
+        },
+        "critiques": [
+          {
+            "item_name": "laser excitation",
+            "normalized_name": "laser excitation",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_5",
+              "Agent_1",
+              "Agent_3"
+            ],
+            "opposing_agents": [
+              "Agent_2",
+              "Agent_4"
+            ],
+            "avg_confidence": 0.9766666666666666,
+            "critique_text": "Strong consensus on 'laser excitation': all 3 agents support with avg confidence 0.98. Preserve this component."
+          },
+          {
+            "item_name": "fluidics",
+            "normalized_name": "fluidics",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_5",
+              "Agent_1",
+              "Agent_2",
+              "Agent_4"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.9559999999999998,
+            "critique_text": "Majority support for 'fluidics': 5/3 agents agree (conf: 0.96). Consider strengthening consensus."
+          },
+          {
+            "item_name": "optical detection",
+            "normalized_name": "optical detection",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_5",
+              "Agent_1",
+              "Agent_2",
+              "Agent_4"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.954,
+            "critique_text": "Majority support for 'optical detection': 5/3 agents agree (conf: 0.95). Consider strengthening consensus."
+          },
+          {
+            "item_name": "main electronic control board",
+            "normalized_name": "main electronic control board",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_5",
+              "Agent_2",
+              "Agent_3",
+              "Agent_4"
+            ],
+            "avg_confidence": 0.92,
+            "critique_text": "Isolated proposal 'main electronic control board' from 1 agent(s) (conf: 0.92). Requires justification or peer validation."
+          },
+          {
+            "item_name": "fluidic valve",
+            "normalized_name": "fluidic valve",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_5",
+              "Agent_2",
+              "Agent_3",
+              "Agent_4"
+            ],
+            "avg_confidence": 0.85,
+            "critique_text": "Isolated proposal 'fluidic valve' from 1 agent(s) (conf: 0.85). Requires justification or peer validation."
+          },
+          {
+            "item_name": "sample injection port",
+            "normalized_name": "sample injection port",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_5",
+              "Agent_1",
+              "Agent_3"
+            ],
+            "opposing_agents": [
+              "Agent_2",
+              "Agent_4"
+            ],
+            "avg_confidence": 0.8166666666666668,
+            "critique_text": "Strong consensus on 'sample injection port': all 3 agents support with avg confidence 0.82. Preserve this component."
+          },
+          {
+            "item_name": "user interface display and control electronics",
+            "normalized_name": "user interface display and control electronics",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_4",
+              "Agent_3"
+            ],
+            "opposing_agents": [
+              "Agent_5",
+              "Agent_2"
+            ],
+            "avg_confidence": 0.81,
+            "critique_text": "Strong consensus on 'user interface display and control electronics': all 3 agents support with avg confidence 0.81. Preserve this component."
+          },
+          {
+            "item_name": "power supply",
+            "normalized_name": "power supply",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_3"
+            ],
+            "opposing_agents": [
+              "Agent_5",
+              "Agent_2",
+              "Agent_4"
+            ],
+            "avg_confidence": 0.89,
+            "critique_text": "Majority support for 'power supply': 2/3 agents agree (conf: 0.89). Consider strengthening consensus."
+          },
+          {
+            "item_name": "instrument chassis and enclosure",
+            "normalized_name": "instrument chassis and enclosure",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_5",
+              "Agent_1",
+              "Agent_2",
+              "Agent_4"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.866,
+            "critique_text": "Majority support for 'instrument chassis and enclosure': 5/3 agents agree (conf: 0.87). Consider strengthening consensus."
+          },
+          {
+            "item_name": "sample injection port and flow cell",
+            "normalized_name": "sample injection port and flow cell",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_5",
+              "Agent_1",
+              "Agent_4",
+              "Agent_3"
+            ],
+            "avg_confidence": 0.9,
+            "critique_text": "Isolated proposal 'sample injection port and flow cell' from 1 agent(s) (conf: 0.90). Requires justification or peer validation."
+          },
+          {
+            "item_name": "signal processing and data acquisition board",
+            "normalized_name": "signal processing and data acquisition board",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_4"
+            ],
+            "opposing_agents": [
+              "Agent_5",
+              "Agent_1",
+              "Agent_3"
+            ],
+            "avg_confidence": 0.93,
+            "critique_text": "Majority support for 'signal processing and data acquisition board': 2/3 agents agree (conf: 0.93). Consider strengthening consensus."
+          },
+          {
+            "item_name": "cooling",
+            "normalized_name": "cooling",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_3"
+            ],
+            "opposing_agents": [
+              "Agent_5",
+              "Agent_1",
+              "Agent_4"
+            ],
+            "avg_confidence": 0.775,
+            "critique_text": "Majority support for 'cooling': 2/3 agents agree (conf: 0.78). Consider strengthening consensus."
+          },
+          {
+            "item_name": "waste collection",
+            "normalized_name": "waste collection",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_5",
+              "Agent_1",
+              "Agent_4",
+              "Agent_3"
+            ],
+            "avg_confidence": 0.75,
+            "critique_text": "Isolated proposal 'waste collection' from 1 agent(s) (conf: 0.75). Requires justification or peer validation."
+          },
+          {
+            "item_name": "flow cell",
+            "normalized_name": "flow cell",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_5",
+              "Agent_3"
+            ],
+            "opposing_agents": [
+              "Agent_1",
+              "Agent_2",
+              "Agent_4"
+            ],
+            "avg_confidence": 0.905,
+            "critique_text": "Majority support for 'flow cell': 2/3 agents agree (conf: 0.91). Consider strengthening consensus."
+          },
+          {
+            "item_name": "signal processing electronics",
+            "normalized_name": "signal processing electronics",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_5",
+              "Agent_3"
+            ],
+            "opposing_agents": [
+              "Agent_1",
+              "Agent_2",
+              "Agent_4"
+            ],
+            "avg_confidence": 0.91,
+            "critique_text": "Majority support for 'signal processing electronics': 2/3 agents agree (conf: 0.91). Consider strengthening consensus."
+          },
+          {
+            "item_name": "optical excitation",
+            "normalized_name": "optical excitation",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_4"
+            ],
+            "opposing_agents": [
+              "Agent_5",
+              "Agent_1",
+              "Agent_2",
+              "Agent_3"
+            ],
+            "avg_confidence": 0.95,
+            "critique_text": "Isolated proposal 'optical excitation' from 1 agent(s) (conf: 0.95). Requires justification or peer validation."
+          },
+          {
+            "item_name": "sample handling and loading interface",
+            "normalized_name": "sample handling and loading interface",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_4"
+            ],
+            "opposing_agents": [
+              "Agent_5",
+              "Agent_1",
+              "Agent_2",
+              "Agent_3"
+            ],
+            "avg_confidence": 0.85,
+            "critique_text": "Isolated proposal 'sample handling and loading interface' from 1 agent(s) (conf: 0.85). Requires justification or peer validation."
+          },
+          {
+            "item_name": "fluidics pumping",
+            "normalized_name": "fluidics pumping",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_4"
+            ],
+            "opposing_agents": [
+              "Agent_5",
+              "Agent_1",
+              "Agent_2",
+              "Agent_3"
+            ],
+            "avg_confidence": 0.88,
+            "critique_text": "Isolated proposal 'fluidics pumping' from 1 agent(s) (conf: 0.88). Requires justification or peer validation."
+          },
+          {
+            "item_name": "laser safety and beam steering optics",
+            "normalized_name": "laser safety and beam steering optics",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_4"
+            ],
+            "opposing_agents": [
+              "Agent_5",
+              "Agent_1",
+              "Agent_2",
+              "Agent_3"
+            ],
+            "avg_confidence": 0.75,
+            "critique_text": "Isolated proposal 'laser safety and beam steering optics' from 1 agent(s) (conf: 0.75). Requires justification or peer validation."
+          },
+          {
+            "item_name": "fluidics control electronics",
+            "normalized_name": "fluidics control electronics",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_5"
+            ],
+            "opposing_agents": [
+              "Agent_4",
+              "Agent_1",
+              "Agent_2",
+              "Agent_3"
+            ],
+            "avg_confidence": 0.9,
+            "critique_text": "Isolated proposal 'fluidics control electronics' from 1 agent(s) (conf: 0.90). Requires justification or peer validation."
+          },
+          {
+            "item_name": "data acquisition and analysis computer interface",
+            "normalized_name": "data acquisition and analysis computer interface",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_5"
+            ],
+            "opposing_agents": [
+              "Agent_4",
+              "Agent_1",
+              "Agent_2",
+              "Agent_3"
+            ],
+            "avg_confidence": 0.88,
+            "critique_text": "Isolated proposal 'data acquisition and analysis computer interface' from 1 agent(s) (conf: 0.88). Requires justification or peer validation."
+          }
+        ],
+        "changes_from_previous": null
+      },
+      {
+        "round_num": 2,
+        "convergence": 0.5428571428571429,
+        "threshold": 0.7,
+        "threshold_reached": false,
+        "proposals": {
+          "Agent_1": [
+            {
+              "agent_id": "Agent_1",
+              "component": "Laser Excitation Module",
+              "confidence": 0.98,
+              "reasoning": "Strong consensus with highest confidence across 3 agents and peer critiques emphasizing its fundamental importance for excitation in flow cytometry.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Fluidics System (including sample injection, sheath fluid delivery, and flow cell)",
+              "confidence": 0.96,
+              "reasoning": "Unanimous 5-agent support with very high confidence and critical for sample delivery and flow within cytometer.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Optical Detection Module (Photomultiplier tubes and photodiodes with filters and mirrors)",
+              "confidence": 0.95,
+              "reasoning": "Full 5-agent agreement with high confidence; essential for detecting emitted fluorescence and scatter signals from particles.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Sample Injection Port / Sample Handling Module",
+              "confidence": 0.82,
+              "reasoning": "Supported by 3 agents with solid confidence average; critical interface for sample introduction and thus should be included.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "User Interface Module (Touchscreen display and control electronics)",
+              "confidence": 0.81,
+              "reasoning": "Strong consensus among 3 agents with reasonable confidence; important for user operation and control of the system.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Enclosure and Structural Framework",
+              "confidence": 0.87,
+              "reasoning": "Unanimous support among all agents with high confidence; fundamental structural and safety component in instrument design.",
+              "round": 2
+            }
+          ],
+          "Agent_2": [
+            {
+              "agent_id": "Agent_2",
+              "component": "Laser Excitation Module",
+              "confidence": 0.98,
+              "reasoning": "Strong consensus among 3 agents with high confidence (avg ~0.98). Laser excitation is critical for flow cytometer function.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Fluidics System (including sample injection, sheath fluid delivery, and flow cell)",
+              "confidence": 0.96,
+              "reasoning": "Supported by all 5 agents (avg confidence 0.96). Essential for sample handling and analysis in flow cytometry.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Optical Detection Module (Photomultiplier tubes and photodiodes with filters and mirrors)",
+              "confidence": 0.95,
+              "reasoning": "Unanimous support across agents (avg confidence ~0.95). Essential for detecting signals from fluorescent markers.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Sample Injection Port / Sample Handling Module",
+              "confidence": 0.82,
+              "reasoning": "Supported by multiple agents (avg confidence ~0.82). Critical for sample introduction to the system.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "User Interface Module (Touchscreen display and control electronics)",
+              "confidence": 0.81,
+              "reasoning": "Multiple agent support (avg confidence ~0.81). Needed for user control and data visualization.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Chassis / Instrument Enclosure",
+              "confidence": 0.87,
+              "reasoning": "Strong consensus with all agents supporting various similar chassis components (avg confidence ~0.87). Provides structural integrity and housing.",
+              "round": 2
+            }
+          ],
+          "Agent_3": [
+            {
+              "agent_id": "Agent_3",
+              "component": "Laser Excitation Module",
+              "confidence": 0.98,
+              "reasoning": "Strong consensus with high average confidence (0.98) from multiple agents; critical for flow cytometer operation.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Fluidics System (including sample injection, sheath fluid delivery, and flow cell)",
+              "confidence": 0.96,
+              "reasoning": "Unanimous support across all agents with very high average confidence; essential for sample handling and flow.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Optical Detection Module (Photomultiplier tubes and photodiodes with filters and mirrors)",
+              "confidence": 0.95,
+              "reasoning": "Strong multi-agent support with high confidence; necessary for detecting optical signals from samples.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Sample Injection Port (Autosampler Module)",
+              "confidence": 0.82,
+              "reasoning": "Good consensus and important for automated sample introduction; supported by multiple agents.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "User Interface Display Module (Touchscreen LCD)",
+              "confidence": 0.81,
+              "reasoning": "Important for user interaction and device control; well supported by multiple agents.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Instrument Chassis and Enclosure",
+              "confidence": 0.87,
+              "reasoning": "Widely supported across agents for structural integrity and housing of components.",
+              "round": 2
+            }
+          ],
+          "Agent_4": [
+            {
+              "agent_id": "Agent_4",
+              "component": "Laser Excitation Module",
+              "confidence": 0.98,
+              "reasoning": "Strong consensus with three agents supporting it and an average confidence of 0.98. This is a critical primary component for a flow cytometer to provide laser excitation.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "Fluidics System (including sample injection, sheath fluid delivery, and flow cell)",
+              "confidence": 0.96,
+              "reasoning": "Unanimous support from all five agents with high averaged confidence of 0.96. This system is indispensable for controlling sample and sheath fluid flow in the instrument.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "Optical Detection Module (Photomultiplier tubes and photodiodes with filters and mirrors)",
+              "confidence": 0.95,
+              "reasoning": "Strong consensus with five agents supporting it with average confidence 0.95. This component is essential for detecting fluorescence and light scatter signals.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "Sample Injection Port / Sample Handling Module",
+              "confidence": 0.82,
+              "reasoning": "Good support from three agents with average confidence 0.82. It is important for introducing samples into the fluidics stream.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "User Interface Module (Touchscreen display and control electronics)",
+              "confidence": 0.81,
+              "reasoning": "Supported by three agents with average confidence 0.81. Provides necessary user control and feedback for instrument operation.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "Enclosure and Structural Framework",
+              "confidence": 0.87,
+              "reasoning": "Strong consensus with five agents supporting it at about 0.87 confidence. This provides physical protection and structural integrity to the instrument.",
+              "round": 2
+            }
+          ],
+          "Agent_5": [
+            {
+              "agent_id": "Agent_5",
+              "component": "Laser Excitation Module",
+              "confidence": 0.98,
+              "reasoning": "Strong consensus with 3 agents supporting it and highest average confidence 0.98; essential for fluorescence excitation in flow cytometry.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_5",
+              "component": "Fluidics System (including sample injection, sheath fluid delivery, and flow cell)",
+              "confidence": 0.97,
+              "reasoning": "Unanimous strong support from all 5 agents; critical for sample transport and sheath fluid management; highest confidence among fluidics proposals.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_5",
+              "component": "Optical Detection Module (Photomultiplier tubes and photodiodes with filters and mirrors)",
+              "confidence": 0.95,
+              "reasoning": "Strong agreement with 5 agents supporting and good average confidence; essential for detecting signals from cells.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_5",
+              "component": "Sample Injection Port (Autosampler Module)",
+              "confidence": 0.82,
+              "reasoning": "Solid consensus from 3 agents; important for sample introduction; maintain moderate confidence given peer support.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_5",
+              "component": "User Interface Display Module (Touchscreen LCD)",
+              "confidence": 0.81,
+              "reasoning": "Supported by 3 agents with adequate confidence; needed for operator interaction and control.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_5",
+              "component": "Instrument Chassis and Enclosure",
+              "confidence": 0.87,
+              "reasoning": "Full agreement among 5 agents with good confidence; important to house and protect components.",
+              "round": 2
+            }
+          ]
+        },
+        "rounds_completed": 2,
+        "support_analysis": {
+          "consensus": [
+            "sample injection port / sample handling",
+            "user interface module (touchscreen display and control electronics)"
+          ],
+          "majority": [
+            "laser excitation",
+            "fluidics system (including sample injection, sheath fluid delivery, and flow cell)",
+            "optical detection module (photomultiplier tubes and photodiodes with filters and mirrors)",
+            "enclosure and structural framework",
+            "sample injection port (autosampler module)",
+            "user interface display module (touchscreen lcd)",
+            "instrument chassis and enclosure"
+          ],
+          "isolated": [
+            "chassis / instrument enclosure"
+          ]
+        },
+        "critiques": [
+          {
+            "item_name": "Laser Excitation Module",
+            "normalized_name": "laser excitation",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_5",
+              "Agent_1",
+              "Agent_2",
+              "Agent_4"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.9800000000000001,
+            "critique_text": "Majority support for 'Laser Excitation Module': 5/3 agents agree (conf: 0.98). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Fluidics System (including sample injection, sheath fluid delivery, and flow cell)",
+            "normalized_name": "fluidics system (including sample injection, sheath fluid delivery, and flow cell)",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_5",
+              "Agent_1",
+              "Agent_2",
+              "Agent_4"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.962,
+            "critique_text": "Majority support for 'Fluidics System (including sample injection, sheath fluid delivery, and flow cell)': 5/3 agents agree (conf: 0.96). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Optical Detection Module (Photomultiplier tubes and photodiodes with filters and mirrors)",
+            "normalized_name": "optical detection module (photomultiplier tubes and photodiodes with filters and mirrors)",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_5",
+              "Agent_1",
+              "Agent_2",
+              "Agent_4"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.95,
+            "critique_text": "Majority support for 'Optical Detection Module (Photomultiplier tubes and photodiodes with filters and mirrors)': 5/3 agents agree (conf: 0.95). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Sample Injection Port / Sample Handling Module",
+            "normalized_name": "sample injection port / sample handling",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_2",
+              "Agent_4"
+            ],
+            "opposing_agents": [
+              "Agent_5",
+              "Agent_3"
+            ],
+            "avg_confidence": 0.82,
+            "critique_text": "Strong consensus on 'Sample Injection Port / Sample Handling Module': all 3 agents support with avg confidence 0.82. Preserve this component."
+          },
+          {
+            "item_name": "User Interface Module (Touchscreen display and control electronics)",
+            "normalized_name": "user interface module (touchscreen display and control electronics)",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_2",
+              "Agent_4"
+            ],
+            "opposing_agents": [
+              "Agent_5",
+              "Agent_3"
+            ],
+            "avg_confidence": 0.81,
+            "critique_text": "Strong consensus on 'User Interface Module (Touchscreen display and control electronics)': all 3 agents support with avg confidence 0.81. Preserve this component."
+          },
+          {
+            "item_name": "Enclosure and Structural Framework",
+            "normalized_name": "enclosure and structural framework",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_4"
+            ],
+            "opposing_agents": [
+              "Agent_5",
+              "Agent_2",
+              "Agent_3"
+            ],
+            "avg_confidence": 0.87,
+            "critique_text": "Majority support for 'Enclosure and Structural Framework': 2/3 agents agree (conf: 0.87). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Chassis / Instrument Enclosure",
+            "normalized_name": "chassis / instrument enclosure",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_5",
+              "Agent_1",
+              "Agent_4",
+              "Agent_3"
+            ],
+            "avg_confidence": 0.87,
+            "critique_text": "Isolated proposal 'Chassis / Instrument Enclosure' from 1 agent(s) (conf: 0.87). Requires justification or peer validation."
+          },
+          {
+            "item_name": "Sample Injection Port (Autosampler Module)",
+            "normalized_name": "sample injection port (autosampler module)",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_5",
+              "Agent_3"
+            ],
+            "opposing_agents": [
+              "Agent_1",
+              "Agent_2",
+              "Agent_4"
+            ],
+            "avg_confidence": 0.82,
+            "critique_text": "Majority support for 'Sample Injection Port (Autosampler Module)': 2/3 agents agree (conf: 0.82). Consider strengthening consensus."
+          },
+          {
+            "item_name": "User Interface Display Module (Touchscreen LCD)",
+            "normalized_name": "user interface display module (touchscreen lcd)",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_5",
+              "Agent_3"
+            ],
+            "opposing_agents": [
+              "Agent_1",
+              "Agent_2",
+              "Agent_4"
+            ],
+            "avg_confidence": 0.81,
+            "critique_text": "Majority support for 'User Interface Display Module (Touchscreen LCD)': 2/3 agents agree (conf: 0.81). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Instrument Chassis and Enclosure",
+            "normalized_name": "instrument chassis and enclosure",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_5",
+              "Agent_3"
+            ],
+            "opposing_agents": [
+              "Agent_1",
+              "Agent_2",
+              "Agent_4"
+            ],
+            "avg_confidence": 0.87,
+            "critique_text": "Majority support for 'Instrument Chassis and Enclosure': 2/3 agents agree (conf: 0.87). Consider strengthening consensus."
+          }
+        ],
+        "changes_from_previous": {
+          "items_added": [
+            "optical detection module (photomultiplier tubes and photodiodes with filters and mirrors)",
+            "chassis / instrument enclosure",
+            "enclosure and structural framework",
+            "user interface module (touchscreen display and control electronics)",
+            "user interface display module (touchscreen lcd)",
+            "fluidics system (including sample injection, sheath fluid delivery, and flow cell)",
+            "sample injection port (autosampler module)",
+            "sample injection port / sample handling"
+          ],
+          "items_removed": [
+            "power supply",
+            "laser safety and beam steering optics",
+            "flow cell",
+            "user interface display and control electronics",
+            "fluidics control electronics",
+            "fluidics pumping",
+            "sample handling and loading interface",
+            "optical excitation",
+            "main electronic control board",
+            "sample injection port",
+            "data acquisition and analysis computer interface",
+            "signal processing and data acquisition board",
+            "cooling",
+            "fluidic valve",
+            "sample injection port and flow cell",
+            "waste collection",
+            "signal processing electronics",
+            "fluidics",
+            "optical detection"
+          ],
+          "confidence_changes": {}
+        }
+      },
+      {
+        "round_num": 3,
+        "convergence": 1.0,
+        "threshold": 0.7,
+        "threshold_reached": true,
+        "proposals": {
+          "Agent_1": [
+            {
+              "agent_id": "Agent_1",
+              "component": "Laser Excitation Module",
+              "confidence": 0.98,
+              "reasoning": "Unanimous support from all agents with very high confidence; essential for fluorophore excitation in a flow cytometer.",
+              "round": 3,
+              "normalized_component": "Laser Excitation Module"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Fluidics System (including sample injection, sheath fluid delivery, and flow cell)",
+              "confidence": 0.96,
+              "reasoning": "Strong consensus with high confidence from all agents; critical for delivering and aligning cells for optical interrogation.",
+              "round": 3,
+              "normalized_component": "Fluidics System (Including Sample Injection, Sheath Fluid Delivery, and Flow Cell)"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Optical Detection Module (Photomultiplier tubes and photodiodes with filters and mirrors)",
+              "confidence": 0.95,
+              "reasoning": "Unanimous agreement with strong confidence; vital for sensitive detection of fluorescence and scattered light signals.",
+              "round": 3,
+              "normalized_component": "Optical Detection Module (Photomultiplier Tubes and Photodiodes with Filters and Mirrors)"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Sample Injection Port / Sample Handling Module",
+              "confidence": 0.82,
+              "reasoning": "Supported by majority of agents with moderate confidence; important for sample introduction though slightly less critical than core optical and fluidics modules.",
+              "round": 3,
+              "normalized_component": "Sample Injection Port and Sample Handling Module"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "User Interface Module (Touchscreen display and control electronics)",
+              "confidence": 0.81,
+              "reasoning": "Supported by several agents and necessary for user operation and control despite slightly lower confidence levels.",
+              "round": 3,
+              "normalized_component": "Touchscreen Display and Control Electronics"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Enclosure and Structural Framework",
+              "confidence": 0.87,
+              "reasoning": "Supported by multiple agents and necessary for mechanical support and housing of internal components; consolidates origin of chassis/enclosure concepts.",
+              "round": 3,
+              "normalized_component": "Enclosure and Structural Framework"
+            }
+          ],
+          "Agent_2": [
+            {
+              "agent_id": "Agent_2",
+              "component": "Laser Excitation Module",
+              "confidence": 0.98,
+              "reasoning": "Strong unanimous support from all agents with very high confidence; critical for excitation in flow cytometry.",
+              "round": 3,
+              "normalized_component": "Laser Excitation Module"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Fluidics System (including sample injection, sheath fluid delivery, and flow cell)",
+              "confidence": 0.96,
+              "reasoning": "Consistent selection by all agents with high confidence; this component is essential to transport and focus the sample through the flow cell.",
+              "round": 3,
+              "normalized_component": "Fluidics System (Including Sample Injection, Sheath Fluid Delivery, and Flow Cell)"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Optical Detection Module (Photomultiplier tubes and photodiodes with filters and mirrors)",
+              "confidence": 0.95,
+              "reasoning": "Unanimous agreement and high confidence; necessary for sensitive detection and signal conversion.",
+              "round": 3,
+              "normalized_component": "Optical Detection Module (Photomultiplier Tubes and Photodiodes with Filters and Mirrors)"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Sample Injection Port / Sample Handling Module",
+              "confidence": 0.82,
+              "reasoning": "Majority support (3 out of 5) with moderate confidence; needed for sample introduction, reflecting consensus for inclusion.",
+              "round": 3,
+              "normalized_component": "Sample Injection Port and Sample Handling Module"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "User Interface Module (Touchscreen display and control electronics)",
+              "confidence": 0.81,
+              "reasoning": "Supported by multiple agents with moderate confidence; enables user operation and control, important for usability.",
+              "round": 3,
+              "normalized_component": "Touchscreen Display and Control Electronics"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Enclosure and Structural Framework",
+              "confidence": 0.87,
+              "reasoning": "Selected by multiple agents and supported as providing mechanical stability and protection; preferred over isolated chassis component proposals.",
+              "round": 3,
+              "normalized_component": "Enclosure and Structural Framework"
+            }
+          ],
+          "Agent_3": [
+            {
+              "agent_id": "Agent_3",
+              "component": "Laser Excitation Module",
+              "confidence": 0.98,
+              "reasoning": "Strong multi-agent support with highest consensus and essential for flow cytometer functionality.",
+              "round": 3,
+              "normalized_component": "Laser Excitation Module"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Fluidics System (including sample injection, sheath fluid delivery, and flow cell)",
+              "confidence": 0.96,
+              "reasoning": "Unanimous support from all agents and critical for sample handling and flow control.",
+              "round": 3,
+              "normalized_component": "Fluidics System (Including Sample Injection, Sheath Fluid Delivery, and Flow Cell)"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Optical Detection Module (Photomultiplier tubes and photodiodes with filters and mirrors)",
+              "confidence": 0.95,
+              "reasoning": "Strong consensus and necessary to detect optical signals from analyzed cells.",
+              "round": 3,
+              "normalized_component": "Optical Detection Module (Photomultiplier Tubes and Photodiodes with Filters and Mirrors)"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Sample Injection Port / Sample Handling Module",
+              "confidence": 0.82,
+              "reasoning": "Supported by a majority and necessary for introducing samples effectively, should be included despite lower confidence.",
+              "round": 3,
+              "normalized_component": "Sample Injection Port and Sample Handling Module"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "User Interface Module (Touchscreen display and control electronics)",
+              "confidence": 0.81,
+              "reasoning": "Moderate support and important for user interaction and control of the instrument.",
+              "round": 3,
+              "normalized_component": "Touchscreen Display and Control Electronics"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Enclosure and Structural Framework",
+              "confidence": 0.87,
+              "reasoning": "Supports instrument integrity and structure, chosen over similar chassis/enclosure components for broader naming and consensus.",
+              "round": 3,
+              "normalized_component": "Enclosure and Structural Framework"
+            }
+          ],
+          "Agent_4": [
+            {
+              "agent_id": "Agent_4",
+              "component": "Laser Excitation Module",
+              "confidence": 0.98,
+              "reasoning": "Unanimous support from all agents with very high confidence. Essential primary component for flow cytometer.",
+              "round": 3,
+              "normalized_component": "Laser Excitation Module"
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "Fluidics System (including sample injection, sheath fluid delivery, and flow cell)",
+              "confidence": 0.96,
+              "reasoning": "Unanimous support and high confidence across all agents. Core functional component critical to flow cytometry.",
+              "round": 3,
+              "normalized_component": "Fluidics System (Including Sample Injection, Sheath Fluid Delivery, and Flow Cell)"
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "Optical Detection Module (Photomultiplier tubes and photodiodes with filters and mirrors)",
+              "confidence": 0.95,
+              "reasoning": "Unanimous agent support and high confidence, crucial for detection and measurement of fluorescence signals.",
+              "round": 3,
+              "normalized_component": "Optical Detection Module (Photomultiplier Tubes and Photodiodes with Filters and Mirrors)"
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "Sample Injection Port / Sample Handling Module",
+              "confidence": 0.82,
+              "reasoning": "Majority of agents selected this component with reasonable confidence. Important for sample introduction and handling, justifying inclusion.",
+              "round": 3,
+              "normalized_component": "Sample Injection Port and Sample Handling Module"
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "User Interface Module (Touchscreen display and control electronics)",
+              "confidence": 0.81,
+              "reasoning": "Selected by multiple agents with consistent confidence. Important for user interaction and control of the instrument.",
+              "round": 3,
+              "normalized_component": "Touchscreen Display and Control Electronics"
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "Enclosure and Structural Framework",
+              "confidence": 0.87,
+              "reasoning": "Selected by majority agents over alternate chassis/enclosure components. Structural and protective role important for instrument integrity and operation.",
+              "round": 3,
+              "normalized_component": "Enclosure and Structural Framework"
+            }
+          ],
+          "Agent_5": [
+            {
+              "agent_id": "Agent_5",
+              "component": "Laser Excitation Module",
+              "confidence": 0.98,
+              "reasoning": "Strong consensus with unanimous support from all agents and highest confidence score; critical for flow cytometer operation.",
+              "round": 3,
+              "normalized_component": "Laser Excitation Module"
+            },
+            {
+              "agent_id": "Agent_5",
+              "component": "Fluidics System (including sample injection, sheath fluid delivery, and flow cell)",
+              "confidence": 0.96,
+              "reasoning": "Unanimous support from all agents, high confidence, essential for sample delivery and flow control.",
+              "round": 3,
+              "normalized_component": "Fluidics System (Including Sample Injection, Sheath Fluid Delivery, and Flow Cell)"
+            },
+            {
+              "agent_id": "Agent_5",
+              "component": "Optical Detection Module (Photomultiplier tubes and photodiodes with filters and mirrors)",
+              "confidence": 0.95,
+              "reasoning": "Unanimous support from all agents; key component for detecting and quantifying the sample signals.",
+              "round": 3,
+              "normalized_component": "Optical Detection Module (Photomultiplier Tubes and Photodiodes with Filters and Mirrors)"
+            },
+            {
+              "agent_id": "Agent_5",
+              "component": "Sample Injection Port / Sample Handling Module",
+              "confidence": 0.82,
+              "reasoning": "Supported by majority of agents with moderate confidence; necessary for sample introduction and handling.",
+              "round": 3,
+              "normalized_component": "Sample Injection Port and Sample Handling Module"
+            },
+            {
+              "agent_id": "Agent_5",
+              "component": "User Interface Module (Touchscreen display and control electronics)",
+              "confidence": 0.81,
+              "reasoning": "Supported by multiple agents with moderate confidence; essential for user interaction and instrument control.",
+              "round": 3,
+              "normalized_component": "Touchscreen Display and Control Electronics"
+            },
+            {
+              "agent_id": "Agent_5",
+              "component": "Enclosure and Structural Framework",
+              "confidence": 0.87,
+              "reasoning": "Supported by several agents; provides mechanical support and protection, important but not duplicated by isolated chassis components.",
+              "round": 3,
+              "normalized_component": "Enclosure and Structural Framework"
+            }
+          ]
+        },
+        "rounds_completed": 3,
+        "support_analysis": {
+          "consensus": [],
+          "majority": [
+            "laser excitation",
+            "fluidics system (including sample injection, sheath fluid delivery, and flow cell)",
+            "optical detection module (photomultiplier tubes and photodiodes with filters and mirrors)",
+            "sample injection port / sample handling",
+            "user interface module (touchscreen display and control electronics)",
+            "enclosure and structural framework"
+          ],
+          "isolated": []
+        },
+        "critiques": [
+          {
+            "item_name": "Laser Excitation Module",
+            "normalized_name": "laser excitation",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_5",
+              "Agent_1",
+              "Agent_2",
+              "Agent_4"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.9800000000000001,
+            "critique_text": "Majority support for 'Laser Excitation Module': 5/3 agents agree (conf: 0.98). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Fluidics System (including sample injection, sheath fluid delivery, and flow cell)",
+            "normalized_name": "fluidics system (including sample injection, sheath fluid delivery, and flow cell)",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_5",
+              "Agent_1",
+              "Agent_2",
+              "Agent_4"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.96,
+            "critique_text": "Majority support for 'Fluidics System (including sample injection, sheath fluid delivery, and flow cell)': 5/3 agents agree (conf: 0.96). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Optical Detection Module (Photomultiplier tubes and photodiodes with filters and mirrors)",
+            "normalized_name": "optical detection module (photomultiplier tubes and photodiodes with filters and mirrors)",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_5",
+              "Agent_1",
+              "Agent_2",
+              "Agent_4"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.95,
+            "critique_text": "Majority support for 'Optical Detection Module (Photomultiplier tubes and photodiodes with filters and mirrors)': 5/3 agents agree (conf: 0.95). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Sample Injection Port / Sample Handling Module",
+            "normalized_name": "sample injection port / sample handling",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_5",
+              "Agent_1",
+              "Agent_2",
+              "Agent_4"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.82,
+            "critique_text": "Majority support for 'Sample Injection Port / Sample Handling Module': 5/3 agents agree (conf: 0.82). Consider strengthening consensus."
+          },
+          {
+            "item_name": "User Interface Module (Touchscreen display and control electronics)",
+            "normalized_name": "user interface module (touchscreen display and control electronics)",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_5",
+              "Agent_1",
+              "Agent_2",
+              "Agent_4"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.8100000000000002,
+            "critique_text": "Majority support for 'User Interface Module (Touchscreen display and control electronics)': 5/3 agents agree (conf: 0.81). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Enclosure and Structural Framework",
+            "normalized_name": "enclosure and structural framework",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_5",
+              "Agent_1",
+              "Agent_2",
+              "Agent_4"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.8699999999999999,
+            "critique_text": "Majority support for 'Enclosure and Structural Framework': 5/3 agents agree (conf: 0.87). Consider strengthening consensus."
+          }
+        ],
+        "changes_from_previous": {
+          "items_added": [],
+          "items_removed": [
+            "instrument chassis and enclosure",
+            "user interface display module (touchscreen lcd)",
+            "sample injection port (autosampler module)",
+            "chassis / instrument enclosure"
+          ],
+          "confidence_changes": {}
+        }
+      }
+    ],
+    "phase3_final_consensus": {
+      "technology": "Flow Cytometer",
+      "technology_specification": "Flow Cytometer",
+      "technology_reasoning": "",
+      "components": [
+        "Laser Excitation Module",
+        "Fluidics System (including Sample Injection, Sheath Fluid Delivery, And Flow Cell)",
+        "Optical Detection Module (photomultiplier Tubes And Photodiodes With Filters And Mirrors)",
+        "Enclosure And Structural Framework",
+        "Sample Injection Port And Sample Handling Module",
+        "Touchscreen Display And Control Electronics"
+      ],
+      "confidence": 1.0,
+      "rounds": 3,
+      "convergence_score": 1.0
+    }
+  },
+  "materials_debate": {
+    "debate_rounds": [],
+    "final_consensus": {
+      "components": 6,
+      "unique_materials": 8,
+      "total_assignments": 20,
+      "materials_by_component": {
+        "Laser Excitation Module": [
+          {
+            "name": "Aluminum gallium arsenide",
+            "confidence": 0.95,
+            "reasoning": "Used as the semiconductor in laser diodes for excitation, essential for light generation in the laser excitation module; industry standard with very few alternatives."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.85,
+            "reasoning": "Structural and heat dissipation component material in the module due to good thermal and mechanical properties; very commonly used but some alternatives exist."
+          },
+          {
+            "name": "Glass",
+            "confidence": 0.8,
+            "reasoning": "Optical components such as lenses or windows within the laser module require glass for clarity and transmission; commonly used with few substitutes."
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.7,
+            "reasoning": "Electrical conductors and heat sinks in the module employ copper for excellent conductivity; commonly used but some alternatives like silver or aluminum exist."
+          }
+        ],
+        "Fluidics System (including Sample Injection, Sheath Fluid Delivery, And Flow Cell)": [
+          {
+            "name": "Glass",
+            "confidence": 0.9,
+            "reasoning": "Flow cells are typically made with glass for chemical resistance and optical clarity, essential for accurate detection; standard in fluidic channels."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.7,
+            "reasoning": "Used for structural parts of the fluidic system housing due to lightweight and machinability; moderately common with alternatives like stainless steel."
+          },
+          {
+            "name": "Silicon",
+            "confidence": 0.65,
+            "reasoning": "Used in sensor or microfluidic chips integrated in some fluidics systems for detection or flow control; moderately common in advanced systems."
+          }
+        ],
+        "Optical Detection Module (photomultiplier Tubes And Photodiodes With Filters And Mirrors)": [
+          {
+            "name": "Photomultiplier tube materials",
+            "confidence": 0.95,
+            "reasoning": "Critical raw materials specialized for photomultiplier tube fabrication, indispensable for signal detection with no alternatives."
+          },
+          {
+            "name": "Silicon",
+            "confidence": 0.9,
+            "reasoning": "Primary semiconductor material for photodiodes; standard and essential semiconductor in detection modules."
+          },
+          {
+            "name": "Glass",
+            "confidence": 0.85,
+            "reasoning": "Used in lenses, optical filters, and windows due to optical clarity and mechanical properties."
+          },
+          {
+            "name": "Silver",
+            "confidence": 0.7,
+            "reasoning": "Used in coatings and mirrors for high reflectivity; commonly used but alternatives like aluminum exist."
+          }
+        ],
+        "Enclosure And Structural Framework": [
+          {
+            "name": "Aluminum",
+            "confidence": 0.9,
+            "reasoning": "Widely used lightweight metal for the enclosure and framework due to strength and corrosion resistance; industry standard."
+          },
+          {
+            "name": "Steel Ingots",
+            "confidence": 0.75,
+            "reasoning": "Used for structural framework components requiring higher strength; common alternative to aluminum."
+          },
+          {
+            "name": "Glass",
+            "confidence": 0.6,
+            "reasoning": "Used in viewing windows or panels; moderately common with alternatives depending on design."
+          }
+        ],
+        "Sample Injection Port And Sample Handling Module": [
+          {
+            "name": "Glass",
+            "confidence": 0.85,
+            "reasoning": "Material for fluidic pathways and ports providing chemical resistance and optical clarity; very commonly used."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.65,
+            "reasoning": "Structural components in the sample handling module due to machinability; moderately common but alternatives exist."
+          },
+          {
+            "name": "Silicon",
+            "confidence": 0.7,
+            "reasoning": "Used in microfluidic chips or sensors integrated in sample handling; common in advanced modules."
+          }
+        ],
+        "Touchscreen Display And Control Electronics": [
+          {
+            "name": "Glass",
+            "confidence": 0.9,
+            "reasoning": "Display substrate material providing clarity and durability; universally used in touchscreen displays."
+          },
+          {
+            "name": "Silicon",
+            "confidence": 0.95,
+            "reasoning": "Base semiconductor material for electronic control circuits and touchscreen sensing; absolutely essential."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.6,
+            "reasoning": "Used in components such as heat sinks or structural parts within the electronics; moderately common with alternatives."
+          }
+        ]
+      }
+    }
+  }
+}

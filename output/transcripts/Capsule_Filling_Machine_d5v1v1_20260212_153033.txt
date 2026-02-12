@@ -1,0 +1,703 @@
+================================================================================
+STDN ANALYSIS: Capsule Filling Machine
+Generated: 2026-02-12 15:59:20
+================================================================================
+
+LEGEND
+--------------------------------------------------------------------------------
+Support Levels:
+  [C] CONSENSUS  - All agents agree (3/3)
+  [M] MAJORITY   - Majority agrees (2/3)
+  [I] ISOLATED   - Single agent only (1/3)
+
+Confidence Scale: 0.0-1.0 (higher = more certain)
+  0.9-1.0: High certainty - universal/essential
+  0.7-0.9: Confident - industry standard
+  0.5-0.7: Moderate - common but varies
+  <0.5:    Low - optional or uncertain
+
+================================================================================
+TECHNOLOGY SPECIFICATION
+================================================================================
+
+Query: Capsule Filling Machine
+Specification: Capsule Filling Machine
+
+================================================================================
+STAGE 1: COMPONENT EXTRACTION
+================================================================================
+
+ROUND 1: Independent Proposals
+--------------------------------------------------------------------------------
+
+Agent_1 (Expert):
+  • Turret Assembly (1.00) - This is the primary mechanical subassembly that holds capsul...
+  • Dosator or Dosing System (0.95) - The dosing mechanism (such as dosator, tamping pin, or auger...
+  • Feeding Hopper and Capsule Feeding System (0.90) - This subsystem manages the capsule feeding and orientation b...
+  • Control Panel and PLC Unit (0.95) - The electronic control unit, including programmable logic co...
+  • Filling Station Module (0.90) - Includes the tooling and encapsulation units performing actu...
+  • Capsule Orientation and Separation System (0.85) - Mechanism that correctly opens, separates, and re-closes cap...
+  • Punch and Die Assembly (0.80) - If applicable (in some rotary machines), the punch and die s...
+  • Air Compression and Vacuum System (0.75) - Necessary for capsule handling and filling processes, often ...
+  • Frame and Machine Housing (0.80) - Structural framework that supports all modules; often procur...
+
+Agent_2 (Expert):
+  • Rotary Turret Assembly (0.98) - Central rotating drum that indexes capsules through filling ...
+  • Capsule Feeding Hopper (0.95) - A distinct unit that stores and feeds empty capsule halves i...
+  • Filling Station Module (0.94) - Includes dosing devices and powder/particle feeders; often m...
+  • Capsule Sealing Station (0.88) - Mechanical or ultrasonic system that locks capsule halves af...
+  • Machine Frame and Support Structure (0.90) - The structural chassis providing mechanical support and hous...
+  • Control Panel and Electronics Enclosure (0.86) - Housing for PLC controllers and operator interface units, ma...
+  • Capsule Orientation and Feeding Mechanism (0.87) - Mechanized system that orients and feeds capsule bodies and ...
+  • Sieving and Dedusting Unit (0.75) - Separate module that removes dust and fine powder from capsu...
+  • Drive Motor and Transmission Assembly (0.92) - Electric motor coupled with gear transmission providing moti...
+
+Agent_3 (Expert):
+  • Filling Turret Assembly (0.98) - The filling turret is a key mechanical subassembly that hold...
+  • Dosator or Volumetric Dosing System (0.95) - This is the core metering component responsible for dose acc...
+  • Capsule Feeding System (0.90) - Includes orientation and feeding mechanisms such as vibrator...
+  • Cam and Drive Mechanism (0.85) - Mechanical drive and motion control subassembly that powers ...
+  • Control System (PLC and HMI) (0.92) - Programmable logic controller and touchscreen interface unit...
+  • Compressed Air System (Valves and Actuators) (0.80) - Pneumatic components including valves and actuators, critica...
+  • Capsule Sealing and Closing Station (0.88) - Subassembly dedicated to closing filled capsules, a speciali...
+  • Frame and Structural Assembly (0.90) - The engineered chassis and structural supports that house ot...
+  • Vacuum System (if applicable) (0.70) - Some machines include vacuum to hold capsules or remove dust...
+
+Agent_4 (Expert):
+  • Capsule Feeding and Separation Unit (0.95) - This subsystem is essential for orienting, separating, and f...
+  • Filling Dispensing System (0.98) - The core functional module that delivers precise amounts of ...
+  • Cam and Turret Mechanism (0.90) - Mechanical assembly that indexes and synchronizes capsule pa...
+  • Control Panel and PLC System (0.92) - Includes programmable logic controller and user interface fo...
+  • Compression and Locking Station (0.88) - Subassembly that compresses capsule contents and locks capsu...
+  • Infeed and Outfeed Conveyor Modules (0.85) - Conveyance modules are distinct mechanical subsystems respon...
+  • Vacuum and Air Supply System (0.80) - Includes vacuum pumps and pneumatic components that assist c...
+  • Lubrication System (0.65) - Automated lubrication unit that ensures proper operation of ...
+  • Safety Guarding and Enclosure (0.75) - Protective physical structures and safety interlocks are oft...
+  • Electrical Cabinet and Wiring Harness (0.78) - Enclosure housing electrical components and wiring; typicall...
+
+Agent_5 (Expert):
+  • Capsule Feeding and Orientation System (0.95) - This subsystem ensures continuous supply and correct orienta...
+  • Filling Station (Dosing Mechanism) (0.98) - Core functional unit responsible for precise measurement and...
+  • Turret or Indexing Table (0.90) - Mechanical assembly that holds capsules and indexes them thr...
+  • Capsule Closing Mechanism (0.92) - Separate mechanical module dedicated to joining capsule halv...
+  • Control Panel with PLC and HMI (0.95) - Electronic control system including programmable logic contr...
+  • Feeding Hopper (0.85) - Storage container for bulk powder or pellets feeding the fil...
+  • Discharge Conveyor or Output System (0.80) - Transports filled and sealed capsules out of the machine for...
+  • Drive System (Motors and Gearboxes) (0.90) - Electric motor and gearbox assemblies powering mechanical mo...
+  • Dust Collection or Vacuum System (0.70) - Subsystem to capture excess powder and maintain clean enviro...
+
+Initial Support Analysis:
+  [I] Isolated (45 items):
+      • Turret Assembly (1.00) - needs peer support
+      • Rotary Turret Assembly (0.98) - needs peer support
+      • Filling Turret Assembly (0.98) - needs peer support
+
+ROUND 2: Consensus Reached
+--------------------------------------------------------------------------------
+Convergence: 76.1% ✓ (threshold reached)
+
+Changes from Previous Round:
+  + Added: vacuum and air supply, vacuum system (if applicable), frame and structural
+  - Removed: safety guarding and enclosure, capsule feeding, cam and drive mechanism, compressed air system (valves and actuators), capsule sealing station (+11 more)
+
+Key Critiques:
+  [C] 1 items have full consensus
+  [I] Vacuum and Air Supply System (conf: 0.74) - needs peer support
+
+Round 2 Support Analysis:
+  [C] Consensus (1 items):
+      • frame and structural
+  [M] Majority (7 items):
+      • rotary turret - partial agreement
+      • capsule feeding hopper - partial agreement
+      • control panel with plc and hmi - partial agreement
+      • filling station (dosing mechanism) - partial agreement
+      • capsule orientation and separation - partial agreement
+      ... and 2 more
+  [I] Isolated (1 items):
+      • vacuum and air supply - needs peer support
+
+================================================================================
+FINAL CONSENSUS: Components
+================================================================================
+
+Rounds Completed: 2
+Final Convergence: 76.1%
+Components Selected: 7
+
+  1. Rotary Turret
+  2. Filling Station (dosing Mechanism)
+  3. Control Panel With Plc And Hmi
+  4. Capsule Orientation And Separation System
+  5. Feeding System Assembly With Feed Frame And Hopper
+  6. Vacuum System
+  7. Support Structure Or Frame
+
+================================================================================
+END OF COMPONENT EXTRACTION
+================================================================================
+
+
+================================================================================
+MATERIALS EXTRACTION DEBATE
+================================================================================
+
+COMPONENTS PROCESSED:
+--------------------------------------------------------------------------------
+Total Components: 7
+  - Rotary Turret
+  - Filling Station (dosing Mechanism)
+  - Control Panel With Plc And Hmi
+  - Capsule Orientation And Separation System
+  - Feeding System Assembly With Feed Frame And Hopper
+  - Vacuum System
+  - Support Structure Or Frame
+
+================================================================================
+MATERIAL DEBATE ROUNDS
+================================================================================
+
+================================================================================
+FINAL MATERIAL ASSIGNMENTS
+================================================================================
+
+Components: 7
+Unique Materials: 11
+Total Assignments: 28
+
+Materials by Component:
+--------------------------------------------------------------------------------
+
+Capsule Orientation And Separation System:
+  • Stainless steel (SS 304/316) (confidence: 0.90)
+    → Critical for contact parts for durability, hygiene, and corrosion resistance; industry standard.
+  • Aluminum (confidence: 0.75)
+    → Used in non-contact or lighter structural parts to reduce weight; standard material.
+  • Polypropylene (confidence: 0.65)
+    → Used for parts needing moderate strength and chemical resistance; common plastic choice.
+  • PTFE (confidence: 0.60)
+    → Used for low-friction surfaces and seals in capsule handling to prevent damage; common material.
+
+Control Panel With Plc And Hmi:
+  • Silicon (confidence: 1.00)
+    → Core semiconductor material for integrated circuits in PLCs and HMIs; absolutely essential.
+  • Copper (confidence: 0.90)
+    → Primary electrical conductor in circuit boards and wiring; universally used in electronics.
+  • Glass (confidence: 0.85)
+    → Used for display screens and protective windows; standard in HMI interfaces.
+  • Polycarbonate (confidence: 0.75)
+    → For protective housings and clear panels; commonly used plastic in electronics enclosures.
+  • Aluminum (confidence: 0.70)
+    → Used for heat sinks and panel housings; common but alternatives exist.
+
+Feeding System Assembly With Feed Frame And Hopper:
+  • Stainless steel (SS 304/316) (confidence: 0.95)
+    → Essential for feed frames and hoppers in contact with product for strength and hygiene.
+  • Aluminum (confidence: 0.70)
+    → Used for hopper and frame parts to reduce weight where corrosion resistance is less critical.
+  • Polypropylene (confidence: 0.60)
+    → Used for non-structural parts or liners, providing chemical resistance and ease of cleaning.
+  • Polyethylene terephthalate (confidence: 0.55)
+    → Potentially used in covers or sight windows; alternatives exist but common plastic.
+
+Filling Station (dosing Mechanism):
+  • Stainless steel (SS 304/316) (confidence: 0.95)
+    → Essential for food contact parts due to corrosion resistance, hygiene, and strength; standard in dosing mechanisms.
+  • Aluminum (confidence: 0.75)
+    → Used in some non-critical structural parts to reduce weight; often combined with stainless steel parts.
+  • PTFE (confidence: 0.70)
+    → Used for friction reduction and chemical resistance in seals and sliding parts; common in dosing devices.
+  • Polypropylene (confidence: 0.60)
+    → Used for non-metallic contact parts and housings; alternatives exist but common in pharmaceutical equipment.
+
+Rotary Turret:
+  • Stainless steel (SS 304/316) (confidence: 0.95)
+    → Used for structural and mechanical parts due to corrosion resistance and strength; industry standard material for precision rotating components.
+  • Aluminum (confidence: 0.85)
+    → Common for turret parts to reduce weight; used widely due to good strength-to-weight ratio and machinability.
+  • Polyethylene terephthalate (confidence: 0.65)
+    → Sometimes used for non-load bearing covers or protective shields; alternative plastics may exist.
+  • Polypropylene (confidence: 0.50)
+    → Possible alternative plastic material for turret components but less common than PET or metal parts.
+
+Support Structure Or Frame:
+  • Stainless steel (SS 304/316) (confidence: 0.95)
+    → Primary structural material for machine support due to strength and corrosion resistance.
+  • Aluminum (confidence: 0.80)
+    → Used in some frame components to reduce weight and maintain rigidity; common alternative to steel.
+  • Steel Ingots (confidence: 0.70)
+    → Base feedstock for steel parts including frames; indirect material but essential in steel manufacturing.
+
+Vacuum System:
+  • Stainless steel (SS 304/316) (confidence: 0.90)
+    → Used for vacuum chamber and piping for corrosion resistance and structural integrity.
+  • Vacuum pump materials (confidence: 0.80)
+    → Specialized materials for pump internals and seals; essential for vacuum function though composition varies.
+  • PTFE (confidence: 0.75)
+    → Common for sealing components due to chemical inertness and vacuum compatibility.
+  • Aluminum (confidence: 0.70)
+    → Used for some structural parts where weight reduction is desired; less common than steel.
+
+================================================================================
+END OF COMBINED TRANSCRIPT
+================================================================================
+
+
+============================================================
+TOP PRODUCING COUNTRIES: Vacuum pump materials
+Data Source: LLM Fallback Cache
+============================================================
+1. China
+   Production: 0.00 metric tons
+   Global Share: 45.0%
+   Confidence: 0.90
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Vacuum pump materials
+2. United States
+   Production: 0.00 metric tons
+   Global Share: 20.0%
+   Confidence: 0.85
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Vacuum pump materials
+3. Japan
+   Production: 0.00 metric tons
+   Global Share: 15.0%
+   Confidence: 0.80
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Vacuum pump materials
+4. Germany
+   Production: 0.00 metric tons
+   Global Share: 12.0%
+   Confidence: 0.80
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Vacuum pump materials
+5. South Korea
+   Production: 0.00 metric tons
+   Global Share: 8.0%
+   Confidence: 0.75
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Vacuum pump materials
+============================================================
+
+
+================================================================================
+COUNTRY PRODUCTION DATA
+================================================================================
+
+Capsule Orientation And Separation System:
+--------------------------------------------------------------------------------
+
+  Material: Aluminum
+  Confidence: 0.750
+  Countries (5):
+    • CHINA: 41000.0 THOUSAND METRIC TONS (58.57%)
+      Confidence: 0.950
+    • OTHER: 7000.0 THOUSAND METRIC TONS (10.0%)
+      Confidence: 0.950
+    • INDIA: 4100.0 THOUSAND METRIC TONS (5.86%)
+      Confidence: 0.950
+    • RUSSIA: 3800.0 THOUSAND METRIC TONS (5.43%)
+      Confidence: 0.950
+    • CANADA: 3000.0 THOUSAND METRIC TONS (4.29%)
+      Confidence: 0.950
+
+  Material: PTFE
+  Confidence: 0.600
+  Countries (5):
+    • China: 0.0 metric tons (55.0%)
+      Confidence: 0.900
+    • United States: 0.0 metric tons (20.0%)
+      Confidence: 0.850
+    • Japan: 0.0 metric tons (10.0%)
+      Confidence: 0.800
+    • Germany: 0.0 metric tons (8.0%)
+      Confidence: 0.750
+    • South Korea: 0.0 metric tons (7.0%)
+      Confidence: 0.700
+
+  Material: Polypropylene
+  Confidence: 0.650
+  Countries (5):
+    • China: 0.0 metric tons (30.0%)
+      Confidence: 0.900
+    • United States: 0.0 metric tons (25.0%)
+      Confidence: 0.900
+    • India: 0.0 metric tons (12.0%)
+      Confidence: 0.800
+    • South Korea: 0.0 metric tons (10.0%)
+      Confidence: 0.800
+    • Saudi Arabia: 0.0 metric tons (8.0%)
+      Confidence: 0.800
+
+  Material: Stainless steel (SS 304/316)
+  Confidence: 0.900
+  Countries (5):
+    • Nigeria: 0.0 metric tons (18.0%)
+      Confidence: 0.920
+    • Russia: 0.0 metric tons (15.0%)
+      Confidence: 0.900
+    • India: 0.0 metric tons (10.0%)
+      Confidence: 0.850
+    • Australia: 0.0 metric tons (13.0%)
+      Confidence: 0.950
+    • Indonesia: 0.0 metric tons (10.0%)
+      Confidence: 0.870
+
+Control Panel With Plc And Hmi:
+--------------------------------------------------------------------------------
+
+  Material: Aluminum
+  Confidence: 0.700
+  Countries (5):
+    • CHINA: 41000.0 THOUSAND METRIC TONS (58.57%)
+      Confidence: 0.950
+    • OTHER: 7000.0 THOUSAND METRIC TONS (10.0%)
+      Confidence: 0.950
+    • INDIA: 4100.0 THOUSAND METRIC TONS (5.86%)
+      Confidence: 0.950
+    • RUSSIA: 3800.0 THOUSAND METRIC TONS (5.43%)
+      Confidence: 0.950
+    • CANADA: 3000.0 THOUSAND METRIC TONS (4.29%)
+      Confidence: 0.950
+
+  Material: Copper
+  Confidence: 0.900
+  Countries (5):
+    • CHINA: 1700.0 THOUSAND METRIC TONS (3.47%)
+      Confidence: 0.950
+    • CHILE: 5000.0 THOUSAND METRIC TONS (10.2%)
+      Confidence: 0.950
+    • OTHER: 3100.0 THOUSAND METRIC TONS (6.33%)
+      Confidence: 0.950
+    • CONGO: 2500.0 THOUSAND METRIC TONS (5.1%)
+      Confidence: 0.950
+    • PERU: 2600.0 THOUSAND METRIC TONS (5.31%)
+      Confidence: 0.950
+
+  Material: Glass
+  Confidence: 0.850
+  Countries (5):
+    • China: 0.0 metric tons (63.0%)
+      Confidence: 0.950
+    • United States: 0.0 metric tons (12.0%)
+      Confidence: 0.900
+    • Germany: 0.0 metric tons (7.0%)
+      Confidence: 0.850
+    • India: 0.0 metric tons (6.0%)
+      Confidence: 0.800
+    • Japan: 0.0 metric tons (5.0%)
+      Confidence: 0.800
+
+  Material: Polycarbonate
+  Confidence: 0.750
+  Countries (5):
+    • China: 0.0 metric tons (52.0%)
+      Confidence: 0.900
+    • South Korea: 0.0 metric tons (15.0%)
+      Confidence: 0.850
+    • United States: 0.0 metric tons (10.0%)
+      Confidence: 0.850
+    • Germany: 0.0 metric tons (8.0%)
+      Confidence: 0.800
+    • Japan: 0.0 metric tons (7.0%)
+      Confidence: 0.800
+
+  Material: Silicon
+  Confidence: 1.000
+  Countries (5):
+    • CHINA: 3600.0 THOUSAND METRIC TONS (40.0%)
+      Confidence: 0.950
+    • RUSSIA: 570.0 THOUSAND METRIC TONS (6.33%)
+      Confidence: 0.950
+    • BRAZIL: 190.0 THOUSAND METRIC TONS (2.11%)
+      Confidence: 0.950
+    • NORWAY: 200.0 THOUSAND METRIC TONS (2.22%)
+      Confidence: 0.950
+    • OTHER: 100.0 THOUSAND METRIC TONS (1.11%)
+      Confidence: 0.950
+
+Feeding System Assembly With Feed Frame And Hopper:
+--------------------------------------------------------------------------------
+
+  Material: Aluminum
+  Confidence: 0.700
+  Countries (5):
+    • CHINA: 41000.0 THOUSAND METRIC TONS (58.57%)
+      Confidence: 0.950
+    • OTHER: 7000.0 THOUSAND METRIC TONS (10.0%)
+      Confidence: 0.950
+    • INDIA: 4100.0 THOUSAND METRIC TONS (5.86%)
+      Confidence: 0.950
+    • RUSSIA: 3800.0 THOUSAND METRIC TONS (5.43%)
+      Confidence: 0.950
+    • CANADA: 3000.0 THOUSAND METRIC TONS (4.29%)
+      Confidence: 0.950
+
+  Material: Polyethylene terephthalate
+  Confidence: 0.550
+  Countries (5):
+    • China: 0.0 metric tons (35.0%)
+      Confidence: 0.950
+    • Saudi Arabia: 0.0 metric tons (17.0%)
+      Confidence: 0.900
+    • South Korea: 0.0 metric tons (15.0%)
+      Confidence: 0.850
+    • Turkey: 0.0 metric tons (12.0%)
+      Confidence: 0.800
+    • United States: 0.0 metric tons (10.0%)
+      Confidence: 0.750
+
+  Material: Polypropylene
+  Confidence: 0.600
+  Countries (5):
+    • China: 0.0 metric tons (30.0%)
+      Confidence: 0.900
+    • United States: 0.0 metric tons (25.0%)
+      Confidence: 0.900
+    • India: 0.0 metric tons (12.0%)
+      Confidence: 0.800
+    • South Korea: 0.0 metric tons (10.0%)
+      Confidence: 0.800
+    • Saudi Arabia: 0.0 metric tons (8.0%)
+      Confidence: 0.800
+
+  Material: Stainless steel (SS 304/316)
+  Confidence: 0.950
+  Countries (5):
+    • Nigeria: 0.0 metric tons (18.0%)
+      Confidence: 0.920
+    • Russia: 0.0 metric tons (15.0%)
+      Confidence: 0.900
+    • India: 0.0 metric tons (10.0%)
+      Confidence: 0.850
+    • Australia: 0.0 metric tons (13.0%)
+      Confidence: 0.950
+    • Indonesia: 0.0 metric tons (10.0%)
+      Confidence: 0.870
+
+Filling Station (dosing Mechanism):
+--------------------------------------------------------------------------------
+
+  Material: Aluminum
+  Confidence: 0.750
+  Countries (5):
+    • CHINA: 41000.0 THOUSAND METRIC TONS (58.57%)
+      Confidence: 0.950
+    • OTHER: 7000.0 THOUSAND METRIC TONS (10.0%)
+      Confidence: 0.950
+    • INDIA: 4100.0 THOUSAND METRIC TONS (5.86%)
+      Confidence: 0.950
+    • RUSSIA: 3800.0 THOUSAND METRIC TONS (5.43%)
+      Confidence: 0.950
+    • CANADA: 3000.0 THOUSAND METRIC TONS (4.29%)
+      Confidence: 0.950
+
+  Material: PTFE
+  Confidence: 0.700
+  Countries (5):
+    • China: 0.0 metric tons (55.0%)
+      Confidence: 0.900
+    • United States: 0.0 metric tons (20.0%)
+      Confidence: 0.850
+    • Japan: 0.0 metric tons (10.0%)
+      Confidence: 0.800
+    • Germany: 0.0 metric tons (8.0%)
+      Confidence: 0.750
+    • South Korea: 0.0 metric tons (7.0%)
+      Confidence: 0.700
+
+  Material: Polypropylene
+  Confidence: 0.600
+  Countries (5):
+    • China: 0.0 metric tons (30.0%)
+      Confidence: 0.900
+    • United States: 0.0 metric tons (25.0%)
+      Confidence: 0.900
+    • India: 0.0 metric tons (12.0%)
+      Confidence: 0.800
+    • South Korea: 0.0 metric tons (10.0%)
+      Confidence: 0.800
+    • Saudi Arabia: 0.0 metric tons (8.0%)
+      Confidence: 0.800
+
+  Material: Stainless steel (SS 304/316)
+  Confidence: 0.950
+  Countries (5):
+    • Nigeria: 0.0 metric tons (18.0%)
+      Confidence: 0.920
+    • Russia: 0.0 metric tons (15.0%)
+      Confidence: 0.900
+    • India: 0.0 metric tons (10.0%)
+      Confidence: 0.850
+    • Australia: 0.0 metric tons (13.0%)
+      Confidence: 0.950
+    • Indonesia: 0.0 metric tons (10.0%)
+      Confidence: 0.870
+
+Rotary Turret:
+--------------------------------------------------------------------------------
+
+  Material: Aluminum
+  Confidence: 0.850
+  Countries (5):
+    • CHINA: 41000.0 THOUSAND METRIC TONS (58.57%)
+      Confidence: 0.950
+    • OTHER: 7000.0 THOUSAND METRIC TONS (10.0%)
+      Confidence: 0.950
+    • INDIA: 4100.0 THOUSAND METRIC TONS (5.86%)
+      Confidence: 0.950
+    • RUSSIA: 3800.0 THOUSAND METRIC TONS (5.43%)
+      Confidence: 0.950
+    • CANADA: 3000.0 THOUSAND METRIC TONS (4.29%)
+      Confidence: 0.950
+
+  Material: Polyethylene terephthalate
+  Confidence: 0.650
+  Countries (5):
+    • China: 0.0 metric tons (35.0%)
+      Confidence: 0.950
+    • Saudi Arabia: 0.0 metric tons (17.0%)
+      Confidence: 0.900
+    • South Korea: 0.0 metric tons (15.0%)
+      Confidence: 0.850
+    • Turkey: 0.0 metric tons (12.0%)
+      Confidence: 0.800
+    • United States: 0.0 metric tons (10.0%)
+      Confidence: 0.750
+
+  Material: Polypropylene
+  Confidence: 0.500
+  Countries (5):
+    • China: 0.0 metric tons (30.0%)
+      Confidence: 0.900
+    • United States: 0.0 metric tons (25.0%)
+      Confidence: 0.900
+    • India: 0.0 metric tons (12.0%)
+      Confidence: 0.800
+    • South Korea: 0.0 metric tons (10.0%)
+      Confidence: 0.800
+    • Saudi Arabia: 0.0 metric tons (8.0%)
+      Confidence: 0.800
+
+  Material: Stainless steel (SS 304/316)
+  Confidence: 0.950
+  Countries (5):
+    • Nigeria: 0.0 metric tons (18.0%)
+      Confidence: 0.920
+    • Russia: 0.0 metric tons (15.0%)
+      Confidence: 0.900
+    • India: 0.0 metric tons (10.0%)
+      Confidence: 0.850
+    • Australia: 0.0 metric tons (13.0%)
+      Confidence: 0.950
+    • Indonesia: 0.0 metric tons (10.0%)
+      Confidence: 0.870
+
+Support Structure Or Frame:
+--------------------------------------------------------------------------------
+
+  Material: Aluminum
+  Confidence: 0.800
+  Countries (5):
+    • CHINA: 41000.0 THOUSAND METRIC TONS (58.57%)
+      Confidence: 0.950
+    • OTHER: 7000.0 THOUSAND METRIC TONS (10.0%)
+      Confidence: 0.950
+    • INDIA: 4100.0 THOUSAND METRIC TONS (5.86%)
+      Confidence: 0.950
+    • RUSSIA: 3800.0 THOUSAND METRIC TONS (5.43%)
+      Confidence: 0.950
+    • CANADA: 3000.0 THOUSAND METRIC TONS (4.29%)
+      Confidence: 0.950
+
+  Material: Stainless steel (SS 304/316)
+  Confidence: 0.950
+  Countries (5):
+    • Nigeria: 0.0 metric tons (18.0%)
+      Confidence: 0.920
+    • Russia: 0.0 metric tons (15.0%)
+      Confidence: 0.900
+    • India: 0.0 metric tons (10.0%)
+      Confidence: 0.850
+    • Australia: 0.0 metric tons (13.0%)
+      Confidence: 0.950
+    • Indonesia: 0.0 metric tons (10.0%)
+      Confidence: 0.870
+
+  Material: Steel Ingots
+  Confidence: 0.700
+  Countries (5):
+    • China: 0.0 metric tons (52.0%)
+      Confidence: 0.950
+    • Japan: 0.0 metric tons (6.0%)
+      Confidence: 0.900
+    • India: 0.0 metric tons (5.0%)
+      Confidence: 0.900
+    • South Korea: 0.0 metric tons (5.0%)
+      Confidence: 0.850
+    • Germany: 0.0 metric tons (4.0%)
+      Confidence: 0.850
+
+Vacuum System:
+--------------------------------------------------------------------------------
+
+  Material: Aluminum
+  Confidence: 0.700
+  Countries (5):
+    • CHINA: 41000.0 THOUSAND METRIC TONS (58.57%)
+      Confidence: 0.950
+    • OTHER: 7000.0 THOUSAND METRIC TONS (10.0%)
+      Confidence: 0.950
+    • INDIA: 4100.0 THOUSAND METRIC TONS (5.86%)
+      Confidence: 0.950
+    • RUSSIA: 3800.0 THOUSAND METRIC TONS (5.43%)
+      Confidence: 0.950
+    • CANADA: 3000.0 THOUSAND METRIC TONS (4.29%)
+      Confidence: 0.950
+
+  Material: PTFE
+  Confidence: 0.750
+  Countries (5):
+    • China: 0.0 metric tons (55.0%)
+      Confidence: 0.900
+    • United States: 0.0 metric tons (20.0%)
+      Confidence: 0.850
+    • Japan: 0.0 metric tons (10.0%)
+      Confidence: 0.800
+    • Germany: 0.0 metric tons (8.0%)
+      Confidence: 0.750
+    • South Korea: 0.0 metric tons (7.0%)
+      Confidence: 0.700
+
+  Material: Stainless steel (SS 304/316)
+  Confidence: 0.900
+  Countries (5):
+    • Nigeria: 0.0 metric tons (18.0%)
+      Confidence: 0.920
+    • Russia: 0.0 metric tons (15.0%)
+      Confidence: 0.900
+    • India: 0.0 metric tons (10.0%)
+      Confidence: 0.850
+    • Australia: 0.0 metric tons (13.0%)
+      Confidence: 0.950
+    • Indonesia: 0.0 metric tons (10.0%)
+      Confidence: 0.870
+
+  Material: Vacuum pump materials
+  Confidence: 0.800
+  Countries (5):
+    • China: 0.0 metric tons (45.0%)
+      Confidence: 0.900
+    • United States: 0.0 metric tons (20.0%)
+      Confidence: 0.850
+    • Japan: 0.0 metric tons (15.0%)
+      Confidence: 0.800
+    • Germany: 0.0 metric tons (12.0%)
+      Confidence: 0.800
+    • South Korea: 0.0 metric tons (8.0%)
+      Confidence: 0.750
+
+
+================================================================================
+SUMMARY
+================================================================================
+Total records: 140
+Components: 7
+Unique materials: 11
+Records with country  140
+Average country confidence: 0.886

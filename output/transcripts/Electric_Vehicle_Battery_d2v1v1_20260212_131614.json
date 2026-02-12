@@ -1,0 +1,867 @@
+{
+  "version": "2.0",
+  "metadata": {
+    "technology": "Electric Vehicle Battery",
+    "technology_specification": "Electric Vehicle Battery",
+    "technology_reasoning": "",
+    "timestamp": "2026-02-12T13:18:40.302667",
+    "format_version": "2.0"
+  },
+  "config": {
+    "num_agents": 2,
+    "max_rounds": 2
+  },
+  "component_stage": {
+    "phase1_initial_proposals": [
+      {
+        "agent_id": "Agent_1",
+        "components": [
+          {
+            "name": "Battery Cell Module",
+            "confidence": 0.98,
+            "reasoning": "The fundamental energy storage unit composed of multiple lithium-ion cells assembled into modules; distinct and universally present as a separately manufactured subassembly."
+          },
+          {
+            "name": "Battery Management System (BMS)",
+            "confidence": 0.95,
+            "reasoning": "An electronic control module vital for monitoring and balancing cells' state of charge and health, typically procured as a separate unit integrated with the pack."
+          },
+          {
+            "name": "Thermal Management System",
+            "confidence": 0.9,
+            "reasoning": "Includes cooling plates, pumps, and fluid circuits to maintain optimal temperature; usually a separately designed and supplied subassembly to ensure performance and longevity."
+          },
+          {
+            "name": "Pack Enclosure/Case",
+            "confidence": 0.9,
+            "reasoning": "The structural housing that protects internal components and provides mechanical integrity, typically fabricated and procured separately from internal modules."
+          },
+          {
+            "name": "High Voltage Wiring Harness",
+            "confidence": 0.85,
+            "reasoning": "The integrated electrical cabling assembly connecting modules, BMS, and external vehicle systems; distinct and often supplied as a separate component."
+          },
+          {
+            "name": "Contactors and Fuses",
+            "confidence": 0.8,
+            "reasoning": "Electrical safety and switching components that are procured separately and integrated into the pack for controlling power flow and protection."
+          },
+          {
+            "name": "Busbars and Electrical Interconnects",
+            "confidence": 0.85,
+            "reasoning": "Metallic connectors that link cells/modules electrically; distinct components manufactured separately for assembly into the battery pack."
+          },
+          {
+            "name": "Service Disconnect Unit",
+            "confidence": 0.75,
+            "reasoning": "A high-voltage isolation device allowing safe disconnection of the battery pack; a standardized safety component often procured separately."
+          },
+          {
+            "name": "Battery Control Unit (BCU)",
+            "confidence": 0.7,
+            "reasoning": "Sometimes separated from the BMS, this controller manages higher-level battery functions and vehicle integration; presence and separation vary by manufacturer."
+          }
+        ],
+        "technology_specification": "Lithium-ion battery pack for electric vehicles (EVs) using NMC (Nickel Manganese Cobalt) or similar cathode chemistry with integrated battery management and thermal management systems.",
+        "technology_reasoning": "Lithium-ion battery packs with NMC chemistry dominate the EV market as of 2024 due to their high energy density, safety, and cost-effectiveness, comprising over 80% of EV battery capacity produced globally. These packs are complex assemblies procured as modular units integrating cells, management electronics, and thermal systems."
+      },
+      {
+        "agent_id": "Agent_2",
+        "components": [
+          {
+            "name": "Cell Modules (Lithium-ion Cells Aggregated into Modules)",
+            "confidence": 0.98,
+            "reasoning": "Fundamental functional unit composed of multiple lithium-ion cells assembled into modules; universally procured as distinct subassemblies within battery packs."
+          },
+          {
+            "name": "Battery Management System (BMS) Unit",
+            "confidence": 0.95,
+            "reasoning": "Electronic subsystem responsible for monitoring and balancing cell voltages and temperatures; typically supplied as a separate module integrated into the pack."
+          },
+          {
+            "name": "Battery Pack Enclosure (Housing)",
+            "confidence": 0.95,
+            "reasoning": "Rigid structural casing made of metals (e.g., aluminum alloy) or composites that protects internal components and provides mechanical strength; always a separately manufactured component."
+          },
+          {
+            "name": "Cooling System Assembly (Liquid or Air Cooling)",
+            "confidence": 0.9,
+            "reasoning": "Dedicated thermal management apparatus including cold plates, pumps, and heat exchangers designed for temperature control; commonly procured as an integrated subassembly."
+          },
+          {
+            "name": "Electrical Interconnects and Busbars Assembly",
+            "confidence": 0.85,
+            "reasoning": "Metallic conductive assemblies connecting cell modules and external terminals; manufactured as separate units rather than raw wiring."
+          },
+          {
+            "name": "High Voltage Safety Disconnects and Fuses Module",
+            "confidence": 0.85,
+            "reasoning": "Critical safety subassemblies for emergency electrical isolation and protection incorporated as distinct procurable units within battery packs."
+          },
+          {
+            "name": "Battery Mounting and Vibration Dampening Structures",
+            "confidence": 0.75,
+            "reasoning": "Structural brackets, insulators, and damping components securing the battery pack in the vehicle chassis; often standardized and separately procured."
+          }
+        ],
+        "technology_specification": "Lithium-ion battery pack assembly for electric vehicles (EV), comprising cell modules, battery management, and structural protective housings as standardized in 2024 EV designs.",
+        "technology_reasoning": "Lithium-ion battery packs, particularly those using NMC or NCA chemistries, dominate the EV market due to their energy density, safety features, and integration into modular pack assemblies. These packs combine multiple cell modules within a structural enclosure with dedicated management and cooling systems, forming the primary physical unit supplied to automakers."
+      }
+    ],
+    "phase2_debate_rounds": [
+      {
+        "round_num": 1,
+        "convergence": 0.0,
+        "threshold": 0.7,
+        "threshold_reached": false,
+        "proposals": {
+          "Agent_1": [
+            {
+              "name": "Battery Cell Module",
+              "confidence": 0.98,
+              "reasoning": "The fundamental energy storage unit composed of multiple lithium-ion cells assembled into modules; distinct and universally present as a separately manufactured subassembly.",
+              "component": "Battery Cell Module",
+              "normalized_component": "cell modules (lithium ion cells aggregated into modules), battery cell"
+            },
+            {
+              "name": "Battery Management System (BMS)",
+              "confidence": 0.95,
+              "reasoning": "An electronic control module vital for monitoring and balancing cells' state of charge and health, typically procured as a separate unit integrated with the pack.",
+              "component": "Battery Management System (BMS)",
+              "normalized_component": "battery management system (bms), battery management system (bms)"
+            },
+            {
+              "name": "Thermal Management System",
+              "confidence": 0.9,
+              "reasoning": "Includes cooling plates, pumps, and fluid circuits to maintain optimal temperature; usually a separately designed and supplied subassembly to ensure performance and longevity.",
+              "component": "Thermal Management System",
+              "normalized_component": "thermal management"
+            },
+            {
+              "name": "Pack Enclosure/Case",
+              "confidence": 0.9,
+              "reasoning": "The structural housing that protects internal components and provides mechanical integrity, typically fabricated and procured separately from internal modules.",
+              "component": "Pack Enclosure/Case",
+              "normalized_component": "pack enclosure/case"
+            },
+            {
+              "name": "High Voltage Wiring Harness",
+              "confidence": 0.85,
+              "reasoning": "The integrated electrical cabling assembly connecting modules, BMS, and external vehicle systems; distinct and often supplied as a separate component.",
+              "component": "High Voltage Wiring Harness",
+              "normalized_component": "high voltage wiring harness"
+            },
+            {
+              "name": "Contactors and Fuses",
+              "confidence": 0.8,
+              "reasoning": "Electrical safety and switching components that are procured separately and integrated into the pack for controlling power flow and protection.",
+              "component": "Contactors and Fuses",
+              "normalized_component": "contactors and fuses"
+            },
+            {
+              "name": "Busbars and Electrical Interconnects",
+              "confidence": 0.85,
+              "reasoning": "Metallic connectors that link cells/modules electrically; distinct components manufactured separately for assembly into the battery pack.",
+              "component": "Busbars and Electrical Interconnects",
+              "normalized_component": "busbars and electrical interconnects"
+            },
+            {
+              "name": "Service Disconnect Unit",
+              "confidence": 0.75,
+              "reasoning": "A high-voltage isolation device allowing safe disconnection of the battery pack; a standardized safety component often procured separately.",
+              "component": "Service Disconnect Unit",
+              "normalized_component": "service disconnect"
+            },
+            {
+              "name": "Battery Control Unit (BCU)",
+              "confidence": 0.7,
+              "reasoning": "Sometimes separated from the BMS, this controller manages higher-level battery functions and vehicle integration; presence and separation vary by manufacturer.",
+              "component": "Battery Control Unit (BCU)",
+              "normalized_component": "battery control unit (bcu)"
+            }
+          ],
+          "Agent_2": [
+            {
+              "name": "Cell Modules (Lithium-ion Cells Aggregated into Modules)",
+              "confidence": 0.98,
+              "reasoning": "Fundamental functional unit composed of multiple lithium-ion cells assembled into modules; universally procured as distinct subassemblies within battery packs.",
+              "component": "Cell Modules (Lithium-ion Cells Aggregated into Modules)",
+              "normalized_component": "cell modules (lithium ion cells aggregated into modules)"
+            },
+            {
+              "name": "Battery Management System (BMS) Unit",
+              "confidence": 0.95,
+              "reasoning": "Electronic subsystem responsible for monitoring and balancing cell voltages and temperatures; typically supplied as a separate module integrated into the pack.",
+              "component": "Battery Management System (BMS) Unit",
+              "normalized_component": "battery management system (bms)"
+            },
+            {
+              "name": "Battery Pack Enclosure (Housing)",
+              "confidence": 0.95,
+              "reasoning": "Rigid structural casing made of metals (e.g., aluminum alloy) or composites that protects internal components and provides mechanical strength; always a separately manufactured component.",
+              "component": "Battery Pack Enclosure (Housing)",
+              "normalized_component": "battery pack enclosure (housing)"
+            },
+            {
+              "name": "Cooling System Assembly (Liquid or Air Cooling)",
+              "confidence": 0.9,
+              "reasoning": "Dedicated thermal management apparatus including cold plates, pumps, and heat exchangers designed for temperature control; commonly procured as an integrated subassembly.",
+              "component": "Cooling System Assembly (Liquid or Air Cooling)",
+              "normalized_component": "cooling system assembly (liquid or air cooling)"
+            },
+            {
+              "name": "Electrical Interconnects and Busbars Assembly",
+              "confidence": 0.85,
+              "reasoning": "Metallic conductive assemblies connecting cell modules and external terminals; manufactured as separate units rather than raw wiring.",
+              "component": "Electrical Interconnects and Busbars Assembly",
+              "normalized_component": "electrical interconnects and busbars assembly, busbars and electrical interconnects"
+            },
+            {
+              "name": "High Voltage Safety Disconnects and Fuses Module",
+              "confidence": 0.85,
+              "reasoning": "Critical safety subassemblies for emergency electrical isolation and protection incorporated as distinct procurable units within battery packs.",
+              "component": "High Voltage Safety Disconnects and Fuses Module",
+              "normalized_component": "high voltage safety disconnects and fuses"
+            },
+            {
+              "name": "Battery Mounting and Vibration Dampening Structures",
+              "confidence": 0.75,
+              "reasoning": "Structural brackets, insulators, and damping components securing the battery pack in the vehicle chassis; often standardized and separately procured.",
+              "component": "Battery Mounting and Vibration Dampening Structures",
+              "normalized_component": "battery mounting and vibration dampening structures"
+            }
+          ]
+        },
+        "rounds_completed": 1,
+        "support_analysis": {
+          "consensus": [],
+          "majority": [],
+          "isolated": [
+            "cell modules (lithium ion cells aggregated into modules), battery cell",
+            "battery management system (bms), battery management system (bms)",
+            "thermal management",
+            "pack enclosure/case",
+            "high voltage wiring harness",
+            "contactors and fuses",
+            "busbars and electrical interconnects",
+            "service disconnect",
+            "battery control unit (bcu)",
+            "cell modules (lithium ion cells aggregated into modules)",
+            "battery management system (bms)",
+            "battery pack enclosure (housing)",
+            "cooling system assembly (liquid or air cooling)",
+            "electrical interconnects and busbars assembly, busbars and electrical interconnects",
+            "high voltage safety disconnects and fuses",
+            "battery mounting and vibration dampening structures"
+          ]
+        },
+        "critiques": [
+          {
+            "item_name": "cell modules (lithium ion cells aggregated into modules), battery cell",
+            "normalized_name": "cell modules (lithium ion cells aggregated into modules), battery cell",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2"
+            ],
+            "avg_confidence": 0.98,
+            "critique_text": "Isolated proposal 'cell modules (lithium ion cells aggregated into modules), battery cell' from 1 agent(s) (conf: 0.98). Requires justification or peer validation."
+          },
+          {
+            "item_name": "battery management system (bms), battery management system (bms)",
+            "normalized_name": "battery management system (bms), battery management system (bms)",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2"
+            ],
+            "avg_confidence": 0.95,
+            "critique_text": "Isolated proposal 'battery management system (bms), battery management system (bms)' from 1 agent(s) (conf: 0.95). Requires justification or peer validation."
+          },
+          {
+            "item_name": "thermal management",
+            "normalized_name": "thermal management",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2"
+            ],
+            "avg_confidence": 0.9,
+            "critique_text": "Isolated proposal 'thermal management' from 1 agent(s) (conf: 0.90). Requires justification or peer validation."
+          },
+          {
+            "item_name": "pack enclosure/case",
+            "normalized_name": "pack enclosure/case",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2"
+            ],
+            "avg_confidence": 0.9,
+            "critique_text": "Isolated proposal 'pack enclosure/case' from 1 agent(s) (conf: 0.90). Requires justification or peer validation."
+          },
+          {
+            "item_name": "high voltage wiring harness",
+            "normalized_name": "high voltage wiring harness",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2"
+            ],
+            "avg_confidence": 0.85,
+            "critique_text": "Isolated proposal 'high voltage wiring harness' from 1 agent(s) (conf: 0.85). Requires justification or peer validation."
+          },
+          {
+            "item_name": "contactors and fuses",
+            "normalized_name": "contactors and fuses",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2"
+            ],
+            "avg_confidence": 0.8,
+            "critique_text": "Isolated proposal 'contactors and fuses' from 1 agent(s) (conf: 0.80). Requires justification or peer validation."
+          },
+          {
+            "item_name": "busbars and electrical interconnects",
+            "normalized_name": "busbars and electrical interconnects",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2"
+            ],
+            "avg_confidence": 0.85,
+            "critique_text": "Isolated proposal 'busbars and electrical interconnects' from 1 agent(s) (conf: 0.85). Requires justification or peer validation."
+          },
+          {
+            "item_name": "service disconnect",
+            "normalized_name": "service disconnect",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2"
+            ],
+            "avg_confidence": 0.75,
+            "critique_text": "Isolated proposal 'service disconnect' from 1 agent(s) (conf: 0.75). Requires justification or peer validation."
+          },
+          {
+            "item_name": "battery control unit (bcu)",
+            "normalized_name": "battery control unit (bcu)",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2"
+            ],
+            "avg_confidence": 0.7,
+            "critique_text": "Isolated proposal 'battery control unit (bcu)' from 1 agent(s) (conf: 0.70). Requires justification or peer validation."
+          },
+          {
+            "item_name": "cell modules (lithium ion cells aggregated into modules)",
+            "normalized_name": "cell modules (lithium ion cells aggregated into modules)",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_1"
+            ],
+            "avg_confidence": 0.98,
+            "critique_text": "Isolated proposal 'cell modules (lithium ion cells aggregated into modules)' from 1 agent(s) (conf: 0.98). Requires justification or peer validation."
+          },
+          {
+            "item_name": "battery management system (bms)",
+            "normalized_name": "battery management system (bms)",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_1"
+            ],
+            "avg_confidence": 0.95,
+            "critique_text": "Isolated proposal 'battery management system (bms)' from 1 agent(s) (conf: 0.95). Requires justification or peer validation."
+          },
+          {
+            "item_name": "battery pack enclosure (housing)",
+            "normalized_name": "battery pack enclosure (housing)",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_1"
+            ],
+            "avg_confidence": 0.95,
+            "critique_text": "Isolated proposal 'battery pack enclosure (housing)' from 1 agent(s) (conf: 0.95). Requires justification or peer validation."
+          },
+          {
+            "item_name": "cooling system assembly (liquid or air cooling)",
+            "normalized_name": "cooling system assembly (liquid or air cooling)",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_1"
+            ],
+            "avg_confidence": 0.9,
+            "critique_text": "Isolated proposal 'cooling system assembly (liquid or air cooling)' from 1 agent(s) (conf: 0.90). Requires justification or peer validation."
+          },
+          {
+            "item_name": "electrical interconnects and busbars assembly, busbars and electrical interconnects",
+            "normalized_name": "electrical interconnects and busbars assembly, busbars and electrical interconnects",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_1"
+            ],
+            "avg_confidence": 0.85,
+            "critique_text": "Isolated proposal 'electrical interconnects and busbars assembly, busbars and electrical interconnects' from 1 agent(s) (conf: 0.85). Requires justification or peer validation."
+          },
+          {
+            "item_name": "high voltage safety disconnects and fuses",
+            "normalized_name": "high voltage safety disconnects and fuses",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_1"
+            ],
+            "avg_confidence": 0.85,
+            "critique_text": "Isolated proposal 'high voltage safety disconnects and fuses' from 1 agent(s) (conf: 0.85). Requires justification or peer validation."
+          },
+          {
+            "item_name": "battery mounting and vibration dampening structures",
+            "normalized_name": "battery mounting and vibration dampening structures",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_1"
+            ],
+            "avg_confidence": 0.75,
+            "critique_text": "Isolated proposal 'battery mounting and vibration dampening structures' from 1 agent(s) (conf: 0.75). Requires justification or peer validation."
+          }
+        ],
+        "changes_from_previous": null
+      },
+      {
+        "round_num": 2,
+        "convergence": 0.7142857142857143,
+        "threshold": 0.7,
+        "threshold_reached": true,
+        "proposals": {
+          "Agent_1": [
+            {
+              "agent_id": "Agent_1",
+              "component": "Battery Cell Module",
+              "confidence": 0.98,
+              "reasoning": "Both agents selected this component with very high confidence, and it is fundamental to the battery assembly as the basic energy storage unit.",
+              "round": 2,
+              "normalized_component": "Battery Module Assembly"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Battery Management System (BMS)",
+              "confidence": 0.95,
+              "reasoning": "Both agents included a very similar BMS component with high confidence. BMS is vital for safety, monitoring, and performance management.",
+              "round": 2,
+              "normalized_component": "Battery Management System"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Pack Enclosure/Case",
+              "confidence": 0.93,
+              "reasoning": "Similar but distinct enclosure components were selected by both agents with high confidence. The enclosure is critical for protecting and containing the battery system.",
+              "round": 2,
+              "normalized_component": "3D Qubit Microwave Packaging and Enclosure"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Thermal Management System",
+              "confidence": 0.89,
+              "reasoning": "Thermal management or equivalent cooling assembly was selected with solid confidence; temperature control is essential for safety and performance.",
+              "round": 2,
+              "normalized_component": "Cooling Fan/Blower"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Busbars and Electrical Interconnects",
+              "confidence": 0.86,
+              "reasoning": "Electrical interconnects and busbars were supported by both agents with good confidence. They are necessary for electrical connectivity and current flow.",
+              "round": 2,
+              "normalized_component": "Busbars and Electrical Interconnects"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "High Voltage Wiring Harness",
+              "confidence": 0.85,
+              "reasoning": "Selected by one agent with fairly high confidence; crucial for safe high voltage electrical connections.",
+              "round": 2,
+              "normalized_component": "Wiring Harness"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Contactors and Fuses",
+              "confidence": 0.8,
+              "reasoning": "Important for electrical protection and control; included by one agent with medium confidence.",
+              "round": 2,
+              "normalized_component": "Contactors and Fuses"
+            }
+          ],
+          "Agent_2": [
+            {
+              "agent_id": "Agent_2",
+              "component": "Battery Cell Module",
+              "confidence": 0.98,
+              "reasoning": "Both agents proposed highly similar components 'Battery Cell Module' and 'Cell Modules (Lithium-ion Cells Aggregated into Modules)' with high confidence (0.98). This is a core component of electric vehicle batteries and absolutely essential. High confidence is maintained.",
+              "round": 2,
+              "normalized_component": "Battery Module Assembly"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Battery Management System (BMS)",
+              "confidence": 0.95,
+              "reasoning": "Both agents selected 'Battery Management System (BMS)' or its variant with high confidence (0.95). It is a critical safety and functionality component for battery operation. Confidence remains high despite isolated feedback due to its importance and agreement.",
+              "round": 2,
+              "normalized_component": "Battery Management System"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Pack Enclosure/Case",
+              "confidence": 0.9,
+              "reasoning": "Both agents selected closely named components related to enclosure/housing with high confidence (0.90 and 0.95). The enclosure is essential for structural integrity and safety, so it remains included with high confidence.",
+              "round": 2,
+              "normalized_component": "3D Qubit Microwave Packaging and Enclosure"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Thermal Management System",
+              "confidence": 0.9,
+              "reasoning": "Thermal management is vital for electric batteries to maintain performance and safety. Both 'Thermal Management System' and 'Cooling System Assembly (Liquid or Air Cooling)' have similar confidence and meaning. This is important enough to keep with high confidence.",
+              "round": 2,
+              "normalized_component": "Cooling Fan/Blower"
+            }
+          ],
+          "Agent_3": [
+            {
+              "agent_id": "Agent_3",
+              "component": "Battery Cell Module",
+              "confidence": 0.98,
+              "reasoning": "Highest confidence and critical core component of EV battery, strong peer support and foundational element.",
+              "round": 2,
+              "normalized_component": "Battery Module Assembly"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Battery Management System (BMS)",
+              "confidence": 0.95,
+              "reasoning": "Essential for monitoring and controlling battery health and safety with strong peer support.",
+              "round": 2,
+              "normalized_component": "Battery Management System"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Thermal Management System",
+              "confidence": 0.9,
+              "reasoning": "Critical for maintaining battery performance and safety, peer support is solid with similar component 'Cooling System Assembly' from other agent.",
+              "round": 2,
+              "normalized_component": "Cooling Fan/Blower"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Pack Enclosure/Case",
+              "confidence": 0.9,
+              "reasoning": "Protects the battery pack and integral for housing the components, well supported and necessary.",
+              "round": 2,
+              "normalized_component": "3D Qubit Microwave Packaging and Enclosure"
+            }
+          ]
+        },
+        "rounds_completed": 2,
+        "support_analysis": {
+          "consensus": [
+            "battery cell",
+            "battery management system (bms)",
+            "pack enclosure/case",
+            "thermal management"
+          ],
+          "majority": [],
+          "isolated": [
+            "busbars and electrical interconnects",
+            "high voltage wiring harness",
+            "contactors and fuses"
+          ]
+        },
+        "critiques": [
+          {
+            "item_name": "Battery Cell Module",
+            "normalized_name": "battery cell",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.98,
+            "critique_text": "Strong consensus on 'Battery Cell Module': all 3 agents support with avg confidence 0.98. Preserve this component."
+          },
+          {
+            "item_name": "Battery Management System (BMS)",
+            "normalized_name": "battery management system (bms)",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.9499999999999998,
+            "critique_text": "Strong consensus on 'Battery Management System (BMS)': all 3 agents support with avg confidence 0.95. Preserve this component."
+          },
+          {
+            "item_name": "Pack Enclosure/Case",
+            "normalized_name": "pack enclosure/case",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.91,
+            "critique_text": "Strong consensus on 'Pack Enclosure/Case': all 3 agents support with avg confidence 0.91. Preserve this component."
+          },
+          {
+            "item_name": "Thermal Management System",
+            "normalized_name": "thermal management",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.8966666666666666,
+            "critique_text": "Strong consensus on 'Thermal Management System': all 3 agents support with avg confidence 0.90. Preserve this component."
+          },
+          {
+            "item_name": "Busbars and Electrical Interconnects",
+            "normalized_name": "busbars and electrical interconnects",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_3",
+              "Agent_2"
+            ],
+            "avg_confidence": 0.86,
+            "critique_text": "Isolated proposal 'Busbars and Electrical Interconnects' from 1 agent(s) (conf: 0.86). Requires justification or peer validation."
+          },
+          {
+            "item_name": "High Voltage Wiring Harness",
+            "normalized_name": "high voltage wiring harness",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_3",
+              "Agent_2"
+            ],
+            "avg_confidence": 0.85,
+            "critique_text": "Isolated proposal 'High Voltage Wiring Harness' from 1 agent(s) (conf: 0.85). Requires justification or peer validation."
+          },
+          {
+            "item_name": "Contactors and Fuses",
+            "normalized_name": "contactors and fuses",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_3",
+              "Agent_2"
+            ],
+            "avg_confidence": 0.8,
+            "critique_text": "Isolated proposal 'Contactors and Fuses' from 1 agent(s) (conf: 0.80). Requires justification or peer validation."
+          }
+        ],
+        "changes_from_previous": {
+          "items_added": [
+            "battery cell"
+          ],
+          "items_removed": [
+            "battery pack enclosure (housing)",
+            "battery mounting and vibration dampening structures",
+            "battery management system (bms), battery management system (bms)",
+            "cell modules (lithium ion cells aggregated into modules)",
+            "cell modules (lithium ion cells aggregated into modules), battery cell",
+            "service disconnect",
+            "electrical interconnects and busbars assembly, busbars and electrical interconnects",
+            "battery control unit (bcu)",
+            "high voltage safety disconnects and fuses",
+            "cooling system assembly (liquid or air cooling)"
+          ],
+          "confidence_changes": {}
+        }
+      }
+    ],
+    "phase3_final_consensus": {
+      "technology": "Electric Vehicle Battery",
+      "technology_specification": "Electric Vehicle Battery",
+      "technology_reasoning": "",
+      "components": [
+        "Battery Module Assembly",
+        "Battery Management System",
+        "3d Qubit Microwave Packaging And Enclosure",
+        "Cooling Fan/blower"
+      ],
+      "confidence": 0.7142857142857143,
+      "rounds": 2,
+      "convergence_score": 0.7142857142857143
+    }
+  },
+  "materials_debate": {
+    "debate_rounds": [],
+    "final_consensus": {
+      "components": 4,
+      "unique_materials": 11,
+      "total_assignments": 20,
+      "materials_by_component": {
+        "Battery Module Assembly": [
+          {
+            "name": "Lithium",
+            "confidence": 0.95,
+            "reasoning": "Lithium is critical as the primary element in lithium-ion battery cells, essential for energy storage chemistry, with no commercial alternatives for this component."
+          },
+          {
+            "name": "Cobalt",
+            "confidence": 0.85,
+            "reasoning": "Cobalt is commonly used in cathode materials to provide stability and high energy density; while some alternatives exist, cobalt is standard in many batteries."
+          },
+          {
+            "name": "Nickel",
+            "confidence": 0.8,
+            "reasoning": "Nickel is a key cathode material enhancing energy capacity; it is widely used though the ratio may vary depending on specific battery chemistry."
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.9,
+            "reasoning": "Copper is essential for the current collectors and electrical connections within the battery module, universally used due to its excellent conductivity."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.85,
+            "reasoning": "Aluminum is used for cathode current collectors and structural casing; it is a standard, though in some designs steel may be used as an alternative."
+          },
+          {
+            "name": "Graphite",
+            "confidence": 0.9,
+            "reasoning": "Graphite serves as the baseline anode material for lithium-ion batteries due to its ability to intercalate lithium ions, universally indispensable in commercial cells."
+          }
+        ],
+        "Battery Management System": [
+          {
+            "name": "Silicon",
+            "confidence": 0.95,
+            "reasoning": "Silicon is the foundational semiconductor material used in integrated circuits and microcontrollers within battery management systems, universally essential."
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.85,
+            "reasoning": "Copper is used extensively for internal wiring and printed circuit board traces due to its high electrical conductivity."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.7,
+            "reasoning": "Aluminum may be used in some heat sinks or casings, common but with alternatives like plastic housings available."
+          },
+          {
+            "name": "Gold",
+            "confidence": 0.65,
+            "reasoning": "Gold is often employed for high-reliability electrical contacts and bonding wires inside the management system, though it can be substituted occasionally, hence moderate confidence."
+          },
+          {
+            "name": "Epoxy resins",
+            "confidence": 0.85,
+            "reasoning": "Epoxy resins are used as insulating encapsulants and adhesives on printed circuit boards, standard in electronics manufacturing."
+          }
+        ],
+        "3d Qubit Microwave Packaging And Enclosure": [
+          {
+            "name": "Aluminum",
+            "confidence": 0.8,
+            "reasoning": "Aluminum is commonly used for enclosures and packaging due to its lightweight, thermal conductivity and ease of machining, though alternatives exist."
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.8,
+            "reasoning": "Copper is frequently used for microwave packaging due to its excellent conductivity and shielding properties."
+          },
+          {
+            "name": "Gold",
+            "confidence": 0.75,
+            "reasoning": "Gold is used in microwave components for reliable electrical contacts and corrosion resistance, though its use is sometimes minimized due to cost."
+          },
+          {
+            "name": "Silicon",
+            "confidence": 0.7,
+            "reasoning": "Silicon may be present in semiconductor qubit chips embedded inside the packaging though the confidence is moderate as packaging includes many materials."
+          },
+          {
+            "name": "Aluminum oxide",
+            "confidence": 0.65,
+            "reasoning": "Aluminum oxide may be used as an insulating or protective coating in the microwave packaging, but alternatives exist."
+          }
+        ],
+        "Cooling Fan/blower": [
+          {
+            "name": "Aluminum",
+            "confidence": 0.85,
+            "reasoning": "Aluminum is commonly used in the fan blades and housing due to its lightweight and heat dissipation properties."
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.7,
+            "reasoning": "Copper is likely used in motor windings for its electrical conductivity but alternatives like aluminum windings exist."
+          },
+          {
+            "name": "Steel Ingots",
+            "confidence": 0.75,
+            "reasoning": "Steel is used in shafts and structural components due to strength and durability, standard but alternatives like hardened steel may also apply."
+          },
+          {
+            "name": "Epoxy resins",
+            "confidence": 0.65,
+            "reasoning": "Epoxy resins are used in insulating motor parts and for structural bonding, common but with some alternatives."
+          }
+        ]
+      }
+    }
+  }
+}

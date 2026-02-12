@@ -1,0 +1,1345 @@
+{
+  "version": "2.0",
+  "metadata": {
+    "technology": "Freeze Dryer (Lyophilizer)",
+    "technology_specification": "Freeze Dryer (Lyophilizer)",
+    "technology_reasoning": "",
+    "timestamp": "2026-02-12T13:28:37.990850",
+    "format_version": "2.0"
+  },
+  "config": {
+    "num_agents": 2,
+    "max_rounds": 3
+  },
+  "component_stage": {
+    "phase1_initial_proposals": [
+      {
+        "agent_id": "Agent_1",
+        "components": [
+          {
+            "name": "Vacuum Pump Assembly",
+            "confidence": 0.98,
+            "reasoning": "The vacuum pump is a critical major subassembly, usually a complete, procurable unit responsible for maintaining the low-pressure environment essential for sublimation. It has a distinct supply chain and is almost always a separate component."
+          },
+          {
+            "name": "Refrigeration Condenser Unit",
+            "confidence": 0.97,
+            "reasoning": "The condenser collects and freezes moisture removed from the product; this refrigeration unit is typically a modular, procurable component with its own supply chain focused on refrigeration technology."
+          },
+          {
+            "name": "Drying Chamber / Product Shelf Assembly",
+            "confidence": 0.95,
+            "reasoning": "This includes the insulated chamber and the shelves where product trays are placed. It is a major structural and functional assembly procured or custom manufactured, often with configurable shelving."
+          },
+          {
+            "name": "Control System and Human-Machine Interface (HMI)",
+            "confidence": 0.9,
+            "reasoning": "An electronic control module including PLC and touchscreen interface, procured as a distinct unit enabling precise process control, data acquisition, and validation."
+          },
+          {
+            "name": "Heating System / Shelf Heater Assembly",
+            "confidence": 0.88,
+            "reasoning": "Independently procured heating elements integrated into the shelves to supply controlled heat during drying. Often modular and replaceable, distinctly separate from refrigeration and vacuum systems."
+          },
+          {
+            "name": "Vacuum Valve Manifold Assembly",
+            "confidence": 0.85,
+            "reasoning": "This assembly contains valves and piping critical for controlling vacuum distribution and isolating sections. Typically a discrete manufactured assembly sourced separately."
+          },
+          {
+            "name": "Load Lock or Isolation Chamber",
+            "confidence": 0.75,
+            "reasoning": "Present in more advanced pharmaceutical freeze dryers for sterile transfer of materials, this is usually a separate procurable assembly with its own supply chain, though not present in all models."
+          },
+          {
+            "name": "Condenser Drain and Defrost System",
+            "confidence": 0.7,
+            "reasoning": "These components enable regular thawing and draining of the condenser and are often modular subassemblies procured separately within the refrigeration system."
+          }
+        ],
+        "technology_specification": "Industrial freeze dryer (lyophilizer) system designed for pharmaceutical applications involving controlled sublimation drying through vacuum and temperature modulation, typically featuring a refrigerated condenser, vacuum system, and insulated drying chamber.",
+        "technology_reasoning": "This type of freeze dryer is the industry standard for pharmaceutical manufacturing due to its ability to preserve biologics and heat-sensitive compounds with high sterility and process control. Systems with integrated vacuum pumps, refrigeration, and control modules dominate the market given their reliability and regulatory compliance."
+      },
+      {
+        "agent_id": "Agent_2",
+        "components": [
+          {
+            "name": "Vacuum Chamber (Stainless Steel Enclosure)",
+            "confidence": 0.98,
+            "reasoning": "Core structural enclosure housing the product shelves and vacuum environment; procured as a fabricated assembly distinct from other subsystems with strict material and sanitary standards."
+          },
+          {
+            "name": "Shelf Assembly with Refrigerated Shelves",
+            "confidence": 0.95,
+            "reasoning": "A critical subassembly comprising temperature-controlled shelves where products are placed for freeze drying; manufactured separately due to integrated refrigeration and heating capabilities."
+          },
+          {
+            "name": "Condenser Unit (Cold Trap)",
+            "confidence": 0.93,
+            "reasoning": "Specialized refrigeration condenser that captures sublimated moisture vapor; a separately procured refrigeration module essential for operation."
+          },
+          {
+            "name": "Vacuum System (Vacuum Pump and Piping)",
+            "confidence": 0.9,
+            "reasoning": "Includes vacuum pumps and connecting piping to maintain the low-pressure environment; vacuum pumps are major procured components with distinct supply chains."
+          },
+          {
+            "name": "Control Panel and Electronics Enclosure",
+            "confidence": 0.89,
+            "reasoning": "Housing for the electronic controls, sensors, and PLCs to automate and monitor freeze drying; typically supplied as an integrated manufactured unit."
+          },
+          {
+            "name": "Door Assembly with Sealing Gasket",
+            "confidence": 0.87,
+            "reasoning": "A structural assembly with transparent or solid door panels and vacuum seals for accessing the chamber; procured separately for functionality and maintenance."
+          },
+          {
+            "name": "Frame and Support Structure",
+            "confidence": 0.85,
+            "reasoning": "The mechanical framework supporting the vacuum chamber and ancillary equipment; commonly supplied as a fabricated metal assembly."
+          },
+          {
+            "name": "Cold Refrigeration Unit (External Chiller)",
+            "confidence": 0.8,
+            "reasoning": "Dedicated refrigeration plant that supplies cooling to the shelf assembly and condenser; often sourced externally as a packaged chiller system."
+          }
+        ],
+        "technology_specification": "Industrial pharmaceutical freeze dryer (lyophilizer) system with a stainless steel vacuum chamber and shelf condenser assembly for freeze drying of biological and pharmaceutical products.",
+        "technology_reasoning": "This specification reflects the dominant industrial type of freeze dryer used in pharmaceutical manufacturing, characterized by a vacuum chamber for sublimation drying, shelf condensers to capture vapor, and robust stainless steel construction for hygiene and durability. This type is widely adopted due to its scalability, compliance with cGMP standards, and operational reliability."
+      }
+    ],
+    "phase2_debate_rounds": [
+      {
+        "round_num": 1,
+        "convergence": 0.0,
+        "threshold": 0.7,
+        "threshold_reached": false,
+        "proposals": {
+          "Agent_1": [
+            {
+              "name": "Vacuum Pump Assembly",
+              "confidence": 0.98,
+              "reasoning": "The vacuum pump is a critical major subassembly, usually a complete, procurable unit responsible for maintaining the low-pressure environment essential for sublimation. It has a distinct supply chain and is almost always a separate component.",
+              "component": "Vacuum Pump Assembly",
+              "normalized_component": "vacuum pump"
+            },
+            {
+              "name": "Refrigeration Condenser Unit",
+              "confidence": 0.97,
+              "reasoning": "The condenser collects and freezes moisture removed from the product; this refrigeration unit is typically a modular, procurable component with its own supply chain focused on refrigeration technology.",
+              "component": "Refrigeration Condenser Unit",
+              "normalized_component": "refrigeration condenser"
+            },
+            {
+              "name": "Drying Chamber / Product Shelf Assembly",
+              "confidence": 0.95,
+              "reasoning": "This includes the insulated chamber and the shelves where product trays are placed. It is a major structural and functional assembly procured or custom manufactured, often with configurable shelving.",
+              "component": "Drying Chamber / Product Shelf Assembly",
+              "normalized_component": "drying chamber with product shelves"
+            },
+            {
+              "name": "Control System and Human-Machine Interface (HMI)",
+              "confidence": 0.9,
+              "reasoning": "An electronic control module including PLC and touchscreen interface, procured as a distinct unit enabling precise process control, data acquisition, and validation.",
+              "component": "Control System and Human-Machine Interface (HMI)",
+              "normalized_component": "control system and hmi"
+            },
+            {
+              "name": "Heating System / Shelf Heater Assembly",
+              "confidence": 0.88,
+              "reasoning": "Independently procured heating elements integrated into the shelves to supply controlled heat during drying. Often modular and replaceable, distinctly separate from refrigeration and vacuum systems.",
+              "component": "Heating System / Shelf Heater Assembly",
+              "normalized_component": "shelf heater"
+            },
+            {
+              "name": "Vacuum Valve Manifold Assembly",
+              "confidence": 0.85,
+              "reasoning": "This assembly contains valves and piping critical for controlling vacuum distribution and isolating sections. Typically a discrete manufactured assembly sourced separately.",
+              "component": "Vacuum Valve Manifold Assembly",
+              "normalized_component": "vacuum valve manifold"
+            },
+            {
+              "name": "Load Lock or Isolation Chamber",
+              "confidence": 0.75,
+              "reasoning": "Present in more advanced pharmaceutical freeze dryers for sterile transfer of materials, this is usually a separate procurable assembly with its own supply chain, though not present in all models.",
+              "component": "Load Lock or Isolation Chamber",
+              "normalized_component": "load lock chamber"
+            },
+            {
+              "name": "Condenser Drain and Defrost System",
+              "confidence": 0.7,
+              "reasoning": "These components enable regular thawing and draining of the condenser and are often modular subassemblies procured separately within the refrigeration system.",
+              "component": "Condenser Drain and Defrost System",
+              "normalized_component": "condenser drain and defrost"
+            }
+          ],
+          "Agent_2": [
+            {
+              "name": "Vacuum Chamber (Stainless Steel Enclosure)",
+              "confidence": 0.98,
+              "reasoning": "Core structural enclosure housing the product shelves and vacuum environment; procured as a fabricated assembly distinct from other subsystems with strict material and sanitary standards.",
+              "component": "Vacuum Chamber (Stainless Steel Enclosure)",
+              "normalized_component": "vacuum chamber"
+            },
+            {
+              "name": "Shelf Assembly with Refrigerated Shelves",
+              "confidence": 0.95,
+              "reasoning": "A critical subassembly comprising temperature-controlled shelves where products are placed for freeze drying; manufactured separately due to integrated refrigeration and heating capabilities.",
+              "component": "Shelf Assembly with Refrigerated Shelves",
+              "normalized_component": "refrigerated shelf"
+            },
+            {
+              "name": "Condenser Unit (Cold Trap)",
+              "confidence": 0.93,
+              "reasoning": "Specialized refrigeration condenser that captures sublimated moisture vapor; a separately procured refrigeration module essential for operation.",
+              "component": "Condenser Unit (Cold Trap)",
+              "normalized_component": "cold trap condenser"
+            },
+            {
+              "name": "Vacuum System (Vacuum Pump and Piping)",
+              "confidence": 0.9,
+              "reasoning": "Includes vacuum pumps and connecting piping to maintain the low-pressure environment; vacuum pumps are major procured components with distinct supply chains.",
+              "component": "Vacuum System (Vacuum Pump and Piping)",
+              "normalized_component": "vacuum pump and piping"
+            },
+            {
+              "name": "Control Panel and Electronics Enclosure",
+              "confidence": 0.89,
+              "reasoning": "Housing for the electronic controls, sensors, and PLCs to automate and monitor freeze drying; typically supplied as an integrated manufactured unit.",
+              "component": "Control Panel and Electronics Enclosure",
+              "normalized_component": "control panel and electronics enclosure"
+            },
+            {
+              "name": "Door Assembly with Sealing Gasket",
+              "confidence": 0.87,
+              "reasoning": "A structural assembly with transparent or solid door panels and vacuum seals for accessing the chamber; procured separately for functionality and maintenance.",
+              "component": "Door Assembly with Sealing Gasket",
+              "normalized_component": "sealing door"
+            },
+            {
+              "name": "Frame and Support Structure",
+              "confidence": 0.85,
+              "reasoning": "The mechanical framework supporting the vacuum chamber and ancillary equipment; commonly supplied as a fabricated metal assembly.",
+              "component": "Frame and Support Structure",
+              "normalized_component": "frame and support structure"
+            },
+            {
+              "name": "Cold Refrigeration Unit (External Chiller)",
+              "confidence": 0.8,
+              "reasoning": "Dedicated refrigeration plant that supplies cooling to the shelf assembly and condenser; often sourced externally as a packaged chiller system.",
+              "component": "Cold Refrigeration Unit (External Chiller)",
+              "normalized_component": "external chiller"
+            }
+          ]
+        },
+        "rounds_completed": 1,
+        "support_analysis": {
+          "consensus": [],
+          "majority": [],
+          "isolated": [
+            "vacuum pump",
+            "refrigeration condenser",
+            "drying chamber with product shelves",
+            "control system and hmi",
+            "shelf heater",
+            "vacuum valve manifold",
+            "load lock chamber",
+            "condenser drain and defrost",
+            "vacuum chamber",
+            "refrigerated shelf",
+            "cold trap condenser",
+            "vacuum pump and piping",
+            "control panel and electronics enclosure",
+            "sealing door",
+            "frame and support structure",
+            "external chiller"
+          ]
+        },
+        "critiques": [
+          {
+            "item_name": "vacuum pump",
+            "normalized_name": "vacuum pump",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2"
+            ],
+            "avg_confidence": 0.98,
+            "critique_text": "Isolated proposal 'vacuum pump' from 1 agent(s) (conf: 0.98). Requires justification or peer validation."
+          },
+          {
+            "item_name": "refrigeration condenser",
+            "normalized_name": "refrigeration condenser",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2"
+            ],
+            "avg_confidence": 0.97,
+            "critique_text": "Isolated proposal 'refrigeration condenser' from 1 agent(s) (conf: 0.97). Requires justification or peer validation."
+          },
+          {
+            "item_name": "drying chamber with product shelves",
+            "normalized_name": "drying chamber with product shelves",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2"
+            ],
+            "avg_confidence": 0.95,
+            "critique_text": "Isolated proposal 'drying chamber with product shelves' from 1 agent(s) (conf: 0.95). Requires justification or peer validation."
+          },
+          {
+            "item_name": "control system and hmi",
+            "normalized_name": "control system and hmi",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2"
+            ],
+            "avg_confidence": 0.9,
+            "critique_text": "Isolated proposal 'control system and hmi' from 1 agent(s) (conf: 0.90). Requires justification or peer validation."
+          },
+          {
+            "item_name": "shelf heater",
+            "normalized_name": "shelf heater",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2"
+            ],
+            "avg_confidence": 0.88,
+            "critique_text": "Isolated proposal 'shelf heater' from 1 agent(s) (conf: 0.88). Requires justification or peer validation."
+          },
+          {
+            "item_name": "vacuum valve manifold",
+            "normalized_name": "vacuum valve manifold",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2"
+            ],
+            "avg_confidence": 0.85,
+            "critique_text": "Isolated proposal 'vacuum valve manifold' from 1 agent(s) (conf: 0.85). Requires justification or peer validation."
+          },
+          {
+            "item_name": "load lock chamber",
+            "normalized_name": "load lock chamber",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2"
+            ],
+            "avg_confidence": 0.75,
+            "critique_text": "Isolated proposal 'load lock chamber' from 1 agent(s) (conf: 0.75). Requires justification or peer validation."
+          },
+          {
+            "item_name": "condenser drain and defrost",
+            "normalized_name": "condenser drain and defrost",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2"
+            ],
+            "avg_confidence": 0.7,
+            "critique_text": "Isolated proposal 'condenser drain and defrost' from 1 agent(s) (conf: 0.70). Requires justification or peer validation."
+          },
+          {
+            "item_name": "vacuum chamber",
+            "normalized_name": "vacuum chamber",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_1"
+            ],
+            "avg_confidence": 0.98,
+            "critique_text": "Isolated proposal 'vacuum chamber' from 1 agent(s) (conf: 0.98). Requires justification or peer validation."
+          },
+          {
+            "item_name": "refrigerated shelf",
+            "normalized_name": "refrigerated shelf",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_1"
+            ],
+            "avg_confidence": 0.95,
+            "critique_text": "Isolated proposal 'refrigerated shelf' from 1 agent(s) (conf: 0.95). Requires justification or peer validation."
+          },
+          {
+            "item_name": "cold trap condenser",
+            "normalized_name": "cold trap condenser",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_1"
+            ],
+            "avg_confidence": 0.93,
+            "critique_text": "Isolated proposal 'cold trap condenser' from 1 agent(s) (conf: 0.93). Requires justification or peer validation."
+          },
+          {
+            "item_name": "vacuum pump and piping",
+            "normalized_name": "vacuum pump and piping",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_1"
+            ],
+            "avg_confidence": 0.9,
+            "critique_text": "Isolated proposal 'vacuum pump and piping' from 1 agent(s) (conf: 0.90). Requires justification or peer validation."
+          },
+          {
+            "item_name": "control panel and electronics enclosure",
+            "normalized_name": "control panel and electronics enclosure",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_1"
+            ],
+            "avg_confidence": 0.89,
+            "critique_text": "Isolated proposal 'control panel and electronics enclosure' from 1 agent(s) (conf: 0.89). Requires justification or peer validation."
+          },
+          {
+            "item_name": "sealing door",
+            "normalized_name": "sealing door",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_1"
+            ],
+            "avg_confidence": 0.87,
+            "critique_text": "Isolated proposal 'sealing door' from 1 agent(s) (conf: 0.87). Requires justification or peer validation."
+          },
+          {
+            "item_name": "frame and support structure",
+            "normalized_name": "frame and support structure",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_1"
+            ],
+            "avg_confidence": 0.85,
+            "critique_text": "Isolated proposal 'frame and support structure' from 1 agent(s) (conf: 0.85). Requires justification or peer validation."
+          },
+          {
+            "item_name": "external chiller",
+            "normalized_name": "external chiller",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_1"
+            ],
+            "avg_confidence": 0.8,
+            "critique_text": "Isolated proposal 'external chiller' from 1 agent(s) (conf: 0.80). Requires justification or peer validation."
+          }
+        ],
+        "changes_from_previous": null
+      },
+      {
+        "round_num": 2,
+        "convergence": 0.5457875457875457,
+        "threshold": 0.7,
+        "threshold_reached": false,
+        "proposals": {
+          "Agent_1": [
+            {
+              "agent_id": "Agent_1",
+              "component": "Vacuum Pump Assembly",
+              "confidence": 0.98,
+              "reasoning": "High initial confidence and critical component for generating vacuum; supported as essential despite isolated proposal.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Refrigeration Condenser Unit",
+              "confidence": 0.96,
+              "reasoning": "High initial confidence; essential for condensing vapor during freeze drying; isolated proposal but critical function justifies inclusion.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Drying Chamber / Product Shelf Assembly",
+              "confidence": 0.95,
+              "reasoning": "High initial confidence; core component where product is placed and dried; essential even if only one agent proposed.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Control System and Human-Machine Interface (HMI)",
+              "confidence": 0.89,
+              "reasoning": "Important for process control and monitoring; single proposal but aligns with necessary automation and control functions.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Vacuum Chamber (Stainless Steel Enclosure)",
+              "confidence": 0.97,
+              "reasoning": "Essential enclosure for vacuum environment; high initial confidence and critical to freeze dryer operation.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Shelf Assembly with Refrigerated Shelves",
+              "confidence": 0.93,
+              "reasoning": "Integral to product freezing and drying; high confidence and key role in functionality.",
+              "round": 2
+            }
+          ],
+          "Agent_2": [
+            {
+              "agent_id": "Agent_2",
+              "component": "Vacuum Pump Assembly",
+              "confidence": 0.98,
+              "reasoning": "High initial confidence and essential for creating the vacuum environment necessary for freeze drying. Selected by Agent_1 and critical for operation.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Drying Chamber / Product Shelf Assembly",
+              "confidence": 0.95,
+              "reasoning": "Central to the freeze drying process as it holds the product and facilitates drying. Selected by Agent_1 and very important.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Control System and Human-Machine Interface (HMI)",
+              "confidence": 0.9,
+              "reasoning": "Needed for operation and monitoring of the freeze dryer. Selected by Agent_1, critical for control though confidence slightly lower due to singular agent.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Vacuum Chamber (Stainless Steel Enclosure)",
+              "confidence": 0.98,
+              "reasoning": "Essential containment for vacuum environment, selected by Agent_2 with very high confidence and critical.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Shelf Assembly with Refrigerated Shelves",
+              "confidence": 0.95,
+              "reasoning": "Integral for maintaining low temperatures during freeze drying, selected by Agent_2 and critical for process control.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Condenser Unit (Cold Trap)",
+              "confidence": 0.93,
+              "reasoning": "Important for trapping sublimated water vapor, selected by Agent_2 with high confidence.",
+              "round": 2
+            }
+          ],
+          "Agent_3": [
+            {
+              "agent_id": "Agent_3",
+              "component": "Vacuum Pump Assembly",
+              "confidence": 0.98,
+              "reasoning": "This is a critical component for freeze drying, providing the vacuum environment needed for sublimation. Very high confidence due to critical function despite isolated proposal.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Refrigeration Condenser Unit",
+              "confidence": 0.97,
+              "reasoning": "Essential for condensing vapor from the drying chamber and maintaining the vacuum, thus critical for operation. Although isolated, its role is vital.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Drying Chamber / Product Shelf Assembly",
+              "confidence": 0.95,
+              "reasoning": "Primary chamber where the product is dried. Fundamental structural component necessary for the freeze drying process.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Control System and Human-Machine Interface (HMI)",
+              "confidence": 0.9,
+              "reasoning": "Controls and monitors process parameters; critical for automated and safe freeze dryer operation.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Heating System / Shelf Heater Assembly",
+              "confidence": 0.88,
+              "reasoning": "Critical for providing controlled heat needed during drying to facilitate sublimation.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Vacuum Valve Manifold Assembly",
+              "confidence": 0.85,
+              "reasoning": "Important for controlling vacuum distribution and isolation within the system; supports vacuum pump function.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Load Lock or Isolation Chamber",
+              "confidence": 0.75,
+              "reasoning": "Useful for product loading/unloading without breaking vacuum in main chamber; beneficial for continuous operation.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Condenser Drain and Defrost System",
+              "confidence": 0.7,
+              "reasoning": "Supports maintenance and efficiency of condenser, ensuring long-term operation and preventing ice build-up.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Vacuum Chamber (Stainless Steel Enclosure)",
+              "confidence": 0.98,
+              "reasoning": "Main enclosure sustaining vacuum environment; structurally crucial and must be included.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Shelf Assembly with Refrigerated Shelves",
+              "confidence": 0.95,
+              "reasoning": "Supports product and provides refrigeration integral to freeze drying; core to maintaining low temp environment on shelves.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Condenser Unit (Cold Trap)",
+              "confidence": 0.93,
+              "reasoning": "Key component trapping moisture, maintaining vacuum and drying efficiency.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Door Assembly with Sealing Gasket",
+              "confidence": 0.87,
+              "reasoning": "Ensures airtight seal of vacuum chamber, essential for maintaining vacuum integrity.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Frame and Support Structure",
+              "confidence": 0.85,
+              "reasoning": "Structural backbone supporting major freeze dryer components; necessary for stability.",
+              "round": 2
+            }
+          ]
+        },
+        "rounds_completed": 2,
+        "support_analysis": {
+          "consensus": [
+            "vacuum pump",
+            "drying chamber / product shelf",
+            "control system and human machine interface (hmi)",
+            "vacuum chamber (stainless steel enclosure)",
+            "shelf assembly with refrigerated shelves"
+          ],
+          "majority": [
+            "refrigeration condenser",
+            "condenser unit (cold trap)"
+          ],
+          "isolated": [
+            "heating system / shelf heater",
+            "vacuum valve manifold",
+            "load lock or isolation chamber",
+            "condenser drain and defrost",
+            "door assembly with sealing gasket",
+            "frame and support structure"
+          ]
+        },
+        "critiques": [
+          {
+            "item_name": "Vacuum Pump Assembly",
+            "normalized_name": "vacuum pump",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_2",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.98,
+            "critique_text": "Strong consensus on 'Vacuum Pump Assembly': all 3 agents support with avg confidence 0.98. Preserve this component."
+          },
+          {
+            "item_name": "Refrigeration Condenser Unit",
+            "normalized_name": "refrigeration condenser",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2"
+            ],
+            "avg_confidence": 0.965,
+            "critique_text": "Majority support for 'Refrigeration Condenser Unit': 2/3 agents agree (conf: 0.96). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Drying Chamber / Product Shelf Assembly",
+            "normalized_name": "drying chamber / product shelf",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_2",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.9499999999999998,
+            "critique_text": "Strong consensus on 'Drying Chamber / Product Shelf Assembly': all 3 agents support with avg confidence 0.95. Preserve this component."
+          },
+          {
+            "item_name": "Control System and Human-Machine Interface (HMI)",
+            "normalized_name": "control system and human machine interface (hmi)",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_2",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.8966666666666666,
+            "critique_text": "Strong consensus on 'Control System and Human-Machine Interface (HMI)': all 3 agents support with avg confidence 0.90. Preserve this component."
+          },
+          {
+            "item_name": "Vacuum Chamber (Stainless Steel Enclosure)",
+            "normalized_name": "vacuum chamber (stainless steel enclosure)",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_2",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.9766666666666666,
+            "critique_text": "Strong consensus on 'Vacuum Chamber (Stainless Steel Enclosure)': all 3 agents support with avg confidence 0.98. Preserve this component."
+          },
+          {
+            "item_name": "Shelf Assembly with Refrigerated Shelves",
+            "normalized_name": "shelf assembly with refrigerated shelves",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_2",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.9433333333333334,
+            "critique_text": "Strong consensus on 'Shelf Assembly with Refrigerated Shelves': all 3 agents support with avg confidence 0.94. Preserve this component."
+          },
+          {
+            "item_name": "Condenser Unit (Cold Trap)",
+            "normalized_name": "condenser unit (cold trap)",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_3"
+            ],
+            "opposing_agents": [
+              "Agent_1"
+            ],
+            "avg_confidence": 0.93,
+            "critique_text": "Majority support for 'Condenser Unit (Cold Trap)': 2/3 agents agree (conf: 0.93). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Heating System / Shelf Heater Assembly",
+            "normalized_name": "heating system / shelf heater",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_3"
+            ],
+            "opposing_agents": [
+              "Agent_2",
+              "Agent_1"
+            ],
+            "avg_confidence": 0.88,
+            "critique_text": "Isolated proposal 'Heating System / Shelf Heater Assembly' from 1 agent(s) (conf: 0.88). Requires justification or peer validation."
+          },
+          {
+            "item_name": "Vacuum Valve Manifold Assembly",
+            "normalized_name": "vacuum valve manifold",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_3"
+            ],
+            "opposing_agents": [
+              "Agent_2",
+              "Agent_1"
+            ],
+            "avg_confidence": 0.85,
+            "critique_text": "Isolated proposal 'Vacuum Valve Manifold Assembly' from 1 agent(s) (conf: 0.85). Requires justification or peer validation."
+          },
+          {
+            "item_name": "Load Lock or Isolation Chamber",
+            "normalized_name": "load lock or isolation chamber",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_3"
+            ],
+            "opposing_agents": [
+              "Agent_2",
+              "Agent_1"
+            ],
+            "avg_confidence": 0.75,
+            "critique_text": "Isolated proposal 'Load Lock or Isolation Chamber' from 1 agent(s) (conf: 0.75). Requires justification or peer validation."
+          },
+          {
+            "item_name": "Condenser Drain and Defrost System",
+            "normalized_name": "condenser drain and defrost",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_3"
+            ],
+            "opposing_agents": [
+              "Agent_2",
+              "Agent_1"
+            ],
+            "avg_confidence": 0.7,
+            "critique_text": "Isolated proposal 'Condenser Drain and Defrost System' from 1 agent(s) (conf: 0.70). Requires justification or peer validation."
+          },
+          {
+            "item_name": "Door Assembly with Sealing Gasket",
+            "normalized_name": "door assembly with sealing gasket",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_3"
+            ],
+            "opposing_agents": [
+              "Agent_2",
+              "Agent_1"
+            ],
+            "avg_confidence": 0.87,
+            "critique_text": "Isolated proposal 'Door Assembly with Sealing Gasket' from 1 agent(s) (conf: 0.87). Requires justification or peer validation."
+          },
+          {
+            "item_name": "Frame and Support Structure",
+            "normalized_name": "frame and support structure",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_3"
+            ],
+            "opposing_agents": [
+              "Agent_2",
+              "Agent_1"
+            ],
+            "avg_confidence": 0.85,
+            "critique_text": "Isolated proposal 'Frame and Support Structure' from 1 agent(s) (conf: 0.85). Requires justification or peer validation."
+          }
+        ],
+        "changes_from_previous": {
+          "items_added": [
+            "drying chamber / product shelf",
+            "vacuum chamber (stainless steel enclosure)",
+            "heating system / shelf heater",
+            "control system and human machine interface (hmi)",
+            "shelf assembly with refrigerated shelves",
+            "condenser unit (cold trap)",
+            "door assembly with sealing gasket",
+            "load lock or isolation chamber"
+          ],
+          "items_removed": [
+            "refrigerated shelf",
+            "vacuum chamber",
+            "sealing door",
+            "shelf heater",
+            "drying chamber with product shelves",
+            "load lock chamber",
+            "control system and hmi",
+            "vacuum pump and piping",
+            "cold trap condenser",
+            "control panel and electronics enclosure",
+            "external chiller"
+          ],
+          "confidence_changes": {}
+        }
+      },
+      {
+        "round_num": 3,
+        "convergence": 1.0,
+        "threshold": 0.7,
+        "threshold_reached": true,
+        "proposals": {
+          "Agent_1": [
+            {
+              "agent_id": "Agent_1",
+              "component": "Vacuum Pump Assembly",
+              "confidence": 0.99,
+              "reasoning": "Strong consensus among all agents with high confidence; essential for creating the vacuum environment for freeze drying.",
+              "round": 3,
+              "normalized_component": "Vacuum Pump Assembly"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Refrigeration Condenser Unit",
+              "confidence": 0.97,
+              "reasoning": "Supported by two agents with very high confidence; critical for condensing the vapor during the drying process.",
+              "round": 3,
+              "normalized_component": "Refrigeration Condenser Unit"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Drying Chamber / Product Shelf Assembly",
+              "confidence": 0.96,
+              "reasoning": "Unanimous support and high confidence; primary component where the product resides and drying occurs.",
+              "round": 3,
+              "normalized_component": "Drying Chamber and Product Shelf Assembly"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Control System and Human-Machine Interface (HMI)",
+              "confidence": 0.91,
+              "reasoning": "Unanimous support and high confidence; necessary for operation control and monitoring.",
+              "round": 3,
+              "normalized_component": "Control System and Human-Machine Interface (HMI)"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Vacuum Chamber (Stainless Steel Enclosure)",
+              "confidence": 0.98,
+              "reasoning": "Strong consensus and very high confidence; stainless steel vacuum chamber is essential for maintaining operating environment.",
+              "round": 3,
+              "normalized_component": "Vacuum Chamber (Stainless Steel Enclosure)"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Shelf Assembly with Refrigerated Shelves",
+              "confidence": 0.94,
+              "reasoning": "Supported by all agents with consistent high confidence; required to hold and refrigerate products during freeze drying.",
+              "round": 3,
+              "normalized_component": "Refrigerated Shelf Assembly"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Condenser Unit (Cold Trap)",
+              "confidence": 0.93,
+              "reasoning": "Supported by two agents with high confidence; important for capturing moisture and vapor during freeze drying.",
+              "round": 3,
+              "normalized_component": "Condenser Unit (Cold Trap)"
+            }
+          ],
+          "Agent_2": [
+            {
+              "agent_id": "Agent_2",
+              "component": "Vacuum Pump Assembly",
+              "confidence": 0.98,
+              "reasoning": "Strong unanimous support from all agents with the highest confidence, critical for creating vacuum necessary in freeze drying.",
+              "round": 3,
+              "normalized_component": "Vacuum Pump Assembly"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Refrigeration Condenser Unit",
+              "confidence": 0.96,
+              "reasoning": "Strong consensus with high confidence from 2 agents, essential for condensation and trapping moisture in the process.",
+              "round": 3,
+              "normalized_component": "Refrigeration Condenser Unit"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Drying Chamber / Product Shelf Assembly",
+              "confidence": 0.95,
+              "reasoning": "Unanimous support from all agents with very high confidence, vital as the location where product drying occurs.",
+              "round": 3,
+              "normalized_component": "Drying Chamber and Product Shelf Assembly"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Control System and Human-Machine Interface (HMI)",
+              "confidence": 0.9,
+              "reasoning": "Unanimous support with high confidence, necessary for operational control and monitoring of the freeze dryer.",
+              "round": 3,
+              "normalized_component": "Control System and Human-Machine Interface (HMI)"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Vacuum Chamber (Stainless Steel Enclosure)",
+              "confidence": 0.98,
+              "reasoning": "Unanimous strong support and critical structural component to maintain vacuum environmental conditions.",
+              "round": 3,
+              "normalized_component": "Vacuum Chamber (Stainless Steel Enclosure)"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Shelf Assembly with Refrigerated Shelves",
+              "confidence": 0.94,
+              "reasoning": "Strong multi-agent support, important for uniform freezing and temperature control of product shelves.",
+              "round": 3,
+              "normalized_component": "Refrigerated Shelf Assembly"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Condenser Unit (Cold Trap)",
+              "confidence": 0.93,
+              "reasoning": "Supported by multiple agents and critical for trapping vapors during drying to prevent contamination of the vacuum pump.",
+              "round": 3,
+              "normalized_component": "Condenser Unit (Cold Trap)"
+            }
+          ],
+          "Agent_3": [
+            {
+              "agent_id": "Agent_3",
+              "component": "Vacuum Pump Assembly",
+              "confidence": 0.98,
+              "reasoning": "Unanimous support from all agents with very high confidence; essential for creating vacuum in freeze dryer.",
+              "round": 3,
+              "normalized_component": "Vacuum Pump Assembly"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Refrigeration Condenser Unit",
+              "confidence": 0.96,
+              "reasoning": "Strong multi-agent support with high average confidence; key for condensing vapor in the drying process.",
+              "round": 3,
+              "normalized_component": "Refrigeration Condenser Unit"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Drying Chamber / Product Shelf Assembly",
+              "confidence": 0.95,
+              "reasoning": "Unanimous agreement with high confidence; primary area where product drying occurs.",
+              "round": 3,
+              "normalized_component": "Drying Chamber and Product Shelf Assembly"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Control System and Human-Machine Interface (HMI)",
+              "confidence": 0.9,
+              "reasoning": "Strong consensus and essential for operation control and monitoring; widely supported with high confidence.",
+              "round": 3,
+              "normalized_component": "Control System and Human-Machine Interface (HMI)"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Vacuum Chamber (Stainless Steel Enclosure)",
+              "confidence": 0.98,
+              "reasoning": "Unanimous support with very high confidence; fundamental enclosure to maintain vacuum conditions.",
+              "round": 3,
+              "normalized_component": "Vacuum Chamber (Stainless Steel Enclosure)"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Shelf Assembly with Refrigerated Shelves",
+              "confidence": 0.94,
+              "reasoning": "Consistent multi-agent support indicating critical role in temperature control for product shelves.",
+              "round": 3,
+              "normalized_component": "Refrigerated Shelf Assembly"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Condenser Unit (Cold Trap)",
+              "confidence": 0.93,
+              "reasoning": "Supported by multiple agents with high confidence; important for trapping condensate vapor and protecting vacuum pump.",
+              "round": 3,
+              "normalized_component": "Condenser Unit (Cold Trap)"
+            }
+          ]
+        },
+        "rounds_completed": 3,
+        "support_analysis": {
+          "consensus": [
+            "vacuum pump",
+            "refrigeration condenser",
+            "drying chamber / product shelf",
+            "control system and human machine interface (hmi)",
+            "vacuum chamber (stainless steel enclosure)",
+            "shelf assembly with refrigerated shelves",
+            "condenser unit (cold trap)"
+          ],
+          "majority": [],
+          "isolated": []
+        },
+        "critiques": [
+          {
+            "item_name": "Vacuum Pump Assembly",
+            "normalized_name": "vacuum pump",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_2",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.9833333333333334,
+            "critique_text": "Strong consensus on 'Vacuum Pump Assembly': all 3 agents support with avg confidence 0.98. Preserve this component."
+          },
+          {
+            "item_name": "Refrigeration Condenser Unit",
+            "normalized_name": "refrigeration condenser",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_2",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.9633333333333333,
+            "critique_text": "Strong consensus on 'Refrigeration Condenser Unit': all 3 agents support with avg confidence 0.96. Preserve this component."
+          },
+          {
+            "item_name": "Drying Chamber / Product Shelf Assembly",
+            "normalized_name": "drying chamber / product shelf",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_2",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.9533333333333333,
+            "critique_text": "Strong consensus on 'Drying Chamber / Product Shelf Assembly': all 3 agents support with avg confidence 0.95. Preserve this component."
+          },
+          {
+            "item_name": "Control System and Human-Machine Interface (HMI)",
+            "normalized_name": "control system and human machine interface (hmi)",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_2",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.9033333333333333,
+            "critique_text": "Strong consensus on 'Control System and Human-Machine Interface (HMI)': all 3 agents support with avg confidence 0.90. Preserve this component."
+          },
+          {
+            "item_name": "Vacuum Chamber (Stainless Steel Enclosure)",
+            "normalized_name": "vacuum chamber (stainless steel enclosure)",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_2",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.98,
+            "critique_text": "Strong consensus on 'Vacuum Chamber (Stainless Steel Enclosure)': all 3 agents support with avg confidence 0.98. Preserve this component."
+          },
+          {
+            "item_name": "Shelf Assembly with Refrigerated Shelves",
+            "normalized_name": "shelf assembly with refrigerated shelves",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_2",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.94,
+            "critique_text": "Strong consensus on 'Shelf Assembly with Refrigerated Shelves': all 3 agents support with avg confidence 0.94. Preserve this component."
+          },
+          {
+            "item_name": "Condenser Unit (Cold Trap)",
+            "normalized_name": "condenser unit (cold trap)",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_2",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.93,
+            "critique_text": "Strong consensus on 'Condenser Unit (Cold Trap)': all 3 agents support with avg confidence 0.93. Preserve this component."
+          }
+        ],
+        "changes_from_previous": {
+          "items_added": [],
+          "items_removed": [
+            "frame and support structure",
+            "heating system / shelf heater",
+            "condenser drain and defrost",
+            "door assembly with sealing gasket",
+            "load lock or isolation chamber",
+            "vacuum valve manifold"
+          ],
+          "confidence_changes": {}
+        }
+      }
+    ],
+    "phase3_final_consensus": {
+      "technology": "Freeze Dryer (Lyophilizer)",
+      "technology_specification": "Freeze Dryer (Lyophilizer)",
+      "technology_reasoning": "",
+      "components": [
+        "Vacuum Pump Assembly",
+        "Vacuum Chamber (stainless Steel Enclosure)",
+        "Refrigeration Condenser Unit",
+        "Drying Chamber And Product Shelf Assembly",
+        "Refrigerated Shelf Assembly",
+        "Condenser Unit (cold Trap)",
+        "Control System And Human-machine Interface (hmi)"
+      ],
+      "confidence": 1.0,
+      "rounds": 3,
+      "convergence_score": 1.0
+    }
+  },
+  "materials_debate": {
+    "debate_rounds": [],
+    "final_consensus": {
+      "components": 7,
+      "unique_materials": 8,
+      "total_assignments": 23,
+      "materials_by_component": {
+        "Vacuum Pump Assembly": [
+          {
+            "name": "Vacuum pump materials",
+            "confidence": 0.95,
+            "reasoning": "Specialized materials used in pump seals, rotors, and housings essential for vacuum generation; these materials are specific to vacuum pumps and cannot be substituted without loss of function."
+          },
+          {
+            "name": "Stainless steel",
+            "confidence": 0.85,
+            "reasoning": "Used extensively for pump housings and internal components due to corrosion resistance and mechanical strength; standard industry material with few substitutes in vacuum pumps."
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.7,
+            "reasoning": "Common for motor windings and electrical connections within the assembly providing excellent conductivity; alternatives exist but copper is common due to cost and performance."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.6,
+            "reasoning": "Used in some lightweight parts and heat dissipation components; alternatives exist but aluminum is widely used for its lightweight and thermal properties."
+          }
+        ],
+        "Vacuum Chamber (stainless Steel Enclosure)": [
+          {
+            "name": "Stainless steel (SS 304/316)",
+            "confidence": 0.98,
+            "reasoning": "Primary material for vacuum chamber enclosure providing corrosion resistance, mechanical strength, and vacuum integrity; essential and industry standard."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.55,
+            "reasoning": "Potentially used in some structural or internal support components but less common than stainless steel; uncertain due to possible substitutions."
+          },
+          {
+            "name": "Glass",
+            "confidence": 0.3,
+            "reasoning": "Sometimes used for observation windows but not structural parts; optional material and easily substituted by other transparent materials."
+          }
+        ],
+        "Refrigeration Condenser Unit": [
+          {
+            "name": "Copper",
+            "confidence": 0.95,
+            "reasoning": "Essential for tubing and heat exchanger components due to excellent thermal conductivity; industry standard with no practical substitutes."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.9,
+            "reasoning": "Used in fins and housing to aid heat dissipation and reduce weight; commonly paired with copper tubing in condensers."
+          },
+          {
+            "name": "Stainless steel",
+            "confidence": 0.7,
+            "reasoning": "Used for structural parts and corrosion resistance in some condenser designs; alternatives exist but stainless steel is common."
+          },
+          {
+            "name": "Titanium",
+            "confidence": 0.5,
+            "reasoning": "Used in specialized condenser units requiring exceptional corrosion resistance but less common; uncertain relevance for typical freeze dryers."
+          }
+        ],
+        "Drying Chamber And Product Shelf Assembly": [
+          {
+            "name": "Stainless steel (SS 304/316)",
+            "confidence": 0.95,
+            "reasoning": "Primary structural material for drying chamber and shelves due to corrosion resistance and mechanical strength; industry standard with no viable substitutes."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.6,
+            "reasoning": "Used in some shelf components or supports for lightweight strength; moderate confidence due to common substitution with stainless steel."
+          },
+          {
+            "name": "Glass",
+            "confidence": 0.4,
+            "reasoning": "Sometimes used for observation windows or covers; optional and easily substituted."
+          }
+        ],
+        "Refrigerated Shelf Assembly": [
+          {
+            "name": "Aluminum",
+            "confidence": 0.9,
+            "reasoning": "Primary material for refrigerated shelves due to excellent thermal conductivity and lightweight properties; industry standard."
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.85,
+            "reasoning": "Used for internal piping or cooling tubes within shelf assemblies; essential for effective refrigeration."
+          },
+          {
+            "name": "Stainless steel",
+            "confidence": 0.75,
+            "reasoning": "Used for structural parts and shelf surfaces in some designs for corrosion resistance; commonly used but alternatives exist."
+          }
+        ],
+        "Condenser Unit (cold Trap)": [
+          {
+            "name": "Copper",
+            "confidence": 0.95,
+            "reasoning": "Used extensively for heat exchanger tubes and coils due to excellent thermal conductivity; absolutely essential for condenser function."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.7,
+            "reasoning": "Commonly used for fins and housing to improve heat transfer and reduce weight; widely used but some designs use stainless steel."
+          },
+          {
+            "name": "Stainless steel",
+            "confidence": 0.6,
+            "reasoning": "Used in housing or structural parts for corrosion resistance in certain designs; alternatives exist but it is common."
+          }
+        ],
+        "Control System And Human-machine Interface (hmi)": [
+          {
+            "name": "Silicon",
+            "confidence": 0.95,
+            "reasoning": "Fundamental semiconductor material for all microelectronics and processors in control systems; absolutely essential."
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.85,
+            "reasoning": "Used extensively for electrical wiring, PCB traces, and connectors due to high conductivity; industry standard."
+          },
+          {
+            "name": "Glass",
+            "confidence": 0.7,
+            "reasoning": "Used as substrate for displays and protective covers in user interface; common but alternatives like plastics exist."
+          }
+        ]
+      }
+    }
+  }
+}

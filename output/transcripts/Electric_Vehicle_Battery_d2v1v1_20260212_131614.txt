@@ -1,0 +1,550 @@
+================================================================================
+STDN ANALYSIS: Electric Vehicle Battery
+Generated: 2026-02-12 13:18:40
+================================================================================
+
+LEGEND
+--------------------------------------------------------------------------------
+Support Levels:
+  [C] CONSENSUS  - All agents agree (3/3)
+  [M] MAJORITY   - Majority agrees (2/3)
+  [I] ISOLATED   - Single agent only (1/3)
+
+Confidence Scale: 0.0-1.0 (higher = more certain)
+  0.9-1.0: High certainty - universal/essential
+  0.7-0.9: Confident - industry standard
+  0.5-0.7: Moderate - common but varies
+  <0.5:    Low - optional or uncertain
+
+================================================================================
+TECHNOLOGY SPECIFICATION
+================================================================================
+
+Query: Electric Vehicle Battery
+Specification: Electric Vehicle Battery
+
+================================================================================
+STAGE 1: COMPONENT EXTRACTION
+================================================================================
+
+ROUND 1: Independent Proposals
+--------------------------------------------------------------------------------
+
+Agent_1 (Expert):
+  • Battery Cell Module (0.98) - The fundamental energy storage unit composed of multiple lit...
+  • Battery Management System (BMS) (0.95) - An electronic control module vital for monitoring and balanc...
+  • Thermal Management System (0.90) - Includes cooling plates, pumps, and fluid circuits to mainta...
+  • Pack Enclosure/Case (0.90) - The structural housing that protects internal components and...
+  • High Voltage Wiring Harness (0.85) - The integrated electrical cabling assembly connecting module...
+  • Contactors and Fuses (0.80) - Electrical safety and switching components that are procured...
+  • Busbars and Electrical Interconnects (0.85) - Metallic connectors that link cells/modules electrically; di...
+  • Service Disconnect Unit (0.75) - A high-voltage isolation device allowing safe disconnection ...
+  • Battery Control Unit (BCU) (0.70) - Sometimes separated from the BMS, this controller manages hi...
+
+Agent_2 (Expert):
+  • Cell Modules (Lithium-ion Cells Aggregated into Modules) (0.98) - Fundamental functional unit composed of multiple lithium-ion...
+  • Battery Management System (BMS) Unit (0.95) - Electronic subsystem responsible for monitoring and balancin...
+  • Battery Pack Enclosure (Housing) (0.95) - Rigid structural casing made of metals (e.g., aluminum alloy...
+  • Cooling System Assembly (Liquid or Air Cooling) (0.90) - Dedicated thermal management apparatus including cold plates...
+  • Electrical Interconnects and Busbars Assembly (0.85) - Metallic conductive assemblies connecting cell modules and e...
+  • High Voltage Safety Disconnects and Fuses Module (0.85) - Critical safety subassemblies for emergency electrical isola...
+  • Battery Mounting and Vibration Dampening Structures (0.75) - Structural brackets, insulators, and damping components secu...
+
+Initial Support Analysis:
+  [I] Isolated (16 items):
+      • Battery Cell Module (0.98) - needs peer support
+      • Cell Modules (Lithium-ion Cells Aggregated into Modules) (0.98) - needs peer support
+      • Battery Management System (BMS) (0.95) - needs peer support
+
+ROUND 2: Consensus Reached
+--------------------------------------------------------------------------------
+Convergence: 71.4% ✓ (threshold reached)
+
+Changes from Previous Round:
+  + Added: battery cell
+  - Removed: battery pack enclosure (housing), battery mounting and vibration dampening structures, battery management system (bms), battery management system (bms), cell modules (lithium ion cells aggregated into modules), cell modules (lithium ion cells aggregated into modules), battery cell (+5 more)
+
+Key Critiques:
+  [C] 4 items have full consensus
+  [I] Busbars and Electrical Interconnects (conf: 0.86) - needs peer support
+  [I] High Voltage Wiring Harness (conf: 0.85) - needs peer support
+  [I] Contactors and Fuses (conf: 0.80) - needs peer support
+
+Round 2 Support Analysis:
+  [C] Consensus (4 items):
+      • battery cell
+      • battery management system (bms)
+      • pack enclosure/case
+      • thermal management
+  [I] Isolated (3 items):
+      • busbars and electrical interconnects - needs peer support
+      • high voltage wiring harness - needs peer support
+      • contactors and fuses - needs peer support
+
+================================================================================
+FINAL CONSENSUS: Components
+================================================================================
+
+Rounds Completed: 2
+Final Convergence: 71.4%
+Components Selected: 4
+
+  1. Battery Module Assembly
+  2. Battery Management System
+  3. 3d Qubit Microwave Packaging And Enclosure
+  4. Cooling Fan/blower
+
+================================================================================
+END OF COMPONENT EXTRACTION
+================================================================================
+
+
+================================================================================
+MATERIALS EXTRACTION DEBATE
+================================================================================
+
+COMPONENTS PROCESSED:
+--------------------------------------------------------------------------------
+Total Components: 4
+  - Battery Module Assembly
+  - Battery Management System
+  - 3d Qubit Microwave Packaging And Enclosure
+  - Cooling Fan/blower
+
+================================================================================
+MATERIAL DEBATE ROUNDS
+================================================================================
+
+================================================================================
+FINAL MATERIAL ASSIGNMENTS
+================================================================================
+
+Components: 4
+Unique Materials: 11
+Total Assignments: 20
+
+Materials by Component:
+--------------------------------------------------------------------------------
+
+3d Qubit Microwave Packaging And Enclosure:
+  • Aluminum (confidence: 0.80)
+    → Aluminum is commonly used for enclosures and packaging due to its lightweight, thermal conductivity and ease of machining, though alternatives exist.
+  • Copper (confidence: 0.80)
+    → Copper is frequently used for microwave packaging due to its excellent conductivity and shielding properties.
+  • Gold (confidence: 0.75)
+    → Gold is used in microwave components for reliable electrical contacts and corrosion resistance, though its use is sometimes minimized due to cost.
+  • Silicon (confidence: 0.70)
+    → Silicon may be present in semiconductor qubit chips embedded inside the packaging though the confidence is moderate as packaging includes many materials.
+  • Aluminum oxide (confidence: 0.65)
+    → Aluminum oxide may be used as an insulating or protective coating in the microwave packaging, but alternatives exist.
+
+Battery Management System:
+  • Silicon (confidence: 0.95)
+    → Silicon is the foundational semiconductor material used in integrated circuits and microcontrollers within battery management systems, universally essential.
+  • Copper (confidence: 0.85)
+    → Copper is used extensively for internal wiring and printed circuit board traces due to its high electrical conductivity.
+  • Epoxy resins (confidence: 0.85)
+    → Epoxy resins are used as insulating encapsulants and adhesives on printed circuit boards, standard in electronics manufacturing.
+  • Aluminum (confidence: 0.70)
+    → Aluminum may be used in some heat sinks or casings, common but with alternatives like plastic housings available.
+  • Gold (confidence: 0.65)
+    → Gold is often employed for high-reliability electrical contacts and bonding wires inside the management system, though it can be substituted occasionally, hence moderate confidence.
+
+Battery Module Assembly:
+  • Lithium (confidence: 0.95)
+    → Lithium is critical as the primary element in lithium-ion battery cells, essential for energy storage chemistry, with no commercial alternatives for this component.
+  • Copper (confidence: 0.90)
+    → Copper is essential for the current collectors and electrical connections within the battery module, universally used due to its excellent conductivity.
+  • Graphite (confidence: 0.90)
+    → Graphite serves as the baseline anode material for lithium-ion batteries due to its ability to intercalate lithium ions, universally indispensable in commercial cells.
+  • Aluminum (confidence: 0.85)
+    → Aluminum is used for cathode current collectors and structural casing; it is a standard, though in some designs steel may be used as an alternative.
+  • Cobalt (confidence: 0.85)
+    → Cobalt is commonly used in cathode materials to provide stability and high energy density; while some alternatives exist, cobalt is standard in many batteries.
+  • Nickel (confidence: 0.80)
+    → Nickel is a key cathode material enhancing energy capacity; it is widely used though the ratio may vary depending on specific battery chemistry.
+
+Cooling Fan/blower:
+  • Aluminum (confidence: 0.85)
+    → Aluminum is commonly used in the fan blades and housing due to its lightweight and heat dissipation properties.
+  • Steel Ingots (confidence: 0.75)
+    → Steel is used in shafts and structural components due to strength and durability, standard but alternatives like hardened steel may also apply.
+  • Copper (confidence: 0.70)
+    → Copper is likely used in motor windings for its electrical conductivity but alternatives like aluminum windings exist.
+  • Epoxy resins (confidence: 0.65)
+    → Epoxy resins are used in insulating motor parts and for structural bonding, common but with some alternatives.
+
+================================================================================
+END OF COMBINED TRANSCRIPT
+================================================================================
+
+
+============================================================
+TOP PRODUCING COUNTRIES: Epoxy resins
+Data Source: LLM Fallback Cache
+============================================================
+1. Germany
+   Production: 0.00 metric tons
+   Global Share: 30.0%
+   Confidence: 0.80
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Epoxy resins
+2. Japan
+   Production: 0.00 metric tons
+   Global Share: 25.0%
+   Confidence: 0.80
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Epoxy resins
+3. United States
+   Production: 0.00 metric tons
+   Global Share: 18.0%
+   Confidence: 0.70
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Epoxy resins
+4. China
+   Production: 0.00 metric tons
+   Global Share: 15.0%
+   Confidence: 0.80
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Epoxy resins
+5. South Korea
+   Production: 0.00 metric tons
+   Global Share: 9.0%
+   Confidence: 0.60
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Epoxy resins
+============================================================
+
+
+============================================================
+TOP PRODUCING COUNTRIES: Aluminum oxide
+Data Source: LLM Fallback Cache
+============================================================
+1. China
+   Production: 0.00 metric tons
+   Global Share: 56.0%
+   Confidence: 0.90
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Aluminum oxide
+2. India
+   Production: 0.00 metric tons
+   Global Share: 9.0%
+   Confidence: 0.85
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Aluminum oxide
+3. Russia
+   Production: 0.00 metric tons
+   Global Share: 7.0%
+   Confidence: 0.80
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Aluminum oxide
+4. Australia
+   Production: 0.00 metric tons
+   Global Share: 6.0%
+   Confidence: 0.85
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Aluminum oxide
+5. Brazil
+   Production: 0.00 metric tons
+   Global Share: 5.0%
+   Confidence: 0.80
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Aluminum oxide
+============================================================
+
+
+================================================================================
+COUNTRY PRODUCTION DATA
+================================================================================
+
+3d Qubit Microwave Packaging And Enclosure:
+--------------------------------------------------------------------------------
+
+  Material: Aluminum
+  Confidence: 0.800
+  Countries (5):
+    • CHINA: 41000.0 THOUSAND METRIC TONS (58.57%)
+      Confidence: 0.950
+    • OTHER: 7000.0 THOUSAND METRIC TONS (10.0%)
+      Confidence: 0.950
+    • INDIA: 4100.0 THOUSAND METRIC TONS (5.86%)
+      Confidence: 0.950
+    • RUSSIA: 3800.0 THOUSAND METRIC TONS (5.43%)
+      Confidence: 0.950
+    • CANADA: 3000.0 THOUSAND METRIC TONS (4.29%)
+      Confidence: 0.950
+
+  Material: Aluminum oxide
+  Confidence: 0.650
+  Countries (5):
+    • China: 0.0 metric tons (56.0%)
+      Confidence: 0.900
+    • India: 0.0 metric tons (9.0%)
+      Confidence: 0.850
+    • Russia: 0.0 metric tons (7.0%)
+      Confidence: 0.800
+    • Australia: 0.0 metric tons (6.0%)
+      Confidence: 0.850
+    • Brazil: 0.0 metric tons (5.0%)
+      Confidence: 0.800
+
+  Material: Copper
+  Confidence: 0.800
+  Countries (5):
+    • CHINA: 1700.0 THOUSAND METRIC TONS (3.47%)
+      Confidence: 0.950
+    • CHILE: 5000.0 THOUSAND METRIC TONS (10.2%)
+      Confidence: 0.950
+    • OTHER: 3100.0 THOUSAND METRIC TONS (6.33%)
+      Confidence: 0.950
+    • CONGO: 2500.0 THOUSAND METRIC TONS (5.1%)
+      Confidence: 0.950
+    • PERU: 2600.0 THOUSAND METRIC TONS (5.31%)
+      Confidence: 0.950
+
+  Material: Gold
+  Confidence: 0.750
+  Countries (5):
+    • OTHER: 700.0 METRIC TONS (23.33%)
+      Confidence: 0.950
+    • CHINA: 370.0 METRIC TONS (12.33%)
+      Confidence: 0.950
+    • AUSTRALIA: 310.0 METRIC TONS (10.33%)
+      Confidence: 0.950
+    • RUSSIA: 310.0 METRIC TONS (10.33%)
+      Confidence: 0.950
+    • CANADA: 200.0 METRIC TONS (6.67%)
+      Confidence: 0.950
+
+  Material: Silicon
+  Confidence: 0.700
+  Countries (5):
+    • CHINA: 3600.0 THOUSAND METRIC TONS (40.0%)
+      Confidence: 0.950
+    • RUSSIA: 570.0 THOUSAND METRIC TONS (6.33%)
+      Confidence: 0.950
+    • BRAZIL: 190.0 THOUSAND METRIC TONS (2.11%)
+      Confidence: 0.950
+    • NORWAY: 200.0 THOUSAND METRIC TONS (2.22%)
+      Confidence: 0.950
+    • OTHER: 100.0 THOUSAND METRIC TONS (1.11%)
+      Confidence: 0.950
+
+Battery Management System:
+--------------------------------------------------------------------------------
+
+  Material: Aluminum
+  Confidence: 0.700
+  Countries (5):
+    • CHINA: 41000.0 THOUSAND METRIC TONS (58.57%)
+      Confidence: 0.950
+    • OTHER: 7000.0 THOUSAND METRIC TONS (10.0%)
+      Confidence: 0.950
+    • INDIA: 4100.0 THOUSAND METRIC TONS (5.86%)
+      Confidence: 0.950
+    • RUSSIA: 3800.0 THOUSAND METRIC TONS (5.43%)
+      Confidence: 0.950
+    • CANADA: 3000.0 THOUSAND METRIC TONS (4.29%)
+      Confidence: 0.950
+
+  Material: Copper
+  Confidence: 0.850
+  Countries (5):
+    • CHINA: 1700.0 THOUSAND METRIC TONS (3.47%)
+      Confidence: 0.950
+    • CHILE: 5000.0 THOUSAND METRIC TONS (10.2%)
+      Confidence: 0.950
+    • OTHER: 3100.0 THOUSAND METRIC TONS (6.33%)
+      Confidence: 0.950
+    • CONGO: 2500.0 THOUSAND METRIC TONS (5.1%)
+      Confidence: 0.950
+    • PERU: 2600.0 THOUSAND METRIC TONS (5.31%)
+      Confidence: 0.950
+
+  Material: Epoxy resins
+  Confidence: 0.850
+  Countries (5):
+    • Germany: 0.0 metric tons (30.0%)
+      Confidence: 0.800
+    • Japan: 0.0 metric tons (25.0%)
+      Confidence: 0.800
+    • United States: 0.0 metric tons (18.0%)
+      Confidence: 0.700
+    • China: 0.0 metric tons (15.0%)
+      Confidence: 0.800
+    • South Korea: 0.0 metric tons (9.0%)
+      Confidence: 0.600
+
+  Material: Gold
+  Confidence: 0.650
+  Countries (5):
+    • OTHER: 700.0 METRIC TONS (23.33%)
+      Confidence: 0.950
+    • CHINA: 370.0 METRIC TONS (12.33%)
+      Confidence: 0.950
+    • AUSTRALIA: 310.0 METRIC TONS (10.33%)
+      Confidence: 0.950
+    • RUSSIA: 310.0 METRIC TONS (10.33%)
+      Confidence: 0.950
+    • CANADA: 200.0 METRIC TONS (6.67%)
+      Confidence: 0.950
+
+  Material: Silicon
+  Confidence: 0.950
+  Countries (5):
+    • CHINA: 3600.0 THOUSAND METRIC TONS (40.0%)
+      Confidence: 0.950
+    • RUSSIA: 570.0 THOUSAND METRIC TONS (6.33%)
+      Confidence: 0.950
+    • BRAZIL: 190.0 THOUSAND METRIC TONS (2.11%)
+      Confidence: 0.950
+    • NORWAY: 200.0 THOUSAND METRIC TONS (2.22%)
+      Confidence: 0.950
+    • OTHER: 100.0 THOUSAND METRIC TONS (1.11%)
+      Confidence: 0.950
+
+Battery Module Assembly:
+--------------------------------------------------------------------------------
+
+  Material: Aluminum
+  Confidence: 0.850
+  Countries (5):
+    • CHINA: 41000.0 THOUSAND METRIC TONS (58.57%)
+      Confidence: 0.950
+    • OTHER: 7000.0 THOUSAND METRIC TONS (10.0%)
+      Confidence: 0.950
+    • INDIA: 4100.0 THOUSAND METRIC TONS (5.86%)
+      Confidence: 0.950
+    • RUSSIA: 3800.0 THOUSAND METRIC TONS (5.43%)
+      Confidence: 0.950
+    • CANADA: 3000.0 THOUSAND METRIC TONS (4.29%)
+      Confidence: 0.950
+
+  Material: Cobalt
+  Confidence: 0.850
+  Countries (5):
+    • CONGO: 170000.0 METRIC TONS (73.91%)
+      Confidence: 0.950
+    • INDONESIA: 17000.0 METRIC TONS (7.39%)
+      Confidence: 0.950
+    • RUSSIA: 8800.0 METRIC TONS (3.83%)
+      Confidence: 0.950
+    • OTHER: 6600.0 METRIC TONS (2.87%)
+      Confidence: 0.950
+    • AUSTRALIA: 4600.0 METRIC TONS (2.0%)
+      Confidence: 0.950
+
+  Material: Copper
+  Confidence: 0.900
+  Countries (5):
+    • CHINA: 1700.0 THOUSAND METRIC TONS (3.47%)
+      Confidence: 0.950
+    • CHILE: 5000.0 THOUSAND METRIC TONS (10.2%)
+      Confidence: 0.950
+    • OTHER: 3100.0 THOUSAND METRIC TONS (6.33%)
+      Confidence: 0.950
+    • CONGO: 2500.0 THOUSAND METRIC TONS (5.1%)
+      Confidence: 0.950
+    • PERU: 2600.0 THOUSAND METRIC TONS (5.31%)
+      Confidence: 0.950
+
+  Material: Graphite
+  Confidence: 0.900
+  Countries (5):
+    • CHINA: 1230000.0 METRIC TONS (76.88%)
+      Confidence: 0.950
+    • MADAGASCAR: 100000.0 METRIC TONS (6.25%)
+      Confidence: 0.950
+    • MOZAMBIQUE: 96000.0 METRIC TONS (6.0%)
+      Confidence: 0.950
+    • BRAZIL: 73000.0 METRIC TONS (4.56%)
+      Confidence: 0.950
+    • KOREA, REPUBLIC OF: 27000.0 METRIC TONS (1.69%)
+      Confidence: 0.950
+
+  Material: Lithium
+  Confidence: 0.950
+  Countries (5):
+    • AUSTRALIA: 86000.0 METRIC TONS (47.78%)
+      Confidence: 0.950
+    • CHILE: 44000.0 METRIC TONS (24.44%)
+      Confidence: 0.950
+    • CHINA: 33000.0 METRIC TONS (18.33%)
+      Confidence: 0.950
+    • ARGENTINA: 9600.0 METRIC TONS (5.33%)
+      Confidence: 0.950
+    • BRAZIL: 4900.0 METRIC TONS (2.72%)
+      Confidence: 0.950
+
+  Material: Nickel
+  Confidence: 0.800
+  Countries (5):
+    • INDONESIA: 1800000.0 METRIC TONS (50.0%)
+      Confidence: 0.950
+    • PHILIPPINES: 400000.0 METRIC TONS (11.11%)
+      Confidence: 0.950
+    • OTHER: 380000.0 METRIC TONS (10.56%)
+      Confidence: 0.950
+    • NEW CALEDONIA: 230000.0 METRIC TONS (6.39%)
+      Confidence: 0.950
+    • RUSSIA: 200000.0 METRIC TONS (5.56%)
+      Confidence: 0.950
+
+Cooling Fan/blower:
+--------------------------------------------------------------------------------
+
+  Material: Aluminum
+  Confidence: 0.850
+  Countries (5):
+    • CHINA: 41000.0 THOUSAND METRIC TONS (58.57%)
+      Confidence: 0.950
+    • OTHER: 7000.0 THOUSAND METRIC TONS (10.0%)
+      Confidence: 0.950
+    • INDIA: 4100.0 THOUSAND METRIC TONS (5.86%)
+      Confidence: 0.950
+    • RUSSIA: 3800.0 THOUSAND METRIC TONS (5.43%)
+      Confidence: 0.950
+    • CANADA: 3000.0 THOUSAND METRIC TONS (4.29%)
+      Confidence: 0.950
+
+  Material: Copper
+  Confidence: 0.700
+  Countries (5):
+    • CHINA: 1700.0 THOUSAND METRIC TONS (3.47%)
+      Confidence: 0.950
+    • CHILE: 5000.0 THOUSAND METRIC TONS (10.2%)
+      Confidence: 0.950
+    • OTHER: 3100.0 THOUSAND METRIC TONS (6.33%)
+      Confidence: 0.950
+    • CONGO: 2500.0 THOUSAND METRIC TONS (5.1%)
+      Confidence: 0.950
+    • PERU: 2600.0 THOUSAND METRIC TONS (5.31%)
+      Confidence: 0.950
+
+  Material: Epoxy resins
+  Confidence: 0.650
+  Countries (5):
+    • Germany: 0.0 metric tons (30.0%)
+      Confidence: 0.800
+    • Japan: 0.0 metric tons (25.0%)
+      Confidence: 0.800
+    • United States: 0.0 metric tons (18.0%)
+      Confidence: 0.700
+    • China: 0.0 metric tons (15.0%)
+      Confidence: 0.800
+    • South Korea: 0.0 metric tons (9.0%)
+      Confidence: 0.600
+
+  Material: Steel Ingots
+  Confidence: 0.750
+  Countries (5):
+    • China: 0.0 metric tons (52.0%)
+      Confidence: 0.950
+    • Japan: 0.0 metric tons (6.0%)
+      Confidence: 0.900
+    • India: 0.0 metric tons (5.0%)
+      Confidence: 0.900
+    • South Korea: 0.0 metric tons (5.0%)
+      Confidence: 0.850
+    • Germany: 0.0 metric tons (4.0%)
+      Confidence: 0.850
+
+
+================================================================================
+SUMMARY
+================================================================================
+Total records: 100
+Components: 4
+Unique materials: 11
+Records with country  100
+Average country confidence: 0.920

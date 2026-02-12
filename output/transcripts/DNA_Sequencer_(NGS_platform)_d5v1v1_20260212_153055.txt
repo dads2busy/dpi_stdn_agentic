@@ -1,0 +1,1178 @@
+================================================================================
+STDN ANALYSIS: DNA Sequencer (NGS platform)
+Generated: 2026-02-12 16:15:25
+================================================================================
+
+LEGEND
+--------------------------------------------------------------------------------
+Support Levels:
+  [C] CONSENSUS  - All agents agree (3/3)
+  [M] MAJORITY   - Majority agrees (2/3)
+  [I] ISOLATED   - Single agent only (1/3)
+
+Confidence Scale: 0.0-1.0 (higher = more certain)
+  0.9-1.0: High certainty - universal/essential
+  0.7-0.9: Confident - industry standard
+  0.5-0.7: Moderate - common but varies
+  <0.5:    Low - optional or uncertain
+
+================================================================================
+TECHNOLOGY SPECIFICATION
+================================================================================
+
+Query: DNA Sequencer (NGS platform)
+Specification: DNA Sequencer (NGS platform)
+
+================================================================================
+STAGE 1: COMPONENT EXTRACTION
+================================================================================
+
+ROUND 1: Independent Proposals
+--------------------------------------------------------------------------------
+
+Agent_1 (Expert):
+  • Optical Detection Module (including lasers, cameras, and filters) (0.98) - This module is essential for detecting fluorescent signals f...
+  • Fluidics System (microfluidic pumps, valves, and channels) (0.95) - Critical for moving reagents and samples precisely through t...
+  • Thermal Control Unit (temperature regulation for sample incubation) (0.90) - Maintains optimal temperatures for enzymatic reactions durin...
+  • Reagent Cartridge or Consumables Module (pre-packaged reagents and flow cells) (0.85) - Although consumable, the cartridge itself is a manufactured ...
+  • Main Electronics Control Board (including processor and communication interfaces) (0.93) - Acts as the central processing and control unit of the seque...
+  • Enclosure and Mechanical Frame (chassis and protective casing) (0.80) - Provides structural integrity and physical protection, often...
+  • User Interface Module (touchscreen display and control panel) (0.75) - Facilitates operator control and monitoring; though integrat...
+  • Data Storage and Networking Module (hard drive/SSD and network interfaces) (0.70) - Provides local data storage and connectivity, commonly a sep...
+
+Agent_2 (Expert):
+  • Fluidic Sample Processing Module (0.95) - A key modular subassembly comprising pumps, valves, microflu...
+  • High-Resolution Imaging Optics System (0.96) - The optical subsystem involving lenses, lasers or LEDs, filt...
+  • Sequencing Flow Cell Assembly (0.97) - The flow cell is a consumable but highly engineered componen...
+  • Illumination and Excitation Light Source Module (0.92) - Includes lasers or LEDs and associated drive electronics to ...
+  • Instrument Chassis and Frame (0.89) - The mechanical housing provides structural integrity and sup...
+  • Thermal Control and Cooling System (0.87) - Maintains operational temperature stability for sensitive op...
+  • Electronics Control Board Assembly (0.88) - The main printed circuit boards (PCBs) with FPGA or microcon...
+  • Data Acquisition and Processing Unit (0.85) - Computing hardware proprietary to the sequencer handles imag...
+
+Agent_3 (Expert):
+  • Optical Detection Module (0.95) - This integral subsystem houses lasers, cameras (e.g., CCD or...
+  • Fluidic System Module (0.93) - Includes pumps, valves, microfluidic chips, and tubing assem...
+  • Sequencing Consumables Cartridge / Flow Cell (0.90) - Although partially consumable, this cartridge or flow cell i...
+  • Main Control Electronics Board (PCB) (0.92) - Contains the processor, memory, and circuitry for coordinati...
+  • Thermal Management Unit (0.85) - Includes Peltier elements or heat exchangers to precisely co...
+  • Mechanical Motion Stage / Sample Handling System (0.88) - Precisely moves samples or optics during sequencing; a manuf...
+  • Power Supply Unit (PSU) (0.90) - Converts mains power to required voltages for internal compo...
+  • User Interface Touchscreen Display (0.80) - Provides system control and feedback, usually an off-the-she...
+  • Enclosure / Chassis Assembly (0.87) - The structural housing that integrates components; often a s...
+
+Agent_4 (Expert):
+  • Fluidic and reagent delivery system (0.95) - Critical for handling and delivering sequencing reagents and...
+  • Optical detection module (camera and illumination) (0.92) - In optical NGS platforms, this module captures fluorescence ...
+  • Semiconductor detection chip (0.85) - In non-optical platforms, this sensor measures pH changes or...
+  • Sample loading and cartridge interface (0.89) - Provides the mechanical and fluidic interface to prepare and...
+  • Computing and control electronics board (0.90) - Central electronic control boards handle instrument control,...
+  • Microfluidic flow cell or sequencing chip (0.95) - Contains the immobilized DNA template arrays and reaction ch...
+  • Thermal control system (Peltier elements and heat sinks) (0.80) - Maintains precise temperature control of enzymatic reactions...
+  • Instrument chassis and enclosure (0.88) - Structural frame housing all components, often manufactured ...
+  • Optical path alignment and scanning mechanism (0.75) - Mechanical and optical subsystem to guide and scan light dur...
+  • Power supply unit (0.85) - Provides regulated power to the instrument’s subsystems; sta...
+
+Agent_5 (Expert):
+  • Optical Detection System (High-sensitivity fluorescence microscope and camera) (0.98) - The core subsystem that captures fluorescent signals emitted...
+  • Fluidics System (Reagent delivery and microfluidic flow cells) (0.97) - Responsible for precise handling and delivery of reagents an...
+  • Flow Cell (Microfluidic sequencing substrate) (0.99) - The consumable microfluidic chip where DNA templates are imm...
+  • Sample Preparation Module (Automated library preparation and amplification unit) (0.85) - Automated subassembly enabling preprocessing of DNA/RNA samp...
+  • Thermal Control System (Temperature regulation units including Peltier elements) (0.88) - Maintains precise temperature conditions critical to enzymat...
+  • Data Processing and Control Electronics (Main computer board and control units) (0.95) - Contains central processing hardware and firmware controllin...
+  • Illumination Source (LED or laser excitation modules) (0.92) - Provides excitation light for fluorescent dyes during sequen...
+  • Enclosure and Instrument Frame (Structural housing and mechanical supports) (0.85) - Protects and supports internal components, often designed to...
+  • Waste Management System (Fluid disposal pumps and reservoirs) (0.75) - Separately manufactured fluid handling subsystem managing us...
+
+Initial Support Analysis:
+  [I] Isolated (44 items):
+      • Flow Cell (Microfluidic sequencing substrate) (0.99) - needs peer support
+      • Optical Detection Module (including lasers, cameras, and filters) (0.98) - needs peer support
+      • Optical Detection System (High-sensitivity fluorescence microscope and camera) (0.98) - needs peer support
+
+ROUND 2: Refinement
+--------------------------------------------------------------------------------
+Convergence: 34.2% (threshold: 70%)
+
+Changes from Previous Round:
+  + Added: reagent cartridge or consumables module (pre packaged reagents and flow cells), fluidics system (microfluidic pumps, valves, and channels), instrument chassis and frame, thermal control unit (temperature regulation for sample incubation), main electronics control board (including processor and communication interfaces) (+8 more)
+  - Removed: instrument chassis and enclosure, main electronics control board, power supply, illumination source, thermal control (+10 more)
+
+Key Critiques:
+  [C] 4 items have full consensus
+  [I] Data Processing and Control Electronics (Main computer board and control units) (conf: 0.94) - needs peer support
+  [I] Instrument Chassis and Frame (conf: 0.86) - needs peer support
+
+Round 2 Support Analysis:
+  [C] Consensus (4 items):
+      • optical detection module (including lasers, cameras, and filters)
+      • fluidics system (microfluidic pumps, valves, and channels)
+      • thermal control unit (temperature regulation for sample incubation)
+      • reagent cartridge or consumables module (pre packaged reagents and flow cells)
+  [M] Majority (7 items):
+      • main electronics control board (including processor and communication interfaces) - partial agreement
+      • enclosure and mechanical frame (chassis and protective casing) - partial agreement
+      • optical detection system (high sensitivity fluorescence microscope and camera) - partial agreement
+      • fluidics system (reagent delivery and microfluidic flow cells) - partial agreement
+      • thermal control system (temperature regulation units including peltier elements) - partial agreement
+      ... and 2 more
+  [I] Isolated (2 items):
+      • data processing and control electronics (main computer board and control units) - needs peer support
+      • instrument chassis and frame - needs peer support
+
+ROUND 3: Consensus Reached
+--------------------------------------------------------------------------------
+Convergence: 93.3% ✓ (threshold reached)
+
+Changes from Previous Round:
+  - Removed: instrument chassis and frame, flow cell (microfluidic sequencing substrate), fluidics system (reagent delivery and microfluidic flow cells), thermal control system (temperature regulation units including peltier elements), optical detection system (high sensitivity fluorescence microscope and camera) (+2 more)
+
+Key Critiques:
+
+Round 3 Support Analysis:
+  [M] Majority (6 items):
+      • optical detection module (including lasers, cameras, and filters) - partial agreement
+      • fluidics system (microfluidic pumps, valves, and channels) - partial agreement
+      • thermal control unit (temperature regulation for sample incubation) - partial agreement
+      • reagent cartridge or consumables module (pre packaged reagents and flow cells) - partial agreement
+      • main electronics control board (including processor and communication interfaces) - partial agreement
+      ... and 1 more
+
+================================================================================
+FINAL CONSENSUS: Components
+================================================================================
+
+Rounds Completed: 3
+Final Convergence: 93.3%
+Components Selected: 6
+
+  1. Optical Detection Module
+  2. Fluidics System
+  3. Reagent Cartridge And Consumables Module
+  4. Main Electronics Control Board
+  5. Thermal Control Unit
+  6. Chassis And Protective Enclosure
+
+================================================================================
+END OF COMPONENT EXTRACTION
+================================================================================
+
+
+================================================================================
+MATERIALS EXTRACTION DEBATE
+================================================================================
+
+COMPONENTS PROCESSED:
+--------------------------------------------------------------------------------
+Total Components: 6
+  - Optical Detection Module
+  - Fluidics System
+  - Reagent Cartridge And Consumables Module
+  - Main Electronics Control Board
+  - Thermal Control Unit
+  - Chassis And Protective Enclosure
+
+================================================================================
+MATERIAL DEBATE ROUNDS
+================================================================================
+
+================================================================================
+FINAL MATERIAL ASSIGNMENTS
+================================================================================
+
+Components: 6
+Unique Materials: 20
+Total Assignments: 29
+
+Materials by Component:
+--------------------------------------------------------------------------------
+
+Chassis And Protective Enclosure:
+  • Aluminum (confidence: 0.90)
+    → Aluminum is the industry standard for chassis and enclosures due to its strength, corrosion resistance, and light weight.
+  • Stainless steel (confidence: 0.80)
+    → Stainless steel is often used where higher strength or corrosion resistance is required, common in protective enclosures.
+  • Polycarbonate (confidence: 0.70)
+    → Polycarbonate is used for transparent protective parts and housings, offering toughness and impact resistance but optional.
+  • Epoxy resins (confidence: 0.60)
+    → Epoxy resins may be used in composite panels or coatings, used but alternatives available.
+
+Fluidics System:
+  • Polytetrafluoroethylene (confidence: 0.90)
+    → Polytetrafluoroethylene is extensively used for tubing and seals in fluidics systems for its chemical resistance and low friction.
+  • Glass (confidence: 0.85)
+    → Glass is common in microfluidic channels and flow cells due to chemical inertness and optical transparency.
+  • Stainless steel (confidence: 0.80)
+    → Stainless steel is widely used for valves, fittings, and structural parts because of its corrosion resistance and strength.
+  • Silicon (confidence: 0.65)
+    → Silicon substrates may be used in microfluidic chips; less common but present in some systems.
+  • Polysulfone (confidence: 0.60)
+    → Polysulfone is used for durable polymer components in fluidics, though alternatives exist.
+
+Main Electronics Control Board:
+  • Silicon (confidence: 0.95)
+    → Silicon is fundamental as the semiconductor material for integrated circuits and processors, absolutely essential.
+  • Copper (confidence: 0.90)
+    → Copper is universally used for electrical interconnects on circuit boards due to excellent conductivity.
+  • Epoxy resins (confidence: 0.85)
+    → Epoxy resins are critical for PCB substrates and encapsulation, providing mechanical support and insulation.
+  • Tin (confidence: 0.80)
+    → Tin is used in solder materials for electrical connections, very common and important but alternatives exist.
+  • Gold (confidence: 0.70)
+    → Gold plating is often used for corrosion resistance on connectors and key contacts, standard in electronics but alternatives exist.
+
+Optical Detection Module:
+  • Glass (confidence: 0.95)
+    → Glass is universally used for optical lenses and windows in detection modules due to its optical clarity and durability.
+  • Silicon (confidence: 0.90)
+    → Silicon is essential as a semiconductor material for photodetectors and image sensors, a core element in optical detection.
+  • Gallium arsenide (confidence: 0.85)
+    → Gallium arsenide is commonly used in laser diodes and photodetectors owing to its superior electronic and optical properties, standard in NGS optical modules.
+  • Aluminum (confidence: 0.80)
+    → Aluminum is widely used for structural components and heatsinks due to its lightweight and thermal conductivity.
+  • Silver (confidence: 0.70)
+    → Silver may be used in reflective coatings within optical systems due to its high reflectivity, though alternatives like aluminum exist.
+
+Reagent Cartridge And Consumables Module:
+  • DNA primers (confidence: 0.95)
+    → DNA primers are essential oligonucleotides directing sequencing reactions, absolutely essential in consumables.
+  • dNTPs (confidence: 0.95)
+    → Deoxynucleotide triphosphates (dNTPs) are substrates for DNA polymerase during sequencing, absolutely essential.
+  • Buffer salts (confidence: 0.90)
+    → Buffer salts maintain pH stability in reagents and are essential for biochemical reactions in sequencing.
+  • Polycarbonate (confidence: 0.90)
+    → Polycarbonate is a preferred material for consumable cartridges due to its optical clarity, durability, and chemical resistance.
+  • Amino acids (confidence: 0.85)
+    → Amino acids are critical reactants or components in sequencing reagents affecting enzymatic processes.
+  • Acrylic (confidence: 0.75)
+    → Acrylic is commonly used for transparent components and housings, though polycarbonate is often preferred for toughness.
+
+Thermal Control Unit:
+  • Peltier elements (confidence: 0.90)
+    → Peltier elements enable active thermoelectric cooling and heating, essential for precise temperature control.
+  • Aluminum (confidence: 0.85)
+    → Aluminum is widely used for heat sinks and thermal spreaders because of its high thermal conductivity and light weight.
+  • Copper (confidence: 0.80)
+    → Copper is used in thermal interfaces and heat exchangers due to superior thermal conductivity.
+  • Ceramic (confidence: 0.75)
+    → Ceramic materials are often used as electrical insulators and structural components in thermal units, common though alternatives exist.
+
+================================================================================
+END OF COMBINED TRANSCRIPT
+================================================================================
+
+
+============================================================
+TOP PRODUCING COUNTRIES: Polytetrafluoroethylene
+Data Source: LLM Fallback Cache
+============================================================
+1. China
+   Production: 0.00 metric tons
+   Global Share: 39.0%
+   Confidence: 0.60
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Polytetrafluoroethylene
+2. Japan
+   Production: 0.00 metric tons
+   Global Share: 28.0%
+   Confidence: 0.75
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Polytetrafluoroethylene
+3. United States
+   Production: 0.00 metric tons
+   Global Share: 7.0%
+   Confidence: 0.65
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Polytetrafluoroethylene
+4. Germany
+   Production: 0.00 metric tons
+   Global Share: 4.0%
+   Confidence: 0.70
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Polytetrafluoroethylene
+5. Korea (South)
+   Production: 0.00 metric tons
+   Global Share: 3.0%
+   Confidence: 0.80
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Polytetrafluoroethylene
+============================================================
+
+
+============================================================
+TOP PRODUCING COUNTRIES: Polysulfone
+Data Source: LLM Fallback Cache
+============================================================
+1. China
+   Production: 0.00 metric tons
+   Global Share: 45.0%
+   Confidence: 0.85
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Polysulfone
+2. United States
+   Production: 0.00 metric tons
+   Global Share: 25.0%
+   Confidence: 0.80
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Polysulfone
+3. Germany
+   Production: 0.00 metric tons
+   Global Share: 15.0%
+   Confidence: 0.75
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Polysulfone
+4. Japan
+   Production: 0.00 metric tons
+   Global Share: 10.0%
+   Confidence: 0.70
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Polysulfone
+5. South Korea
+   Production: 0.00 metric tons
+   Global Share: 5.0%
+   Confidence: 0.65
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Polysulfone
+============================================================
+
+
+============================================================
+TOP PRODUCING COUNTRIES: Amino acids
+Data Source: LLM Fallback Cache
+============================================================
+1. China
+   Production: 0.00 metric tons
+   Global Share: 65.0%
+   Confidence: 0.90
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Amino acids
+2. United States
+   Production: 0.00 metric tons
+   Global Share: 15.0%
+   Confidence: 0.85
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Amino acids
+3. Japan
+   Production: 0.00 metric tons
+   Global Share: 7.0%
+   Confidence: 0.80
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Amino acids
+4. South Korea
+   Production: 0.00 metric tons
+   Global Share: 6.0%
+   Confidence: 0.75
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Amino acids
+5. Germany
+   Production: 0.00 metric tons
+   Global Share: 5.0%
+   Confidence: 0.70
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Amino acids
+============================================================
+
+
+============================================================
+TOP PRODUCING COUNTRIES: Buffer salts
+Data Source: LLM Fallback Cache
+============================================================
+1. China
+   Production: 0.00 metric tons
+   Global Share: 40.0%
+   Confidence: 0.85
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Buffer salts
+2. United States
+   Production: 0.00 metric tons
+   Global Share: 20.0%
+   Confidence: 0.80
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Buffer salts
+3. Germany
+   Production: 0.00 metric tons
+   Global Share: 15.0%
+   Confidence: 0.75
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Buffer salts
+4. India
+   Production: 0.00 metric tons
+   Global Share: 12.0%
+   Confidence: 0.70
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Buffer salts
+5. Japan
+   Production: 0.00 metric tons
+   Global Share: 10.0%
+   Confidence: 0.70
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Buffer salts
+============================================================
+
+
+============================================================
+TOP PRODUCING COUNTRIES: DNA primers
+Data Source: LLM Fallback Cache
+============================================================
+1. United States
+   Production: 0.00 grams
+   Global Share: 40.0%
+   Confidence: 0.85
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for DNA primers
+2. China
+   Production: 0.00 grams
+   Global Share: 30.0%
+   Confidence: 0.80
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for DNA primers
+3. Germany
+   Production: 0.00 grams
+   Global Share: 10.0%
+   Confidence: 0.75
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for DNA primers
+4. India
+   Production: 0.00 grams
+   Global Share: 8.0%
+   Confidence: 0.65
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for DNA primers
+5. South Korea
+   Production: 0.00 grams
+   Global Share: 7.0%
+   Confidence: 0.60
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for DNA primers
+============================================================
+
+
+============================================================
+TOP PRODUCING COUNTRIES: dNTPs
+Data Source: LLM Fallback Cache
+============================================================
+1. China
+   Production: 0.00 metric tons
+   Global Share: 60.0%
+   Confidence: 0.90
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for dNTPs
+2. United States
+   Production: 0.00 metric tons
+   Global Share: 20.0%
+   Confidence: 0.85
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for dNTPs
+3. Germany
+   Production: 0.00 metric tons
+   Global Share: 8.0%
+   Confidence: 0.80
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for dNTPs
+4. Japan
+   Production: 0.00 metric tons
+   Global Share: 7.0%
+   Confidence: 0.75
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for dNTPs
+5. India
+   Production: 0.00 metric tons
+   Global Share: 5.0%
+   Confidence: 0.60
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for dNTPs
+============================================================
+
+
+============================================================
+TOP PRODUCING COUNTRIES: Peltier elements
+Data Source: LLM Fallback Cache
+============================================================
+1. China
+   Production: 0.00 units
+   Global Share: 50.0%
+   Confidence: 0.70
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Peltier elements
+2. South Korea
+   Production: 0.00 units
+   Global Share: 20.0%
+   Confidence: 0.65
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Peltier elements
+3. United States
+   Production: 0.00 units
+   Global Share: 15.0%
+   Confidence: 0.60
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Peltier elements
+4. Germany
+   Production: 0.00 units
+   Global Share: 10.0%
+   Confidence: 0.50
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Peltier elements
+5. Japan
+   Production: 0.00 units
+   Global Share: 5.0%
+   Confidence: 0.50
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Peltier elements
+============================================================
+
+
+================================================================================
+COUNTRY PRODUCTION DATA
+================================================================================
+
+Chassis And Protective Enclosure:
+--------------------------------------------------------------------------------
+
+  Material: Aluminum
+  Confidence: 0.900
+  Countries (5):
+    • CHINA: 41000.0 THOUSAND METRIC TONS (58.57%)
+      Confidence: 0.950
+    • OTHER: 7000.0 THOUSAND METRIC TONS (10.0%)
+      Confidence: 0.950
+    • INDIA: 4100.0 THOUSAND METRIC TONS (5.86%)
+      Confidence: 0.950
+    • RUSSIA: 3800.0 THOUSAND METRIC TONS (5.43%)
+      Confidence: 0.950
+    • CANADA: 3000.0 THOUSAND METRIC TONS (4.29%)
+      Confidence: 0.950
+
+  Material: Epoxy resins
+  Confidence: 0.600
+  Countries (5):
+    • Germany: 0.0 metric tons (30.0%)
+      Confidence: 0.800
+    • Japan: 0.0 metric tons (25.0%)
+      Confidence: 0.800
+    • United States: 0.0 metric tons (18.0%)
+      Confidence: 0.700
+    • China: 0.0 metric tons (15.0%)
+      Confidence: 0.800
+    • South Korea: 0.0 metric tons (9.0%)
+      Confidence: 0.600
+
+  Material: Polycarbonate
+  Confidence: 0.700
+  Countries (5):
+    • China: 0.0 metric tons (52.0%)
+      Confidence: 0.900
+    • South Korea: 0.0 metric tons (15.0%)
+      Confidence: 0.850
+    • United States: 0.0 metric tons (10.0%)
+      Confidence: 0.850
+    • Germany: 0.0 metric tons (8.0%)
+      Confidence: 0.800
+    • Japan: 0.0 metric tons (7.0%)
+      Confidence: 0.800
+
+  Material: Stainless steel
+  Confidence: 0.800
+  Countries (5):
+    • China: 31600000.0 metric tons (56.53%)
+      Confidence: 0.913
+    • India: 3800000.0 metric tons (6.8%)
+      Confidence: 0.860
+    • Japan: 3043333.3333333335 metric tons (5.43%)
+      Confidence: 0.893
+    • United States: 2473333.3333333335 metric tons (4.43%)
+      Confidence: 0.867
+    • South Korea: 2136666.6666666665 metric tons (3.83%)
+      Confidence: 0.867
+
+Fluidics System:
+--------------------------------------------------------------------------------
+
+  Material: Glass
+  Confidence: 0.850
+  Countries (5):
+    • China: 0.0 metric tons (63.0%)
+      Confidence: 0.950
+    • United States: 0.0 metric tons (12.0%)
+      Confidence: 0.900
+    • Germany: 0.0 metric tons (7.0%)
+      Confidence: 0.850
+    • India: 0.0 metric tons (6.0%)
+      Confidence: 0.800
+    • Japan: 0.0 metric tons (5.0%)
+      Confidence: 0.800
+
+  Material: Polysulfone
+  Confidence: 0.600
+  Countries (5):
+    • China: 0.0 metric tons (45.0%)
+      Confidence: 0.850
+    • United States: 0.0 metric tons (25.0%)
+      Confidence: 0.800
+    • Germany: 0.0 metric tons (15.0%)
+      Confidence: 0.750
+    • Japan: 0.0 metric tons (10.0%)
+      Confidence: 0.700
+    • South Korea: 0.0 metric tons (5.0%)
+      Confidence: 0.650
+
+  Material: Polytetrafluoroethylene
+  Confidence: 0.900
+  Countries (5):
+    • China: 0.0 metric tons (39.0%)
+      Confidence: 0.600
+    • Japan: 0.0 metric tons (28.0%)
+      Confidence: 0.750
+    • United States: 0.0 metric tons (7.0%)
+      Confidence: 0.650
+    • Germany: 0.0 metric tons (4.0%)
+      Confidence: 0.700
+    • Korea (South): 0.0 metric tons (3.0%)
+      Confidence: 0.800
+
+  Material: Silicon
+  Confidence: 0.650
+  Countries (5):
+    • CHINA: 3600.0 THOUSAND METRIC TONS (40.0%)
+      Confidence: 0.950
+    • RUSSIA: 570.0 THOUSAND METRIC TONS (6.33%)
+      Confidence: 0.950
+    • BRAZIL: 190.0 THOUSAND METRIC TONS (2.11%)
+      Confidence: 0.950
+    • NORWAY: 200.0 THOUSAND METRIC TONS (2.22%)
+      Confidence: 0.950
+    • OTHER: 100.0 THOUSAND METRIC TONS (1.11%)
+      Confidence: 0.950
+
+  Material: Stainless steel
+  Confidence: 0.800
+  Countries (5):
+    • China: 31600000.0 metric tons (56.53%)
+      Confidence: 0.913
+    • India: 3800000.0 metric tons (6.8%)
+      Confidence: 0.860
+    • Japan: 3043333.3333333335 metric tons (5.43%)
+      Confidence: 0.893
+    • United States: 2473333.3333333335 metric tons (4.43%)
+      Confidence: 0.867
+    • South Korea: 2136666.6666666665 metric tons (3.83%)
+      Confidence: 0.867
+
+Main Electronics Control Board:
+--------------------------------------------------------------------------------
+
+  Material: Copper
+  Confidence: 0.900
+  Countries (5):
+    • CHINA: 1700.0 THOUSAND METRIC TONS (3.47%)
+      Confidence: 0.950
+    • CHILE: 5000.0 THOUSAND METRIC TONS (10.2%)
+      Confidence: 0.950
+    • OTHER: 3100.0 THOUSAND METRIC TONS (6.33%)
+      Confidence: 0.950
+    • CONGO: 2500.0 THOUSAND METRIC TONS (5.1%)
+      Confidence: 0.950
+    • PERU: 2600.0 THOUSAND METRIC TONS (5.31%)
+      Confidence: 0.950
+
+  Material: Epoxy resins
+  Confidence: 0.850
+  Countries (5):
+    • Germany: 0.0 metric tons (30.0%)
+      Confidence: 0.800
+    • Japan: 0.0 metric tons (25.0%)
+      Confidence: 0.800
+    • United States: 0.0 metric tons (18.0%)
+      Confidence: 0.700
+    • China: 0.0 metric tons (15.0%)
+      Confidence: 0.800
+    • South Korea: 0.0 metric tons (9.0%)
+      Confidence: 0.600
+
+  Material: Gold
+  Confidence: 0.700
+  Countries (5):
+    • OTHER: 700.0 METRIC TONS (23.33%)
+      Confidence: 0.950
+    • CHINA: 370.0 METRIC TONS (12.33%)
+      Confidence: 0.950
+    • RUSSIA: 310.0 METRIC TONS (10.33%)
+      Confidence: 0.950
+    • AUSTRALIA: 310.0 METRIC TONS (10.33%)
+      Confidence: 0.950
+    • CANADA: 200.0 METRIC TONS (6.67%)
+      Confidence: 0.950
+
+  Material: Silicon
+  Confidence: 0.950
+  Countries (5):
+    • CHINA: 3600.0 THOUSAND METRIC TONS (40.0%)
+      Confidence: 0.950
+    • RUSSIA: 570.0 THOUSAND METRIC TONS (6.33%)
+      Confidence: 0.950
+    • BRAZIL: 190.0 THOUSAND METRIC TONS (2.11%)
+      Confidence: 0.950
+    • NORWAY: 200.0 THOUSAND METRIC TONS (2.22%)
+      Confidence: 0.950
+    • OTHER: 100.0 THOUSAND METRIC TONS (1.11%)
+      Confidence: 0.950
+
+  Material: Tin
+  Confidence: 0.800
+  Countries (5):
+    • CHINA: 68000.0 METRIC TONS (23.45%)
+      Confidence: 0.950
+    • BURMA: 54000.0 METRIC TONS (18.62%)
+      Confidence: 0.950
+    • INDONESIA: 52000.0 METRIC TONS (17.93%)
+      Confidence: 0.950
+    • PERU: 23000.0 METRIC TONS (7.93%)
+      Confidence: 0.950
+    • CONGO: 19000.0 METRIC TONS (6.55%)
+      Confidence: 0.950
+
+Optical Detection Module:
+--------------------------------------------------------------------------------
+
+  Material: Aluminum
+  Confidence: 0.800
+  Countries (5):
+    • CHINA: 41000.0 THOUSAND METRIC TONS (58.57%)
+      Confidence: 0.950
+    • OTHER: 7000.0 THOUSAND METRIC TONS (10.0%)
+      Confidence: 0.950
+    • INDIA: 4100.0 THOUSAND METRIC TONS (5.86%)
+      Confidence: 0.950
+    • RUSSIA: 3800.0 THOUSAND METRIC TONS (5.43%)
+      Confidence: 0.950
+    • CANADA: 3000.0 THOUSAND METRIC TONS (4.29%)
+      Confidence: 0.950
+
+  Material: Gallium arsenide
+  Confidence: 0.850
+  Countries (5):
+    • China: 0.0 metric tons (60.0%)
+      Confidence: 0.850
+    • Russia: 0.0 metric tons (15.0%)
+      Confidence: 0.650
+    • Germany: 0.0 metric tons (10.0%)
+      Confidence: 0.700
+    • United States: 0.0 metric tons (8.0%)
+      Confidence: 0.750
+    • Japan: 0.0 metric tons (7.0%)
+      Confidence: 0.700
+
+  Material: Glass
+  Confidence: 0.950
+  Countries (5):
+    • China: 0.0 metric tons (63.0%)
+      Confidence: 0.950
+    • United States: 0.0 metric tons (12.0%)
+      Confidence: 0.900
+    • Germany: 0.0 metric tons (7.0%)
+      Confidence: 0.850
+    • India: 0.0 metric tons (6.0%)
+      Confidence: 0.800
+    • Japan: 0.0 metric tons (5.0%)
+      Confidence: 0.800
+
+  Material: Silicon
+  Confidence: 0.900
+  Countries (5):
+    • CHINA: 3600.0 THOUSAND METRIC TONS (40.0%)
+      Confidence: 0.950
+    • RUSSIA: 570.0 THOUSAND METRIC TONS (6.33%)
+      Confidence: 0.950
+    • BRAZIL: 190.0 THOUSAND METRIC TONS (2.11%)
+      Confidence: 0.950
+    • NORWAY: 200.0 THOUSAND METRIC TONS (2.22%)
+      Confidence: 0.950
+    • OTHER: 100.0 THOUSAND METRIC TONS (1.11%)
+      Confidence: 0.950
+
+  Material: Silver
+  Confidence: 0.700
+  Countries (5):
+    • MEXICO: 6400.0 METRIC TONS (24.62%)
+      Confidence: 0.950
+    • CHINA: 3400.0 METRIC TONS (13.08%)
+      Confidence: 0.950
+    • PERU: 3100.0 METRIC TONS (11.92%)
+      Confidence: 0.950
+    • OTHER: 3000.0 METRIC TONS (11.54%)
+      Confidence: 0.950
+    • CHILE: 1400.0 METRIC TONS (5.38%)
+      Confidence: 0.950
+
+Reagent Cartridge And Consumables Module:
+--------------------------------------------------------------------------------
+
+  Material: Acrylic
+  Confidence: 0.750
+  Countries (5):
+    • China: 0.0 metric tons (55.0%)
+      Confidence: 0.900
+    • United States: 0.0 metric tons (15.0%)
+      Confidence: 0.850
+    • South Korea: 0.0 metric tons (10.0%)
+      Confidence: 0.800
+    • Japan: 0.0 metric tons (12.0%)
+      Confidence: 0.800
+    • Germany: 0.0 metric tons (8.0%)
+      Confidence: 0.750
+
+  Material: Amino acids
+  Confidence: 0.850
+  Countries (5):
+    • China: 0.0 metric tons (65.0%)
+      Confidence: 0.900
+    • United States: 0.0 metric tons (15.0%)
+      Confidence: 0.850
+    • Japan: 0.0 metric tons (7.0%)
+      Confidence: 0.800
+    • South Korea: 0.0 metric tons (6.0%)
+      Confidence: 0.750
+    • Germany: 0.0 metric tons (5.0%)
+      Confidence: 0.700
+
+  Material: Buffer salts
+  Confidence: 0.900
+  Countries (5):
+    • China: 0.0 metric tons (40.0%)
+      Confidence: 0.850
+    • United States: 0.0 metric tons (20.0%)
+      Confidence: 0.800
+    • Germany: 0.0 metric tons (15.0%)
+      Confidence: 0.750
+    • India: 0.0 metric tons (12.0%)
+      Confidence: 0.700
+    • Japan: 0.0 metric tons (10.0%)
+      Confidence: 0.700
+
+  Material: DNA primers
+  Confidence: 0.950
+  Countries (5):
+    • United States: 0.0 grams (40.0%)
+      Confidence: 0.850
+    • China: 0.0 grams (30.0%)
+      Confidence: 0.800
+    • Germany: 0.0 grams (10.0%)
+      Confidence: 0.750
+    • India: 0.0 grams (8.0%)
+      Confidence: 0.650
+    • South Korea: 0.0 grams (7.0%)
+      Confidence: 0.600
+
+  Material: Polycarbonate
+  Confidence: 0.900
+  Countries (5):
+    • China: 0.0 metric tons (52.0%)
+      Confidence: 0.900
+    • South Korea: 0.0 metric tons (15.0%)
+      Confidence: 0.850
+    • United States: 0.0 metric tons (10.0%)
+      Confidence: 0.850
+    • Germany: 0.0 metric tons (8.0%)
+      Confidence: 0.800
+    • Japan: 0.0 metric tons (7.0%)
+      Confidence: 0.800
+
+  Material: dNTPs
+  Confidence: 0.950
+  Countries (5):
+    • China: 0.0 metric tons (60.0%)
+      Confidence: 0.900
+    • United States: 0.0 metric tons (20.0%)
+      Confidence: 0.850
+    • Germany: 0.0 metric tons (8.0%)
+      Confidence: 0.800
+    • Japan: 0.0 metric tons (7.0%)
+      Confidence: 0.750
+    • India: 0.0 metric tons (5.0%)
+      Confidence: 0.600
+
+Thermal Control Unit:
+--------------------------------------------------------------------------------
+
+  Material: Aluminum
+  Confidence: 0.850
+  Countries (5):
+    • CHINA: 41000.0 THOUSAND METRIC TONS (58.57%)
+      Confidence: 0.950
+    • OTHER: 7000.0 THOUSAND METRIC TONS (10.0%)
+      Confidence: 0.950
+    • INDIA: 4100.0 THOUSAND METRIC TONS (5.86%)
+      Confidence: 0.950
+    • RUSSIA: 3800.0 THOUSAND METRIC TONS (5.43%)
+      Confidence: 0.950
+    • CANADA: 3000.0 THOUSAND METRIC TONS (4.29%)
+      Confidence: 0.950
+
+  Material: Ceramic
+  Confidence: 0.750
+  Countries (5):
+    • China: 0.0 metric tons (60.0%)
+      Confidence: 0.950
+    • India: 0.0 metric tons (15.0%)
+      Confidence: 0.850
+    • United States: 0.0 metric tons (8.0%)
+      Confidence: 0.800
+    • Brazil: 0.0 metric tons (7.0%)
+      Confidence: 0.750
+    • Italy: 0.0 metric tons (5.0%)
+      Confidence: 0.780
+
+  Material: Copper
+  Confidence: 0.800
+  Countries (5):
+    • CHINA: 1700.0 THOUSAND METRIC TONS (3.47%)
+      Confidence: 0.950
+    • CHILE: 5000.0 THOUSAND METRIC TONS (10.2%)
+      Confidence: 0.950
+    • OTHER: 3100.0 THOUSAND METRIC TONS (6.33%)
+      Confidence: 0.950
+    • CONGO: 2500.0 THOUSAND METRIC TONS (5.1%)
+      Confidence: 0.950
+    • PERU: 2600.0 THOUSAND METRIC TONS (5.31%)
+      Confidence: 0.950
+
+  Material: Peltier elements
+  Confidence: 0.900
+  Countries (5):
+    • China: 0.0 units (50.0%)
+      Confidence: 0.700
+    • South Korea: 0.0 units (20.0%)
+      Confidence: 0.650
+    • United States: 0.0 units (15.0%)
+      Confidence: 0.600
+    • Germany: 0.0 units (10.0%)
+      Confidence: 0.500
+    • Japan: 0.0 units (5.0%)
+      Confidence: 0.500
+
+
+================================================================================
+SUMMARY
+================================================================================
+Total records: 145
+Components: 6
+Unique materials: 20
+Records with country  145
+Average country confidence: 0.847
+
+
+================================================================================
+MATERIALS EXTRACTION DEBATE
+================================================================================
+
+COMPONENTS PROCESSED:
+--------------------------------------------------------------------------------
+Total Components: 3
+  - Chromatographic Column
+  - Detector Module
+  - Solvent Degasser Module
+
+================================================================================
+MATERIAL DEBATE ROUNDS
+================================================================================
+
+================================================================================
+FINAL MATERIAL ASSIGNMENTS
+================================================================================
+
+Components: 3
+Unique Materials: 6
+Total Assignments: 12
+
+Materials by Component:
+--------------------------------------------------------------------------------
+
+Chromatographic Column:
+  • C18 silica (confidence: 0.95)
+    → Critical stationary phase material for reverse phase chromatographic separations, universally employed in these columns.
+  • Stainless steel (SS 316) (confidence: 0.90)
+    → Commonly used for column housing due to corrosion resistance and mechanical strength, standard in chromatography columns.
+  • PTFE (confidence: 0.85)
+    → Widely used for column seals and tubing because of chemical resistance and inertness, standard in chromatography systems.
+  • Glass (confidence: 0.60)
+    → Used in some column jackets or windows to allow optical detection, alternatives exist but glass is common in transparent components.
+
+Detector Module:
+  • Silicon (confidence: 0.90)
+    → Fundamental semiconductor material for photodiodes and solid-state detectors, industry standard in detector modules.
+  • Glass (confidence: 0.85)
+    → Used for optical windows and lenses in detector modules due to its transparency and optical clarity.
+  • Stainless steel (SS 316) (confidence: 0.70)
+    → Used for structural components and housings to provide durability and chemical resistance; alternatives like aluminum exist but stainless steel is common.
+  • Aluminum (confidence: 0.65)
+    → Used for detector module casings and heat sinks; aluminum's light weight and thermal conductivity make it suitable though alternatives are available.
+
+Solvent Degasser Module:
+  • PTFE (confidence: 0.90)
+    → Critical for tubing and seals as it is chemically inert and resistant to solvents, essential to prevent contamination.
+  • Stainless steel (SS 316) (confidence: 0.85)
+    → Used for fluidic components and housing due to chemical resistance and strength, standard in solvent handling units.
+  • Glass (confidence: 0.70)
+    → Used in optical flow cells and degasser windows, common material though some plastic alternatives exist.
+  • Aluminum (confidence: 0.60)
+    → Used in structural parts and heat dissipation elements; used but less critical than other materials and alternatives exist.
+
+================================================================================
+END OF COMBINED TRANSCRIPT
+================================================================================
+
+
+================================================================================
+COUNTRY PRODUCTION DATA
+================================================================================
+
+Chromatographic Column:
+--------------------------------------------------------------------------------
+
+  Material: C18 silica
+  Confidence: 0.950
+  Countries (5):
+    • China: 0.0 metric tons (35.0%)
+      Confidence: 0.850
+    • United States: 0.0 metric tons (25.0%)
+      Confidence: 0.800
+    • India: 0.0 metric tons (15.0%)
+      Confidence: 0.750
+    • Brazil: 0.0 metric tons (12.0%)
+      Confidence: 0.650
+    • Russia: 0.0 metric tons (8.0%)
+      Confidence: 0.600
+
+  Material: Glass
+  Confidence: 0.600
+  Countries (5):
+    • China: 0.0 metric tons (63.0%)
+      Confidence: 0.950
+    • United States: 0.0 metric tons (12.0%)
+      Confidence: 0.900
+    • Germany: 0.0 metric tons (7.0%)
+      Confidence: 0.850
+    • India: 0.0 metric tons (6.0%)
+      Confidence: 0.800
+    • Japan: 0.0 metric tons (5.0%)
+      Confidence: 0.800
+
+  Material: PTFE
+  Confidence: 0.850
+  Countries (5):
+    • China: 0.0 metric tons (55.0%)
+      Confidence: 0.900
+    • United States: 0.0 metric tons (20.0%)
+      Confidence: 0.850
+    • Japan: 0.0 metric tons (10.0%)
+      Confidence: 0.800
+    • Germany: 0.0 metric tons (8.0%)
+      Confidence: 0.750
+    • South Korea: 0.0 metric tons (7.0%)
+      Confidence: 0.700
+
+  Material: Stainless steel (SS 316)
+  Confidence: 0.900
+  Countries (5):
+    • China: 0.0 metric tons (36.0%)
+      Confidence: 0.850
+    • Japan: 0.0 metric tons (28.0%)
+      Confidence: 0.800
+    • India: 0.0 metric tons (21.0%)
+      Confidence: 0.800
+    • United States: 0.0 metric tons (14.0%)
+      Confidence: 0.750
+    • South Korea: 0.0 metric tons (11.0%)
+      Confidence: 0.650
+
+Detector Module:
+--------------------------------------------------------------------------------
+
+  Material: Aluminum
+  Confidence: 0.650
+  Countries (5):
+    • CHINA: 41000.0 THOUSAND METRIC TONS (58.57%)
+      Confidence: 0.950
+    • OTHER: 7000.0 THOUSAND METRIC TONS (10.0%)
+      Confidence: 0.950
+    • INDIA: 4100.0 THOUSAND METRIC TONS (5.86%)
+      Confidence: 0.950
+    • RUSSIA: 3800.0 THOUSAND METRIC TONS (5.43%)
+      Confidence: 0.950
+    • CANADA: 3000.0 THOUSAND METRIC TONS (4.29%)
+      Confidence: 0.950
+
+  Material: Glass
+  Confidence: 0.850
+  Countries (5):
+    • China: 0.0 metric tons (63.0%)
+      Confidence: 0.950
+    • United States: 0.0 metric tons (12.0%)
+      Confidence: 0.900
+    • Germany: 0.0 metric tons (7.0%)
+      Confidence: 0.850
+    • India: 0.0 metric tons (6.0%)
+      Confidence: 0.800
+    • Japan: 0.0 metric tons (5.0%)
+      Confidence: 0.800
+
+  Material: Silicon
+  Confidence: 0.900
+  Countries (5):
+    • CHINA: 3600.0 THOUSAND METRIC TONS (40.0%)
+      Confidence: 0.950
+    • RUSSIA: 570.0 THOUSAND METRIC TONS (6.33%)
+      Confidence: 0.950
+    • BRAZIL: 190.0 THOUSAND METRIC TONS (2.11%)
+      Confidence: 0.950
+    • NORWAY: 200.0 THOUSAND METRIC TONS (2.22%)
+      Confidence: 0.950
+    • OTHER: 100.0 THOUSAND METRIC TONS (1.11%)
+      Confidence: 0.950
+
+  Material: Stainless steel (SS 316)
+  Confidence: 0.700
+  Countries (5):
+    • China: 0.0 metric tons (36.0%)
+      Confidence: 0.850
+    • Japan: 0.0 metric tons (28.0%)
+      Confidence: 0.800
+    • India: 0.0 metric tons (21.0%)
+      Confidence: 0.800
+    • United States: 0.0 metric tons (14.0%)
+      Confidence: 0.750
+    • South Korea: 0.0 metric tons (11.0%)
+      Confidence: 0.650
+
+Solvent Degasser Module:
+--------------------------------------------------------------------------------
+
+  Material: Aluminum
+  Confidence: 0.600
+  Countries (5):
+    • CHINA: 41000.0 THOUSAND METRIC TONS (58.57%)
+      Confidence: 0.950
+    • OTHER: 7000.0 THOUSAND METRIC TONS (10.0%)
+      Confidence: 0.950
+    • INDIA: 4100.0 THOUSAND METRIC TONS (5.86%)
+      Confidence: 0.950
+    • RUSSIA: 3800.0 THOUSAND METRIC TONS (5.43%)
+      Confidence: 0.950
+    • CANADA: 3000.0 THOUSAND METRIC TONS (4.29%)
+      Confidence: 0.950
+
+  Material: Glass
+  Confidence: 0.700
+  Countries (5):
+    • China: 0.0 metric tons (63.0%)
+      Confidence: 0.950
+    • United States: 0.0 metric tons (12.0%)
+      Confidence: 0.900
+    • Germany: 0.0 metric tons (7.0%)
+      Confidence: 0.850
+    • India: 0.0 metric tons (6.0%)
+      Confidence: 0.800
+    • Japan: 0.0 metric tons (5.0%)
+      Confidence: 0.800
+
+  Material: PTFE
+  Confidence: 0.900
+  Countries (5):
+    • China: 0.0 metric tons (55.0%)
+      Confidence: 0.900
+    • United States: 0.0 metric tons (20.0%)
+      Confidence: 0.850
+    • Japan: 0.0 metric tons (10.0%)
+      Confidence: 0.800
+    • Germany: 0.0 metric tons (8.0%)
+      Confidence: 0.750
+    • South Korea: 0.0 metric tons (7.0%)
+      Confidence: 0.700
+
+  Material: Stainless steel (SS 316)
+  Confidence: 0.850
+  Countries (5):
+    • China: 0.0 metric tons (36.0%)
+      Confidence: 0.850
+    • Japan: 0.0 metric tons (28.0%)
+      Confidence: 0.800
+    • India: 0.0 metric tons (21.0%)
+      Confidence: 0.800
+    • United States: 0.0 metric tons (14.0%)
+      Confidence: 0.750
+    • South Korea: 0.0 metric tons (11.0%)
+      Confidence: 0.650
+
+
+================================================================================
+SUMMARY
+================================================================================
+Total records: 60
+Components: 3
+Unique materials: 6
+Records with country  60
+Average country confidence: 0.839

@@ -1,0 +1,838 @@
+{
+  "version": "2.0",
+  "metadata": {
+    "technology": "Autoclave (Steam Sterilizer)",
+    "technology_specification": "Autoclave (Steam Sterilizer)",
+    "technology_reasoning": "",
+    "timestamp": "2026-02-12T13:35:00.259087",
+    "format_version": "2.0"
+  },
+  "config": {
+    "num_agents": 2,
+    "max_rounds": 2
+  },
+  "component_stage": {
+    "phase1_initial_proposals": [
+      {
+        "agent_id": "Agent_1",
+        "components": [
+          {
+            "name": "Pressure Vessel (Sterilization Chamber)",
+            "confidence": 0.98,
+            "reasoning": "The core component where sterilization occurs, typically manufactured as a robust, stainless steel jacketed chamber, procured as a distinct pressure vessel assembly."
+          },
+          {
+            "name": "Steam Generator/ Boiler Unit",
+            "confidence": 0.92,
+            "reasoning": "Supplies saturated steam for sterilization, often a separate modular unit with its own controls and safety features, procured independently from chamber."
+          },
+          {
+            "name": "Control System Panel (PLC and HMI)",
+            "confidence": 0.93,
+            "reasoning": "Includes programmable logic controller and user interface screen, enabling automated sterilization cycles and process monitoring; this is a manufactured electronics assembly distinct from other mechanical components."
+          },
+          {
+            "name": "Safety Valve Assembly",
+            "confidence": 0.9,
+            "reasoning": "Includes pressure relief valves and safety interlocks critical for operational safety, procured as standardized safety subassemblies."
+          },
+          {
+            "name": "Door Assembly with Sealing Gasket and Locking Mechanism",
+            "confidence": 0.95,
+            "reasoning": "A major mechanical subassembly with a pressure-tight door, gasket seals, and mechanical or pneumatic locking system, essential for maintaining chamber integrity during operation."
+          },
+          {
+            "name": "Vacuum System or Air Removal Subsystem",
+            "confidence": 0.85,
+            "reasoning": "Used in pre- and post- sterilization cycles for air removal to ensure steam penetration, typically procured as a distinct vacuum pump assembly with piping and controls."
+          },
+          {
+            "name": "Condensate and Drain System",
+            "confidence": 0.8,
+            "reasoning": "A subsystem managing condensate removal and drainage during and after cycles, often procured as a separate plumbing and pump assembly."
+          },
+          {
+            "name": "Heating Element or Steam Injection Manifold",
+            "confidence": 0.75,
+            "reasoning": "Component or subsystem responsible for introducing steam or heat into the chamber; sometimes integrated into steam generator or separate injection piping module."
+          },
+          {
+            "name": "Chassis and Structural Frame",
+            "confidence": 0.7,
+            "reasoning": "The structural framework housing all components, usually procured as a manufactured assembly, though designs vary on complexity and modularity."
+          }
+        ],
+        "technology_specification": "Vertical autoclave steam sterilizer with jacketed pressure chamber, fully automated control system, and integrated safety valves.",
+        "technology_reasoning": "This specification represents the most widely adopted type of autoclave in biotechnology and medical laboratories for sterilization, characterized by steam sterilization under pressure, which ensures effective microbial destruction. The jacketed pressure chamber design is standard for improving temperature uniformity and cycle efficiency, with automated controls and safety features standard in modern equipment as of 2024."
+      },
+      {
+        "agent_id": "Agent_2",
+        "components": [
+          {
+            "name": "Pressure Vessel (Sterilization Chamber)",
+            "confidence": 1.0,
+            "reasoning": "The core structural component made of stainless steel housing the sterilization process, always procured as a distinct, fabricated assembly due to safety and pressure requirements."
+          },
+          {
+            "name": "Door Assembly with Sealing Gasket and Locking Mechanism",
+            "confidence": 0.95,
+            "reasoning": "A critical safety and pressure containment component procured as a distinct assembly including the gasket and mechanical or hydraulic locks ensuring secure closure under pressure."
+          },
+          {
+            "name": "Steam Generator or Boiler Unit",
+            "confidence": 0.9,
+            "reasoning": "Often a separate manufactured unit supplying saturated steam, fundamental to autoclave operation and typically procured from specialized suppliers."
+          },
+          {
+            "name": "Control Panel and Automated Control System",
+            "confidence": 0.9,
+            "reasoning": "Includes electronic controllers, sensors, and user interface modules procured as a standardized subsystem managing cycle parameters, instrumentation, and safety interlocks."
+          },
+          {
+            "name": "Pressure and Temperature Sensors",
+            "confidence": 0.85,
+            "reasoning": "Specialized sensing components essential for monitoring sterilization conditions, typically separate units integrated into the control system."
+          },
+          {
+            "name": "Chassis or Frame Structure",
+            "confidence": 0.85,
+            "reasoning": "The structural framework supporting the pressure vessel and other components, procured or fabricated as a separate assembly for modularity and robustness."
+          },
+          {
+            "name": "Steam Distribution Manifold and Piping Assemblies",
+            "confidence": 0.8,
+            "reasoning": "Fabricated assemblies that channel steam within the pressure vessel, often procured separately due to complexity and material requirements."
+          },
+          {
+            "name": "Vacuum Pump Assembly",
+            "confidence": 0.7,
+            "reasoning": "Used in advanced autoclaves for load drying and air removal, a distinct manufactured subsystem but not present in all models."
+          },
+          {
+            "name": "Drain and Condensate Removal System",
+            "confidence": 0.7,
+            "reasoning": "Assembly responsible for removing condensate after sterilization, often supplied as a separate unit integrated into the vessel plumbing."
+          }
+        ],
+        "technology_specification": "Horizontal autoclave steam sterilizer with stainless steel pressure vessel and automated control system, designed for sterilization in medical and biotechnology settings.",
+        "technology_reasoning": "This industrial autoclave configuration is most common in biotechnology and healthcare sectors as it combines a stainless steel pressure chamber designed to withstand high-pressure saturated steam with automated controls for cycle management, which is standard for meeting sterilization protocols and regulatory compliance globally."
+      }
+    ],
+    "phase2_debate_rounds": [
+      {
+        "round_num": 1,
+        "convergence": 0.5,
+        "threshold": 0.7,
+        "threshold_reached": false,
+        "proposals": {
+          "Agent_1": [
+            {
+              "name": "Pressure Vessel (Sterilization Chamber)",
+              "confidence": 0.98,
+              "reasoning": "The core component where sterilization occurs, typically manufactured as a robust, stainless steel jacketed chamber, procured as a distinct pressure vessel assembly.",
+              "component": "Pressure Vessel (Sterilization Chamber)",
+              "normalized_component": "sterilization chamber"
+            },
+            {
+              "name": "Steam Generator/ Boiler Unit",
+              "confidence": 0.92,
+              "reasoning": "Supplies saturated steam for sterilization, often a separate modular unit with its own controls and safety features, procured independently from chamber.",
+              "component": "Steam Generator/ Boiler Unit",
+              "normalized_component": "steam generator"
+            },
+            {
+              "name": "Control System Panel (PLC and HMI)",
+              "confidence": 0.93,
+              "reasoning": "Includes programmable logic controller and user interface screen, enabling automated sterilization cycles and process monitoring; this is a manufactured electronics assembly distinct from other mechanical components.",
+              "component": "Control System Panel (PLC and HMI)",
+              "normalized_component": "control system panel"
+            },
+            {
+              "name": "Safety Valve Assembly",
+              "confidence": 0.9,
+              "reasoning": "Includes pressure relief valves and safety interlocks critical for operational safety, procured as standardized safety subassemblies.",
+              "component": "Safety Valve Assembly",
+              "normalized_component": "safety valve"
+            },
+            {
+              "name": "Door Assembly with Sealing Gasket and Locking Mechanism",
+              "confidence": 0.95,
+              "reasoning": "A major mechanical subassembly with a pressure-tight door, gasket seals, and mechanical or pneumatic locking system, essential for maintaining chamber integrity during operation.",
+              "component": "Door Assembly with Sealing Gasket and Locking Mechanism",
+              "normalized_component": "door assembly with sealing gasket and locking mechanism"
+            },
+            {
+              "name": "Vacuum System or Air Removal Subsystem",
+              "confidence": 0.85,
+              "reasoning": "Used in pre- and post- sterilization cycles for air removal to ensure steam penetration, typically procured as a distinct vacuum pump assembly with piping and controls.",
+              "component": "Vacuum System or Air Removal Subsystem",
+              "normalized_component": "vacuum"
+            },
+            {
+              "name": "Condensate and Drain System",
+              "confidence": 0.8,
+              "reasoning": "A subsystem managing condensate removal and drainage during and after cycles, often procured as a separate plumbing and pump assembly.",
+              "component": "Condensate and Drain System",
+              "normalized_component": "condensate and drain"
+            },
+            {
+              "name": "Heating Element or Steam Injection Manifold",
+              "confidence": 0.75,
+              "reasoning": "Component or subsystem responsible for introducing steam or heat into the chamber; sometimes integrated into steam generator or separate injection piping module.",
+              "component": "Heating Element or Steam Injection Manifold",
+              "normalized_component": "heating element"
+            },
+            {
+              "name": "Chassis and Structural Frame",
+              "confidence": 0.7,
+              "reasoning": "The structural framework housing all components, usually procured as a manufactured assembly, though designs vary on complexity and modularity.",
+              "component": "Chassis and Structural Frame",
+              "normalized_component": "chassis and structural frame"
+            }
+          ],
+          "Agent_2": [
+            {
+              "name": "Pressure Vessel (Sterilization Chamber)",
+              "confidence": 1.0,
+              "reasoning": "The core structural component made of stainless steel housing the sterilization process, always procured as a distinct, fabricated assembly due to safety and pressure requirements.",
+              "component": "Pressure Vessel (Sterilization Chamber)",
+              "normalized_component": "sterilization chamber"
+            },
+            {
+              "name": "Door Assembly with Sealing Gasket and Locking Mechanism",
+              "confidence": 0.95,
+              "reasoning": "A critical safety and pressure containment component procured as a distinct assembly including the gasket and mechanical or hydraulic locks ensuring secure closure under pressure.",
+              "component": "Door Assembly with Sealing Gasket and Locking Mechanism",
+              "normalized_component": "door assembly with sealing gasket and locking mechanism"
+            },
+            {
+              "name": "Steam Generator or Boiler Unit",
+              "confidence": 0.9,
+              "reasoning": "Often a separate manufactured unit supplying saturated steam, fundamental to autoclave operation and typically procured from specialized suppliers.",
+              "component": "Steam Generator or Boiler Unit",
+              "normalized_component": "steam generator"
+            },
+            {
+              "name": "Control Panel and Automated Control System",
+              "confidence": 0.9,
+              "reasoning": "Includes electronic controllers, sensors, and user interface modules procured as a standardized subsystem managing cycle parameters, instrumentation, and safety interlocks.",
+              "component": "Control Panel and Automated Control System",
+              "normalized_component": "control system panel"
+            },
+            {
+              "name": "Pressure and Temperature Sensors",
+              "confidence": 0.85,
+              "reasoning": "Specialized sensing components essential for monitoring sterilization conditions, typically separate units integrated into the control system.",
+              "component": "Pressure and Temperature Sensors",
+              "normalized_component": "pressure and temperature sensors"
+            },
+            {
+              "name": "Chassis or Frame Structure",
+              "confidence": 0.85,
+              "reasoning": "The structural framework supporting the pressure vessel and other components, procured or fabricated as a separate assembly for modularity and robustness.",
+              "component": "Chassis or Frame Structure",
+              "normalized_component": "chassis and structural frame"
+            },
+            {
+              "name": "Steam Distribution Manifold and Piping Assemblies",
+              "confidence": 0.8,
+              "reasoning": "Fabricated assemblies that channel steam within the pressure vessel, often procured separately due to complexity and material requirements.",
+              "component": "Steam Distribution Manifold and Piping Assemblies",
+              "normalized_component": "steam distribution manifold and piping assemblies"
+            },
+            {
+              "name": "Vacuum Pump Assembly",
+              "confidence": 0.7,
+              "reasoning": "Used in advanced autoclaves for load drying and air removal, a distinct manufactured subsystem but not present in all models.",
+              "component": "Vacuum Pump Assembly",
+              "normalized_component": "vacuum pump"
+            },
+            {
+              "name": "Drain and Condensate Removal System",
+              "confidence": 0.7,
+              "reasoning": "Assembly responsible for removing condensate after sterilization, often supplied as a separate unit integrated into the vessel plumbing.",
+              "component": "Drain and Condensate Removal System",
+              "normalized_component": "condensate and drain"
+            }
+          ]
+        },
+        "rounds_completed": 1,
+        "support_analysis": {
+          "consensus": [],
+          "majority": [
+            "sterilization chamber",
+            "steam generator",
+            "control system panel",
+            "door assembly with sealing gasket and locking mechanism",
+            "condensate and drain",
+            "chassis and structural frame"
+          ],
+          "isolated": [
+            "safety valve",
+            "vacuum",
+            "heating element",
+            "pressure and temperature sensors",
+            "steam distribution manifold and piping assemblies",
+            "vacuum pump"
+          ]
+        },
+        "critiques": [
+          {
+            "item_name": "sterilization chamber",
+            "normalized_name": "sterilization chamber",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.99,
+            "critique_text": "Majority support for 'sterilization chamber': 2/3 agents agree (conf: 0.99). Consider strengthening consensus."
+          },
+          {
+            "item_name": "steam generator",
+            "normalized_name": "steam generator",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.91,
+            "critique_text": "Majority support for 'steam generator': 2/3 agents agree (conf: 0.91). Consider strengthening consensus."
+          },
+          {
+            "item_name": "control system panel",
+            "normalized_name": "control system panel",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.915,
+            "critique_text": "Majority support for 'control system panel': 2/3 agents agree (conf: 0.92). Consider strengthening consensus."
+          },
+          {
+            "item_name": "safety valve",
+            "normalized_name": "safety valve",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2"
+            ],
+            "avg_confidence": 0.9,
+            "critique_text": "Isolated proposal 'safety valve' from 1 agent(s) (conf: 0.90). Requires justification or peer validation."
+          },
+          {
+            "item_name": "door assembly with sealing gasket and locking mechanism",
+            "normalized_name": "door assembly with sealing gasket and locking mechanism",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.95,
+            "critique_text": "Majority support for 'door assembly with sealing gasket and locking mechanism': 2/3 agents agree (conf: 0.95). Consider strengthening consensus."
+          },
+          {
+            "item_name": "vacuum",
+            "normalized_name": "vacuum",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2"
+            ],
+            "avg_confidence": 0.85,
+            "critique_text": "Isolated proposal 'vacuum' from 1 agent(s) (conf: 0.85). Requires justification or peer validation."
+          },
+          {
+            "item_name": "condensate and drain",
+            "normalized_name": "condensate and drain",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.75,
+            "critique_text": "Majority support for 'condensate and drain': 2/3 agents agree (conf: 0.75). Consider strengthening consensus."
+          },
+          {
+            "item_name": "heating element",
+            "normalized_name": "heating element",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2"
+            ],
+            "avg_confidence": 0.75,
+            "critique_text": "Isolated proposal 'heating element' from 1 agent(s) (conf: 0.75). Requires justification or peer validation."
+          },
+          {
+            "item_name": "chassis and structural frame",
+            "normalized_name": "chassis and structural frame",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.7749999999999999,
+            "critique_text": "Majority support for 'chassis and structural frame': 2/3 agents agree (conf: 0.77). Consider strengthening consensus."
+          },
+          {
+            "item_name": "pressure and temperature sensors",
+            "normalized_name": "pressure and temperature sensors",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_1"
+            ],
+            "avg_confidence": 0.85,
+            "critique_text": "Isolated proposal 'pressure and temperature sensors' from 1 agent(s) (conf: 0.85). Requires justification or peer validation."
+          },
+          {
+            "item_name": "steam distribution manifold and piping assemblies",
+            "normalized_name": "steam distribution manifold and piping assemblies",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_1"
+            ],
+            "avg_confidence": 0.8,
+            "critique_text": "Isolated proposal 'steam distribution manifold and piping assemblies' from 1 agent(s) (conf: 0.80). Requires justification or peer validation."
+          },
+          {
+            "item_name": "vacuum pump",
+            "normalized_name": "vacuum pump",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_1"
+            ],
+            "avg_confidence": 0.7,
+            "critique_text": "Isolated proposal 'vacuum pump' from 1 agent(s) (conf: 0.70). Requires justification or peer validation."
+          }
+        ],
+        "changes_from_previous": null
+      },
+      {
+        "round_num": 2,
+        "convergence": 1.0,
+        "threshold": 0.7,
+        "threshold_reached": true,
+        "proposals": {
+          "Agent_1": [
+            {
+              "agent_id": "Agent_1",
+              "component": "Pressure Vessel (Sterilization Chamber)",
+              "confidence": 0.99,
+              "reasoning": "Strong consensus among all agents and critiques; fundamental core component critical for the autoclave function.",
+              "round": 2,
+              "normalized_component": "Sterilization Chamber"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Steam Generator/ Boiler Unit",
+              "confidence": 0.91,
+              "reasoning": "Strong consensus support by multiple agents; essential for generating the steam required for sterilization.",
+              "round": 2,
+              "normalized_component": "Steam Generator"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Control System Panel (PLC and HMI)",
+              "confidence": 0.92,
+              "reasoning": "Multiple agents support this component as primary for controlling and monitoring the autoclave; high importance.",
+              "round": 2,
+              "normalized_component": "Control System Panel"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Door Assembly with Sealing Gasket and Locking Mechanism",
+              "confidence": 0.95,
+              "reasoning": "Unanimous support; vital for maintaining pressure and ensuring safety during operation.",
+              "round": 2,
+              "normalized_component": "Door Assembly with Sealing Gasket and Locking Mechanism"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Condensate and Drain System",
+              "confidence": 0.75,
+              "reasoning": "Moderate but consistent support; necessary for removal of condensate ensuring efficient operation.",
+              "round": 2,
+              "normalized_component": "Condensate and Drain System"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Chassis and Structural Frame",
+              "confidence": 0.77,
+              "reasoning": "Necessary for structural integrity, supported by multiple agents and critiques.",
+              "round": 2,
+              "normalized_component": "Support Structure or Frame"
+            }
+          ],
+          "Agent_2": [
+            {
+              "agent_id": "Agent_2",
+              "component": "Pressure Vessel (Sterilization Chamber)",
+              "confidence": 0.99,
+              "reasoning": "Strong consensus with very high confidence from both agents; essential core component for autoclave function.",
+              "round": 2,
+              "normalized_component": "Sterilization Chamber"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Steam Generator/ Boiler Unit",
+              "confidence": 0.91,
+              "reasoning": "Strong consensus from both agents with high confidence; critical for generating steam for sterilization.",
+              "round": 2,
+              "normalized_component": "Steam Generator"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Control System Panel (PLC and HMI)",
+              "confidence": 0.92,
+              "reasoning": "Strong consensus with high confidence; necessary for automated operation and process control.",
+              "round": 2,
+              "normalized_component": "Control System Panel"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Door Assembly with Sealing Gasket and Locking Mechanism",
+              "confidence": 0.95,
+              "reasoning": "Strong consensus with very high confidence; crucial for sealing the chamber to maintain pressure and safety.",
+              "round": 2,
+              "normalized_component": "Door Assembly with Sealing Gasket and Locking Mechanism"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Condensate and Drain System",
+              "confidence": 0.75,
+              "reasoning": "Moderate consensus and importance; needed to manage condensate formed during sterilization cycles.",
+              "round": 2,
+              "normalized_component": "Condensate and Drain System"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Chassis and Structural Frame",
+              "confidence": 0.77,
+              "reasoning": "Moderate consensus and importance; provides necessary structural support for all components.",
+              "round": 2,
+              "normalized_component": "Support Structure or Frame"
+            }
+          ],
+          "Agent_3": [
+            {
+              "agent_id": "Agent_3",
+              "component": "Pressure Vessel (Sterilization Chamber)",
+              "confidence": 0.99,
+              "reasoning": "Strong consensus from both agents with very high confidence (average 0.99) and critical as the core sterilization chamber.",
+              "round": 2,
+              "normalized_component": "Sterilization Chamber"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Steam Generator/ Boiler Unit",
+              "confidence": 0.91,
+              "reasoning": "Strong consensus from both agents with average confidence of 0.91, essential for generating the steam required for sterilization.",
+              "round": 2,
+              "normalized_component": "Steam Generator"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Control System Panel (PLC and HMI)",
+              "confidence": 0.92,
+              "reasoning": "Strong consensus from both agents with average confidence of 0.92, necessary for controlling and automating the sterilization process.",
+              "round": 2,
+              "normalized_component": "Control System Panel"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Door Assembly with Sealing Gasket and Locking Mechanism",
+              "confidence": 0.95,
+              "reasoning": "Strong consensus from both agents with high confidence (average 0.95), critical for maintaining a sealed, safe sterilization environment.",
+              "round": 2,
+              "normalized_component": "Door Assembly with Sealing Gasket and Locking Mechanism"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Condensate and Drain System",
+              "confidence": 0.75,
+              "reasoning": "Strong consensus from both agents with average confidence 0.75, important for removing condensate and maintaining operational efficiency.",
+              "round": 2,
+              "normalized_component": "Condensate and Drain System"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Chassis and Structural Frame",
+              "confidence": 0.77,
+              "reasoning": "Consensus from both agents with average confidence about 0.77, important for mechanical support and housing of components.",
+              "round": 2,
+              "normalized_component": "Support Structure or Frame"
+            }
+          ]
+        },
+        "rounds_completed": 2,
+        "support_analysis": {
+          "consensus": [
+            "pressure vessel (sterilization chamber)",
+            "steam generator/ boiler",
+            "control system panel (plc and hmi)",
+            "door assembly with sealing gasket and locking mechanism",
+            "condensate and drain",
+            "chassis and structural frame"
+          ],
+          "majority": [],
+          "isolated": []
+        },
+        "critiques": [
+          {
+            "item_name": "Pressure Vessel (Sterilization Chamber)",
+            "normalized_name": "pressure vessel (sterilization chamber)",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.9899999999999999,
+            "critique_text": "Strong consensus on 'Pressure Vessel (Sterilization Chamber)': all 3 agents support with avg confidence 0.99. Preserve this component."
+          },
+          {
+            "item_name": "Steam Generator/ Boiler Unit",
+            "normalized_name": "steam generator/ boiler",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.91,
+            "critique_text": "Strong consensus on 'Steam Generator/ Boiler Unit': all 3 agents support with avg confidence 0.91. Preserve this component."
+          },
+          {
+            "item_name": "Control System Panel (PLC and HMI)",
+            "normalized_name": "control system panel (plc and hmi)",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.92,
+            "critique_text": "Strong consensus on 'Control System Panel (PLC and HMI)': all 3 agents support with avg confidence 0.92. Preserve this component."
+          },
+          {
+            "item_name": "Door Assembly with Sealing Gasket and Locking Mechanism",
+            "normalized_name": "door assembly with sealing gasket and locking mechanism",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.9499999999999998,
+            "critique_text": "Strong consensus on 'Door Assembly with Sealing Gasket and Locking Mechanism': all 3 agents support with avg confidence 0.95. Preserve this component."
+          },
+          {
+            "item_name": "Condensate and Drain System",
+            "normalized_name": "condensate and drain",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.75,
+            "critique_text": "Strong consensus on 'Condensate and Drain System': all 3 agents support with avg confidence 0.75. Preserve this component."
+          },
+          {
+            "item_name": "Chassis and Structural Frame",
+            "normalized_name": "chassis and structural frame",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.77,
+            "critique_text": "Strong consensus on 'Chassis and Structural Frame': all 3 agents support with avg confidence 0.77. Preserve this component."
+          }
+        ],
+        "changes_from_previous": {
+          "items_added": [
+            "steam generator/ boiler",
+            "control system panel (plc and hmi)",
+            "pressure vessel (sterilization chamber)"
+          ],
+          "items_removed": [
+            "vacuum",
+            "sterilization chamber",
+            "pressure and temperature sensors",
+            "control system panel",
+            "heating element",
+            "steam distribution manifold and piping assemblies",
+            "safety valve",
+            "vacuum pump",
+            "steam generator"
+          ],
+          "confidence_changes": {}
+        }
+      }
+    ],
+    "phase3_final_consensus": {
+      "technology": "Autoclave (Steam Sterilizer)",
+      "technology_specification": "Autoclave (Steam Sterilizer)",
+      "technology_reasoning": "",
+      "components": [
+        "Sterilization Chamber",
+        "Door Assembly With Sealing Gasket And Locking Mechanism",
+        "Control System Panel",
+        "Steam Generator",
+        "Support Structure Or Frame",
+        "Condensate And Drain System"
+      ],
+      "confidence": 1.0,
+      "rounds": 2,
+      "convergence_score": 1.0
+    }
+  },
+  "materials_debate": {
+    "debate_rounds": [],
+    "final_consensus": {
+      "components": 6,
+      "unique_materials": 10,
+      "total_assignments": 19,
+      "materials_by_component": {
+        "Sterilization Chamber": [
+          {
+            "name": "Stainless steel (SS 304/316)",
+            "confidence": 0.95,
+            "reasoning": "Primary structural material for sterilization chambers due to its excellent corrosion resistance, strength, and ability to withstand high temperature and pressure; universally used in autoclave chambers."
+          },
+          {
+            "name": "Aluminum oxide",
+            "confidence": 0.6,
+            "reasoning": "Used as a coating or surface treatment to enhance corrosion resistance and wear properties in some chambers; alternatives exist but commonly used."
+          },
+          {
+            "name": "Silicon dioxide",
+            "confidence": 0.55,
+            "reasoning": "Present as part of glass or ceramic insulating linings inside chamber; not always used but common for high temperature stability and insulation."
+          }
+        ],
+        "Door Assembly With Sealing Gasket And Locking Mechanism": [
+          {
+            "name": "Stainless steel (SS 304/316)",
+            "confidence": 0.9,
+            "reasoning": "Primary material for door structural components and locking mechanisms due to strength and corrosion resistance; nearly universally used."
+          },
+          {
+            "name": "PTFE",
+            "confidence": 0.8,
+            "reasoning": "Common material for sealing gaskets in steam sterilizers due to chemical resistance, temperature tolerance, and sealing performance; widely used."
+          },
+          {
+            "name": "Silicon",
+            "confidence": 0.5,
+            "reasoning": "Used in some gasket materials or sealing surfaces due to temperature stability, but alternatives like rubber or other polymers possible; moderate confidence."
+          }
+        ],
+        "Control System Panel": [
+          {
+            "name": "Aluminum",
+            "confidence": 0.75,
+            "reasoning": "Used in control panel housing and heat sinks for electronics; common but alternatives like plastic or steel also exist."
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.85,
+            "reasoning": "Critical electrical conductor material in circuit boards and wiring; standard in electronics manufacturing."
+          },
+          {
+            "name": "Silicon",
+            "confidence": 0.95,
+            "reasoning": "Core semiconductor material for electronic control components; absolutely essential."
+          },
+          {
+            "name": "Glass",
+            "confidence": 0.7,
+            "reasoning": "Used in display screens and protective windows in control panels; alternatives exist but common."
+          },
+          {
+            "name": "Epoxy resins",
+            "confidence": 0.65,
+            "reasoning": "Used as insulating and structural material in printed circuit boards; alternatives exist but widely applied."
+          }
+        ],
+        "Steam Generator": [
+          {
+            "name": "Stainless steel (SS 304/316)",
+            "confidence": 0.95,
+            "reasoning": "Primary material for steam generator vessel and heating elements due to corrosion and heat resistance; industry standard."
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.7,
+            "reasoning": "Used in heating coils, pipes or electrical windings in some steam generators; alternatives exist but common."
+          },
+          {
+            "name": "Aluminum oxide",
+            "confidence": 0.55,
+            "reasoning": "Used as an insulating ceramic in some heating elements; not always used but present in some designs."
+          }
+        ],
+        "Support Structure Or Frame": [
+          {
+            "name": "Steel Ingots",
+            "confidence": 0.85,
+            "reasoning": "Base raw material to manufacture structural steel supports; foundational for autoclave frame strength and rigidity."
+          },
+          {
+            "name": "Stainless steel (SS 304/316)",
+            "confidence": 0.8,
+            "reasoning": "Commonly used finished structural steel for corrosion resistance and durability in frame parts; with steel ingots as input material."
+          }
+        ],
+        "Condensate And Drain System": [
+          {
+            "name": "Stainless steel (SS 304/316)",
+            "confidence": 0.9,
+            "reasoning": "Primary material for piping and fittings in condensate and drain systems due to corrosion resistance and durability."
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.75,
+            "reasoning": "Commonly used for piping and tubing sections due to thermal conductivity and ease of fabrication; alternatives exist."
+          },
+          {
+            "name": "PTFE",
+            "confidence": 0.6,
+            "reasoning": "Used for seals and gaskets in drain system due to chemical and temperature resistance; alternatives possible but common."
+          }
+        ]
+      }
+    }
+  }
+}

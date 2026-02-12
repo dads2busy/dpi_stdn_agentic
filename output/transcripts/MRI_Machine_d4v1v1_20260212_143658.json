@@ -1,0 +1,1433 @@
+{
+  "version": "2.0",
+  "metadata": {
+    "technology": "MRI Machine",
+    "technology_specification": "MRI Machine",
+    "technology_reasoning": "",
+    "timestamp": "2026-02-12T14:48:50.462994",
+    "format_version": "2.0"
+  },
+  "config": {
+    "num_agents": 4,
+    "max_rounds": 2
+  },
+  "component_stage": {
+    "phase1_initial_proposals": [
+      {
+        "agent_id": "Agent_1",
+        "components": [
+          {
+            "name": "Superconducting Magnet Assembly",
+            "confidence": 1.0,
+            "reasoning": "This is the core component responsible for generating the high-intensity static magnetic field and is procured as a complete assembly including coils and cryostat."
+          },
+          {
+            "name": "Gradient Coil Assembly",
+            "confidence": 0.98,
+            "reasoning": "Essential for spatial encoding of the MRI signal, this coil assembly is a major submodule that is manufactured and procured separately from the main magnet."
+          },
+          {
+            "name": "Radio Frequency (RF) Coil(s)",
+            "confidence": 0.95,
+            "reasoning": "These coils transmit and receive the RF signals during scanning, widely available as separate modules tailored to different imaging regions."
+          },
+          {
+            "name": "Cryogenic Cooling System",
+            "confidence": 0.9,
+            "reasoning": "Includes the liquid helium refrigeration or cryocooler unit and associated infrastructure to maintain superconductivity in the magnet; always a distinct, critical procureable subassembly."
+          },
+          {
+            "name": "Magnet Power Supply and Quench System",
+            "confidence": 0.88,
+            "reasoning": "Provides stable DC current to the superconducting magnet and includes quench protection systems to safely dissipate energy, usually procured as a specialized electrical subassembly."
+          },
+          {
+            "name": "Main Control Electronics and Computer System",
+            "confidence": 0.85,
+            "reasoning": "The integrated control unit managing sequences, image acquisition, and data processing is a distinct procurement with its own supply chain."
+          },
+          {
+            "name": "Patient Table and Positioning System",
+            "confidence": 0.8,
+            "reasoning": "A mechanical and electromechanical assembly for patient transport and accurate positioning within the MRI bore, usually procured separately from electronic subsystems."
+          },
+          {
+            "name": "RF Shielded Room or Faraday Cage Components",
+            "confidence": 0.75,
+            "reasoning": "Though often built on-site, modular panels and shielding materials for electromagnetic interference control are sometimes pre-fabricated components in the supply chain."
+          },
+          {
+            "name": "Cooling Water System (Chiller Unit)",
+            "confidence": 0.7,
+            "reasoning": "Provides the necessary secondary cooling for gradient coils and RF amplifiers; commonly procured as a packaged refrigeration or chiller unit."
+          }
+        ],
+        "technology_specification": "Superconducting Magnetic Resonance Imaging (MRI) system using a superconducting magnet with cryogenic cooling, gradient coils, RF transmit/receive coils, and integrated control electronics.",
+        "technology_reasoning": "This specification reflects the dominant industry standard for high-field clinical MRI machines globally as of 2024, which primarily use superconducting magnets cooled by liquid helium in cryostats, combined with gradient and RF coil assemblies to generate and receive magnetic signals for imaging."
+      },
+      {
+        "agent_id": "Agent_2",
+        "components": [
+          {
+            "name": "Superconducting Magnet Coil Assembly",
+            "confidence": 1.0,
+            "reasoning": "Core functional and structural assembly generating the primary magnetic field, procured as a complete manufactured unit including windings and coil supports."
+          },
+          {
+            "name": "Cryostat and Cryogenic Cooling System",
+            "confidence": 0.98,
+            "reasoning": "Encloses the superconducting coils and maintains liquid helium at cryogenic temperatures; a specialized, distinct assembly with separate manufacturing and supply."
+          },
+          {
+            "name": "Gradient Coil Assembly",
+            "confidence": 0.95,
+            "reasoning": "Essential for spatial encoding of MRI signals, a separate coil assembly installed within the bore, procured as a specialized electromagnetic unit."
+          },
+          {
+            "name": "RF Transmit/Receive Coil",
+            "confidence": 0.92,
+            "reasoning": "Dedicated antenna coil assembly for transmitting and receiving radiofrequency signals; typically modular and separately supplied."
+          },
+          {
+            "name": "Patient Table/Bed Assembly",
+            "confidence": 0.93,
+            "reasoning": "Structural component designed to hold and position the patient within the scanner bore, often procured as a distinct mechanical assembly."
+          },
+          {
+            "name": "Main Magnet Housing/Structural Frame",
+            "confidence": 0.9,
+            "reasoning": "Mechanical enclosure and structural support for the magnet and bore, manufactured as a complete assembly to ensure stability and alignment."
+          },
+          {
+            "name": "Shim System (Passive and Active Shims)",
+            "confidence": 0.85,
+            "reasoning": "Magnetic field homogeneity correction subsystem, including fixed shim components and active shim coils; procured or manufactured separately to be integrated within the magnet assembly."
+          },
+          {
+            "name": "Magnet Power Supply and Quench Protection Unit",
+            "confidence": 0.82,
+            "reasoning": "Critical electronic subsystem providing current to the superconducting magnet and managing safety shutdowns, often a separate procurable unit."
+          }
+        ],
+        "technology_specification": "Superconducting Magnetic Resonance Imaging (MRI) machine with a closed-bore design and cryogen-cooled superconducting magnet.",
+        "technology_reasoning": "This specification matches the most common MRI machines used worldwide in clinical settings as of 2024, featuring superconducting magnets cooled by liquid helium to generate strong, stable magnetic fields essential for high-resolution imaging. Closed-bore designs dominate the market due to their superior magnetic homogeneity and imaging quality."
+      },
+      {
+        "agent_id": "Agent_3",
+        "components": [
+          {
+            "name": "Superconducting Magnet Assembly",
+            "confidence": 1.0,
+            "reasoning": "The magnet is the core component generating the uniform, strong magnetic field essential for MRI operation; it is a distinct, procured superconducting coil assembly with cryogenic systems."
+          },
+          {
+            "name": "Gradient Coil System",
+            "confidence": 0.98,
+            "reasoning": "The gradient coils produce spatially varying magnetic fields critical for spatial encoding of the MRI signal; they are complex, separately manufactured subassemblies integrated into the magnet bore."
+          },
+          {
+            "name": "Radiofrequency (RF) Coil",
+            "confidence": 0.97,
+            "reasoning": "RF coils transmit and receive signals; typically modular with varying designs for different body parts, they are distinct components sourced separately or manufactured independently."
+          },
+          {
+            "name": "Cryogenic Cooling System (Cryocooler and Dewar)",
+            "confidence": 0.95,
+            "reasoning": "Maintains the superconducting state by cooling the magnet to cryogenic temperatures using a closed-cycle cryocooler and insulated dewar vessel; a critical, purchased subsystem."
+          },
+          {
+            "name": "Magnet Shim System",
+            "confidence": 0.85,
+            "reasoning": "Consists of passive and active shim coils to improve field homogeneity; often a separately manufactured module but sometimes integrated with magnet assembly depending on design."
+          },
+          {
+            "name": "Patient Table (Patient Couch)",
+            "confidence": 0.9,
+            "reasoning": "The movable patient support apparatus integrated with positioning motors and controls; standard component procured or manufactured separately due to its mechanical and ergonomic complexity."
+          },
+          {
+            "name": "Main Control Electronics Cabinet",
+            "confidence": 0.93,
+            "reasoning": "Encloses power supplies, gradient amplifiers, RF transmitters, and system control electronics; a standalone manufactured subassembly essential for system functionality."
+          },
+          {
+            "name": "User Interface Console (Operator Workstation)",
+            "confidence": 0.88,
+            "reasoning": "Computer system with specialized software and displays used by radiologists and technologists to operate the MRI system; typically a separate procurement."
+          },
+          {
+            "name": "Magnet Quench and Safety Systems",
+            "confidence": 0.8,
+            "reasoning": "Subsystems responsible for safely venting the superconducting magnet during emergency quenches; a critical safety component with distinct supply chain."
+          },
+          {
+            "name": "RF Shielding Enclosure (Faraday Cage)",
+            "confidence": 0.75,
+            "reasoning": "Specialized enclosure that surrounds the MRI room to prevent RF interference; often procured as a modular shield system though its exact form can vary by installation."
+          }
+        ],
+        "technology_specification": "Superconducting magnetic resonance imaging (MRI) machine using a high-field superconducting magnet (typically 1.5T or 3T) and radiofrequency (RF) coils for non-invasive internal body imaging.",
+        "technology_reasoning": "Superconducting MRI systems with high-field magnets (1.5T and 3T) dominate medical imaging globally due to optimal image resolution and established clinical formats. They represent the industry standard for hospitals and clinics as of 2024, with mature supply chains for major subassemblies."
+      },
+      {
+        "agent_id": "Agent_4",
+        "components": [
+          {
+            "name": "Superconducting Magnet Assembly",
+            "confidence": 0.99,
+            "reasoning": "Core component generating the main magnetic field, procured as a major assembly including the cryostat and superconducting coils, universally present in all MRI machines."
+          },
+          {
+            "name": "Gradient Coil Assembly",
+            "confidence": 0.95,
+            "reasoning": "Essential for spatial encoding in MRI, this is a distinct manufactured coil system separate from the magnet, with its own power and cooling requirements."
+          },
+          {
+            "name": "Radio Frequency (RF) Coil System",
+            "confidence": 0.95,
+            "reasoning": "Critical for transmitting and receiving electromagnetic signals for imaging, these coils are distinct subsystems often procured separately for different body parts."
+          },
+          {
+            "name": "MRI Control and Console Electronics",
+            "confidence": 0.9,
+            "reasoning": "Includes processing units, pulse sequence controllers, and user interface hardware; a distinct electronics module typically sourced as a major subsystem."
+          },
+          {
+            "name": "Cryogenic Cooling System",
+            "confidence": 0.9,
+            "reasoning": "Supports the superconducting magnet by maintaining low temperatures via liquid helium or closed-cycle coolers, procured as a separate subsystem."
+          },
+          {
+            "name": "Patient Table and Positioning System",
+            "confidence": 0.85,
+            "reasoning": "Mechanical assembly for patient support and precise positioning within the magnet bore, distinct structural component with separate supply channels."
+          },
+          {
+            "name": "Gradient Power Amplifier",
+            "confidence": 0.9,
+            "reasoning": "Electronic unit providing controlled current to gradient coils, procured separately as a high-power amplifier module."
+          },
+          {
+            "name": "RF Transmitter/Receiver Unit",
+            "confidence": 0.92,
+            "reasoning": "Electronic module responsible for amplifying and processing RF signals, distinct from coil hardware, procured independently."
+          },
+          {
+            "name": "Magnet Shimming Assembly",
+            "confidence": 0.7,
+            "reasoning": "Subsystem to fine-tune magnetic field homogeneity, sometimes integrated but often a separate module with discrete supply chain."
+          }
+        ],
+        "technology_specification": "Superconducting magnetic resonance imaging (MRI) system with high-field magnet and integrated gradient and RF subsystems",
+        "technology_reasoning": "The most common medical MRI machines use superconducting magnets operating typically at 1.5 to 3 Tesla as the industry standard due to their high field strengths providing superior image quality. These systems integrate gradient coils and RF subsystems as distinct modules, making this the dominant architecture in clinical MRI globally."
+      }
+    ],
+    "phase2_debate_rounds": [
+      {
+        "round_num": 1,
+        "convergence": 0.5429292929292929,
+        "threshold": 0.7,
+        "threshold_reached": false,
+        "proposals": {
+          "Agent_1": [
+            {
+              "name": "Superconducting Magnet Assembly",
+              "confidence": 1.0,
+              "reasoning": "This is the core component responsible for generating the high-intensity static magnetic field and is procured as a complete assembly including coils and cryostat.",
+              "component": "Superconducting Magnet Assembly",
+              "normalized_component": "superconducting magnet"
+            },
+            {
+              "name": "Gradient Coil Assembly",
+              "confidence": 0.98,
+              "reasoning": "Essential for spatial encoding of the MRI signal, this coil assembly is a major submodule that is manufactured and procured separately from the main magnet.",
+              "component": "Gradient Coil Assembly",
+              "normalized_component": "gradient coil"
+            },
+            {
+              "name": "Radio Frequency (RF) Coil(s)",
+              "confidence": 0.95,
+              "reasoning": "These coils transmit and receive the RF signals during scanning, widely available as separate modules tailored to different imaging regions.",
+              "component": "Radio Frequency (RF) Coil(s)",
+              "normalized_component": "radio frequency (rf) coil"
+            },
+            {
+              "name": "Cryogenic Cooling System",
+              "confidence": 0.9,
+              "reasoning": "Includes the liquid helium refrigeration or cryocooler unit and associated infrastructure to maintain superconductivity in the magnet; always a distinct, critical procureable subassembly.",
+              "component": "Cryogenic Cooling System",
+              "normalized_component": "cryogenic cooling"
+            },
+            {
+              "name": "Magnet Power Supply and Quench System",
+              "confidence": 0.88,
+              "reasoning": "Provides stable DC current to the superconducting magnet and includes quench protection systems to safely dissipate energy, usually procured as a specialized electrical subassembly.",
+              "component": "Magnet Power Supply and Quench System",
+              "normalized_component": "magnet power supply and quench protection"
+            },
+            {
+              "name": "Main Control Electronics and Computer System",
+              "confidence": 0.85,
+              "reasoning": "The integrated control unit managing sequences, image acquisition, and data processing is a distinct procurement with its own supply chain.",
+              "component": "Main Control Electronics and Computer System",
+              "normalized_component": "main control electronics"
+            },
+            {
+              "name": "Patient Table and Positioning System",
+              "confidence": 0.8,
+              "reasoning": "A mechanical and electromechanical assembly for patient transport and accurate positioning within the MRI bore, usually procured separately from electronic subsystems.",
+              "component": "Patient Table and Positioning System",
+              "normalized_component": "patient table"
+            },
+            {
+              "name": "RF Shielded Room or Faraday Cage Components",
+              "confidence": 0.75,
+              "reasoning": "Though often built on-site, modular panels and shielding materials for electromagnetic interference control are sometimes pre-fabricated components in the supply chain.",
+              "component": "RF Shielded Room or Faraday Cage Components",
+              "normalized_component": "rf shielding enclosure (faraday cage)"
+            },
+            {
+              "name": "Cooling Water System (Chiller Unit)",
+              "confidence": 0.7,
+              "reasoning": "Provides the necessary secondary cooling for gradient coils and RF amplifiers; commonly procured as a packaged refrigeration or chiller unit.",
+              "component": "Cooling Water System (Chiller Unit)",
+              "normalized_component": "cooling water"
+            }
+          ],
+          "Agent_2": [
+            {
+              "name": "Superconducting Magnet Coil Assembly",
+              "confidence": 1.0,
+              "reasoning": "Core functional and structural assembly generating the primary magnetic field, procured as a complete manufactured unit including windings and coil supports.",
+              "component": "Superconducting Magnet Coil Assembly",
+              "normalized_component": "superconducting magnet"
+            },
+            {
+              "name": "Cryostat and Cryogenic Cooling System",
+              "confidence": 0.98,
+              "reasoning": "Encloses the superconducting coils and maintains liquid helium at cryogenic temperatures; a specialized, distinct assembly with separate manufacturing and supply.",
+              "component": "Cryostat and Cryogenic Cooling System",
+              "normalized_component": "cryogenic cooling"
+            },
+            {
+              "name": "Gradient Coil Assembly",
+              "confidence": 0.95,
+              "reasoning": "Essential for spatial encoding of MRI signals, a separate coil assembly installed within the bore, procured as a specialized electromagnetic unit.",
+              "component": "Gradient Coil Assembly",
+              "normalized_component": "gradient coil"
+            },
+            {
+              "name": "RF Transmit/Receive Coil",
+              "confidence": 0.92,
+              "reasoning": "Dedicated antenna coil assembly for transmitting and receiving radiofrequency signals; typically modular and separately supplied.",
+              "component": "RF Transmit/Receive Coil",
+              "normalized_component": "radio frequency (rf) coil"
+            },
+            {
+              "name": "Patient Table/Bed Assembly",
+              "confidence": 0.93,
+              "reasoning": "Structural component designed to hold and position the patient within the scanner bore, often procured as a distinct mechanical assembly.",
+              "component": "Patient Table/Bed Assembly",
+              "normalized_component": "patient table"
+            },
+            {
+              "name": "Main Magnet Housing/Structural Frame",
+              "confidence": 0.9,
+              "reasoning": "Mechanical enclosure and structural support for the magnet and bore, manufactured as a complete assembly to ensure stability and alignment.",
+              "component": "Main Magnet Housing/Structural Frame",
+              "normalized_component": "main magnet housing"
+            },
+            {
+              "name": "Shim System (Passive and Active Shims)",
+              "confidence": 0.85,
+              "reasoning": "Magnetic field homogeneity correction subsystem, including fixed shim components and active shim coils; procured or manufactured separately to be integrated within the magnet assembly.",
+              "component": "Shim System (Passive and Active Shims)",
+              "normalized_component": "shim"
+            },
+            {
+              "name": "Magnet Power Supply and Quench Protection Unit",
+              "confidence": 0.82,
+              "reasoning": "Critical electronic subsystem providing current to the superconducting magnet and managing safety shutdowns, often a separate procurable unit.",
+              "component": "Magnet Power Supply and Quench Protection Unit",
+              "normalized_component": "magnet power supply and quench protection"
+            }
+          ],
+          "Agent_3": [
+            {
+              "name": "Superconducting Magnet Assembly",
+              "confidence": 1.0,
+              "reasoning": "The magnet is the core component generating the uniform, strong magnetic field essential for MRI operation; it is a distinct, procured superconducting coil assembly with cryogenic systems.",
+              "component": "Superconducting Magnet Assembly",
+              "normalized_component": "superconducting magnet"
+            },
+            {
+              "name": "Gradient Coil System",
+              "confidence": 0.98,
+              "reasoning": "The gradient coils produce spatially varying magnetic fields critical for spatial encoding of the MRI signal; they are complex, separately manufactured subassemblies integrated into the magnet bore.",
+              "component": "Gradient Coil System",
+              "normalized_component": "gradient coil"
+            },
+            {
+              "name": "Radiofrequency (RF) Coil",
+              "confidence": 0.97,
+              "reasoning": "RF coils transmit and receive signals; typically modular with varying designs for different body parts, they are distinct components sourced separately or manufactured independently.",
+              "component": "Radiofrequency (RF) Coil",
+              "normalized_component": "radio frequency (rf) coil"
+            },
+            {
+              "name": "Cryogenic Cooling System (Cryocooler and Dewar)",
+              "confidence": 0.95,
+              "reasoning": "Maintains the superconducting state by cooling the magnet to cryogenic temperatures using a closed-cycle cryocooler and insulated dewar vessel; a critical, purchased subsystem.",
+              "component": "Cryogenic Cooling System (Cryocooler and Dewar)",
+              "normalized_component": "cryogenic cooling"
+            },
+            {
+              "name": "Magnet Shim System",
+              "confidence": 0.85,
+              "reasoning": "Consists of passive and active shim coils to improve field homogeneity; often a separately manufactured module but sometimes integrated with magnet assembly depending on design.",
+              "component": "Magnet Shim System",
+              "normalized_component": "shim"
+            },
+            {
+              "name": "Patient Table (Patient Couch)",
+              "confidence": 0.9,
+              "reasoning": "The movable patient support apparatus integrated with positioning motors and controls; standard component procured or manufactured separately due to its mechanical and ergonomic complexity.",
+              "component": "Patient Table (Patient Couch)",
+              "normalized_component": "patient table"
+            },
+            {
+              "name": "Main Control Electronics Cabinet",
+              "confidence": 0.93,
+              "reasoning": "Encloses power supplies, gradient amplifiers, RF transmitters, and system control electronics; a standalone manufactured subassembly essential for system functionality.",
+              "component": "Main Control Electronics Cabinet",
+              "normalized_component": "main control electronics"
+            },
+            {
+              "name": "User Interface Console (Operator Workstation)",
+              "confidence": 0.88,
+              "reasoning": "Computer system with specialized software and displays used by radiologists and technologists to operate the MRI system; typically a separate procurement.",
+              "component": "User Interface Console (Operator Workstation)",
+              "normalized_component": "user interface console"
+            },
+            {
+              "name": "Magnet Quench and Safety Systems",
+              "confidence": 0.8,
+              "reasoning": "Subsystems responsible for safely venting the superconducting magnet during emergency quenches; a critical safety component with distinct supply chain.",
+              "component": "Magnet Quench and Safety Systems",
+              "normalized_component": "magnet quench and safety"
+            },
+            {
+              "name": "RF Shielding Enclosure (Faraday Cage)",
+              "confidence": 0.75,
+              "reasoning": "Specialized enclosure that surrounds the MRI room to prevent RF interference; often procured as a modular shield system though its exact form can vary by installation.",
+              "component": "RF Shielding Enclosure (Faraday Cage)",
+              "normalized_component": "rf shielding enclosure (faraday cage)"
+            }
+          ],
+          "Agent_4": [
+            {
+              "name": "Superconducting Magnet Assembly",
+              "confidence": 0.99,
+              "reasoning": "Core component generating the main magnetic field, procured as a major assembly including the cryostat and superconducting coils, universally present in all MRI machines.",
+              "component": "Superconducting Magnet Assembly",
+              "normalized_component": "superconducting magnet"
+            },
+            {
+              "name": "Gradient Coil Assembly",
+              "confidence": 0.95,
+              "reasoning": "Essential for spatial encoding in MRI, this is a distinct manufactured coil system separate from the magnet, with its own power and cooling requirements.",
+              "component": "Gradient Coil Assembly",
+              "normalized_component": "gradient coil"
+            },
+            {
+              "name": "Radio Frequency (RF) Coil System",
+              "confidence": 0.95,
+              "reasoning": "Critical for transmitting and receiving electromagnetic signals for imaging, these coils are distinct subsystems often procured separately for different body parts.",
+              "component": "Radio Frequency (RF) Coil System",
+              "normalized_component": "radio frequency (rf) coil"
+            },
+            {
+              "name": "MRI Control and Console Electronics",
+              "confidence": 0.9,
+              "reasoning": "Includes processing units, pulse sequence controllers, and user interface hardware; a distinct electronics module typically sourced as a major subsystem.",
+              "component": "MRI Control and Console Electronics",
+              "normalized_component": "main control electronics"
+            },
+            {
+              "name": "Cryogenic Cooling System",
+              "confidence": 0.9,
+              "reasoning": "Supports the superconducting magnet by maintaining low temperatures via liquid helium or closed-cycle coolers, procured as a separate subsystem.",
+              "component": "Cryogenic Cooling System",
+              "normalized_component": "cryogenic cooling"
+            },
+            {
+              "name": "Patient Table and Positioning System",
+              "confidence": 0.85,
+              "reasoning": "Mechanical assembly for patient support and precise positioning within the magnet bore, distinct structural component with separate supply channels.",
+              "component": "Patient Table and Positioning System",
+              "normalized_component": "patient table"
+            },
+            {
+              "name": "Gradient Power Amplifier",
+              "confidence": 0.9,
+              "reasoning": "Electronic unit providing controlled current to gradient coils, procured separately as a high-power amplifier module.",
+              "component": "Gradient Power Amplifier",
+              "normalized_component": "gradient power amplifier"
+            },
+            {
+              "name": "RF Transmitter/Receiver Unit",
+              "confidence": 0.92,
+              "reasoning": "Electronic module responsible for amplifying and processing RF signals, distinct from coil hardware, procured independently.",
+              "component": "RF Transmitter/Receiver Unit",
+              "normalized_component": "rf transmitter/receiver"
+            },
+            {
+              "name": "Magnet Shimming Assembly",
+              "confidence": 0.7,
+              "reasoning": "Subsystem to fine-tune magnetic field homogeneity, sometimes integrated but often a separate module with discrete supply chain.",
+              "component": "Magnet Shimming Assembly",
+              "normalized_component": "shim"
+            }
+          ]
+        },
+        "rounds_completed": 1,
+        "support_analysis": {
+          "consensus": [
+            "main control electronics",
+            "shim"
+          ],
+          "majority": [
+            "superconducting magnet",
+            "gradient coil",
+            "radio frequency (rf) coil",
+            "cryogenic cooling",
+            "magnet power supply and quench protection",
+            "patient table",
+            "rf shielding enclosure (faraday cage)"
+          ],
+          "isolated": [
+            "cooling water",
+            "main magnet housing",
+            "user interface console",
+            "magnet quench and safety",
+            "gradient power amplifier",
+            "rf transmitter/receiver"
+          ]
+        },
+        "critiques": [
+          {
+            "item_name": "superconducting magnet",
+            "normalized_name": "superconducting magnet",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_4",
+              "Agent_3",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.9975,
+            "critique_text": "Majority support for 'superconducting magnet': 4/3 agents agree (conf: 1.00). Consider strengthening consensus."
+          },
+          {
+            "item_name": "gradient coil",
+            "normalized_name": "gradient coil",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_4",
+              "Agent_3",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.965,
+            "critique_text": "Majority support for 'gradient coil': 4/3 agents agree (conf: 0.96). Consider strengthening consensus."
+          },
+          {
+            "item_name": "radio frequency (rf) coil",
+            "normalized_name": "radio frequency (rf) coil",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_4",
+              "Agent_3",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.9475,
+            "critique_text": "Majority support for 'radio frequency (rf) coil': 4/3 agents agree (conf: 0.95). Consider strengthening consensus."
+          },
+          {
+            "item_name": "cryogenic cooling",
+            "normalized_name": "cryogenic cooling",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_4",
+              "Agent_3",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.9325,
+            "critique_text": "Majority support for 'cryogenic cooling': 4/3 agents agree (conf: 0.93). Consider strengthening consensus."
+          },
+          {
+            "item_name": "magnet power supply and quench protection",
+            "normalized_name": "magnet power supply and quench protection",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_3",
+              "Agent_4"
+            ],
+            "avg_confidence": 0.85,
+            "critique_text": "Majority support for 'magnet power supply and quench protection': 2/3 agents agree (conf: 0.85). Consider strengthening consensus."
+          },
+          {
+            "item_name": "main control electronics",
+            "normalized_name": "main control electronics",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_4",
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2"
+            ],
+            "avg_confidence": 0.8933333333333334,
+            "critique_text": "Strong consensus on 'main control electronics': all 3 agents support with avg confidence 0.89. Preserve this component."
+          },
+          {
+            "item_name": "patient table",
+            "normalized_name": "patient table",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_4",
+              "Agent_3",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.87,
+            "critique_text": "Majority support for 'patient table': 4/3 agents agree (conf: 0.87). Consider strengthening consensus."
+          },
+          {
+            "item_name": "rf shielding enclosure (faraday cage)",
+            "normalized_name": "rf shielding enclosure (faraday cage)",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2",
+              "Agent_4"
+            ],
+            "avg_confidence": 0.75,
+            "critique_text": "Majority support for 'rf shielding enclosure (faraday cage)': 2/3 agents agree (conf: 0.75). Consider strengthening consensus."
+          },
+          {
+            "item_name": "cooling water",
+            "normalized_name": "cooling water",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2",
+              "Agent_4",
+              "Agent_3"
+            ],
+            "avg_confidence": 0.7,
+            "critique_text": "Isolated proposal 'cooling water' from 1 agent(s) (conf: 0.70). Requires justification or peer validation."
+          },
+          {
+            "item_name": "main magnet housing",
+            "normalized_name": "main magnet housing",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_3",
+              "Agent_4",
+              "Agent_1"
+            ],
+            "avg_confidence": 0.9,
+            "critique_text": "Isolated proposal 'main magnet housing' from 1 agent(s) (conf: 0.90). Requires justification or peer validation."
+          },
+          {
+            "item_name": "shim",
+            "normalized_name": "shim",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_4",
+              "Agent_3"
+            ],
+            "opposing_agents": [
+              "Agent_1"
+            ],
+            "avg_confidence": 0.7999999999999999,
+            "critique_text": "Strong consensus on 'shim': all 3 agents support with avg confidence 0.80. Preserve this component."
+          },
+          {
+            "item_name": "user interface console",
+            "normalized_name": "user interface console",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_3"
+            ],
+            "opposing_agents": [
+              "Agent_2",
+              "Agent_4",
+              "Agent_1"
+            ],
+            "avg_confidence": 0.88,
+            "critique_text": "Isolated proposal 'user interface console' from 1 agent(s) (conf: 0.88). Requires justification or peer validation."
+          },
+          {
+            "item_name": "magnet quench and safety",
+            "normalized_name": "magnet quench and safety",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_3"
+            ],
+            "opposing_agents": [
+              "Agent_2",
+              "Agent_4",
+              "Agent_1"
+            ],
+            "avg_confidence": 0.8,
+            "critique_text": "Isolated proposal 'magnet quench and safety' from 1 agent(s) (conf: 0.80). Requires justification or peer validation."
+          },
+          {
+            "item_name": "gradient power amplifier",
+            "normalized_name": "gradient power amplifier",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_4"
+            ],
+            "opposing_agents": [
+              "Agent_2",
+              "Agent_3",
+              "Agent_1"
+            ],
+            "avg_confidence": 0.9,
+            "critique_text": "Isolated proposal 'gradient power amplifier' from 1 agent(s) (conf: 0.90). Requires justification or peer validation."
+          },
+          {
+            "item_name": "rf transmitter/receiver",
+            "normalized_name": "rf transmitter/receiver",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_4"
+            ],
+            "opposing_agents": [
+              "Agent_2",
+              "Agent_3",
+              "Agent_1"
+            ],
+            "avg_confidence": 0.92,
+            "critique_text": "Isolated proposal 'rf transmitter/receiver' from 1 agent(s) (conf: 0.92). Requires justification or peer validation."
+          }
+        ],
+        "changes_from_previous": null
+      },
+      {
+        "round_num": 2,
+        "convergence": 1.0,
+        "threshold": 0.7,
+        "threshold_reached": true,
+        "proposals": {
+          "Agent_1": [
+            {
+              "agent_id": "Agent_1",
+              "component": "Superconducting Magnet Assembly",
+              "confidence": 1.0,
+              "reasoning": "Unanimous strong support by all agents with perfect confidence, fundamental for MRI operation.",
+              "round": 2,
+              "normalized_component": "Superconducting Magnet"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Gradient Coil Assembly",
+              "confidence": 0.96,
+              "reasoning": "Strong consensus with multiple agents supporting it, essential for spatial encoding in MRI.",
+              "round": 2,
+              "normalized_component": "Gradient Coil"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Radio Frequency (RF) Coil(s)",
+              "confidence": 0.95,
+              "reasoning": "High agreement among agents, critical for transmission and reception of MR signal.",
+              "round": 2,
+              "normalized_component": "Radio Frequency Coil"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Cryogenic Cooling System",
+              "confidence": 0.93,
+              "reasoning": "All agents agree on its necessity to maintain superconducting magnet functionality.",
+              "round": 2,
+              "normalized_component": "High Thermal Efficiency Cooling Fin Array"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Magnet Power Supply and Quench System",
+              "confidence": 0.85,
+              "reasoning": "Moderate consensus with two agent endorsements, important for magnet power management and safety.",
+              "round": 2,
+              "normalized_component": "Magnet Power Supply and Quench System"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Main Control Electronics and Computer System",
+              "confidence": 0.89,
+              "reasoning": "Supported by majority of agents, key for controlling MRI operations and data processing.",
+              "round": 2,
+              "normalized_component": "Main Control Electronics and Computer System"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Patient Table and Positioning System",
+              "confidence": 0.87,
+              "reasoning": "Broad support across agents, vital for patient positioning during scanning.",
+              "round": 2,
+              "normalized_component": "Patient Positioning System"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "RF Shielded Room or Faraday Cage Components",
+              "confidence": 0.75,
+              "reasoning": "Consensus from two agents, necessary to prevent RF interference and ensure image quality.",
+              "round": 2,
+              "normalized_component": "Faraday Cage"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Shim System (Passive and Active Shims)",
+              "confidence": 0.8,
+              "reasoning": "Strong support by multiple agents, important for magnetic field homogeneity.",
+              "round": 2,
+              "normalized_component": "Shim System"
+            }
+          ],
+          "Agent_2": [
+            {
+              "agent_id": "Agent_2",
+              "component": "Superconducting Magnet Assembly",
+              "confidence": 1.0,
+              "reasoning": "Unanimous support from all 4 agents with maximum confidence; essential primary component of an MRI machine.",
+              "round": 2,
+              "normalized_component": "Superconducting Magnet"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Gradient Coil Assembly",
+              "confidence": 0.96,
+              "reasoning": "Strong consensus from all agents with high confidence; critical for spatial encoding in MRI.",
+              "round": 2,
+              "normalized_component": "Gradient Coil"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Radio Frequency (RF) Coil(s)",
+              "confidence": 0.95,
+              "reasoning": "All agents included RF coil variants with about 0.95 confidence; vital for signal transmission and reception in MRI.",
+              "round": 2,
+              "normalized_component": "Radio Frequency Coil"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Cryogenic Cooling System",
+              "confidence": 0.93,
+              "reasoning": "Strong peer consensus on necessity for maintaining superconducting state; confidence adjusted to reflect varied naming but clear agreement on concept.",
+              "round": 2,
+              "normalized_component": "High Thermal Efficiency Cooling Fin Array"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Magnet Power Supply and Quench System",
+              "confidence": 0.85,
+              "reasoning": "Moderate to strong support by two agents, also supported in peer critique; key for safe operation of magnet.",
+              "round": 2,
+              "normalized_component": "Magnet Power Supply and Quench System"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Main Control Electronics and Computer System",
+              "confidence": 0.89,
+              "reasoning": "Included by multiple agents with high confidence; central for system control and data processing.",
+              "round": 2,
+              "normalized_component": "Main Control Electronics and Computer System"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Patient Table and Positioning System",
+              "confidence": 0.87,
+              "reasoning": "Strong consensus and high confidence from multiple agents; crucial for patient handling and positioning.",
+              "round": 2,
+              "normalized_component": "Patient Positioning System"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "RF Shielded Room or Faraday Cage Components",
+              "confidence": 0.75,
+              "reasoning": "Supported by two agents unanimously and recognized in critique; important for noise reduction and signal clarity.",
+              "round": 2,
+              "normalized_component": "Faraday Cage"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Shim System (Passive and Active Shims)",
+              "confidence": 0.8,
+              "reasoning": "Multiple agents support shimming components to ensure magnetic field homogeneity; moderately high confidence.",
+              "round": 2,
+              "normalized_component": "Shim System"
+            }
+          ],
+          "Agent_3": [
+            {
+              "agent_id": "Agent_3",
+              "component": "Superconducting Magnet Assembly",
+              "confidence": 1.0,
+              "reasoning": "Unanimous strong support from all agents with highest confidence, fundamental and primary component of MRI.",
+              "round": 2,
+              "normalized_component": "Superconducting Magnet"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Gradient Coil Assembly",
+              "confidence": 0.96,
+              "reasoning": "Strong consensus and high confidence from all agents; critical for spatial encoding in MRI.",
+              "round": 2,
+              "normalized_component": "Gradient Coil"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Radio Frequency (RF) Coil(s)",
+              "confidence": 0.95,
+              "reasoning": "Majority support and essential for signal transmission and reception; well-supported in all selections.",
+              "round": 2,
+              "normalized_component": "Radio Frequency Coil"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Cryogenic Cooling System",
+              "confidence": 0.93,
+              "reasoning": "Strong agreement and essential for maintaining superconductivity of the magnet coils.",
+              "round": 2,
+              "normalized_component": "High Thermal Efficiency Cooling Fin Array"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Magnet Power Supply and Quench System",
+              "confidence": 0.85,
+              "reasoning": "Adequate consensus and critical for magnet operation and safety during quench events.",
+              "round": 2,
+              "normalized_component": "Magnet Power Supply and Quench System"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Main Control Electronics and Computer System",
+              "confidence": 0.89,
+              "reasoning": "High confidence due to multiple selections and critical for MRI operation and control.",
+              "round": 2,
+              "normalized_component": "Main Control Electronics and Computer System"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Patient Table and Positioning System",
+              "confidence": 0.87,
+              "reasoning": "Consistent support from all agents; essential for patient comfort and imaging precision.",
+              "round": 2,
+              "normalized_component": "Patient Positioning System"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "RF Shielded Room or Faraday Cage Components",
+              "confidence": 0.75,
+              "reasoning": "Necessary to shield MRI signals from external RF noise; supported by multiple agents.",
+              "round": 2,
+              "normalized_component": "Faraday Cage"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Shim System (Passive and Active Shims)",
+              "confidence": 0.8,
+              "reasoning": "Important for magnetic field homogeneity; agreed upon by several agents and serves to optimize image quality.",
+              "round": 2,
+              "normalized_component": "Shim System"
+            }
+          ],
+          "Agent_4": [
+            {
+              "agent_id": "Agent_4",
+              "component": "Superconducting Magnet Assembly",
+              "confidence": 1.0,
+              "reasoning": "All four agents selected this with perfect confidence; it is the core of the MRI machine.",
+              "round": 2,
+              "normalized_component": "Superconducting Magnet"
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "Gradient Coil Assembly",
+              "confidence": 0.96,
+              "reasoning": "Strong consensus with nearly perfect confidence across agents; essential for spatial encoding of MR signals.",
+              "round": 2,
+              "normalized_component": "Gradient Coil"
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "Radio Frequency (RF) Coil(s)",
+              "confidence": 0.95,
+              "reasoning": "All agents agree with high confidence; critical for transmitting and receiving radiowaves used in MRI.",
+              "round": 2,
+              "normalized_component": "Radio Frequency Coil"
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "Cryogenic Cooling System",
+              "confidence": 0.93,
+              "reasoning": "Unanimous support with high confidence; necessary to maintain superconductivity in the magnet.",
+              "round": 2,
+              "normalized_component": "High Thermal Efficiency Cooling Fin Array"
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "Magnet Power Supply and Quench System",
+              "confidence": 0.85,
+              "reasoning": "Supported by two agents with substantial confidence; essential for magnet operation and safety in quench events.",
+              "round": 2,
+              "normalized_component": "Magnet Power Supply and Quench System"
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "Main Control Electronics and Computer System",
+              "confidence": 0.89,
+              "reasoning": "Multiple agents with high confidence; required for system control and data acquisition.",
+              "round": 2,
+              "normalized_component": "Main Control Electronics and Computer System"
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "Patient Table and Positioning System",
+              "confidence": 0.87,
+              "reasoning": "Strong consensus across all agents; needed to position and move the patient precisely during scanning.",
+              "round": 2,
+              "normalized_component": "Patient Positioning System"
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "RF Shielded Room or Faraday Cage Components",
+              "confidence": 0.75,
+              "reasoning": "Supported by some agents; necessary to shield MRI from external RF interference.",
+              "round": 2,
+              "normalized_component": "Faraday Cage"
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "Shim System (Passive and Active Shims)",
+              "confidence": 0.8,
+              "reasoning": "Good consensus; important for fine-tuning magnetic field homogeneity to ensure image quality.",
+              "round": 2,
+              "normalized_component": "Shim System"
+            }
+          ]
+        },
+        "rounds_completed": 2,
+        "support_analysis": {
+          "consensus": [],
+          "majority": [
+            "superconducting magnet",
+            "gradient coil",
+            "radio frequency (rf) coil(s)",
+            "cryogenic cooling",
+            "magnet power supply and quench",
+            "main control electronics and computer",
+            "patient table and positioning",
+            "rf shielded room or faraday cage components",
+            "shim system (passive and active shims)"
+          ],
+          "isolated": []
+        },
+        "critiques": [
+          {
+            "item_name": "Superconducting Magnet Assembly",
+            "normalized_name": "superconducting magnet",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_4",
+              "Agent_3",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 1.0,
+            "critique_text": "Majority support for 'Superconducting Magnet Assembly': 4/3 agents agree (conf: 1.00). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Gradient Coil Assembly",
+            "normalized_name": "gradient coil",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_4",
+              "Agent_3",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.96,
+            "critique_text": "Majority support for 'Gradient Coil Assembly': 4/3 agents agree (conf: 0.96). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Radio Frequency (RF) Coil(s)",
+            "normalized_name": "radio frequency (rf) coil(s)",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_4",
+              "Agent_3",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.95,
+            "critique_text": "Majority support for 'Radio Frequency (RF) Coil(s)': 4/3 agents agree (conf: 0.95). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Cryogenic Cooling System",
+            "normalized_name": "cryogenic cooling",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_4",
+              "Agent_3",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.93,
+            "critique_text": "Majority support for 'Cryogenic Cooling System': 4/3 agents agree (conf: 0.93). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Magnet Power Supply and Quench System",
+            "normalized_name": "magnet power supply and quench",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_4",
+              "Agent_3",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.85,
+            "critique_text": "Majority support for 'Magnet Power Supply and Quench System': 4/3 agents agree (conf: 0.85). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Main Control Electronics and Computer System",
+            "normalized_name": "main control electronics and computer",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_4",
+              "Agent_3",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.89,
+            "critique_text": "Majority support for 'Main Control Electronics and Computer System': 4/3 agents agree (conf: 0.89). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Patient Table and Positioning System",
+            "normalized_name": "patient table and positioning",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_4",
+              "Agent_3",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.87,
+            "critique_text": "Majority support for 'Patient Table and Positioning System': 4/3 agents agree (conf: 0.87). Consider strengthening consensus."
+          },
+          {
+            "item_name": "RF Shielded Room or Faraday Cage Components",
+            "normalized_name": "rf shielded room or faraday cage components",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_4",
+              "Agent_3",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.75,
+            "critique_text": "Majority support for 'RF Shielded Room or Faraday Cage Components': 4/3 agents agree (conf: 0.75). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Shim System (Passive and Active Shims)",
+            "normalized_name": "shim system (passive and active shims)",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_4",
+              "Agent_3",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.8,
+            "critique_text": "Majority support for 'Shim System (Passive and Active Shims)': 4/3 agents agree (conf: 0.80). Consider strengthening consensus."
+          }
+        ],
+        "changes_from_previous": {
+          "items_added": [
+            "rf shielded room or faraday cage components",
+            "shim system (passive and active shims)",
+            "patient table and positioning",
+            "main control electronics and computer",
+            "radio frequency (rf) coil(s)",
+            "magnet power supply and quench"
+          ],
+          "items_removed": [
+            "cooling water",
+            "user interface console",
+            "patient table",
+            "radio frequency (rf) coil",
+            "gradient power amplifier",
+            "main control electronics",
+            "main magnet housing",
+            "rf shielding enclosure (faraday cage)",
+            "magnet power supply and quench protection",
+            "magnet quench and safety",
+            "rf transmitter/receiver",
+            "shim"
+          ],
+          "confidence_changes": {}
+        }
+      }
+    ],
+    "phase3_final_consensus": {
+      "technology": "MRI Machine",
+      "technology_specification": "MRI Machine",
+      "technology_reasoning": "",
+      "components": [
+        "Superconducting Magnet",
+        "Gradient Coil",
+        "Radio Frequency Coil",
+        "High Thermal Efficiency Cooling Fin Array",
+        "Main Control Electronics And Computer System",
+        "Patient Positioning System",
+        "Magnet Power Supply And Quench System",
+        "Shim System",
+        "Faraday Cage"
+      ],
+      "confidence": 1.0,
+      "rounds": 2,
+      "convergence_score": 1.0
+    }
+  },
+  "materials_debate": {
+    "debate_rounds": [],
+    "final_consensus": {
+      "components": 9,
+      "unique_materials": 13,
+      "total_assignments": 34,
+      "materials_by_component": {
+        "Superconducting Magnet": [
+          {
+            "name": "Niobium",
+            "confidence": 0.92,
+            "reasoning": "Niobium is a primary superconducting metal used in superconducting magnet coils due to its superconducting properties at low temperatures; highly standard material with few alternatives."
+          },
+          {
+            "name": "Titanium",
+            "confidence": 0.85,
+            "reasoning": "Used for structural support and cryostat components owing to its strength and light weight; commonly used alloy material in magnet assemblies."
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.9,
+            "reasoning": "Essential for stabilizing superconducting wires and providing electrical conduction; universally used in superconducting magnets."
+          },
+          {
+            "name": "Helium",
+            "confidence": 0.95,
+            "reasoning": "Cryogenic coolant essential to maintain superconducting state by cooling the magnet to low temperatures; absolutely essential."
+          }
+        ],
+        "Gradient Coil": [
+          {
+            "name": "Copper",
+            "confidence": 0.95,
+            "reasoning": "Primary conductor material for gradient coils due to its excellent electrical conductivity; universally used."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.8,
+            "reasoning": "Used for coil formers and structural components due to good conductivity and light weight; standard material but some substitutes exist."
+          },
+          {
+            "name": "Epoxy resins",
+            "confidence": 0.85,
+            "reasoning": "Used as insulating and binding matrix material for coils; industry standard with few substitutes."
+          },
+          {
+            "name": "Glass",
+            "confidence": 0.7,
+            "reasoning": "Used as insulation substrate and mechanical support; commonly used but alternatives exist."
+          }
+        ],
+        "Radio Frequency Coil": [
+          {
+            "name": "Copper",
+            "confidence": 0.95,
+            "reasoning": "Primary conductor for RF coils due to high conductivity and ease of forming coil shapes; absolutely essential."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.75,
+            "reasoning": "Sometimes used for coil formers or shielding; less common but occasionally used."
+          },
+          {
+            "name": "Epoxy resins",
+            "confidence": 0.8,
+            "reasoning": "Used as insulating material and for coil encapsulation; common industry choice."
+          },
+          {
+            "name": "Polytetrafluoroethylene",
+            "confidence": 0.7,
+            "reasoning": "Used as dielectric material for insulation due to high dielectric strength; common but alternatives like other polymers exist."
+          }
+        ],
+        "High Thermal Efficiency Cooling Fin Array": [
+          {
+            "name": "Aluminum",
+            "confidence": 0.9,
+            "reasoning": "Widely used for cooling fins due to its high thermal conductivity, lightweight, and corrosion resistance; industry standard."
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.8,
+            "reasoning": "Used for some high performance cooling fins due to superior thermal conductivity; less common because of cost but effective."
+          },
+          {
+            "name": "Epoxy resins",
+            "confidence": 0.6,
+            "reasoning": "Possible use in coatings or structural adhesives for the cooling fin array; alternatives exist but commonly used in assemblies."
+          }
+        ],
+        "Main Control Electronics And Computer System": [
+          {
+            "name": "Silicon",
+            "confidence": 0.98,
+            "reasoning": "Fundamental semiconductor material for all integrated circuits and chips in the electronic control systems; absolutely essential."
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.9,
+            "reasoning": "Primary conductor for printed circuit boards and internal wiring; universal usage."
+          },
+          {
+            "name": "Gold",
+            "confidence": 0.8,
+            "reasoning": "Used for wire bonding and contacts due to corrosion resistance and excellent conductivity; standard but alternatives like silver exist."
+          },
+          {
+            "name": "Epoxy resins",
+            "confidence": 0.85,
+            "reasoning": "Used as PCB substrate and encapsulants for integrated circuits; standard material with few substitutes."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.75,
+            "reasoning": "Sometimes used in heat sinks and structural parts; common but not always present."
+          }
+        ],
+        "Patient Positioning System": [
+          {
+            "name": "Aluminum",
+            "confidence": 0.85,
+            "reasoning": "Widely used for structural frames and mechanical components due to strength and light weight; industry standard."
+          },
+          {
+            "name": "Stainless steel",
+            "confidence": 0.8,
+            "reasoning": "Used for mechanical parts requiring corrosion resistance and mechanical strength; common standard."
+          },
+          {
+            "name": "Polyethylene terephthalate",
+            "confidence": 0.7,
+            "reasoning": "Used for flexible components and covers; commonly used polymer but alternatives exist."
+          },
+          {
+            "name": "Epoxy resins",
+            "confidence": 0.65,
+            "reasoning": "Used for bonding and structural components; typical but alternatives possible."
+          }
+        ],
+        "Magnet Power Supply And Quench System": [
+          {
+            "name": "Copper",
+            "confidence": 0.95,
+            "reasoning": "Primary conductor in power supply wiring and quench protection circuits; universally essential."
+          },
+          {
+            "name": "Steel Ingots",
+            "confidence": 0.8,
+            "reasoning": "Core structural metal for power supply chassis and magnetic circuit components; widely used with some substitutions."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.75,
+            "reasoning": "Used in components like heat sinks and wiring; common but not always essential."
+          },
+          {
+            "name": "Epoxy resins",
+            "confidence": 0.65,
+            "reasoning": "Used as insulation and structural adhesives in power electronics; common but alternatives exist."
+          }
+        ],
+        "Shim System": [
+          {
+            "name": "Stainless steel",
+            "confidence": 0.9,
+            "reasoning": "Common shim material for precise magnetic field adjustments due to good mechanical properties and corrosion resistance; industry standard."
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.65,
+            "reasoning": "Sometimes used in shim coils or conductive parts; less frequently than steel but possible."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.6,
+            "reasoning": "Used in some shim components or plates for lightweight applications; alternatives exist."
+          }
+        ],
+        "Faraday Cage": [
+          {
+            "name": "Copper",
+            "confidence": 0.95,
+            "reasoning": "Primary material for electromagnetic shielding due to excellent conductivity; universally used."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.85,
+            "reasoning": "Used as a lower-cost alternative to copper for shielding; common industry practice."
+          },
+          {
+            "name": "Steel Ingots",
+            "confidence": 0.75,
+            "reasoning": "Steel is sometimes used for structural parts of cages, less effective as conductor but provides mechanical strength; alternatives exist."
+          }
+        ]
+      }
+    }
+  }
+}

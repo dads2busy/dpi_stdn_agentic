@@ -1,0 +1,1849 @@
+{
+  "version": "2.0",
+  "metadata": {
+    "technology": "Electric Vehicle Motor",
+    "technology_specification": "Electric Vehicle Motor",
+    "technology_reasoning": "",
+    "timestamp": "2026-02-12T15:36:43.259593",
+    "format_version": "2.0"
+  },
+  "config": {
+    "num_agents": 5,
+    "max_rounds": 3
+  },
+  "component_stage": {
+    "phase1_initial_proposals": [
+      {
+        "agent_id": "Agent_1",
+        "components": [
+          {
+            "name": "Stator Assembly",
+            "confidence": 0.98,
+            "reasoning": "The stator, including laminated core and copper windings, is a core electrical component of the motor, universally procured as a separate assembly due to its complexity and critical role."
+          },
+          {
+            "name": "Rotor Assembly",
+            "confidence": 0.97,
+            "reasoning": "The rotor, comprising permanent magnets (in PMSM) or squirrel cage bars (in induction motors), is a fundamental rotating subassembly procured distinctly due to specialized manufacturing."
+          },
+          {
+            "name": "Motor Housing",
+            "confidence": 0.92,
+            "reasoning": "The motor housing provides structural support, thermal management interfaces, and protection; it is a distinct manufactured component procured separately."
+          },
+          {
+            "name": "Bearing Set",
+            "confidence": 0.9,
+            "reasoning": "Bearings enable rotor rotation; these are precision-engineered components usually sourced as a separate procureable item."
+          },
+          {
+            "name": "Power Electronics Module (Inverter)",
+            "confidence": 0.95,
+            "reasoning": "The inverter converts DC battery power to three-phase AC for motor control; it is a critical, separately manufactured and procured subassembly."
+          },
+          {
+            "name": "Cooling System Assembly",
+            "confidence": 0.88,
+            "reasoning": "This includes liquid or air cooling components such as heat exchangers and cooling channels integrated with the motor, typically procured as a subsystem."
+          },
+          {
+            "name": "Shaft Assembly",
+            "confidence": 0.85,
+            "reasoning": "The motor shaft is a key mechanical transmission component, often supplied as a distinct mechanical part."
+          },
+          {
+            "name": "Encoder or Resolver Assembly",
+            "confidence": 0.8,
+            "reasoning": "Position sensors like encoders or resolvers provide rotor position feedback; these are separately manufactured electronic/mechanical modules."
+          },
+          {
+            "name": "Terminal Box (Junction Box)",
+            "confidence": 0.83,
+            "reasoning": "The terminal box consolidates electrical connections and sensor interfaces; it is a separate component typically procured independently."
+          }
+        ],
+        "technology_specification": "Electric vehicle motor typically refers to a permanent magnet synchronous motor (PMSM) or induction motor designed specifically for battery electric vehicle propulsion, integrating high-efficiency rotor-stator assemblies and dedicated power electronics.",
+        "technology_reasoning": "Permanent magnet synchronous motors dominate EV traction applications due to high power density and efficiency, representing the majority of motors in light electric vehicles globally as of 2024, while induction motors remain common in some models. The motor technology is distinctly modular, with several major subassemblies procured separately."
+      },
+      {
+        "agent_id": "Agent_2",
+        "components": [
+          {
+            "name": "Stator Assembly",
+            "confidence": 0.98,
+            "reasoning": "The stator with windings is a core electromechanical assembly procured as a single part, essential in converting electrical energy to magnetic fields."
+          },
+          {
+            "name": "Rotor Assembly with Permanent Magnets",
+            "confidence": 0.98,
+            "reasoning": "The rotor containing permanent magnets is a distinct subassembly critical to motor function, usually supplied as a unit separate from the stator."
+          },
+          {
+            "name": "Motor Housing (Frame)",
+            "confidence": 0.95,
+            "reasoning": "The structural housing supports and protects internal components and provides mounting points, typically produced and sourced separately."
+          },
+          {
+            "name": "Bearing Assembly",
+            "confidence": 0.9,
+            "reasoning": "Bearings enable rotor rotation within the housing, procured as specific mechanical subassemblies and crucial for motor operation."
+          },
+          {
+            "name": "End Cap (or Motor End Shield)",
+            "confidence": 0.85,
+            "reasoning": "Covers and seals the motor ends, supporting bearings and structural integrity; manufactured and sourced as distinct parts."
+          },
+          {
+            "name": "Cooling Jacket or Cooling Components",
+            "confidence": 0.8,
+            "reasoning": "Thermal management parts integrated or mounted on motor housing to maintain operational temperatures, often supplied as separate assemblies."
+          },
+          {
+            "name": "Shaft",
+            "confidence": 0.88,
+            "reasoning": "The rotating shaft transmits torque to the drivetrain, manufactured as a standalone mechanical component integral to motor assembly."
+          }
+        ],
+        "technology_specification": "Electric Vehicle Motor - Permanent Magnet Synchronous Motor (PMSM) assembly for traction in battery electric vehicles",
+        "technology_reasoning": "PMSMs dominate the electric vehicle traction motor market in 2024 due to their high efficiency, power density, and widespread adoption in mainstream BEVs from top manufacturers worldwide."
+      },
+      {
+        "agent_id": "Agent_3",
+        "components": [
+          {
+            "name": "Stator Assembly",
+            "confidence": 0.97,
+            "reasoning": "The stator is the stationary part of the motor that houses the copper windings and iron core; it is a distinct manufactured assembly procured separately or built in-house."
+          },
+          {
+            "name": "Rotor Assembly (including Permanent Magnets)",
+            "confidence": 0.95,
+            "reasoning": "The rotor includes magnets and shaft; this rotor subassembly is a core rotating component procured or assembled separately from the stator."
+          },
+          {
+            "name": "Motor Housing (Frame)",
+            "confidence": 0.9,
+            "reasoning": "The motor housing encloses and protects internal motor components and provides mounting; it is a separate structural component with its own supply chain."
+          },
+          {
+            "name": "Bearings",
+            "confidence": 0.85,
+            "reasoning": "Bearings support rotor rotation within the housing; typically procured as standardized separate parts from bearing manufacturers."
+          },
+          {
+            "name": "Power Connector and Terminal Assembly",
+            "confidence": 0.8,
+            "reasoning": "Electrical connectors and terminal blocks provide the interface for power connections to the motor, often supplied as separate modules."
+          },
+          {
+            "name": "Cooling Jacket or Liquid Cooling Components",
+            "confidence": 0.75,
+            "reasoning": "For thermal management, motors often include cooling jackets or channels as distinct components or subassemblies, especially in high-performance EV motors."
+          },
+          {
+            "name": "Encoder or Resolver (Position Sensor)",
+            "confidence": 0.8,
+            "reasoning": "The position sensor mounted on the motor shaft or housing is critical for motor control and is usually a distinct purchased component."
+          },
+          {
+            "name": "End Bells or End Caps",
+            "confidence": 0.7,
+            "reasoning": "End bells support bearings and close motor ends; often separate cast or machined parts assembled to the housing."
+          }
+        ],
+        "technology_specification": "Electric vehicle traction motor, typically a three-phase AC permanent magnet synchronous motor (PMSM) used for propulsion in battery electric vehicles (BEVs).",
+        "technology_reasoning": "PMSM traction motors are the dominant technology in electric vehicles as of 2024 due to their high efficiency, compact size, and high power density, representing the majority of mass-produced BEVs globally."
+      },
+      {
+        "agent_id": "Agent_4",
+        "components": [
+          {
+            "name": "Rotor Assembly",
+            "confidence": 0.98,
+            "reasoning": "The rotor is a core mechanical and magnetic structure including permanent magnets; it is a distinct assembly procured separately from the stator and essential for motor operation."
+          },
+          {
+            "name": "Stator Assembly",
+            "confidence": 0.98,
+            "reasoning": "The stator with its copper windings and laminated iron core forms the fixed electromagnetic component of the motor; it is manufactured as a discrete module and critical for motor function."
+          },
+          {
+            "name": "Housing (Motor Frame)",
+            "confidence": 0.9,
+            "reasoning": "The motor housing provides structural support, protection, and thermal management; it is a separate manufactured part standardized for the motor assembly."
+          },
+          {
+            "name": "Shaft and Bearing Assembly",
+            "confidence": 0.9,
+            "reasoning": "The shaft transmits mechanical torque and includes bearings for rotation support; this assembly is typically procured as a unit separate from rotor and housing."
+          },
+          {
+            "name": "Cooling System (Liquid or Air Cooling Assembly)",
+            "confidence": 0.85,
+            "reasoning": "A dedicated cooling subsystem is critical to maintain motor temperature; it includes pumps, heat exchangers, and channels usually assembled and procured separately."
+          },
+          {
+            "name": "Inverter Power Electronics Module",
+            "confidence": 0.95,
+            "reasoning": "The inverter converts DC battery power to controlled AC for the motor; it is a key electronic assembly procured as a separate unit with a distinct supply chain."
+          },
+          {
+            "name": "Encoder or Resolver (Position Sensor)",
+            "confidence": 0.85,
+            "reasoning": "Position sensors provide rotor position feedback essential for motor control; they are typically separate, procurable components integrated during assembly."
+          },
+          {
+            "name": "Terminal Box or Electrical Connector Assembly",
+            "confidence": 0.8,
+            "reasoning": "This provides the electrical interface between the motor and inverter; it is often a distinct modular unit standardized for connections."
+          }
+        ],
+        "technology_specification": "Permanent magnet synchronous electric motor (PMSM) used in battery electric vehicles (BEVs) for propulsion.",
+        "technology_reasoning": "The Permanent magnet synchronous motor is the most widely used electric motor technology in modern BEVs as of 2024 due to its high efficiency, power density, and reliability. It dominates the EV motor market share, especially in passenger vehicles, overtaking induction motors in prevalence."
+      },
+      {
+        "agent_id": "Agent_5",
+        "components": [
+          {
+            "name": "Stator Assembly",
+            "confidence": 0.98,
+            "reasoning": "The stator is the stationary part of the motor consisting of laminated steel and windings, procured as a separate manufactured assembly essential for motor electromagnetic function."
+          },
+          {
+            "name": "Rotor Assembly with Permanent Magnets",
+            "confidence": 0.98,
+            "reasoning": "The rotor contains embedded permanent magnets and the rotor shaft; this is a key rotating subassembly procured separately or manufactured as one unit, central to motor operation."
+          },
+          {
+            "name": "Motor Housing (Frame)",
+            "confidence": 0.95,
+            "reasoning": "The structural enclosure that supports motor components and provides mechanical protection; typically manufactured separately and sourced from suppliers specializing in motor casings."
+          },
+          {
+            "name": "Bearing Assembly",
+            "confidence": 0.9,
+            "reasoning": "Bearings support the rotor shaft allowing smooth rotation; usually procured as distinct ready-made components assembled into the motor."
+          },
+          {
+            "name": "Cooling System (Liquid or Air Cooling Jacket)",
+            "confidence": 0.85,
+            "reasoning": "The cooling subsystem includes jackets or channels integrated around the motor housing or stator for thermal management; often procured or manufactured separately due to its critical role in performance."
+          },
+          {
+            "name": "End Shield (End Bells)",
+            "confidence": 0.8,
+            "reasoning": "Covers at motor ends holding bearings and sealing the internals; usually manufactured components that are separate from the motor housing and assembled during motor build."
+          },
+          {
+            "name": "Terminal Box / Electrical Connection Interface",
+            "confidence": 0.8,
+            "reasoning": "The external interface for electrical power connections to the motor windings; typically a separate manufactured component mounted on the motor housing."
+          },
+          {
+            "name": "Encoder or Resolver (Position Sensor)",
+            "confidence": 0.75,
+            "reasoning": "Electromechanical sensor providing rotor position feedback, often a separately sourced component essential for precise motor control in EVs."
+          }
+        ],
+        "technology_specification": "Permanent magnet synchronous electric motor (PMSM) for electric vehicles (EVs)",
+        "technology_reasoning": "PMSMs are the dominant electric motor architecture used in electric vehicles as of 2024 due to their high efficiency, power density, and reliability. They account for a large majority of EV motor production worldwide for propulsion systems in battery electric vehicles."
+      }
+    ],
+    "phase2_debate_rounds": [
+      {
+        "round_num": 1,
+        "convergence": 0.14303946053946054,
+        "threshold": 0.7,
+        "threshold_reached": false,
+        "proposals": {
+          "Agent_1": [
+            {
+              "name": "Stator Assembly",
+              "confidence": 0.98,
+              "reasoning": "The stator, including laminated core and copper windings, is a core electrical component of the motor, universally procured as a separate assembly due to its complexity and critical role.",
+              "component": "Stator Assembly",
+              "normalized_component": "stator"
+            },
+            {
+              "name": "Rotor Assembly",
+              "confidence": 0.97,
+              "reasoning": "The rotor, comprising permanent magnets (in PMSM) or squirrel cage bars (in induction motors), is a fundamental rotating subassembly procured distinctly due to specialized manufacturing.",
+              "component": "Rotor Assembly",
+              "normalized_component": "rotor assembly / rotor assembly with permanent magnets / rotor assembly (including permanent magnets)"
+            },
+            {
+              "name": "Motor Housing",
+              "confidence": 0.92,
+              "reasoning": "The motor housing provides structural support, thermal management interfaces, and protection; it is a distinct manufactured component procured separately.",
+              "component": "Motor Housing",
+              "normalized_component": "motor housing"
+            },
+            {
+              "name": "Bearing Set",
+              "confidence": 0.9,
+              "reasoning": "Bearings enable rotor rotation; these are precision-engineered components usually sourced as a separate procureable item.",
+              "component": "Bearing Set",
+              "normalized_component": "bearing set"
+            },
+            {
+              "name": "Power Electronics Module (Inverter)",
+              "confidence": 0.95,
+              "reasoning": "The inverter converts DC battery power to three-phase AC for motor control; it is a critical, separately manufactured and procured subassembly.",
+              "component": "Power Electronics Module (Inverter)",
+              "normalized_component": "power electronics module (inverter) / inverter power electronics"
+            },
+            {
+              "name": "Cooling System Assembly",
+              "confidence": 0.88,
+              "reasoning": "This includes liquid or air cooling components such as heat exchangers and cooling channels integrated with the motor, typically procured as a subsystem.",
+              "component": "Cooling System Assembly",
+              "normalized_component": "cooling"
+            },
+            {
+              "name": "Shaft Assembly",
+              "confidence": 0.85,
+              "reasoning": "The motor shaft is a key mechanical transmission component, often supplied as a distinct mechanical part.",
+              "component": "Shaft Assembly",
+              "normalized_component": "shaft"
+            },
+            {
+              "name": "Encoder or Resolver Assembly",
+              "confidence": 0.8,
+              "reasoning": "Position sensors like encoders or resolvers provide rotor position feedback; these are separately manufactured electronic/mechanical modules.",
+              "component": "Encoder or Resolver Assembly",
+              "normalized_component": "encoder or resolver"
+            },
+            {
+              "name": "Terminal Box (Junction Box)",
+              "confidence": 0.83,
+              "reasoning": "The terminal box consolidates electrical connections and sensor interfaces; it is a separate component typically procured independently.",
+              "component": "Terminal Box (Junction Box)",
+              "normalized_component": "terminal box (junction box)"
+            }
+          ],
+          "Agent_2": [
+            {
+              "name": "Stator Assembly",
+              "confidence": 0.98,
+              "reasoning": "The stator with windings is a core electromechanical assembly procured as a single part, essential in converting electrical energy to magnetic fields.",
+              "component": "Stator Assembly",
+              "normalized_component": "stator"
+            },
+            {
+              "name": "Rotor Assembly with Permanent Magnets",
+              "confidence": 0.98,
+              "reasoning": "The rotor containing permanent magnets is a distinct subassembly critical to motor function, usually supplied as a unit separate from the stator.",
+              "component": "Rotor Assembly with Permanent Magnets",
+              "normalized_component": "rotor assembly with permanent magnets"
+            },
+            {
+              "name": "Motor Housing (Frame)",
+              "confidence": 0.95,
+              "reasoning": "The structural housing supports and protects internal components and provides mounting points, typically produced and sourced separately.",
+              "component": "Motor Housing (Frame)",
+              "normalized_component": "motor housing (frame) / motor housing / housing (motor frame)"
+            },
+            {
+              "name": "Bearing Assembly",
+              "confidence": 0.9,
+              "reasoning": "Bearings enable rotor rotation within the housing, procured as specific mechanical subassemblies and crucial for motor operation.",
+              "component": "Bearing Assembly",
+              "normalized_component": "bearing"
+            },
+            {
+              "name": "End Cap (or Motor End Shield)",
+              "confidence": 0.85,
+              "reasoning": "Covers and seals the motor ends, supporting bearings and structural integrity; manufactured and sourced as distinct parts.",
+              "component": "End Cap (or Motor End Shield)",
+              "normalized_component": "end cap (or motor end shield) / end shield (end bells) / end bells or end caps"
+            },
+            {
+              "name": "Cooling Jacket or Cooling Components",
+              "confidence": 0.8,
+              "reasoning": "Thermal management parts integrated or mounted on motor housing to maintain operational temperatures, often supplied as separate assemblies.",
+              "component": "Cooling Jacket or Cooling Components",
+              "normalized_component": "cooling jacket or cooling components"
+            },
+            {
+              "name": "Shaft",
+              "confidence": 0.88,
+              "reasoning": "The rotating shaft transmits torque to the drivetrain, manufactured as a standalone mechanical component integral to motor assembly.",
+              "component": "Shaft",
+              "normalized_component": "shaft / shaft assembly / shaft and bearing"
+            }
+          ],
+          "Agent_3": [
+            {
+              "name": "Stator Assembly",
+              "confidence": 0.97,
+              "reasoning": "The stator is the stationary part of the motor that houses the copper windings and iron core; it is a distinct manufactured assembly procured separately or built in-house.",
+              "component": "Stator Assembly",
+              "normalized_component": "stator"
+            },
+            {
+              "name": "Rotor Assembly (including Permanent Magnets)",
+              "confidence": 0.95,
+              "reasoning": "The rotor includes magnets and shaft; this rotor subassembly is a core rotating component procured or assembled separately from the stator.",
+              "component": "Rotor Assembly (including Permanent Magnets)",
+              "normalized_component": "rotor assembly (including permanent magnets)"
+            },
+            {
+              "name": "Motor Housing (Frame)",
+              "confidence": 0.9,
+              "reasoning": "The motor housing encloses and protects internal motor components and provides mounting; it is a separate structural component with its own supply chain.",
+              "component": "Motor Housing (Frame)",
+              "normalized_component": "motor housing (frame) / motor housing / housing (motor frame)"
+            },
+            {
+              "name": "Bearings",
+              "confidence": 0.85,
+              "reasoning": "Bearings support rotor rotation within the housing; typically procured as standardized separate parts from bearing manufacturers.",
+              "component": "Bearings",
+              "normalized_component": "bearings / bearing set / bearing"
+            },
+            {
+              "name": "Power Connector and Terminal Assembly",
+              "confidence": 0.8,
+              "reasoning": "Electrical connectors and terminal blocks provide the interface for power connections to the motor, often supplied as separate modules.",
+              "component": "Power Connector and Terminal Assembly",
+              "normalized_component": "power connector and terminal"
+            },
+            {
+              "name": "Cooling Jacket or Liquid Cooling Components",
+              "confidence": 0.75,
+              "reasoning": "For thermal management, motors often include cooling jackets or channels as distinct components or subassemblies, especially in high-performance EV motors.",
+              "component": "Cooling Jacket or Liquid Cooling Components",
+              "normalized_component": "cooling jacket or liquid cooling components / cooling jacket or cooling components"
+            },
+            {
+              "name": "Encoder or Resolver (Position Sensor)",
+              "confidence": 0.8,
+              "reasoning": "The position sensor mounted on the motor shaft or housing is critical for motor control and is usually a distinct purchased component.",
+              "component": "Encoder or Resolver (Position Sensor)",
+              "normalized_component": "encoder or resolver (position sensor) / encoder or resolver"
+            },
+            {
+              "name": "End Bells or End Caps",
+              "confidence": 0.7,
+              "reasoning": "End bells support bearings and close motor ends; often separate cast or machined parts assembled to the housing.",
+              "component": "End Bells or End Caps",
+              "normalized_component": "end bells or end caps"
+            }
+          ],
+          "Agent_4": [
+            {
+              "name": "Rotor Assembly",
+              "confidence": 0.98,
+              "reasoning": "The rotor is a core mechanical and magnetic structure including permanent magnets; it is a distinct assembly procured separately from the stator and essential for motor operation.",
+              "component": "Rotor Assembly",
+              "normalized_component": "rotor assembly / rotor assembly with permanent magnets / rotor assembly (including permanent magnets)"
+            },
+            {
+              "name": "Stator Assembly",
+              "confidence": 0.98,
+              "reasoning": "The stator with its copper windings and laminated iron core forms the fixed electromagnetic component of the motor; it is manufactured as a discrete module and critical for motor function.",
+              "component": "Stator Assembly",
+              "normalized_component": "stator"
+            },
+            {
+              "name": "Housing (Motor Frame)",
+              "confidence": 0.9,
+              "reasoning": "The motor housing provides structural support, protection, and thermal management; it is a separate manufactured part standardized for the motor assembly.",
+              "component": "Housing (Motor Frame)",
+              "normalized_component": "housing (motor frame)"
+            },
+            {
+              "name": "Shaft and Bearing Assembly",
+              "confidence": 0.9,
+              "reasoning": "The shaft transmits mechanical torque and includes bearings for rotation support; this assembly is typically procured as a unit separate from rotor and housing.",
+              "component": "Shaft and Bearing Assembly",
+              "normalized_component": "shaft and bearing"
+            },
+            {
+              "name": "Cooling System (Liquid or Air Cooling Assembly)",
+              "confidence": 0.85,
+              "reasoning": "A dedicated cooling subsystem is critical to maintain motor temperature; it includes pumps, heat exchangers, and channels usually assembled and procured separately.",
+              "component": "Cooling System (Liquid or Air Cooling Assembly)",
+              "normalized_component": "cooling system (liquid or air cooling assembly) / cooling system (liquid or air cooling jacket) / cooling"
+            },
+            {
+              "name": "Inverter Power Electronics Module",
+              "confidence": 0.95,
+              "reasoning": "The inverter converts DC battery power to controlled AC for the motor; it is a key electronic assembly procured as a separate unit with a distinct supply chain.",
+              "component": "Inverter Power Electronics Module",
+              "normalized_component": "inverter power electronics"
+            },
+            {
+              "name": "Encoder or Resolver (Position Sensor)",
+              "confidence": 0.85,
+              "reasoning": "Position sensors provide rotor position feedback essential for motor control; they are typically separate, procurable components integrated during assembly.",
+              "component": "Encoder or Resolver (Position Sensor)",
+              "normalized_component": "encoder or resolver (position sensor) / encoder or resolver"
+            },
+            {
+              "name": "Terminal Box or Electrical Connector Assembly",
+              "confidence": 0.8,
+              "reasoning": "This provides the electrical interface between the motor and inverter; it is often a distinct modular unit standardized for connections.",
+              "component": "Terminal Box or Electrical Connector Assembly",
+              "normalized_component": "terminal box or electrical connector assembly / terminal box / electrical connection interface / terminal box (junction box)"
+            }
+          ],
+          "Agent_5": [
+            {
+              "name": "Stator Assembly",
+              "confidence": 0.98,
+              "reasoning": "The stator is the stationary part of the motor consisting of laminated steel and windings, procured as a separate manufactured assembly essential for motor electromagnetic function.",
+              "component": "Stator Assembly",
+              "normalized_component": "stator"
+            },
+            {
+              "name": "Rotor Assembly with Permanent Magnets",
+              "confidence": 0.98,
+              "reasoning": "The rotor contains embedded permanent magnets and the rotor shaft; this is a key rotating subassembly procured separately or manufactured as one unit, central to motor operation.",
+              "component": "Rotor Assembly with Permanent Magnets",
+              "normalized_component": "rotor assembly with permanent magnets"
+            },
+            {
+              "name": "Motor Housing (Frame)",
+              "confidence": 0.95,
+              "reasoning": "The structural enclosure that supports motor components and provides mechanical protection; typically manufactured separately and sourced from suppliers specializing in motor casings.",
+              "component": "Motor Housing (Frame)",
+              "normalized_component": "motor housing (frame) / motor housing / housing (motor frame)"
+            },
+            {
+              "name": "Bearing Assembly",
+              "confidence": 0.9,
+              "reasoning": "Bearings support the rotor shaft allowing smooth rotation; usually procured as distinct ready-made components assembled into the motor.",
+              "component": "Bearing Assembly",
+              "normalized_component": "bearing"
+            },
+            {
+              "name": "Cooling System (Liquid or Air Cooling Jacket)",
+              "confidence": 0.85,
+              "reasoning": "The cooling subsystem includes jackets or channels integrated around the motor housing or stator for thermal management; often procured or manufactured separately due to its critical role in performance.",
+              "component": "Cooling System (Liquid or Air Cooling Jacket)",
+              "normalized_component": "cooling system (liquid or air cooling jacket)"
+            },
+            {
+              "name": "End Shield (End Bells)",
+              "confidence": 0.8,
+              "reasoning": "Covers at motor ends holding bearings and sealing the internals; usually manufactured components that are separate from the motor housing and assembled during motor build.",
+              "component": "End Shield (End Bells)",
+              "normalized_component": "end shield (end bells)"
+            },
+            {
+              "name": "Terminal Box / Electrical Connection Interface",
+              "confidence": 0.8,
+              "reasoning": "The external interface for electrical power connections to the motor windings; typically a separate manufactured component mounted on the motor housing.",
+              "component": "Terminal Box / Electrical Connection Interface",
+              "normalized_component": "terminal box / electrical connection interface"
+            },
+            {
+              "name": "Encoder or Resolver (Position Sensor)",
+              "confidence": 0.75,
+              "reasoning": "Electromechanical sensor providing rotor position feedback, often a separately sourced component essential for precise motor control in EVs.",
+              "component": "Encoder or Resolver (Position Sensor)",
+              "normalized_component": "encoder or resolver (position sensor) / encoder or resolver"
+            }
+          ]
+        },
+        "rounds_completed": 1,
+        "support_analysis": {
+          "consensus": [
+            "motor housing (frame) / motor housing / housing (motor frame)",
+            "encoder or resolver (position sensor) / encoder or resolver"
+          ],
+          "majority": [
+            "stator",
+            "rotor assembly / rotor assembly with permanent magnets / rotor assembly (including permanent magnets)",
+            "rotor assembly with permanent magnets",
+            "bearing"
+          ],
+          "isolated": [
+            "motor housing",
+            "bearing set",
+            "power electronics module (inverter) / inverter power electronics",
+            "cooling",
+            "shaft",
+            "encoder or resolver",
+            "terminal box (junction box)",
+            "end cap (or motor end shield) / end shield (end bells) / end bells or end caps",
+            "cooling jacket or cooling components",
+            "shaft / shaft assembly / shaft and bearing",
+            "rotor assembly (including permanent magnets)",
+            "bearings / bearing set / bearing",
+            "power connector and terminal",
+            "cooling jacket or liquid cooling components / cooling jacket or cooling components",
+            "end bells or end caps",
+            "housing (motor frame)",
+            "shaft and bearing",
+            "cooling system (liquid or air cooling assembly) / cooling system (liquid or air cooling jacket) / cooling",
+            "inverter power electronics",
+            "terminal box or electrical connector assembly / terminal box / electrical connection interface / terminal box (junction box)",
+            "cooling system (liquid or air cooling jacket)",
+            "end shield (end bells)",
+            "terminal box / electrical connection interface"
+          ]
+        },
+        "critiques": [
+          {
+            "item_name": "stator",
+            "normalized_name": "stator",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_4",
+              "Agent_3",
+              "Agent_2",
+              "Agent_5",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.978,
+            "critique_text": "Majority support for 'stator': 5/3 agents agree (conf: 0.98). Consider strengthening consensus."
+          },
+          {
+            "item_name": "rotor assembly / rotor assembly with permanent magnets / rotor assembly (including permanent magnets)",
+            "normalized_name": "rotor assembly / rotor assembly with permanent magnets / rotor assembly (including permanent magnets)",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_4"
+            ],
+            "opposing_agents": [
+              "Agent_3",
+              "Agent_2",
+              "Agent_5"
+            ],
+            "avg_confidence": 0.975,
+            "critique_text": "Majority support for 'rotor assembly / rotor assembly with permanent magnets / rotor assembly (including permanent magnets)': 2/3 agents agree (conf: 0.97). Consider strengthening consensus."
+          },
+          {
+            "item_name": "motor housing",
+            "normalized_name": "motor housing",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_3",
+              "Agent_4",
+              "Agent_2",
+              "Agent_5"
+            ],
+            "avg_confidence": 0.92,
+            "critique_text": "Isolated proposal 'motor housing' from 1 agent(s) (conf: 0.92). Requires justification or peer validation."
+          },
+          {
+            "item_name": "bearing set",
+            "normalized_name": "bearing set",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_3",
+              "Agent_4",
+              "Agent_2",
+              "Agent_5"
+            ],
+            "avg_confidence": 0.9,
+            "critique_text": "Isolated proposal 'bearing set' from 1 agent(s) (conf: 0.90). Requires justification or peer validation."
+          },
+          {
+            "item_name": "power electronics module (inverter) / inverter power electronics",
+            "normalized_name": "power electronics module (inverter) / inverter power electronics",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_3",
+              "Agent_4",
+              "Agent_2",
+              "Agent_5"
+            ],
+            "avg_confidence": 0.95,
+            "critique_text": "Isolated proposal 'power electronics module (inverter) / inverter power electronics' from 1 agent(s) (conf: 0.95). Requires justification or peer validation."
+          },
+          {
+            "item_name": "cooling",
+            "normalized_name": "cooling",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_3",
+              "Agent_4",
+              "Agent_2",
+              "Agent_5"
+            ],
+            "avg_confidence": 0.88,
+            "critique_text": "Isolated proposal 'cooling' from 1 agent(s) (conf: 0.88). Requires justification or peer validation."
+          },
+          {
+            "item_name": "shaft",
+            "normalized_name": "shaft",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_3",
+              "Agent_4",
+              "Agent_2",
+              "Agent_5"
+            ],
+            "avg_confidence": 0.85,
+            "critique_text": "Isolated proposal 'shaft' from 1 agent(s) (conf: 0.85). Requires justification or peer validation."
+          },
+          {
+            "item_name": "encoder or resolver",
+            "normalized_name": "encoder or resolver",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_3",
+              "Agent_4",
+              "Agent_2",
+              "Agent_5"
+            ],
+            "avg_confidence": 0.8,
+            "critique_text": "Isolated proposal 'encoder or resolver' from 1 agent(s) (conf: 0.80). Requires justification or peer validation."
+          },
+          {
+            "item_name": "terminal box (junction box)",
+            "normalized_name": "terminal box (junction box)",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_3",
+              "Agent_4",
+              "Agent_2",
+              "Agent_5"
+            ],
+            "avg_confidence": 0.83,
+            "critique_text": "Isolated proposal 'terminal box (junction box)' from 1 agent(s) (conf: 0.83). Requires justification or peer validation."
+          },
+          {
+            "item_name": "rotor assembly with permanent magnets",
+            "normalized_name": "rotor assembly with permanent magnets",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_5"
+            ],
+            "opposing_agents": [
+              "Agent_3",
+              "Agent_4",
+              "Agent_1"
+            ],
+            "avg_confidence": 0.98,
+            "critique_text": "Majority support for 'rotor assembly with permanent magnets': 2/3 agents agree (conf: 0.98). Consider strengthening consensus."
+          },
+          {
+            "item_name": "motor housing (frame) / motor housing / housing (motor frame)",
+            "normalized_name": "motor housing (frame) / motor housing / housing (motor frame)",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_2",
+              "Agent_5"
+            ],
+            "opposing_agents": [
+              "Agent_4",
+              "Agent_1"
+            ],
+            "avg_confidence": 0.9333333333333332,
+            "critique_text": "Strong consensus on 'motor housing (frame) / motor housing / housing (motor frame)': all 3 agents support with avg confidence 0.93. Preserve this component."
+          },
+          {
+            "item_name": "bearing",
+            "normalized_name": "bearing",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_5"
+            ],
+            "opposing_agents": [
+              "Agent_3",
+              "Agent_4",
+              "Agent_1"
+            ],
+            "avg_confidence": 0.9,
+            "critique_text": "Majority support for 'bearing': 2/3 agents agree (conf: 0.90). Consider strengthening consensus."
+          },
+          {
+            "item_name": "end cap (or motor end shield) / end shield (end bells) / end bells or end caps",
+            "normalized_name": "end cap (or motor end shield) / end shield (end bells) / end bells or end caps",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_3",
+              "Agent_4",
+              "Agent_1",
+              "Agent_5"
+            ],
+            "avg_confidence": 0.85,
+            "critique_text": "Isolated proposal 'end cap (or motor end shield) / end shield (end bells) / end bells or end caps' from 1 agent(s) (conf: 0.85). Requires justification or peer validation."
+          },
+          {
+            "item_name": "cooling jacket or cooling components",
+            "normalized_name": "cooling jacket or cooling components",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_3",
+              "Agent_4",
+              "Agent_1",
+              "Agent_5"
+            ],
+            "avg_confidence": 0.8,
+            "critique_text": "Isolated proposal 'cooling jacket or cooling components' from 1 agent(s) (conf: 0.80). Requires justification or peer validation."
+          },
+          {
+            "item_name": "shaft / shaft assembly / shaft and bearing",
+            "normalized_name": "shaft / shaft assembly / shaft and bearing",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_3",
+              "Agent_4",
+              "Agent_1",
+              "Agent_5"
+            ],
+            "avg_confidence": 0.88,
+            "critique_text": "Isolated proposal 'shaft / shaft assembly / shaft and bearing' from 1 agent(s) (conf: 0.88). Requires justification or peer validation."
+          },
+          {
+            "item_name": "rotor assembly (including permanent magnets)",
+            "normalized_name": "rotor assembly (including permanent magnets)",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_3"
+            ],
+            "opposing_agents": [
+              "Agent_4",
+              "Agent_1",
+              "Agent_2",
+              "Agent_5"
+            ],
+            "avg_confidence": 0.95,
+            "critique_text": "Isolated proposal 'rotor assembly (including permanent magnets)' from 1 agent(s) (conf: 0.95). Requires justification or peer validation."
+          },
+          {
+            "item_name": "bearings / bearing set / bearing",
+            "normalized_name": "bearings / bearing set / bearing",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_3"
+            ],
+            "opposing_agents": [
+              "Agent_4",
+              "Agent_1",
+              "Agent_2",
+              "Agent_5"
+            ],
+            "avg_confidence": 0.85,
+            "critique_text": "Isolated proposal 'bearings / bearing set / bearing' from 1 agent(s) (conf: 0.85). Requires justification or peer validation."
+          },
+          {
+            "item_name": "power connector and terminal",
+            "normalized_name": "power connector and terminal",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_3"
+            ],
+            "opposing_agents": [
+              "Agent_4",
+              "Agent_1",
+              "Agent_2",
+              "Agent_5"
+            ],
+            "avg_confidence": 0.8,
+            "critique_text": "Isolated proposal 'power connector and terminal' from 1 agent(s) (conf: 0.80). Requires justification or peer validation."
+          },
+          {
+            "item_name": "cooling jacket or liquid cooling components / cooling jacket or cooling components",
+            "normalized_name": "cooling jacket or liquid cooling components / cooling jacket or cooling components",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_3"
+            ],
+            "opposing_agents": [
+              "Agent_4",
+              "Agent_1",
+              "Agent_2",
+              "Agent_5"
+            ],
+            "avg_confidence": 0.75,
+            "critique_text": "Isolated proposal 'cooling jacket or liquid cooling components / cooling jacket or cooling components' from 1 agent(s) (conf: 0.75). Requires justification or peer validation."
+          },
+          {
+            "item_name": "encoder or resolver (position sensor) / encoder or resolver",
+            "normalized_name": "encoder or resolver (position sensor) / encoder or resolver",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_4",
+              "Agent_5"
+            ],
+            "opposing_agents": [
+              "Agent_2",
+              "Agent_1"
+            ],
+            "avg_confidence": 0.7999999999999999,
+            "critique_text": "Strong consensus on 'encoder or resolver (position sensor) / encoder or resolver': all 3 agents support with avg confidence 0.80. Preserve this component."
+          },
+          {
+            "item_name": "end bells or end caps",
+            "normalized_name": "end bells or end caps",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_3"
+            ],
+            "opposing_agents": [
+              "Agent_4",
+              "Agent_1",
+              "Agent_2",
+              "Agent_5"
+            ],
+            "avg_confidence": 0.7,
+            "critique_text": "Isolated proposal 'end bells or end caps' from 1 agent(s) (conf: 0.70). Requires justification or peer validation."
+          },
+          {
+            "item_name": "housing (motor frame)",
+            "normalized_name": "housing (motor frame)",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_4"
+            ],
+            "opposing_agents": [
+              "Agent_3",
+              "Agent_2",
+              "Agent_1",
+              "Agent_5"
+            ],
+            "avg_confidence": 0.9,
+            "critique_text": "Isolated proposal 'housing (motor frame)' from 1 agent(s) (conf: 0.90). Requires justification or peer validation."
+          },
+          {
+            "item_name": "shaft and bearing",
+            "normalized_name": "shaft and bearing",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_4"
+            ],
+            "opposing_agents": [
+              "Agent_3",
+              "Agent_2",
+              "Agent_1",
+              "Agent_5"
+            ],
+            "avg_confidence": 0.9,
+            "critique_text": "Isolated proposal 'shaft and bearing' from 1 agent(s) (conf: 0.90). Requires justification or peer validation."
+          },
+          {
+            "item_name": "cooling system (liquid or air cooling assembly) / cooling system (liquid or air cooling jacket) / cooling",
+            "normalized_name": "cooling system (liquid or air cooling assembly) / cooling system (liquid or air cooling jacket) / cooling",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_4"
+            ],
+            "opposing_agents": [
+              "Agent_3",
+              "Agent_2",
+              "Agent_1",
+              "Agent_5"
+            ],
+            "avg_confidence": 0.85,
+            "critique_text": "Isolated proposal 'cooling system (liquid or air cooling assembly) / cooling system (liquid or air cooling jacket) / cooling' from 1 agent(s) (conf: 0.85). Requires justification or peer validation."
+          },
+          {
+            "item_name": "inverter power electronics",
+            "normalized_name": "inverter power electronics",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_4"
+            ],
+            "opposing_agents": [
+              "Agent_3",
+              "Agent_2",
+              "Agent_1",
+              "Agent_5"
+            ],
+            "avg_confidence": 0.95,
+            "critique_text": "Isolated proposal 'inverter power electronics' from 1 agent(s) (conf: 0.95). Requires justification or peer validation."
+          },
+          {
+            "item_name": "terminal box or electrical connector assembly / terminal box / electrical connection interface / terminal box (junction box)",
+            "normalized_name": "terminal box or electrical connector assembly / terminal box / electrical connection interface / terminal box (junction box)",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_4"
+            ],
+            "opposing_agents": [
+              "Agent_3",
+              "Agent_2",
+              "Agent_1",
+              "Agent_5"
+            ],
+            "avg_confidence": 0.8,
+            "critique_text": "Isolated proposal 'terminal box or electrical connector assembly / terminal box / electrical connection interface / terminal box (junction box)' from 1 agent(s) (conf: 0.80). Requires justification or peer validation."
+          },
+          {
+            "item_name": "cooling system (liquid or air cooling jacket)",
+            "normalized_name": "cooling system (liquid or air cooling jacket)",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_5"
+            ],
+            "opposing_agents": [
+              "Agent_3",
+              "Agent_4",
+              "Agent_1",
+              "Agent_2"
+            ],
+            "avg_confidence": 0.85,
+            "critique_text": "Isolated proposal 'cooling system (liquid or air cooling jacket)' from 1 agent(s) (conf: 0.85). Requires justification or peer validation."
+          },
+          {
+            "item_name": "end shield (end bells)",
+            "normalized_name": "end shield (end bells)",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_5"
+            ],
+            "opposing_agents": [
+              "Agent_3",
+              "Agent_4",
+              "Agent_1",
+              "Agent_2"
+            ],
+            "avg_confidence": 0.8,
+            "critique_text": "Isolated proposal 'end shield (end bells)' from 1 agent(s) (conf: 0.80). Requires justification or peer validation."
+          },
+          {
+            "item_name": "terminal box / electrical connection interface",
+            "normalized_name": "terminal box / electrical connection interface",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_5"
+            ],
+            "opposing_agents": [
+              "Agent_3",
+              "Agent_4",
+              "Agent_1",
+              "Agent_2"
+            ],
+            "avg_confidence": 0.8,
+            "critique_text": "Isolated proposal 'terminal box / electrical connection interface' from 1 agent(s) (conf: 0.80). Requires justification or peer validation."
+          }
+        ],
+        "changes_from_previous": null
+      },
+      {
+        "round_num": 2,
+        "convergence": 0.6144444444444443,
+        "threshold": 0.7,
+        "threshold_reached": false,
+        "proposals": {
+          "Agent_1": [
+            {
+              "agent_id": "Agent_1",
+              "component": "Stator Assembly",
+              "confidence": 0.98,
+              "reasoning": "Strong consensus across all agents with very high average confidence, critical primary component of electric vehicle motor.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Rotor Assembly with Permanent Magnets",
+              "confidence": 0.98,
+              "reasoning": "High confidence proposal selected by multiple agents with focus on permanent magnets variant, essential for modern electric motors.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Motor Housing (Frame)",
+              "confidence": 0.93,
+              "reasoning": "Strong consensus with multiple agents and critiques supporting inclusion at high confidence; primary structural component.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Encoder or Resolver Assembly",
+              "confidence": 0.8,
+              "reasoning": "Moderate consensus from multiple agents at consistent confidence; important for position sensing and motor control.",
+              "round": 2
+            }
+          ],
+          "Agent_2": [
+            {
+              "agent_id": "Agent_2",
+              "component": "Stator Assembly",
+              "confidence": 0.98,
+              "reasoning": "Strong consensus among all agents with highest confidence; essential core component of electric vehicle motor.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Rotor Assembly with Permanent Magnets",
+              "confidence": 0.97,
+              "reasoning": "Strong peer support overall with high confidence; important rotor variant typical in electric vehicle motors.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Motor Housing (Frame)",
+              "confidence": 0.93,
+              "reasoning": "Multiple agents selected various forms of motor housing with good confidence; critical for structural integrity and protection.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Encoder or Resolver Assembly",
+              "confidence": 0.8,
+              "reasoning": "Moderate consensus for position sensor component necessary for control; average confidence matches peer support.",
+              "round": 2
+            }
+          ],
+          "Agent_3": [
+            {
+              "agent_id": "Agent_3",
+              "component": "Stator Assembly",
+              "confidence": 0.98,
+              "reasoning": "Strong consensus with 5 agents selecting it and average confidence of 0.98, critical primary component of electric vehicle motor.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Rotor Assembly with Permanent Magnets",
+              "confidence": 0.97,
+              "reasoning": "Multiple agents support rotor assemblies with permanent magnets; essential for motor function and high confidence in previous rounds.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Motor Housing (Frame)",
+              "confidence": 0.93,
+              "reasoning": "Consensus among 3 agents with high confidence averaging 0.93; important structural component.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Encoder or Resolver Assembly",
+              "confidence": 0.8,
+              "reasoning": "Selected by 3 agents with average confidence of 0.80; important for rotor position feedback and motor control.",
+              "round": 2
+            }
+          ],
+          "Agent_4": [
+            {
+              "agent_id": "Agent_4",
+              "component": "Stator Assembly",
+              "confidence": 0.98,
+              "reasoning": "Strong consensus from all agents with consistently high confidence (avg ~0.98). Crucial primary component for electric vehicle motor.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "Rotor Assembly with Permanent Magnets",
+              "confidence": 0.97,
+              "reasoning": "Selected by multiple agents with high confidence near 0.95\u20130.98. More specific and appropriate version of rotor assembly relevant for electric vehicle motors using permanent magnets.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "Motor Housing (Frame)",
+              "confidence": 0.93,
+              "reasoning": "Strong consensus across 3 agents with average confidence 0.93. Fundamental structural component housing the internal assemblies.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "Bearing Assembly",
+              "confidence": 0.88,
+              "reasoning": "Multiple agents referenced bearing-related components (bearing set, bearing assembly, bearings), all around 0.85-0.90 confidence. Essential for mechanical support and rotation.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "Power Electronics Module (Inverter)",
+              "confidence": 0.9,
+              "reasoning": "Crucial for motor operation, several references to inverter/power electronics with high confidence ~0.95. Important for electric vehicle motor drive control.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "Cooling System (Liquid or Air Cooling Assembly)",
+              "confidence": 0.85,
+              "reasoning": "Cooling components (various descriptions) supported by multiple agents with confidence around 0.85-0.88. Necessary for performance and thermal management.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "Shaft Assembly",
+              "confidence": 0.85,
+              "reasoning": "Shaft or shaft assembly cited by several agents with confidence about 0.85-0.88. Important mechanical interface transmitting torque.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "Encoder or Resolver (Position Sensor)",
+              "confidence": 0.8,
+              "reasoning": "Moderate consensus with average confidence about 0.80 from multiple agents. Important for position sensing in motor control.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "Terminal Box or Electrical Connector Assembly",
+              "confidence": 0.8,
+              "reasoning": "Multiple variants cited with confidence ~0.80. Important interface for electrical connections and motor wiring.",
+              "round": 2
+            }
+          ],
+          "Agent_5": [
+            {
+              "agent_id": "Agent_5",
+              "component": "Stator Assembly",
+              "confidence": 0.98,
+              "reasoning": "Strong consensus among all agents (average confidence 0.98) and core functional component of the motor.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_5",
+              "component": "Rotor Assembly with Permanent Magnets",
+              "confidence": 0.97,
+              "reasoning": "High support with strong confidence (0.95-0.98) from multiple agents, critical for motor operation; consolidated best representation of rotor with magnets.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_5",
+              "component": "Motor Housing (Frame)",
+              "confidence": 0.93,
+              "reasoning": "Strong consensus (3 agents, avg 0.93) and critical for structural integrity and protection of motor internals.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_5",
+              "component": "Encoder or Resolver (Position Sensor)",
+              "confidence": 0.8,
+              "reasoning": "Good peer support (3 agents), important for motor position feedback and control, justified to include.",
+              "round": 2
+            }
+          ]
+        },
+        "rounds_completed": 2,
+        "support_analysis": {
+          "consensus": [
+            "encoder or resolver"
+          ],
+          "majority": [
+            "stator",
+            "rotor assembly with permanent magnets",
+            "motor housing (frame)",
+            "encoder or resolver (position sensor)"
+          ],
+          "isolated": [
+            "bearing",
+            "power electronics module (inverter)",
+            "cooling system (liquid or air cooling assembly)",
+            "shaft",
+            "terminal box or electrical connector"
+          ]
+        },
+        "critiques": [
+          {
+            "item_name": "Stator Assembly",
+            "normalized_name": "stator",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_4",
+              "Agent_3",
+              "Agent_2",
+              "Agent_5",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.9800000000000001,
+            "critique_text": "Majority support for 'Stator Assembly': 5/3 agents agree (conf: 0.98). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Rotor Assembly with Permanent Magnets",
+            "normalized_name": "rotor assembly with permanent magnets",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_4",
+              "Agent_3",
+              "Agent_2",
+              "Agent_5",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.9719999999999999,
+            "critique_text": "Majority support for 'Rotor Assembly with Permanent Magnets': 5/3 agents agree (conf: 0.97). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Motor Housing (Frame)",
+            "normalized_name": "motor housing (frame)",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_4",
+              "Agent_3",
+              "Agent_2",
+              "Agent_5",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.93,
+            "critique_text": "Majority support for 'Motor Housing (Frame)': 5/3 agents agree (conf: 0.93). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Encoder or Resolver Assembly",
+            "normalized_name": "encoder or resolver",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_4",
+              "Agent_5"
+            ],
+            "avg_confidence": 0.8000000000000002,
+            "critique_text": "Strong consensus on 'Encoder or Resolver Assembly': all 3 agents support with avg confidence 0.80. Preserve this component."
+          },
+          {
+            "item_name": "Bearing Assembly",
+            "normalized_name": "bearing",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_4"
+            ],
+            "opposing_agents": [
+              "Agent_3",
+              "Agent_2",
+              "Agent_1",
+              "Agent_5"
+            ],
+            "avg_confidence": 0.88,
+            "critique_text": "Isolated proposal 'Bearing Assembly' from 1 agent(s) (conf: 0.88). Requires justification or peer validation."
+          },
+          {
+            "item_name": "Power Electronics Module (Inverter)",
+            "normalized_name": "power electronics module (inverter)",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_4"
+            ],
+            "opposing_agents": [
+              "Agent_3",
+              "Agent_2",
+              "Agent_1",
+              "Agent_5"
+            ],
+            "avg_confidence": 0.9,
+            "critique_text": "Isolated proposal 'Power Electronics Module (Inverter)' from 1 agent(s) (conf: 0.90). Requires justification or peer validation."
+          },
+          {
+            "item_name": "Cooling System (Liquid or Air Cooling Assembly)",
+            "normalized_name": "cooling system (liquid or air cooling assembly)",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_4"
+            ],
+            "opposing_agents": [
+              "Agent_3",
+              "Agent_2",
+              "Agent_1",
+              "Agent_5"
+            ],
+            "avg_confidence": 0.85,
+            "critique_text": "Isolated proposal 'Cooling System (Liquid or Air Cooling Assembly)' from 1 agent(s) (conf: 0.85). Requires justification or peer validation."
+          },
+          {
+            "item_name": "Shaft Assembly",
+            "normalized_name": "shaft",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_4"
+            ],
+            "opposing_agents": [
+              "Agent_3",
+              "Agent_2",
+              "Agent_1",
+              "Agent_5"
+            ],
+            "avg_confidence": 0.85,
+            "critique_text": "Isolated proposal 'Shaft Assembly' from 1 agent(s) (conf: 0.85). Requires justification or peer validation."
+          },
+          {
+            "item_name": "Encoder or Resolver (Position Sensor)",
+            "normalized_name": "encoder or resolver (position sensor)",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_4",
+              "Agent_5"
+            ],
+            "opposing_agents": [
+              "Agent_3",
+              "Agent_2",
+              "Agent_1"
+            ],
+            "avg_confidence": 0.8,
+            "critique_text": "Majority support for 'Encoder or Resolver (Position Sensor)': 2/3 agents agree (conf: 0.80). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Terminal Box or Electrical Connector Assembly",
+            "normalized_name": "terminal box or electrical connector",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_4"
+            ],
+            "opposing_agents": [
+              "Agent_3",
+              "Agent_2",
+              "Agent_1",
+              "Agent_5"
+            ],
+            "avg_confidence": 0.8,
+            "critique_text": "Isolated proposal 'Terminal Box or Electrical Connector Assembly' from 1 agent(s) (conf: 0.80). Requires justification or peer validation."
+          }
+        ],
+        "changes_from_previous": {
+          "items_added": [
+            "encoder or resolver (position sensor)",
+            "cooling system (liquid or air cooling assembly)",
+            "terminal box or electrical connector",
+            "motor housing (frame)",
+            "power electronics module (inverter)"
+          ],
+          "items_removed": [
+            "shaft / shaft assembly / shaft and bearing",
+            "encoder or resolver (position sensor) / encoder or resolver",
+            "cooling",
+            "terminal box or electrical connector assembly / terminal box / electrical connection interface / terminal box (junction box)",
+            "cooling system (liquid or air cooling jacket)",
+            "bearing set",
+            "cooling jacket or cooling components",
+            "terminal box / electrical connection interface",
+            "housing (motor frame)",
+            "power electronics module (inverter) / inverter power electronics",
+            "cooling jacket or liquid cooling components / cooling jacket or cooling components",
+            "motor housing (frame) / motor housing / housing (motor frame)",
+            "rotor assembly / rotor assembly with permanent magnets / rotor assembly (including permanent magnets)",
+            "power connector and terminal",
+            "end cap (or motor end shield) / end shield (end bells) / end bells or end caps",
+            "bearings / bearing set / bearing",
+            "end shield (end bells)",
+            "rotor assembly (including permanent magnets)",
+            "end bells or end caps",
+            "shaft and bearing",
+            "cooling system (liquid or air cooling assembly) / cooling system (liquid or air cooling jacket) / cooling",
+            "motor housing",
+            "terminal box (junction box)",
+            "inverter power electronics"
+          ],
+          "confidence_changes": {}
+        }
+      },
+      {
+        "round_num": 3,
+        "convergence": 1.0,
+        "threshold": 0.7,
+        "threshold_reached": true,
+        "proposals": {
+          "Agent_1": [
+            {
+              "agent_id": "Agent_1",
+              "component": "Stator Assembly",
+              "confidence": 0.98,
+              "reasoning": "Strong consensus from all 5 agents with high confidence, fundamental to motor operation.",
+              "round": 3,
+              "normalized_component": "Motor Components"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Rotor Assembly with Permanent Magnets",
+              "confidence": 0.97,
+              "reasoning": "Strong consensus from all 5 agents with high confidence, critical rotating element of the motor.",
+              "round": 3,
+              "normalized_component": "Permanent Magnet Rotor Assembly"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Motor Housing (Frame)",
+              "confidence": 0.93,
+              "reasoning": "Strong consensus from all 5 agents, essential for mechanical support and protection.",
+              "round": 3,
+              "normalized_component": "Motor Housing"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Encoder or Resolver Assembly",
+              "confidence": 0.8,
+              "reasoning": "Supported by 3 agents with average confidence 0.80; important for position sensing and control, justified despite fewer votes.",
+              "round": 3,
+              "normalized_component": "Encoder Assembly"
+            }
+          ],
+          "Agent_2": [
+            {
+              "agent_id": "Agent_2",
+              "component": "Stator Assembly",
+              "confidence": 0.98,
+              "reasoning": "Strong consensus from all agents with very high confidence; a fundamental component of electric motors.",
+              "round": 3,
+              "normalized_component": "Motor Components"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Rotor Assembly with Permanent Magnets",
+              "confidence": 0.97,
+              "reasoning": "Strong consensus from all agents with very high confidence; essential rotating component providing magnetic field.",
+              "round": 3,
+              "normalized_component": "Permanent Magnet Rotor Assembly"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Motor Housing (Frame)",
+              "confidence": 0.93,
+              "reasoning": "Selected by all agents with high confidence; necessary for structural integrity and protection.",
+              "round": 3,
+              "normalized_component": "Motor Housing"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Encoder or Resolver Assembly",
+              "confidence": 0.8,
+              "reasoning": "Supported by 3 agents with consistent confidence; important for position feedback and control.",
+              "round": 3,
+              "normalized_component": "Encoder Assembly"
+            }
+          ],
+          "Agent_3": [
+            {
+              "agent_id": "Agent_3",
+              "component": "Stator Assembly",
+              "confidence": 0.98,
+              "reasoning": "Strong consensus with all 5 agents selecting it at high confidence; it is a fundamental part of the motor.",
+              "round": 3,
+              "normalized_component": "Motor Components"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Rotor Assembly with Permanent Magnets",
+              "confidence": 0.97,
+              "reasoning": "Strong consensus with all 5 agents selecting it at high confidence; essential for motor operation.",
+              "round": 3,
+              "normalized_component": "Permanent Magnet Rotor Assembly"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Motor Housing (Frame)",
+              "confidence": 0.93,
+              "reasoning": "Strong consensus with all 5 agents selecting it at high confidence; important for structural integrity and protection.",
+              "round": 3,
+              "normalized_component": "Motor Housing"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Encoder or Resolver Assembly",
+              "confidence": 0.8,
+              "reasoning": "Moderate consensus with 3 out of 5 agents selecting it; important for position sensing in motor control, so it should be included.",
+              "round": 3,
+              "normalized_component": "Encoder Assembly"
+            }
+          ],
+          "Agent_4": [
+            {
+              "agent_id": "Agent_4",
+              "component": "Stator Assembly",
+              "confidence": 0.98,
+              "reasoning": "Unanimous support from all 5 agents with consistently high confidence (0.98). It's a fundamental component of the motor.",
+              "round": 3,
+              "normalized_component": "Motor Components"
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "Rotor Assembly with Permanent Magnets",
+              "confidence": 0.97,
+              "reasoning": "Unanimous support from all 5 agents with very high confidence (~0.97-0.98). Essential primary component for electric motor operation.",
+              "round": 3,
+              "normalized_component": "Permanent Magnet Rotor Assembly"
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "Motor Housing (Frame)",
+              "confidence": 0.93,
+              "reasoning": "Unanimous support from all 5 agents with consistent confidence (0.93). Provides structural support, critical for motor assembly.",
+              "round": 3,
+              "normalized_component": "Motor Housing"
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "Encoder or Resolver Assembly",
+              "confidence": 0.8,
+              "reasoning": "Supported by 3 agents with moderate confidence (0.80). Important for position sensing and motor control, retains consensus despite lower confidence.",
+              "round": 3,
+              "normalized_component": "Encoder Assembly"
+            }
+          ],
+          "Agent_5": [
+            {
+              "agent_id": "Agent_5",
+              "component": "Stator Assembly",
+              "confidence": 0.98,
+              "reasoning": "Strong consensus among all agents with high confidence; fundamental primary component of electric vehicle motor.",
+              "round": 3,
+              "normalized_component": "Motor Components"
+            },
+            {
+              "agent_id": "Agent_5",
+              "component": "Rotor Assembly with Permanent Magnets",
+              "confidence": 0.97,
+              "reasoning": "Strong consensus among all agents with high confidence; critical for motor function and directly impacts performance.",
+              "round": 3,
+              "normalized_component": "Permanent Magnet Rotor Assembly"
+            },
+            {
+              "agent_id": "Agent_5",
+              "component": "Motor Housing (Frame)",
+              "confidence": 0.93,
+              "reasoning": "Unanimous selection by all agents with consistent confidence; essential structural component for motor protection and support.",
+              "round": 3,
+              "normalized_component": "Motor Housing"
+            },
+            {
+              "agent_id": "Agent_5",
+              "component": "Encoder or Resolver Assembly",
+              "confidence": 0.8,
+              "reasoning": "Multiple agent support with reasonable confidence; important for position sensing and motor control, thereby warranted for inclusion.",
+              "round": 3,
+              "normalized_component": "Encoder Assembly"
+            }
+          ]
+        },
+        "rounds_completed": 3,
+        "support_analysis": {
+          "consensus": [],
+          "majority": [
+            "stator",
+            "rotor assembly with permanent magnets",
+            "motor housing (frame)",
+            "encoder or resolver"
+          ],
+          "isolated": []
+        },
+        "critiques": [
+          {
+            "item_name": "Stator Assembly",
+            "normalized_name": "stator",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_4",
+              "Agent_3",
+              "Agent_2",
+              "Agent_5",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.9800000000000001,
+            "critique_text": "Majority support for 'Stator Assembly': 5/3 agents agree (conf: 0.98). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Rotor Assembly with Permanent Magnets",
+            "normalized_name": "rotor assembly with permanent magnets",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_4",
+              "Agent_3",
+              "Agent_2",
+              "Agent_5",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.97,
+            "critique_text": "Majority support for 'Rotor Assembly with Permanent Magnets': 5/3 agents agree (conf: 0.97). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Motor Housing (Frame)",
+            "normalized_name": "motor housing (frame)",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_4",
+              "Agent_3",
+              "Agent_2",
+              "Agent_5",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.93,
+            "critique_text": "Majority support for 'Motor Housing (Frame)': 5/3 agents agree (conf: 0.93). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Encoder or Resolver Assembly",
+            "normalized_name": "encoder or resolver",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_4",
+              "Agent_3",
+              "Agent_2",
+              "Agent_5",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.8,
+            "critique_text": "Majority support for 'Encoder or Resolver Assembly': 5/3 agents agree (conf: 0.80). Consider strengthening consensus."
+          }
+        ],
+        "changes_from_previous": {
+          "items_added": [],
+          "items_removed": [
+            "encoder or resolver (position sensor)",
+            "cooling system (liquid or air cooling assembly)",
+            "terminal box or electrical connector",
+            "bearing",
+            "shaft",
+            "power electronics module (inverter)"
+          ],
+          "confidence_changes": {}
+        }
+      }
+    ],
+    "phase3_final_consensus": {
+      "technology": "Electric Vehicle Motor",
+      "technology_specification": "Electric Vehicle Motor",
+      "technology_reasoning": "",
+      "components": [
+        "Motor Components",
+        "Permanent Magnet Rotor Assembly",
+        "Motor Housing",
+        "Encoder Assembly"
+      ],
+      "confidence": 1.0,
+      "rounds": 3,
+      "convergence_score": 1.0
+    }
+  },
+  "materials_debate": {
+    "debate_rounds": [],
+    "final_consensus": {
+      "components": 4,
+      "unique_materials": 10,
+      "total_assignments": 18,
+      "materials_by_component": {
+        "Motor Components": [
+          {
+            "name": "Copper",
+            "confidence": 0.95,
+            "reasoning": "Primary conductor material for motor windings due to its excellent electrical conductivity, universally essential for motor function."
+          },
+          {
+            "name": "Steel Ingots",
+            "confidence": 0.9,
+            "reasoning": "Used for laminations in the stator and rotor cores to provide magnetic properties and mechanical strength; standard industry material."
+          },
+          {
+            "name": "Silicon",
+            "confidence": 0.85,
+            "reasoning": "Used in electrical steel alloys (silicon steel) for motor cores to reduce hysteresis losses, common and important but alternatives exist."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.8,
+            "reasoning": "Sometimes used for rotor bars in squirrel cage rotors and structural components, commonly employed but copper alternatives exist."
+          }
+        ],
+        "Permanent Magnet Rotor Assembly": [
+          {
+            "name": "Neodymium",
+            "confidence": 0.95,
+            "reasoning": "Critical rare earth element for the strongest permanent magnets (NdFeB magnets) used in rotor assemblies, essential for high-performance motors."
+          },
+          {
+            "name": "Iron",
+            "confidence": 0.9,
+            "reasoning": "Core material for magnets and rotor structure to support magnetic circuits; fundamental to magnet formulation and mechanical support."
+          },
+          {
+            "name": "Boron",
+            "confidence": 0.85,
+            "reasoning": "Added in small amounts to neodymium magnets to enhance magnetic properties and stability; typical in NdFeB magnets."
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.7,
+            "reasoning": "Used in rotor windings or parts of the rotor assembly for electrical conduction; commonly used but some designs may vary."
+          },
+          {
+            "name": "Epoxy resins",
+            "confidence": 0.65,
+            "reasoning": "Used as a bonding agent or coating to secure magnets and protect against corrosion, common but alternatives possible."
+          }
+        ],
+        "Motor Housing": [
+          {
+            "name": "Aluminum",
+            "confidence": 0.9,
+            "reasoning": "Widely used due to its lightweight, good thermal conductivity, and corrosion resistance; standard housing material."
+          },
+          {
+            "name": "Steel Ingots",
+            "confidence": 0.85,
+            "reasoning": "Used for housings requiring higher mechanical strength and durability, very common but heavier than aluminum."
+          },
+          {
+            "name": "Ceramic",
+            "confidence": 0.6,
+            "reasoning": "Used as insulating components or thermal barriers within the housing to manage heat; common with alternatives."
+          },
+          {
+            "name": "Epoxy resins",
+            "confidence": 0.5,
+            "reasoning": "Used as coatings or sealing material for corrosion protection, one of several possible options."
+          }
+        ],
+        "Encoder Assembly": [
+          {
+            "name": "Steel Ingots",
+            "confidence": 0.85,
+            "reasoning": "Used in shaft and structural components for mechanical strength, widely used and standard in encoder construction."
+          },
+          {
+            "name": "Glass",
+            "confidence": 0.8,
+            "reasoning": "Used for optical windows or discs in optical encoders to enable precise measurement, standard material."
+          },
+          {
+            "name": "Silicon",
+            "confidence": 0.9,
+            "reasoning": "Core semiconductor material for encoder sensors and integrated circuits; essential for encoder electronic function."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.7,
+            "reasoning": "Used in housing and shielding components for lightweight and corrosion resistance; common but alternatives present."
+          },
+          {
+            "name": "Epoxy resins",
+            "confidence": 0.65,
+            "reasoning": "Used for potting and protective coatings for sensitive electronic parts, typical but not unique to encoders."
+          }
+        ]
+      }
+    }
+  }
+}

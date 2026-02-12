@@ -1,0 +1,377 @@
+================================================================================
+STDN ANALYSIS: Flow Cytometer
+Generated: 2026-02-12 14:07:02
+================================================================================
+
+LEGEND
+--------------------------------------------------------------------------------
+Support Levels:
+  [C] CONSENSUS  - All agents agree (3/3)
+  [M] MAJORITY   - Majority agrees (2/3)
+  [I] ISOLATED   - Single agent only (1/3)
+
+Confidence Scale: 0.0-1.0 (higher = more certain)
+  0.9-1.0: High certainty - universal/essential
+  0.7-0.9: Confident - industry standard
+  0.5-0.7: Moderate - common but varies
+  <0.5:    Low - optional or uncertain
+
+================================================================================
+TECHNOLOGY SPECIFICATION
+================================================================================
+
+Query: Flow Cytometer
+Specification: Flow Cytometer
+
+================================================================================
+STAGE 1: COMPONENT EXTRACTION
+================================================================================
+
+ROUND 1: Independent Proposals
+--------------------------------------------------------------------------------
+
+Agent_1 (Expert):
+  • Optical Excitation Module (Laser Assembly) (0.98) - This subassembly includes multiple lasers that provide excit...
+  • Flow Cell/Fluidic Assembly (0.97) - The flow cell where cells pass single file through the laser...
+  • Optical Detection Module (Photodetectors and Filters) (0.96) - Consists of photomultiplier tubes (PMTs) or avalanche photod...
+  • Electronics Control Unit (Data Acquisition and Signal Processing Board) (0.95) - A distinct electronic subsystem responsible for acquiring, d...
+  • Fluidics Control System (Pumps and Valves) (0.90) - Includes peristaltic or syringe pumps and precision valves t...
+  • Sample Injection Port or Autosampler Module (0.85) - The mechanical and fluidics subassembly that allows automate...
+  • Instrument Chassis/Enclosure (0.85) - The physical housing that structurally supports optical, flu...
+  • User Interface Module (Touchscreen Display and Control Panel) (0.80) - Modern flow cytometers include a touchscreen or control pane...
+
+Agent_2 (Expert):
+  • Optical Module (Laser and Detection Assembly) (0.98) - Central to flow cytometer function, this module contains las...
+  • Fluidics System Assembly (0.95) - Includes pumps, flow cells, and tubing sets as a separate su...
+  • Electronic Control Board (0.90) - PCB assemblies including signal processing and control elect...
+  • Sample Input and Preparation Module (0.80) - Encompasses sample loading components and may include automa...
+  • Instrument Chassis/Enclosure (0.90) - Structural housing that supports and encloses all components...
+  • Fluidic Waste Disposal System (0.75) - Separate subsystem including waste reservoirs and disposal t...
+  • User Interface Module (Touchscreen Display) (0.80) - Standard in modern flow cytometers for user control and moni...
+
+Agent_3 (Expert):
+  • Fluidics Module (0.95) - This module controls the sample and sheath fluid delivery th...
+  • Optical Detection Module (0.98) - Includes lasers, lenses, filters, and photodetectors; procur...
+  • Laser Excitation Source(s) (0.95) - Lasers are critical excitation components, typically procure...
+  • Photomultiplier Tubes (PMTs) or Photodiodes (0.92) - These detectors convert fluorescent light into electrical si...
+  • Electronic Signal Processing Board (0.90) - Contains the analog and digital electronics to process signa...
+  • Sample Injection Port and Manifold (0.85) - Mechanical interface for sample introduction, manufactured a...
+  • Sorting Valve Assembly (if equipped) (0.80) - In cell sorter models, this mechanical assembly physically d...
+  • User Interface and Control Display (0.75) - Includes touchscreen or display modules and embedded interfa...
+  • Chassis and Structural Frame (0.85) - The mechanical housing and structural support frame, typical...
+
+Initial Support Analysis:
+  [M] Majority (1 items):
+      • Instrument Chassis/Enclosure (0.88) - 2/3 agents
+  [I] Isolated (22 items):
+      • Optical Excitation Module (Laser Assembly) (0.98) - needs peer support
+      • Optical Module (Laser and Detection Assembly) (0.98) - needs peer support
+      • Optical Detection Module (0.98) - needs peer support
+
+ROUND 2: Refinement
+--------------------------------------------------------------------------------
+Convergence: 55.6% (threshold: 70%)
+
+Changes from Previous Round:
+  - Removed: user interface and control display, flow cell/fluidic, sorting valve assembly (if equipped), sample injection port or autosampler, sample input and preparation (+11 more)
+
+Key Critiques:
+  [C] 2 items have full consensus
+  [I] Optical Module (Laser and Detection Assembly) (conf: 0.95) - needs peer support
+  [I] Electronic Control Board (conf: 0.90) - needs peer support
+  [I] Sample Injection Port and Manifold (conf: 0.85) - needs peer support
+      ... and 1 more isolated items
+
+Round 2 Support Analysis:
+  [C] Consensus (2 items):
+      • fluidics
+      • instrument chassis/enclosure
+  [I] Isolated (4 items):
+      • optical module (laser and detection assembly) - needs peer support
+      • electronic control board - needs peer support
+      • sample injection port and manifold - needs peer support
+      ... and 1 more
+
+ROUND 3: Consensus Reached
+--------------------------------------------------------------------------------
+Convergence: 100.0% ✓ (threshold reached)
+
+Changes from Previous Round:
+  - Removed: sample injection port and manifold, electronic control board, user interface module (touchscreen display), optical module (laser and detection assembly)
+
+Key Critiques:
+  [C] 2 items have full consensus
+
+Round 3 Support Analysis:
+  [C] Consensus (2 items):
+      • fluidics
+      • instrument chassis/enclosure
+
+================================================================================
+FINAL CONSENSUS: Components
+================================================================================
+
+Rounds Completed: 3
+Final Convergence: 100.0%
+Components Selected: 3
+
+  1. Fluidics Module
+  2. Fluidics System Assembly
+  3. System Chassis And Enclosure
+
+================================================================================
+END OF COMPONENT EXTRACTION
+================================================================================
+
+
+================================================================================
+MATERIALS EXTRACTION DEBATE
+================================================================================
+
+COMPONENTS PROCESSED:
+--------------------------------------------------------------------------------
+Total Components: 3
+  - Fluidics Module
+  - Fluidics System Assembly
+  - System Chassis And Enclosure
+
+================================================================================
+MATERIAL DEBATE ROUNDS
+================================================================================
+
+================================================================================
+FINAL MATERIAL ASSIGNMENTS
+================================================================================
+
+Components: 3
+Unique Materials: 9
+Total Assignments: 12
+
+Materials by Component:
+--------------------------------------------------------------------------------
+
+Fluidics Module:
+  • Glass (confidence: 0.90)
+    → Commonly used for microfluidic channels and windows because of optical transparency and chemical resistance; very standard in fluidic modules.
+  • Silicon (confidence: 0.85)
+    → Used in microfluidic chips and sensor elements due to its semiconductor properties and manufacturability; standard material with few alternatives.
+  • Polyethylene (confidence: 0.75)
+    → Often used for tubing and fluid transport due to chemical resistance and flexibility; alternatives exist but polyethylene is widely used.
+  • Polyvinyl chloride (confidence: 0.70)
+    → Used in certain tubing and fluid containment parts for chemical compatibility and flexibility, with some alternatives in polymers.
+
+Fluidics System Assembly:
+  • Stainless steel (confidence: 0.90)
+    → Critical for valves, pumps, and fittings due to corrosion resistance and mechanical strength; standard material for fluidic system parts.
+  • Glass (confidence: 0.80)
+    → Utilized in flow cells and optical windows because of transparency and chemical resistance; alternatives exist but glass is standard.
+  • Polyethylene terephthalate (confidence: 0.70)
+    → Common polymer used in connectors and tubing; has suitable chemical resistance with alternatives present.
+  • Silicon (confidence: 0.65)
+    → May be used in sensors or microfluidics integrated in assembly; moderate confidence due to varying designs.
+
+System Chassis And Enclosure:
+  • Aluminum (confidence: 0.90)
+    → Widely used structural material for chassis due to strength-to-weight ratio and corrosion resistance; industry standard.
+  • Polycarbonate (confidence: 0.75)
+    → Used for clear panels or enclosures requiring impact resistance and optical clarity; common polymer with alternatives.
+  • Steel Ingots (confidence: 0.70)
+    → Used to produce steel parts for frame, supports, and bracketry; alternatives possible but steel is typical.
+  • Glass (confidence: 0.60)
+    → May be used for observation windows or display covers; some designs use acrylic or polycarbonate instead.
+
+================================================================================
+END OF COMBINED TRANSCRIPT
+================================================================================
+
+
+================================================================================
+COUNTRY PRODUCTION DATA
+================================================================================
+
+Fluidics Module:
+--------------------------------------------------------------------------------
+
+  Material: Glass
+  Confidence: 0.900
+  Countries (5):
+    • China: 0.0 metric tons (63.0%)
+      Confidence: 0.950
+    • United States: 0.0 metric tons (12.0%)
+      Confidence: 0.900
+    • Germany: 0.0 metric tons (7.0%)
+      Confidence: 0.850
+    • India: 0.0 metric tons (6.0%)
+      Confidence: 0.800
+    • Japan: 0.0 metric tons (5.0%)
+      Confidence: 0.800
+
+  Material: Polyethylene
+  Confidence: 0.750
+  Countries (5):
+    • China: 36283333.333333336 metric tons (31.17%)
+      Confidence: 0.877
+    • United States: 19506666.666666668 metric tons (16.73%)
+      Confidence: 0.870
+    • Saudi Arabia: 10090000.0 metric tons (8.7%)
+      Confidence: 0.807
+    • South Korea: 6446666.666666667 metric tons (5.53%)
+      Confidence: 0.840
+    • Iran: 6470000.0 metric tons (5.6%)
+      Confidence: 0.650
+
+  Material: Polyvinyl chloride
+  Confidence: 0.700
+  Countries (5):
+    • China: 0.0 metric tons (45.0%)
+      Confidence: 0.900
+    • India: 0.0 metric tons (12.0%)
+      Confidence: 0.850
+    • Germany: 0.0 metric tons (7.0%)
+      Confidence: 0.800
+    • Italy: 0.0 metric tons (5.0%)
+      Confidence: 0.750
+    • United States: 0.0 metric tons (4.0%)
+      Confidence: 0.800
+
+  Material: Silicon
+  Confidence: 0.850
+  Countries (5):
+    • CHINA: 3600.0 THOUSAND METRIC TONS (40.0%)
+      Confidence: 0.950
+    • RUSSIA: 570.0 THOUSAND METRIC TONS (6.33%)
+      Confidence: 0.950
+    • BRAZIL: 190.0 THOUSAND METRIC TONS (2.11%)
+      Confidence: 0.950
+    • NORWAY: 200.0 THOUSAND METRIC TONS (2.22%)
+      Confidence: 0.950
+    • OTHER: 100.0 THOUSAND METRIC TONS (1.11%)
+      Confidence: 0.950
+
+Fluidics System Assembly:
+--------------------------------------------------------------------------------
+
+  Material: Glass
+  Confidence: 0.800
+  Countries (5):
+    • China: 0.0 metric tons (63.0%)
+      Confidence: 0.950
+    • United States: 0.0 metric tons (12.0%)
+      Confidence: 0.900
+    • Germany: 0.0 metric tons (7.0%)
+      Confidence: 0.850
+    • India: 0.0 metric tons (6.0%)
+      Confidence: 0.800
+    • Japan: 0.0 metric tons (5.0%)
+      Confidence: 0.800
+
+  Material: Polyethylene terephthalate
+  Confidence: 0.700
+  Countries (5):
+    • China: 0.0 metric tons (35.0%)
+      Confidence: 0.950
+    • Saudi Arabia: 0.0 metric tons (17.0%)
+      Confidence: 0.900
+    • South Korea: 0.0 metric tons (15.0%)
+      Confidence: 0.850
+    • Turkey: 0.0 metric tons (12.0%)
+      Confidence: 0.800
+    • United States: 0.0 metric tons (10.0%)
+      Confidence: 0.750
+
+  Material: Silicon
+  Confidence: 0.650
+  Countries (5):
+    • CHINA: 3600.0 THOUSAND METRIC TONS (40.0%)
+      Confidence: 0.950
+    • RUSSIA: 570.0 THOUSAND METRIC TONS (6.33%)
+      Confidence: 0.950
+    • BRAZIL: 190.0 THOUSAND METRIC TONS (2.11%)
+      Confidence: 0.950
+    • NORWAY: 200.0 THOUSAND METRIC TONS (2.22%)
+      Confidence: 0.950
+    • OTHER: 100.0 THOUSAND METRIC TONS (1.11%)
+      Confidence: 0.950
+
+  Material: Stainless steel
+  Confidence: 0.900
+  Countries (5):
+    • China: 31600000.0 metric tons (56.53%)
+      Confidence: 0.913
+    • India: 3800000.0 metric tons (6.8%)
+      Confidence: 0.860
+    • Japan: 3043333.3333333335 metric tons (5.43%)
+      Confidence: 0.893
+    • United States: 2473333.3333333335 metric tons (4.43%)
+      Confidence: 0.867
+    • South Korea: 2136666.6666666665 metric tons (3.83%)
+      Confidence: 0.867
+
+System Chassis And Enclosure:
+--------------------------------------------------------------------------------
+
+  Material: Aluminum
+  Confidence: 0.900
+  Countries (5):
+    • CHINA: 41000.0 THOUSAND METRIC TONS (58.57%)
+      Confidence: 0.950
+    • OTHER: 7000.0 THOUSAND METRIC TONS (10.0%)
+      Confidence: 0.950
+    • INDIA: 4100.0 THOUSAND METRIC TONS (5.86%)
+      Confidence: 0.950
+    • RUSSIA: 3800.0 THOUSAND METRIC TONS (5.43%)
+      Confidence: 0.950
+    • CANADA: 3000.0 THOUSAND METRIC TONS (4.29%)
+      Confidence: 0.950
+
+  Material: Glass
+  Confidence: 0.600
+  Countries (5):
+    • China: 0.0 metric tons (63.0%)
+      Confidence: 0.950
+    • United States: 0.0 metric tons (12.0%)
+      Confidence: 0.900
+    • Germany: 0.0 metric tons (7.0%)
+      Confidence: 0.850
+    • India: 0.0 metric tons (6.0%)
+      Confidence: 0.800
+    • Japan: 0.0 metric tons (5.0%)
+      Confidence: 0.800
+
+  Material: Polycarbonate
+  Confidence: 0.750
+  Countries (5):
+    • China: 0.0 metric tons (52.0%)
+      Confidence: 0.900
+    • South Korea: 0.0 metric tons (15.0%)
+      Confidence: 0.850
+    • United States: 0.0 metric tons (10.0%)
+      Confidence: 0.850
+    • Germany: 0.0 metric tons (8.0%)
+      Confidence: 0.800
+    • Japan: 0.0 metric tons (7.0%)
+      Confidence: 0.800
+
+  Material: Steel Ingots
+  Confidence: 0.700
+  Countries (5):
+    • China: 0.0 metric tons (52.0%)
+      Confidence: 0.950
+    • Japan: 0.0 metric tons (6.0%)
+      Confidence: 0.900
+    • India: 0.0 metric tons (5.0%)
+      Confidence: 0.900
+    • South Korea: 0.0 metric tons (5.0%)
+      Confidence: 0.850
+    • Germany: 0.0 metric tons (4.0%)
+      Confidence: 0.850
+
+
+================================================================================
+SUMMARY
+================================================================================
+Total records: 60
+Components: 3
+Unique materials: 9
+Records with country  60
+Average country confidence: 0.877

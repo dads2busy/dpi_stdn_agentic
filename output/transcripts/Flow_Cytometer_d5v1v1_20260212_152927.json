@@ -1,0 +1,2055 @@
+{
+  "version": "2.0",
+  "metadata": {
+    "technology": "Flow Cytometer",
+    "technology_specification": "Flow Cytometer",
+    "technology_reasoning": "",
+    "timestamp": "2026-02-12T15:56:05.807926",
+    "format_version": "2.0"
+  },
+  "config": {
+    "num_agents": 5,
+    "max_rounds": 3
+  },
+  "component_stage": {
+    "phase1_initial_proposals": [
+      {
+        "agent_id": "Agent_1",
+        "components": [
+          {
+            "name": "Laser Excitation Module",
+            "confidence": 0.98,
+            "reasoning": "This is a crucial subassembly providing the laser light sources (e.g., diode, solid-state lasers) needed to excite fluorescent markers; procured as a distinct unit due to specialized manufacturers and optical engineering."
+          },
+          {
+            "name": "Fluidics System",
+            "confidence": 0.95,
+            "reasoning": "Responsible for hydrodynamically focusing the sample stream and sheath fluid, this complete module includes pumps, flow cells, and tubing assemblies and is typically sourced separately due to its complex mechanical and fluid design."
+          },
+          {
+            "name": "Optical Detection Assembly",
+            "confidence": 0.96,
+            "reasoning": "Includes photomultiplier tubes (PMTs), avalanche photodiodes, filters, and beam splitters; this module detects fluorescence and light scatter signals and is a specialized procurable unit distinct from other electronics."
+          },
+          {
+            "name": "Signal Processing Electronics Board",
+            "confidence": 0.93,
+            "reasoning": "This PCB assembly handles the conversion of optical signals into digital data; commonly a separate procurement due to its complexity and integration of ADCs and specialized processing ICs."
+          },
+          {
+            "name": "Sample Injection Chamber",
+            "confidence": 0.8,
+            "reasoning": "A physical subassembly where sample introduction occurs, often modular to allow maintenance or replacement; it interfaces with fluidics but is distinct as a procurable consumable module."
+          },
+          {
+            "name": "Chassis / Enclosure",
+            "confidence": 0.89,
+            "reasoning": "The rigid mechanical housing and frame that supports and encloses internal components; typically manufactured and procured as a separate assembly with specific material and design specs."
+          },
+          {
+            "name": "User Interface Electronics Module",
+            "confidence": 0.75,
+            "reasoning": "Includes touchscreen displays or control panels and associated electronics; commonly sourced separately as a standalone module but sometimes integrated more tightly depending on manufacturer."
+          },
+          {
+            "name": "Waste Management System",
+            "confidence": 0.7,
+            "reasoning": "Captures and stores waste fluids after analysis; often provided as a modular unit to facilitate safe disposal and replacement, though designs vary."
+          },
+          {
+            "name": "Power Supply Unit",
+            "confidence": 0.85,
+            "reasoning": "Converts AC mains power to required DC voltages for internal components; a standard procurable assembly with well-defined supply chains."
+          }
+        ],
+        "technology_specification": "Bench-top or research flow cytometer system featuring a laser excitation unit, fluidics system, optics assembly, and electronic signal processing modules designed for multiparametric analysis of suspended particles or cells.",
+        "technology_reasoning": "Flow cytometers for pharmaceutical and biomedical research primarily use bench-top instruments that combine laser-based optical excitation and detection with fluidic handling systems to analyze cell populations. This configuration is the industry standard as of 2024 due to its versatility, precision, and widespread adoption in clinical and research laboratories worldwide."
+      },
+      {
+        "agent_id": "Agent_2",
+        "components": [
+          {
+            "name": "Fluidic System Assembly",
+            "confidence": 0.95,
+            "reasoning": "Core subsystem delivering and hydrodynamically focusing the cell/sample stream, typically a distinct modular assembly procured separately due to its complex microfluidic channels and pumps."
+          },
+          {
+            "name": "Optical Detection Module (including lasers and photodetectors)",
+            "confidence": 1.0,
+            "reasoning": "Essential for fluorescence and light scatter detection; generally a premanufactured subsystem integrating laser sources, filters, lenses, and photomultiplier tubes or photodiodes."
+          },
+          {
+            "name": "Electronics Control Board",
+            "confidence": 0.92,
+            "reasoning": "Distinct printed circuit board responsible for signal processing and instrument control, procured as a separate unit from specialized electronics suppliers."
+          },
+          {
+            "name": "Sample Injection Port and Tubing Interface",
+            "confidence": 0.85,
+            "reasoning": "Key physical interface with the user and sample delivery path, often sourced as separate standardized components for ease of replacement and sterilization."
+          },
+          {
+            "name": "Instrument Chassis and Enclosure",
+            "confidence": 0.9,
+            "reasoning": "Structural frame and outer casing providing mechanical support, protection, and thermal management, typically manufactured or procured as a distinct item."
+          },
+          {
+            "name": "Data Interface Module (e.g., USB or Ethernet port assembly)",
+            "confidence": 0.75,
+            "reasoning": "Physical subassembly allowing communication and data transfer to external computers, often a modular component distinct from main electronics."
+          },
+          {
+            "name": "Waste Collection Assembly",
+            "confidence": 0.7,
+            "reasoning": "Physical assembly for collection of sample waste fluids, commonly a detachable component for hygiene and regulatory compliance, supplied separately in many systems."
+          }
+        ],
+        "technology_specification": "Bench-top flow cytometer system for multiparametric cell analysis featuring fluidic sample delivery, optical detection with multiple lasers, and electronic signal processing modules.",
+        "technology_reasoning": "This specification captures the most common industrial form of flow cytometers used in biomedical labs as of 2024, which combine fluidic systems, optical assemblies with lasers and detectors, and electronic processing into a compact, integrated instrument widely adopted for clinical and research use."
+      },
+      {
+        "agent_id": "Agent_3",
+        "components": [
+          {
+            "name": "Fluidics System",
+            "confidence": 0.95,
+            "reasoning": "This includes pumps, tubing, valves, and flow cells that transport and focus the cell suspension, a distinct manufactured subsystem essential for operation."
+          },
+          {
+            "name": "Laser Light Sources",
+            "confidence": 0.98,
+            "reasoning": "These are procurable laser modules (typically solid-state or diode lasers) providing illumination at specific wavelengths, critical and standardized optical components."
+          },
+          {
+            "name": "Optical Detection Module",
+            "confidence": 0.95,
+            "reasoning": "Comprises photodetectors such as photomultiplier tubes (PMTs), lenses, mirrors, and filters assembled as a distinct subsystem responsible for signal detection."
+          },
+          {
+            "name": "Electronic Control Board",
+            "confidence": 0.92,
+            "reasoning": "The main PCB assembly that controls fluidics, laser operation, signal processing, and interfaces with software; a separately manufactured and critical component."
+          },
+          {
+            "name": "Data Acquisition and Processing Unit",
+            "confidence": 0.9,
+            "reasoning": "Includes the digital electronics and embedded systems hardware that digitize and process detector signals, often a distinct procurable module or board."
+          },
+          {
+            "name": "Sample Injection Port/Loader",
+            "confidence": 0.85,
+            "reasoning": "A mechanical and fluidic interface unit designed for introducing samples, often manufactured as a distinct subassembly."
+          },
+          {
+            "name": "Instrument Chassis/Enclosure",
+            "confidence": 0.88,
+            "reasoning": "The structural housing that protects and integrates all internal components into a user-accessible form factor, typically manufactured or procured separately."
+          },
+          {
+            "name": "User Interface Module",
+            "confidence": 0.8,
+            "reasoning": "Displays, touchscreens, or control panels provided as separate assemblies or modules for user interaction and control."
+          },
+          {
+            "name": "Waste Collection System",
+            "confidence": 0.75,
+            "reasoning": "A subassembly including waste tubing and collection containers, often modular and replaced or serviced separately."
+          }
+        ],
+        "technology_specification": "Flow cytometer system integrating fluidics, optics, electronics, and software to analyze physical and chemical characteristics of cells or particles in a fluid suspension.",
+        "technology_reasoning": "Flow cytometers are standardized analytical instruments widely used in biomedical and clinical labs, characterized by their combination of fluidic sample handling, laser-based optical detection, and integrated electronics for data acquisition and analysis."
+      },
+      {
+        "agent_id": "Agent_4",
+        "components": [
+          {
+            "name": "Fluidics System",
+            "confidence": 0.98,
+            "reasoning": "Core subsystem responsible for transporting and hydrodynamically focusing cells in a fluid stream; usually manufactured and supplied as a complete assembly including pumps, flow chambers, and tubing."
+          },
+          {
+            "name": "Optical Detection Module",
+            "confidence": 0.95,
+            "reasoning": "Includes laser sources, lenses, filters, beam splitters, and photodetectors (PMTs or photodiodes); critical for excitation and detection of fluorescence and light scatter signals, typically a distinct procurable unit."
+          },
+          {
+            "name": "Signal Processing Electronics",
+            "confidence": 0.9,
+            "reasoning": "Electronic boards and integrated circuits handling analog-to-digital conversion, signal amplification, and preliminary data processing; a standard separate subsystem within flow cytometers."
+          },
+          {
+            "name": "Sample Injection Port",
+            "confidence": 0.85,
+            "reasoning": "Interface for introducing biological samples into the fluidics system, often a modular unit with removable parts to allow sterilization or replacement; a distinct manufactured component."
+          },
+          {
+            "name": "Data Acquisition and Control Computer",
+            "confidence": 0.88,
+            "reasoning": "Dedicated computing system for instrument control, data capture, and display; distinct hardware often procured or integrated from specialized industrial PC suppliers."
+          },
+          {
+            "name": "Waste Collection Assembly",
+            "confidence": 0.8,
+            "reasoning": "Subsystem to collect and contain fluid waste post analysis, often modular for safety and disposal compliance, usually procured separately."
+          },
+          {
+            "name": "Laser Power Supply",
+            "confidence": 0.85,
+            "reasoning": "Specialized power module supplying stable current and voltage to lasers in the optical system; a separate manufactured unit critical for performance."
+          },
+          {
+            "name": "Mechanical Enclosure/Chassis",
+            "confidence": 0.9,
+            "reasoning": "Structural framework housing and supporting all subsystems; procured or manufactured as a distinct assembly for protection and ergonomics."
+          }
+        ],
+        "technology_specification": "A flow cytometer is a biomedical analytical instrument designed to perform rapid multiparametric analysis of cells or particles suspended in fluid using laser-based optics and fluidic systems to detect and measure physical and chemical characteristics.",
+        "technology_reasoning": "This specification reflects the dominant configuration used in research and clinical laboratories worldwide, combining optical detection with fluidic sample handling. Its modular architecture typically consists of separate optical, fluidic, electronic, and mechanical subsystems procured as distinct assemblies."
+      },
+      {
+        "agent_id": "Agent_5",
+        "components": [
+          {
+            "name": "Fluidic System Module",
+            "confidence": 0.98,
+            "reasoning": "This distinct subsystem comprising pumps, valves, flow cells, and tubing is essential for cell sample transport and hydrodynamic focusing, and is procured or manufactured as a separate assembly."
+          },
+          {
+            "name": "Optical Excitation Module (Laser Assembly)",
+            "confidence": 0.97,
+            "reasoning": "Includes diode or solid-state lasers providing excitation light at specific wavelengths, procured as a unit from specialized suppliers, foundational for flow cytometry analysis."
+          },
+          {
+            "name": "Optical Detection Module (Photodetectors and Filters)",
+            "confidence": 0.95,
+            "reasoning": "Consists of photomultiplier tubes (PMTs) or avalanche photodiodes (APDs) and optical filters assembled as a module to capture fluorescence and scattered light, a core functional component."
+          },
+          {
+            "name": "Electronic Signal Processing Board",
+            "confidence": 0.9,
+            "reasoning": "A separate printed circuit board responsible for amplifying, digitizing, and processing optical signals, typically designed and procured as a distinct electronic assembly."
+          },
+          {
+            "name": "Sample Input and Handling Assembly",
+            "confidence": 0.88,
+            "reasoning": "Includes sample tubes, loading port, and autosampler mechanisms, usually provided as a modular unit for standardized sample introduction."
+          },
+          {
+            "name": "Data Acquisition and Control Computer Interface Module",
+            "confidence": 0.85,
+            "reasoning": "A dedicated control unit or embedded computer interfacing with signal processing hardware for data collection and user interaction, commonly a separate procurable unit."
+          },
+          {
+            "name": "Instrument Chassis and Enclosure",
+            "confidence": 0.83,
+            "reasoning": "The structural housing that supports and protects optical, fluidic, and electronic components, manufactured as a distinct enclosure assembly."
+          },
+          {
+            "name": "Alignment and Calibration Tools Module",
+            "confidence": 0.65,
+            "reasoning": "Includes optical alignment tools and calibration bead dispensers often provided as secondary subsystems; sometimes integrated but also procured separately in many commercial systems."
+          }
+        ],
+        "technology_specification": "Flow cytometer system comprising optical detection modules, fluidic subsystem, and electronic processing units designed primarily for cell counting, sorting, and biomarker detection through laser-induced fluorescence and light scattering.",
+        "technology_reasoning": "This specification reflects the dominant and standardized architecture of commercially available flow cytometers as of 2024, which typically integrate fluidic control to transport cells, laser optics for excitation, photodetectors for signal capture, and electronic boards for signal processing and data acquisition. This system design is fundamental for research and clinical diagnostics, making it the industry standard."
+      }
+    ],
+    "phase2_debate_rounds": [
+      {
+        "round_num": 1,
+        "convergence": 0.44333333333333336,
+        "threshold": 0.7,
+        "threshold_reached": false,
+        "proposals": {
+          "Agent_1": [
+            {
+              "name": "Laser Excitation Module",
+              "confidence": 0.98,
+              "reasoning": "This is a crucial subassembly providing the laser light sources (e.g., diode, solid-state lasers) needed to excite fluorescent markers; procured as a distinct unit due to specialized manufacturers and optical engineering.",
+              "component": "Laser Excitation Module",
+              "normalized_component": "laser excitation"
+            },
+            {
+              "name": "Fluidics System",
+              "confidence": 0.95,
+              "reasoning": "Responsible for hydrodynamically focusing the sample stream and sheath fluid, this complete module includes pumps, flow cells, and tubing assemblies and is typically sourced separately due to its complex mechanical and fluid design.",
+              "component": "Fluidics System",
+              "normalized_component": "fluidic"
+            },
+            {
+              "name": "Optical Detection Assembly",
+              "confidence": 0.96,
+              "reasoning": "Includes photomultiplier tubes (PMTs), avalanche photodiodes, filters, and beam splitters; this module detects fluorescence and light scatter signals and is a specialized procurable unit distinct from other electronics.",
+              "component": "Optical Detection Assembly",
+              "normalized_component": "optical detection"
+            },
+            {
+              "name": "Signal Processing Electronics Board",
+              "confidence": 0.93,
+              "reasoning": "This PCB assembly handles the conversion of optical signals into digital data; commonly a separate procurement due to its complexity and integration of ADCs and specialized processing ICs.",
+              "component": "Signal Processing Electronics Board",
+              "normalized_component": "signal processing electronics board"
+            },
+            {
+              "name": "Sample Injection Chamber",
+              "confidence": 0.8,
+              "reasoning": "A physical subassembly where sample introduction occurs, often modular to allow maintenance or replacement; it interfaces with fluidics but is distinct as a procurable consumable module.",
+              "component": "Sample Injection Chamber",
+              "normalized_component": "sample injection chamber"
+            },
+            {
+              "name": "Chassis / Enclosure",
+              "confidence": 0.89,
+              "reasoning": "The rigid mechanical housing and frame that supports and encloses internal components; typically manufactured and procured as a separate assembly with specific material and design specs.",
+              "component": "Chassis / Enclosure",
+              "normalized_component": "instrument chassis and enclosure"
+            },
+            {
+              "name": "User Interface Electronics Module",
+              "confidence": 0.75,
+              "reasoning": "Includes touchscreen displays or control panels and associated electronics; commonly sourced separately as a standalone module but sometimes integrated more tightly depending on manufacturer.",
+              "component": "User Interface Electronics Module",
+              "normalized_component": "user interface"
+            },
+            {
+              "name": "Waste Management System",
+              "confidence": 0.7,
+              "reasoning": "Captures and stores waste fluids after analysis; often provided as a modular unit to facilitate safe disposal and replacement, though designs vary.",
+              "component": "Waste Management System",
+              "normalized_component": "waste collection"
+            },
+            {
+              "name": "Power Supply Unit",
+              "confidence": 0.85,
+              "reasoning": "Converts AC mains power to required DC voltages for internal components; a standard procurable assembly with well-defined supply chains.",
+              "component": "Power Supply Unit",
+              "normalized_component": "power supply"
+            }
+          ],
+          "Agent_2": [
+            {
+              "name": "Fluidic System Assembly",
+              "confidence": 0.95,
+              "reasoning": "Core subsystem delivering and hydrodynamically focusing the cell/sample stream, typically a distinct modular assembly procured separately due to its complex microfluidic channels and pumps.",
+              "component": "Fluidic System Assembly",
+              "normalized_component": "fluidic"
+            },
+            {
+              "name": "Optical Detection Module (including lasers and photodetectors)",
+              "confidence": 1.0,
+              "reasoning": "Essential for fluorescence and light scatter detection; generally a premanufactured subsystem integrating laser sources, filters, lenses, and photomultiplier tubes or photodiodes.",
+              "component": "Optical Detection Module (including lasers and photodetectors)",
+              "normalized_component": "optical detection"
+            },
+            {
+              "name": "Electronics Control Board",
+              "confidence": 0.92,
+              "reasoning": "Distinct printed circuit board responsible for signal processing and instrument control, procured as a separate unit from specialized electronics suppliers.",
+              "component": "Electronics Control Board",
+              "normalized_component": "electronics control board"
+            },
+            {
+              "name": "Sample Injection Port and Tubing Interface",
+              "confidence": 0.85,
+              "reasoning": "Key physical interface with the user and sample delivery path, often sourced as separate standardized components for ease of replacement and sterilization.",
+              "component": "Sample Injection Port and Tubing Interface",
+              "normalized_component": "sample injection port"
+            },
+            {
+              "name": "Instrument Chassis and Enclosure",
+              "confidence": 0.9,
+              "reasoning": "Structural frame and outer casing providing mechanical support, protection, and thermal management, typically manufactured or procured as a distinct item.",
+              "component": "Instrument Chassis and Enclosure",
+              "normalized_component": "instrument chassis and enclosure"
+            },
+            {
+              "name": "Data Interface Module (e.g., USB or Ethernet port assembly)",
+              "confidence": 0.75,
+              "reasoning": "Physical subassembly allowing communication and data transfer to external computers, often a modular component distinct from main electronics.",
+              "component": "Data Interface Module (e.g., USB or Ethernet port assembly)",
+              "normalized_component": "data interface"
+            },
+            {
+              "name": "Waste Collection Assembly",
+              "confidence": 0.7,
+              "reasoning": "Physical assembly for collection of sample waste fluids, commonly a detachable component for hygiene and regulatory compliance, supplied separately in many systems.",
+              "component": "Waste Collection Assembly",
+              "normalized_component": "waste collection"
+            }
+          ],
+          "Agent_3": [
+            {
+              "name": "Fluidics System",
+              "confidence": 0.95,
+              "reasoning": "This includes pumps, tubing, valves, and flow cells that transport and focus the cell suspension, a distinct manufactured subsystem essential for operation.",
+              "component": "Fluidics System",
+              "normalized_component": "fluidic"
+            },
+            {
+              "name": "Laser Light Sources",
+              "confidence": 0.98,
+              "reasoning": "These are procurable laser modules (typically solid-state or diode lasers) providing illumination at specific wavelengths, critical and standardized optical components.",
+              "component": "Laser Light Sources",
+              "normalized_component": "laser excitation"
+            },
+            {
+              "name": "Optical Detection Module",
+              "confidence": 0.95,
+              "reasoning": "Comprises photodetectors such as photomultiplier tubes (PMTs), lenses, mirrors, and filters assembled as a distinct subsystem responsible for signal detection.",
+              "component": "Optical Detection Module",
+              "normalized_component": "optical detection"
+            },
+            {
+              "name": "Electronic Control Board",
+              "confidence": 0.92,
+              "reasoning": "The main PCB assembly that controls fluidics, laser operation, signal processing, and interfaces with software; a separately manufactured and critical component.",
+              "component": "Electronic Control Board",
+              "normalized_component": "electronics control board"
+            },
+            {
+              "name": "Data Acquisition and Processing Unit",
+              "confidence": 0.9,
+              "reasoning": "Includes the digital electronics and embedded systems hardware that digitize and process detector signals, often a distinct procurable module or board.",
+              "component": "Data Acquisition and Processing Unit",
+              "normalized_component": "data acquisition and control computer interface"
+            },
+            {
+              "name": "Sample Injection Port/Loader",
+              "confidence": 0.85,
+              "reasoning": "A mechanical and fluidic interface unit designed for introducing samples, often manufactured as a distinct subassembly.",
+              "component": "Sample Injection Port/Loader",
+              "normalized_component": "sample injection port"
+            },
+            {
+              "name": "Instrument Chassis/Enclosure",
+              "confidence": 0.88,
+              "reasoning": "The structural housing that protects and integrates all internal components into a user-accessible form factor, typically manufactured or procured separately.",
+              "component": "Instrument Chassis/Enclosure",
+              "normalized_component": "instrument chassis and enclosure"
+            },
+            {
+              "name": "User Interface Module",
+              "confidence": 0.8,
+              "reasoning": "Displays, touchscreens, or control panels provided as separate assemblies or modules for user interaction and control.",
+              "component": "User Interface Module",
+              "normalized_component": "user interface"
+            },
+            {
+              "name": "Waste Collection System",
+              "confidence": 0.75,
+              "reasoning": "A subassembly including waste tubing and collection containers, often modular and replaced or serviced separately.",
+              "component": "Waste Collection System",
+              "normalized_component": "waste collection"
+            }
+          ],
+          "Agent_4": [
+            {
+              "name": "Fluidics System",
+              "confidence": 0.98,
+              "reasoning": "Core subsystem responsible for transporting and hydrodynamically focusing cells in a fluid stream; usually manufactured and supplied as a complete assembly including pumps, flow chambers, and tubing.",
+              "component": "Fluidics System",
+              "normalized_component": "fluidic"
+            },
+            {
+              "name": "Optical Detection Module",
+              "confidence": 0.95,
+              "reasoning": "Includes laser sources, lenses, filters, beam splitters, and photodetectors (PMTs or photodiodes); critical for excitation and detection of fluorescence and light scatter signals, typically a distinct procurable unit.",
+              "component": "Optical Detection Module",
+              "normalized_component": "optical detection"
+            },
+            {
+              "name": "Signal Processing Electronics",
+              "confidence": 0.9,
+              "reasoning": "Electronic boards and integrated circuits handling analog-to-digital conversion, signal amplification, and preliminary data processing; a standard separate subsystem within flow cytometers.",
+              "component": "Signal Processing Electronics",
+              "normalized_component": "signal processing electronics board"
+            },
+            {
+              "name": "Sample Injection Port",
+              "confidence": 0.85,
+              "reasoning": "Interface for introducing biological samples into the fluidics system, often a modular unit with removable parts to allow sterilization or replacement; a distinct manufactured component.",
+              "component": "Sample Injection Port",
+              "normalized_component": "sample injection port"
+            },
+            {
+              "name": "Data Acquisition and Control Computer",
+              "confidence": 0.88,
+              "reasoning": "Dedicated computing system for instrument control, data capture, and display; distinct hardware often procured or integrated from specialized industrial PC suppliers.",
+              "component": "Data Acquisition and Control Computer",
+              "normalized_component": "data acquisition and control computer interface"
+            },
+            {
+              "name": "Waste Collection Assembly",
+              "confidence": 0.8,
+              "reasoning": "Subsystem to collect and contain fluid waste post analysis, often modular for safety and disposal compliance, usually procured separately.",
+              "component": "Waste Collection Assembly",
+              "normalized_component": "waste collection"
+            },
+            {
+              "name": "Laser Power Supply",
+              "confidence": 0.85,
+              "reasoning": "Specialized power module supplying stable current and voltage to lasers in the optical system; a separate manufactured unit critical for performance.",
+              "component": "Laser Power Supply",
+              "normalized_component": "laser power supply"
+            },
+            {
+              "name": "Mechanical Enclosure/Chassis",
+              "confidence": 0.9,
+              "reasoning": "Structural framework housing and supporting all subsystems; procured or manufactured as a distinct assembly for protection and ergonomics.",
+              "component": "Mechanical Enclosure/Chassis",
+              "normalized_component": "instrument chassis and enclosure"
+            }
+          ],
+          "Agent_5": [
+            {
+              "name": "Fluidic System Module",
+              "confidence": 0.98,
+              "reasoning": "This distinct subsystem comprising pumps, valves, flow cells, and tubing is essential for cell sample transport and hydrodynamic focusing, and is procured or manufactured as a separate assembly.",
+              "component": "Fluidic System Module",
+              "normalized_component": "fluidic"
+            },
+            {
+              "name": "Optical Excitation Module (Laser Assembly)",
+              "confidence": 0.97,
+              "reasoning": "Includes diode or solid-state lasers providing excitation light at specific wavelengths, procured as a unit from specialized suppliers, foundational for flow cytometry analysis.",
+              "component": "Optical Excitation Module (Laser Assembly)",
+              "normalized_component": "laser excitation"
+            },
+            {
+              "name": "Optical Detection Module (Photodetectors and Filters)",
+              "confidence": 0.95,
+              "reasoning": "Consists of photomultiplier tubes (PMTs) or avalanche photodiodes (APDs) and optical filters assembled as a module to capture fluorescence and scattered light, a core functional component.",
+              "component": "Optical Detection Module (Photodetectors and Filters)",
+              "normalized_component": "optical detection"
+            },
+            {
+              "name": "Electronic Signal Processing Board",
+              "confidence": 0.9,
+              "reasoning": "A separate printed circuit board responsible for amplifying, digitizing, and processing optical signals, typically designed and procured as a distinct electronic assembly.",
+              "component": "Electronic Signal Processing Board",
+              "normalized_component": "signal processing electronics board"
+            },
+            {
+              "name": "Sample Input and Handling Assembly",
+              "confidence": 0.88,
+              "reasoning": "Includes sample tubes, loading port, and autosampler mechanisms, usually provided as a modular unit for standardized sample introduction.",
+              "component": "Sample Input and Handling Assembly",
+              "normalized_component": "sample input and handling"
+            },
+            {
+              "name": "Data Acquisition and Control Computer Interface Module",
+              "confidence": 0.85,
+              "reasoning": "A dedicated control unit or embedded computer interfacing with signal processing hardware for data collection and user interaction, commonly a separate procurable unit.",
+              "component": "Data Acquisition and Control Computer Interface Module",
+              "normalized_component": "data acquisition and control computer interface"
+            },
+            {
+              "name": "Instrument Chassis and Enclosure",
+              "confidence": 0.83,
+              "reasoning": "The structural housing that supports and protects optical, fluidic, and electronic components, manufactured as a distinct enclosure assembly.",
+              "component": "Instrument Chassis and Enclosure",
+              "normalized_component": "instrument chassis and enclosure"
+            },
+            {
+              "name": "Alignment and Calibration Tools Module",
+              "confidence": 0.65,
+              "reasoning": "Includes optical alignment tools and calibration bead dispensers often provided as secondary subsystems; sometimes integrated but also procured separately in many commercial systems.",
+              "component": "Alignment and Calibration Tools Module",
+              "normalized_component": "alignment and calibration tools"
+            }
+          ]
+        },
+        "rounds_completed": 1,
+        "support_analysis": {
+          "consensus": [
+            "laser excitation",
+            "signal processing electronics board",
+            "sample injection port",
+            "data acquisition and control computer interface"
+          ],
+          "majority": [
+            "fluidic",
+            "optical detection",
+            "instrument chassis and enclosure",
+            "user interface",
+            "waste collection",
+            "electronics control board"
+          ],
+          "isolated": [
+            "sample injection chamber",
+            "power supply",
+            "data interface",
+            "laser power supply",
+            "sample input and handling",
+            "alignment and calibration tools"
+          ]
+        },
+        "critiques": [
+          {
+            "item_name": "laser excitation",
+            "normalized_name": "laser excitation",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_5",
+              "Agent_3",
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2",
+              "Agent_4"
+            ],
+            "avg_confidence": 0.9766666666666666,
+            "critique_text": "Strong consensus on 'laser excitation': all 3 agents support with avg confidence 0.98. Preserve this component."
+          },
+          {
+            "item_name": "fluidic",
+            "normalized_name": "fluidic",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_5",
+              "Agent_4",
+              "Agent_1",
+              "Agent_3"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.962,
+            "critique_text": "Majority support for 'fluidic': 5/3 agents agree (conf: 0.96). Consider strengthening consensus."
+          },
+          {
+            "item_name": "optical detection",
+            "normalized_name": "optical detection",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_5",
+              "Agent_4",
+              "Agent_1",
+              "Agent_3"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.962,
+            "critique_text": "Majority support for 'optical detection': 5/3 agents agree (conf: 0.96). Consider strengthening consensus."
+          },
+          {
+            "item_name": "signal processing electronics board",
+            "normalized_name": "signal processing electronics board",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_5",
+              "Agent_4",
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2",
+              "Agent_3"
+            ],
+            "avg_confidence": 0.91,
+            "critique_text": "Strong consensus on 'signal processing electronics board': all 3 agents support with avg confidence 0.91. Preserve this component."
+          },
+          {
+            "item_name": "sample injection chamber",
+            "normalized_name": "sample injection chamber",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2",
+              "Agent_3",
+              "Agent_4",
+              "Agent_5"
+            ],
+            "avg_confidence": 0.8,
+            "critique_text": "Isolated proposal 'sample injection chamber' from 1 agent(s) (conf: 0.80). Requires justification or peer validation."
+          },
+          {
+            "item_name": "instrument chassis and enclosure",
+            "normalized_name": "instrument chassis and enclosure",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_5",
+              "Agent_4",
+              "Agent_1",
+              "Agent_3"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.8800000000000001,
+            "critique_text": "Majority support for 'instrument chassis and enclosure': 5/3 agents agree (conf: 0.88). Consider strengthening consensus."
+          },
+          {
+            "item_name": "user interface",
+            "normalized_name": "user interface",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2",
+              "Agent_4",
+              "Agent_5"
+            ],
+            "avg_confidence": 0.775,
+            "critique_text": "Majority support for 'user interface': 2/3 agents agree (conf: 0.78). Consider strengthening consensus."
+          },
+          {
+            "item_name": "waste collection",
+            "normalized_name": "waste collection",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_3",
+              "Agent_4",
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_5"
+            ],
+            "avg_confidence": 0.7375,
+            "critique_text": "Majority support for 'waste collection': 4/3 agents agree (conf: 0.74). Consider strengthening consensus."
+          },
+          {
+            "item_name": "power supply",
+            "normalized_name": "power supply",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2",
+              "Agent_3",
+              "Agent_4",
+              "Agent_5"
+            ],
+            "avg_confidence": 0.85,
+            "critique_text": "Isolated proposal 'power supply' from 1 agent(s) (conf: 0.85). Requires justification or peer validation."
+          },
+          {
+            "item_name": "electronics control board",
+            "normalized_name": "electronics control board",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_3"
+            ],
+            "opposing_agents": [
+              "Agent_5",
+              "Agent_4",
+              "Agent_1"
+            ],
+            "avg_confidence": 0.92,
+            "critique_text": "Majority support for 'electronics control board': 2/3 agents agree (conf: 0.92). Consider strengthening consensus."
+          },
+          {
+            "item_name": "sample injection port",
+            "normalized_name": "sample injection port",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_3",
+              "Agent_4"
+            ],
+            "opposing_agents": [
+              "Agent_5",
+              "Agent_1"
+            ],
+            "avg_confidence": 0.85,
+            "critique_text": "Strong consensus on 'sample injection port': all 3 agents support with avg confidence 0.85. Preserve this component."
+          },
+          {
+            "item_name": "data interface",
+            "normalized_name": "data interface",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_5",
+              "Agent_3",
+              "Agent_4",
+              "Agent_1"
+            ],
+            "avg_confidence": 0.75,
+            "critique_text": "Isolated proposal 'data interface' from 1 agent(s) (conf: 0.75). Requires justification or peer validation."
+          },
+          {
+            "item_name": "data acquisition and control computer interface",
+            "normalized_name": "data acquisition and control computer interface",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_5",
+              "Agent_3",
+              "Agent_4"
+            ],
+            "opposing_agents": [
+              "Agent_2",
+              "Agent_1"
+            ],
+            "avg_confidence": 0.8766666666666666,
+            "critique_text": "Strong consensus on 'data acquisition and control computer interface': all 3 agents support with avg confidence 0.88. Preserve this component."
+          },
+          {
+            "item_name": "laser power supply",
+            "normalized_name": "laser power supply",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_4"
+            ],
+            "opposing_agents": [
+              "Agent_1",
+              "Agent_2",
+              "Agent_3",
+              "Agent_5"
+            ],
+            "avg_confidence": 0.85,
+            "critique_text": "Isolated proposal 'laser power supply' from 1 agent(s) (conf: 0.85). Requires justification or peer validation."
+          },
+          {
+            "item_name": "sample input and handling",
+            "normalized_name": "sample input and handling",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_5"
+            ],
+            "opposing_agents": [
+              "Agent_2",
+              "Agent_3",
+              "Agent_4",
+              "Agent_1"
+            ],
+            "avg_confidence": 0.88,
+            "critique_text": "Isolated proposal 'sample input and handling' from 1 agent(s) (conf: 0.88). Requires justification or peer validation."
+          },
+          {
+            "item_name": "alignment and calibration tools",
+            "normalized_name": "alignment and calibration tools",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_5"
+            ],
+            "opposing_agents": [
+              "Agent_2",
+              "Agent_3",
+              "Agent_4",
+              "Agent_1"
+            ],
+            "avg_confidence": 0.65,
+            "critique_text": "Isolated proposal 'alignment and calibration tools' from 1 agent(s) (conf: 0.65). Requires justification or peer validation."
+          }
+        ],
+        "changes_from_previous": null
+      },
+      {
+        "round_num": 2,
+        "convergence": 0.6496969696969697,
+        "threshold": 0.7,
+        "threshold_reached": false,
+        "proposals": {
+          "Agent_1": [
+            {
+              "agent_id": "Agent_1",
+              "component": "Laser Excitation Module",
+              "confidence": 0.98,
+              "reasoning": "Strong consensus among agents with high confidence, critical for fluorescence excitation in flow cytometry.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Fluidics System",
+              "confidence": 0.96,
+              "reasoning": "Unanimous support across all agents with very high confidence; essential for sample transport and focusing.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Optical Detection Module (including lasers and photodetectors)",
+              "confidence": 0.97,
+              "reasoning": "Strong consensus with highest confidence (1.0 by one agent, 0.95 others); central component for detecting fluorescent signals.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Signal Processing Electronics Board",
+              "confidence": 0.91,
+              "reasoning": "Three agents support with good confidence; vital for converting optical signals to digital data.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Instrument Chassis and Enclosure",
+              "confidence": 0.88,
+              "reasoning": "Five agents support with consistent confidence around 0.88-0.90; necessary as physical housing.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Waste Collection Assembly",
+              "confidence": 0.74,
+              "reasoning": "Four agents support with average confidence ~0.74; important for handling waste stream from sample processing.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Sample Injection Port",
+              "confidence": 0.85,
+              "reasoning": "Three agents support with confidence ~0.85; important for sample input and integration with fluidics.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Data Acquisition and Control Computer",
+              "confidence": 0.88,
+              "reasoning": "Support from multiple agents around 0.88 confidence; vital for system control and data processing.",
+              "round": 2
+            }
+          ],
+          "Agent_2": [
+            {
+              "agent_id": "Agent_2",
+              "component": "Laser Excitation Module",
+              "confidence": 0.98,
+              "reasoning": "Strong peer support from 3 agents with high confidence; consensus indicates it is a primary component essential for laser-based excitation in flow cytometers.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Fluidics System",
+              "confidence": 0.96,
+              "reasoning": "Unanimous support from all 5 agents with average high confidence; critical for sample delivery and sheath fluid management.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Optical Detection Module (including lasers and photodetectors)",
+              "confidence": 1.0,
+              "reasoning": "Unanimous and highest confidence support from 5 agents; matches consensus component covering essential optical detection including lasers and photodetectors.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Signal Processing Electronics Board",
+              "confidence": 0.91,
+              "reasoning": "Supported by 3 agents with solid confidence; integral for converting optical signals into analyzable data.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Instrument Chassis and Enclosure",
+              "confidence": 0.88,
+              "reasoning": "Strong consensus from 5 agents; necessary for mechanical housing and structural integrity.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Waste Collection Assembly",
+              "confidence": 0.74,
+              "reasoning": "Supported by 4 agents at moderate confidence; important for handling and disposing waste fluids safely.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Sample Injection Port and Tubing Interface",
+              "confidence": 0.85,
+              "reasoning": "Supported by 3 agents consistently; essential for controlled sample input delivery.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Data Acquisition and Control Computer",
+              "confidence": 0.88,
+              "reasoning": "Supported by 3 agents with high confidence; required for data handling and instrument control.",
+              "round": 2
+            }
+          ],
+          "Agent_3": [
+            {
+              "agent_id": "Agent_3",
+              "component": "Laser Light Sources",
+              "confidence": 0.98,
+              "reasoning": "Strong consensus among 3 agents with an average confidence of 0.98. Critical primary component for a flow cytometer's laser excitation.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Fluidic System Module",
+              "confidence": 0.96,
+              "reasoning": "Strong consensus across 5 agents with average confidence of 0.96. Essential for sample and fluid transport in flow cytometry.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Optical Detection Module (including lasers and photodetectors)",
+              "confidence": 0.96,
+              "reasoning": "Unanimous support by all 5 agents with average confidence of 0.96. Vital for detecting fluorescence and scatter signals.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Signal Processing Electronics Board",
+              "confidence": 0.9,
+              "reasoning": "Selected by multiple agents with high confidence around 0.90. Needed to process signals from detectors.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Instrument Chassis and Enclosure",
+              "confidence": 0.88,
+              "reasoning": "Strong agreement by all agents with confidence near 0.88. Provides structural and protective housing.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Waste Collection Assembly",
+              "confidence": 0.74,
+              "reasoning": "Supported by 4 agents with average confidence of 0.74. Important for safe disposal of sample waste.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Sample Injection Port",
+              "confidence": 0.85,
+              "reasoning": "Supported by 3 agents with an average confidence of 0.85. Necessary for introducing samples into the flow system.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Data Acquisition and Control Computer",
+              "confidence": 0.88,
+              "reasoning": "Selected by 3 agents with avg confidence near 0.88. Key for controlling the system and acquiring data.",
+              "round": 2
+            }
+          ],
+          "Agent_4": [
+            {
+              "agent_id": "Agent_4",
+              "component": "Laser Excitation Module",
+              "confidence": 0.98,
+              "reasoning": "Strong consensus with 3 agents selecting this with high confidence (0.98 average). Critical for flow cytometer operation as the source of excitation light.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "Fluidics System",
+              "confidence": 0.96,
+              "reasoning": "Unanimous support from 5 agents with high confidence (0.95+), vital for sample transport and flow focusing in the cytometer.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "Optical Detection Assembly",
+              "confidence": 0.96,
+              "reasoning": "Strong agreement from 5 agents with ~0.95 average confidence, crucial for detecting scattered/fluorescent light signals.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "Signal Processing Electronics Board",
+              "confidence": 0.91,
+              "reasoning": "Majority support (3 agents) with confidence ~0.90+, integral for electronic signal conditioning and processing.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "Instrument Chassis and Enclosure",
+              "confidence": 0.88,
+              "reasoning": "Strong consensus (5 agents) with confidence ~0.88-0.90, essential for housing and protecting components.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "Waste Collection Assembly",
+              "confidence": 0.74,
+              "reasoning": "Multiple agents (4) select this with confidence around 0.70-0.75, important for handling waste fluids safely and cleanly.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "Sample Injection Port",
+              "confidence": 0.85,
+              "reasoning": "Good support (3 agents) with confidence ~0.85, necessary for controlled introduction of samples into the system.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "Data Acquisition and Control Computer",
+              "confidence": 0.88,
+              "reasoning": "Selected by 3 agents with confidence around 0.88-0.90, vital for data acquisition, control, and processing.",
+              "round": 2
+            }
+          ],
+          "Agent_5": [
+            {
+              "agent_id": "Agent_5",
+              "component": "Laser Excitation Module",
+              "confidence": 0.98,
+              "reasoning": "Strong consensus among agents with high confidence (average 0.98) and peer feedback supports preserving this component as essential for laser excitation in flow cytometry.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_5",
+              "component": "Fluidics System",
+              "confidence": 0.96,
+              "reasoning": "Unanimous support from all agents with high average confidence (0.96) indicating criticality in handling the fluidics of sample flow.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_5",
+              "component": "Optical Detection Module (including lasers and photodetectors)",
+              "confidence": 0.98,
+              "reasoning": "Strong consensus from multiple agents with very high confidence and peer feedback to preserve optical detection; chosen the most comprehensive named module including lasers and photodetectors to consolidate overlapping similar proposals.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_5",
+              "component": "Signal Processing Electronics Board",
+              "confidence": 0.91,
+              "reasoning": "Multiple agents proposed variants of signal processing electronics with good confidence; peer feedback supports inclusion with average confidence around 0.91.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_5",
+              "component": "Instrument Chassis and Enclosure",
+              "confidence": 0.88,
+              "reasoning": "Well supported by all agents with strong peer consensus indicating this is critical as the physical housing of the device.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_5",
+              "component": "Waste Collection Assembly",
+              "confidence": 0.74,
+              "reasoning": "Strong peer consensus to include waste collection components with average confidence about 0.74; important for handling waste fluids safely.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_5",
+              "component": "Sample Injection Port and Tubing Interface",
+              "confidence": 0.85,
+              "reasoning": "Multiple agents support sample injection port variants with average confidence about 0.85; important for sample introduction into the system.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_5",
+              "component": "Data Acquisition and Control Computer",
+              "confidence": 0.88,
+              "reasoning": "Strong peer support and moderate average confidence two agents selected this or similar components; important for data handling and system control.",
+              "round": 2
+            }
+          ]
+        },
+        "rounds_completed": 2,
+        "support_analysis": {
+          "consensus": [
+            "sample injection port"
+          ],
+          "majority": [
+            "laser excitation",
+            "fluidics",
+            "optical detection module (including lasers and photodetectors)",
+            "signal processing electronics board",
+            "instrument chassis and enclosure",
+            "waste collection",
+            "data acquisition and control computer",
+            "sample injection port and tubing interface"
+          ],
+          "isolated": [
+            "laser light sources",
+            "fluidic",
+            "optical detection"
+          ]
+        },
+        "critiques": [
+          {
+            "item_name": "Laser Excitation Module",
+            "normalized_name": "laser excitation",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_4",
+              "Agent_1",
+              "Agent_5"
+            ],
+            "opposing_agents": [
+              "Agent_3"
+            ],
+            "avg_confidence": 0.98,
+            "critique_text": "Majority support for 'Laser Excitation Module': 4/3 agents agree (conf: 0.98). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Fluidics System",
+            "normalized_name": "fluidics",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_4",
+              "Agent_1",
+              "Agent_5"
+            ],
+            "opposing_agents": [
+              "Agent_3"
+            ],
+            "avg_confidence": 0.96,
+            "critique_text": "Majority support for 'Fluidics System': 4/3 agents agree (conf: 0.96). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Optical Detection Module (including lasers and photodetectors)",
+            "normalized_name": "optical detection module (including lasers and photodetectors)",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_3",
+              "Agent_1",
+              "Agent_5"
+            ],
+            "opposing_agents": [
+              "Agent_4"
+            ],
+            "avg_confidence": 0.9775,
+            "critique_text": "Majority support for 'Optical Detection Module (including lasers and photodetectors)': 4/3 agents agree (conf: 0.98). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Signal Processing Electronics Board",
+            "normalized_name": "signal processing electronics board",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_5",
+              "Agent_4",
+              "Agent_1",
+              "Agent_3"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.908,
+            "critique_text": "Majority support for 'Signal Processing Electronics Board': 5/3 agents agree (conf: 0.91). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Instrument Chassis and Enclosure",
+            "normalized_name": "instrument chassis and enclosure",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_5",
+              "Agent_4",
+              "Agent_1",
+              "Agent_3"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.8800000000000001,
+            "critique_text": "Majority support for 'Instrument Chassis and Enclosure': 5/3 agents agree (conf: 0.88). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Waste Collection Assembly",
+            "normalized_name": "waste collection",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_5",
+              "Agent_4",
+              "Agent_1",
+              "Agent_3"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.74,
+            "critique_text": "Majority support for 'Waste Collection Assembly': 5/3 agents agree (conf: 0.74). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Sample Injection Port",
+            "normalized_name": "sample injection port",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_4",
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2",
+              "Agent_5"
+            ],
+            "avg_confidence": 0.85,
+            "critique_text": "Strong consensus on 'Sample Injection Port': all 3 agents support with avg confidence 0.85. Preserve this component."
+          },
+          {
+            "item_name": "Data Acquisition and Control Computer",
+            "normalized_name": "data acquisition and control computer",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_5",
+              "Agent_4",
+              "Agent_1",
+              "Agent_3"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.8800000000000001,
+            "critique_text": "Majority support for 'Data Acquisition and Control Computer': 5/3 agents agree (conf: 0.88). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Sample Injection Port and Tubing Interface",
+            "normalized_name": "sample injection port and tubing interface",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_5"
+            ],
+            "opposing_agents": [
+              "Agent_3",
+              "Agent_4",
+              "Agent_1"
+            ],
+            "avg_confidence": 0.85,
+            "critique_text": "Majority support for 'Sample Injection Port and Tubing Interface': 2/3 agents agree (conf: 0.85). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Laser Light Sources",
+            "normalized_name": "laser light sources",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_3"
+            ],
+            "opposing_agents": [
+              "Agent_1",
+              "Agent_2",
+              "Agent_4",
+              "Agent_5"
+            ],
+            "avg_confidence": 0.98,
+            "critique_text": "Isolated proposal 'Laser Light Sources' from 1 agent(s) (conf: 0.98). Requires justification or peer validation."
+          },
+          {
+            "item_name": "Fluidic System Module",
+            "normalized_name": "fluidic",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_3"
+            ],
+            "opposing_agents": [
+              "Agent_1",
+              "Agent_2",
+              "Agent_4",
+              "Agent_5"
+            ],
+            "avg_confidence": 0.96,
+            "critique_text": "Isolated proposal 'Fluidic System Module' from 1 agent(s) (conf: 0.96). Requires justification or peer validation."
+          },
+          {
+            "item_name": "Optical Detection Assembly",
+            "normalized_name": "optical detection",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_4"
+            ],
+            "opposing_agents": [
+              "Agent_1",
+              "Agent_2",
+              "Agent_3",
+              "Agent_5"
+            ],
+            "avg_confidence": 0.96,
+            "critique_text": "Isolated proposal 'Optical Detection Assembly' from 1 agent(s) (conf: 0.96). Requires justification or peer validation."
+          }
+        ],
+        "changes_from_previous": {
+          "items_added": [
+            "data acquisition and control computer",
+            "sample injection port and tubing interface",
+            "laser light sources",
+            "optical detection module (including lasers and photodetectors)",
+            "fluidics"
+          ],
+          "items_removed": [
+            "electronics control board",
+            "alignment and calibration tools",
+            "sample input and handling",
+            "sample injection chamber",
+            "laser power supply",
+            "power supply",
+            "user interface",
+            "data interface",
+            "data acquisition and control computer interface"
+          ],
+          "confidence_changes": {}
+        }
+      },
+      {
+        "round_num": 3,
+        "convergence": 1.0,
+        "threshold": 0.7,
+        "threshold_reached": true,
+        "proposals": {
+          "Agent_1": [
+            {
+              "agent_id": "Agent_1",
+              "component": "Laser Excitation Module",
+              "confidence": 0.98,
+              "reasoning": "Strong consensus with 4 agents supporting at high confidence, essential for exciting fluorophores in the flow cytometer.",
+              "round": 3,
+              "normalized_component": "Laser Excitation Module"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Fluidics System",
+              "confidence": 0.96,
+              "reasoning": "Supported by 4 agents with high confidence, fundamental for delivering samples and sheath fluid precisely.",
+              "round": 3,
+              "normalized_component": "Microfluidic Chip"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Optical Detection Module (including lasers and photodetectors)",
+              "confidence": 0.98,
+              "reasoning": "High confidence and supported by 4 agents, critical for detecting fluorescent signals accurately.",
+              "round": 3,
+              "normalized_component": "Optical Detection Module"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Signal Processing Electronics Board",
+              "confidence": 0.91,
+              "reasoning": "Unanimous support from all 5 agents, necessary for processing signals from detectors.",
+              "round": 3,
+              "normalized_component": "Signal Processing Electronics Board"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Instrument Chassis and Enclosure",
+              "confidence": 0.88,
+              "reasoning": "Agreed by all 5 agents, important for housing components and providing structure.",
+              "round": 3,
+              "normalized_component": "System Chassis and Enclosure"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Waste Collection Assembly",
+              "confidence": 0.74,
+              "reasoning": "Supported by all 5 agents though with lower confidence; important for managing sample waste safely.",
+              "round": 3,
+              "normalized_component": "Waste Collection Assembly"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Sample Injection Port",
+              "confidence": 0.85,
+              "reasoning": "Supported by 3 agents at solid confidence; essential for introducing samples into the fluidics system.",
+              "round": 3,
+              "normalized_component": "Sample Injection System"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Data Acquisition and Control Computer",
+              "confidence": 0.88,
+              "reasoning": "Unanimous 5-agent support at 0.88 confidence; pivotal for data collection and instrument control.",
+              "round": 3,
+              "normalized_component": "Data Acquisition And Control Computer"
+            }
+          ],
+          "Agent_2": [
+            {
+              "agent_id": "Agent_2",
+              "component": "Laser Excitation Module",
+              "confidence": 0.98,
+              "reasoning": "Strong multi-agent consensus with high confidence (average 0.98) and critical importance to flow cytometer function.",
+              "round": 3,
+              "normalized_component": "Laser Excitation Module"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Fluidics System",
+              "confidence": 0.96,
+              "reasoning": "Strong multi-agent consensus with high confidence (average 0.96), essential for sample fluid control.",
+              "round": 3,
+              "normalized_component": "Microfluidic Chip"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Optical Detection Module (including lasers and photodetectors)",
+              "confidence": 0.98,
+              "reasoning": "Strong multi-agent consensus with very high confidence (average 0.98), core to detecting and measuring samples.",
+              "round": 3,
+              "normalized_component": "Optical Detection Module"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Signal Processing Electronics Board",
+              "confidence": 0.91,
+              "reasoning": "Unanimous support at good confidence (average 0.91); vital for processing detected signals.",
+              "round": 3,
+              "normalized_component": "Signal Processing Electronics Board"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Instrument Chassis and Enclosure",
+              "confidence": 0.88,
+              "reasoning": "Strong consensus with good confidence, necessary as the physical framework and protection.",
+              "round": 3,
+              "normalized_component": "System Chassis and Enclosure"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Waste Collection Assembly",
+              "confidence": 0.74,
+              "reasoning": "Supported by all agents at moderate confidence (0.74), important for safe sample disposal.",
+              "round": 3,
+              "normalized_component": "Waste Collection Assembly"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Sample Injection Port",
+              "confidence": 0.85,
+              "reasoning": "Substantial consensus with good confidence (0.85), necessary for sample introduction.",
+              "round": 3,
+              "normalized_component": "Sample Injection System"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Data Acquisition and Control Computer",
+              "confidence": 0.88,
+              "reasoning": "Supported by all agents at good confidence. Central for control and data management.",
+              "round": 3,
+              "normalized_component": "Data Acquisition And Control Computer"
+            }
+          ],
+          "Agent_3": [
+            {
+              "agent_id": "Agent_3",
+              "component": "Laser Excitation Module",
+              "confidence": 0.98,
+              "reasoning": "Strong consensus among 4 agents with very high confidence (0.98). Essential for exciting fluorophores in flow cytometry.",
+              "round": 3,
+              "normalized_component": "Laser Excitation Module"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Fluidics System",
+              "confidence": 0.96,
+              "reasoning": "Strong consensus among 4 agents with high confidence (0.96). Critical for controlling sample flow through the cytometer.",
+              "round": 3,
+              "normalized_component": "Microfluidic Chip"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Optical Detection Module (including lasers and photodetectors)",
+              "confidence": 0.98,
+              "reasoning": "Strong consensus among 4 agents with very high confidence (0.98). Core component for detecting emitted light signals.",
+              "round": 3,
+              "normalized_component": "Optical Detection Module"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Signal Processing Electronics Board",
+              "confidence": 0.91,
+              "reasoning": "Unanimous support from all 5 agents with average confidence of 0.91. Necessary for processing the detected signals.",
+              "round": 3,
+              "normalized_component": "Signal Processing Electronics Board"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Instrument Chassis and Enclosure",
+              "confidence": 0.88,
+              "reasoning": "Unanimous support with average confidence 0.88. Provides physical structure and protection for internal components.",
+              "round": 3,
+              "normalized_component": "System Chassis and Enclosure"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Waste Collection Assembly",
+              "confidence": 0.74,
+              "reasoning": "Unanimous but lower confidence support (0.74). Important for managing sample waste, though less critical than core functional components.",
+              "round": 3,
+              "normalized_component": "Waste Collection Assembly"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Sample Injection Port",
+              "confidence": 0.85,
+              "reasoning": "Selected by 3 agents with average confidence of 0.85. Important interface for introducing samples into the flow system.",
+              "round": 3,
+              "normalized_component": "Sample Injection System"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Data Acquisition and Control Computer",
+              "confidence": 0.88,
+              "reasoning": "Unanimous support with average confidence 0.88. Essential for control, data acquisition, and analysis.",
+              "round": 3,
+              "normalized_component": "Data Acquisition And Control Computer"
+            }
+          ],
+          "Agent_4": [
+            {
+              "agent_id": "Agent_4",
+              "component": "Laser Excitation Module",
+              "confidence": 0.98,
+              "reasoning": "Strong consensus with 4 agents supporting and high average confidence (0.98), critical for exciting fluorescence in flow cytometry particles.",
+              "round": 3,
+              "normalized_component": "Laser Excitation Module"
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "Fluidics System",
+              "confidence": 0.96,
+              "reasoning": "Strong consensus with 4 agents supporting and high average confidence (0.96), essential for transporting samples through the flow cytometer.",
+              "round": 3,
+              "normalized_component": "Microfluidic Chip"
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "Optical Detection Module (including lasers and photodetectors)",
+              "confidence": 0.98,
+              "reasoning": "Strong consensus with 4 agents supporting and very high average confidence (0.98), fundamental for detecting signals from fluorescent labeled cells.",
+              "round": 3,
+              "normalized_component": "Optical Detection Module"
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "Signal Processing Electronics Board",
+              "confidence": 0.91,
+              "reasoning": "Unanimous support from all agents with average confidence 0.91, necessary for processing electrical signals from detectors.",
+              "round": 3,
+              "normalized_component": "Signal Processing Electronics Board"
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "Instrument Chassis and Enclosure",
+              "confidence": 0.88,
+              "reasoning": "Unanimous support with average confidence 0.88, providing mechanical support and housing for internal components.",
+              "round": 3,
+              "normalized_component": "System Chassis and Enclosure"
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "Waste Collection Assembly",
+              "confidence": 0.74,
+              "reasoning": "Unanimous support with moderate confidence (0.74), important for handling waste fluid safely during operation.",
+              "round": 3,
+              "normalized_component": "Waste Collection Assembly"
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "Sample Injection Port",
+              "confidence": 0.85,
+              "reasoning": "Majority support (3 agents) with average confidence 0.85, crucial for introducing samples into the system.",
+              "round": 3,
+              "normalized_component": "Sample Injection System"
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "Data Acquisition and Control Computer",
+              "confidence": 0.88,
+              "reasoning": "Unanimous support with average confidence 0.88, essential for controlling the instrument and collecting data outputs.",
+              "round": 3,
+              "normalized_component": "Data Acquisition And Control Computer"
+            }
+          ],
+          "Agent_5": [
+            {
+              "agent_id": "Agent_5",
+              "component": "Laser Excitation Module",
+              "confidence": 0.98,
+              "reasoning": "Strong consensus across 4 agents maintaining very high confidence; key component for laser excitation in flow cytometry.",
+              "round": 3,
+              "normalized_component": "Laser Excitation Module"
+            },
+            {
+              "agent_id": "Agent_5",
+              "component": "Fluidics System",
+              "confidence": 0.96,
+              "reasoning": "Strong multi-agent support at 0.96 confidence, essential for sample flow control and core to cytometer operation.",
+              "round": 3,
+              "normalized_component": "Microfluidic Chip"
+            },
+            {
+              "agent_id": "Agent_5",
+              "component": "Optical Detection Module (including lasers and photodetectors)",
+              "confidence": 0.98,
+              "reasoning": "Strong consensus with high confidence (avg 0.98) across 4 agents; indispensable for detecting fluorescence and scatter signals.",
+              "round": 3,
+              "normalized_component": "Optical Detection Module"
+            },
+            {
+              "agent_id": "Agent_5",
+              "component": "Signal Processing Electronics Board",
+              "confidence": 0.91,
+              "reasoning": "Unanimous support among all agents with stable high confidence; critical for signal processing of detected optical signals.",
+              "round": 3,
+              "normalized_component": "Signal Processing Electronics Board"
+            },
+            {
+              "agent_id": "Agent_5",
+              "component": "Instrument Chassis and Enclosure",
+              "confidence": 0.88,
+              "reasoning": "Consistent support and necessary for housing and protecting all components.",
+              "round": 3,
+              "normalized_component": "System Chassis and Enclosure"
+            },
+            {
+              "agent_id": "Agent_5",
+              "component": "Waste Collection Assembly",
+              "confidence": 0.74,
+              "reasoning": "Unanimous agreement albeit lower confidence; necessary for proper disposal of fluid waste in the system.",
+              "round": 3,
+              "normalized_component": "Waste Collection Assembly"
+            },
+            {
+              "agent_id": "Agent_5",
+              "component": "Sample Injection Port",
+              "confidence": 0.85,
+              "reasoning": "Supported by multiple agents with good confidence; required for sample introduction into the flow system.",
+              "round": 3,
+              "normalized_component": "Sample Injection System"
+            },
+            {
+              "agent_id": "Agent_5",
+              "component": "Data Acquisition and Control Computer",
+              "confidence": 0.88,
+              "reasoning": "Strong unanimous support and medium-high confidence; essential for control, data acquisition, and analysis.",
+              "round": 3,
+              "normalized_component": "Data Acquisition And Control Computer"
+            }
+          ]
+        },
+        "rounds_completed": 3,
+        "support_analysis": {
+          "consensus": [],
+          "majority": [
+            "laser excitation",
+            "fluidics",
+            "optical detection module (including lasers and photodetectors)",
+            "signal processing electronics board",
+            "instrument chassis and enclosure",
+            "waste collection",
+            "sample injection port",
+            "data acquisition and control computer"
+          ],
+          "isolated": []
+        },
+        "critiques": [
+          {
+            "item_name": "Laser Excitation Module",
+            "normalized_name": "laser excitation",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_5",
+              "Agent_4",
+              "Agent_1",
+              "Agent_3"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.9800000000000001,
+            "critique_text": "Majority support for 'Laser Excitation Module': 5/3 agents agree (conf: 0.98). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Fluidics System",
+            "normalized_name": "fluidics",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_5",
+              "Agent_4",
+              "Agent_1",
+              "Agent_3"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.96,
+            "critique_text": "Majority support for 'Fluidics System': 5/3 agents agree (conf: 0.96). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Optical Detection Module (including lasers and photodetectors)",
+            "normalized_name": "optical detection module (including lasers and photodetectors)",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_5",
+              "Agent_4",
+              "Agent_1",
+              "Agent_3"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.9800000000000001,
+            "critique_text": "Majority support for 'Optical Detection Module (including lasers and photodetectors)': 5/3 agents agree (conf: 0.98). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Signal Processing Electronics Board",
+            "normalized_name": "signal processing electronics board",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_5",
+              "Agent_4",
+              "Agent_1",
+              "Agent_3"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.9099999999999999,
+            "critique_text": "Majority support for 'Signal Processing Electronics Board': 5/3 agents agree (conf: 0.91). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Instrument Chassis and Enclosure",
+            "normalized_name": "instrument chassis and enclosure",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_5",
+              "Agent_4",
+              "Agent_1",
+              "Agent_3"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.8800000000000001,
+            "critique_text": "Majority support for 'Instrument Chassis and Enclosure': 5/3 agents agree (conf: 0.88). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Waste Collection Assembly",
+            "normalized_name": "waste collection",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_5",
+              "Agent_4",
+              "Agent_1",
+              "Agent_3"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.74,
+            "critique_text": "Majority support for 'Waste Collection Assembly': 5/3 agents agree (conf: 0.74). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Sample Injection Port",
+            "normalized_name": "sample injection port",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_5",
+              "Agent_4",
+              "Agent_1",
+              "Agent_3"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.85,
+            "critique_text": "Majority support for 'Sample Injection Port': 5/3 agents agree (conf: 0.85). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Data Acquisition and Control Computer",
+            "normalized_name": "data acquisition and control computer",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_5",
+              "Agent_4",
+              "Agent_1",
+              "Agent_3"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.8800000000000001,
+            "critique_text": "Majority support for 'Data Acquisition and Control Computer': 5/3 agents agree (conf: 0.88). Consider strengthening consensus."
+          }
+        ],
+        "changes_from_previous": {
+          "items_added": [],
+          "items_removed": [
+            "optical detection",
+            "fluidic",
+            "sample injection port and tubing interface",
+            "laser light sources"
+          ],
+          "confidence_changes": {}
+        }
+      }
+    ],
+    "phase3_final_consensus": {
+      "technology": "Flow Cytometer",
+      "technology_specification": "Flow Cytometer",
+      "technology_reasoning": "",
+      "components": [
+        "Laser Excitation Module",
+        "Optical Detection Module",
+        "Microfluidic Chip",
+        "Signal Processing Electronics Board",
+        "System Chassis And Enclosure",
+        "Data Acquisition And Control Computer",
+        "Sample Injection System",
+        "Waste Collection Assembly"
+      ],
+      "confidence": 1.0,
+      "rounds": 3,
+      "convergence_score": 1.0
+    }
+  },
+  "materials_debate": {
+    "debate_rounds": [],
+    "final_consensus": {
+      "components": 8,
+      "unique_materials": 15,
+      "total_assignments": 30,
+      "materials_by_component": {
+        "Laser Excitation Module": [
+          {
+            "name": "Aluminum gallium arsenide",
+            "confidence": 0.95,
+            "reasoning": "Used as semiconductor material for laser diodes providing specific excitation wavelengths, industry standard for laser excitation modules."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.85,
+            "reasoning": "Structural and heat sink material for mounting laser diodes and optics due to good thermal conductivity and machinability."
+          },
+          {
+            "name": "Glass",
+            "confidence": 0.8,
+            "reasoning": "Optical lenses and windows in the laser path are commonly glass for transparency and precision; borosilicate glass less common here."
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.75,
+            "reasoning": "Electrical connections and heat dissipation components due to high electrical and thermal conductivity; alternatives exist but copper is common."
+          }
+        ],
+        "Optical Detection Module": [
+          {
+            "name": "Photomultiplier tube materials",
+            "confidence": 0.9,
+            "reasoning": "Critical for the photo-detection and amplification of fluorescence signals; essential component in many flow cytometry detectors."
+          },
+          {
+            "name": "Glass",
+            "confidence": 0.9,
+            "reasoning": "Optical lenses and filters require high optical clarity glass, often fused silica or borosilicate for wavelength precision."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.75,
+            "reasoning": "Used structurally and for some reflective optical surfaces and mounts due to lightweight and machinability."
+          },
+          {
+            "name": "Silver",
+            "confidence": 0.65,
+            "reasoning": "Sometimes used in mirror coatings for high reflectivity; aluminum is more common but silver is a superior alternative."
+          }
+        ],
+        "Microfluidic Chip": [
+          {
+            "name": "Polymethyl methacrylate",
+            "confidence": 0.85,
+            "reasoning": "Common polymer for microfluidic chip substrates due to optical clarity and manufacturability."
+          },
+          {
+            "name": "Glass",
+            "confidence": 0.8,
+            "reasoning": "Alternative substrate material for microfluidic chips providing chemical resistance and optical transparency."
+          },
+          {
+            "name": "Silicon",
+            "confidence": 0.7,
+            "reasoning": "Used in certain microfluidic chips for precise microfabrication and structural strength, though less common than polymers and glass."
+          },
+          {
+            "name": "Epoxy resins",
+            "confidence": 0.65,
+            "reasoning": "Used as bonding and sealing materials in chip assembly; common but alternatives exist."
+          }
+        ],
+        "Signal Processing Electronics Board": [
+          {
+            "name": "Silicon",
+            "confidence": 0.95,
+            "reasoning": "Primary semiconductor material for integrated circuits and processors, absolutely essential."
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.9,
+            "reasoning": "Used for conductive traces and interconnects on printed circuit boards, industry standard."
+          },
+          {
+            "name": "Epoxy resins",
+            "confidence": 0.8,
+            "reasoning": "Used as substrate material (PCB laminate) and encapsulants for electronic components, very standard in electronics."
+          },
+          {
+            "name": "Gold",
+            "confidence": 0.65,
+            "reasoning": "Used in bonding wires and contacts for corrosion resistance and conductivity, though alternatives like copper exist."
+          }
+        ],
+        "System Chassis And Enclosure": [
+          {
+            "name": "Aluminum",
+            "confidence": 0.9,
+            "reasoning": "Widely used for chassis and enclosure due to lightweight, strength, corrosion resistance, and thermal properties."
+          },
+          {
+            "name": "Steel Ingots",
+            "confidence": 0.75,
+            "reasoning": "Used when higher mechanical strength is required; stainless steel variants can be formed from steel ingots."
+          },
+          {
+            "name": "Epoxy resins",
+            "confidence": 0.6,
+            "reasoning": "Can be used for coatings or composite enclosures, alternatives widely exist."
+          },
+          {
+            "name": "Polycarbonate",
+            "confidence": 0.65,
+            "reasoning": "Used for transparent panels or housings, common polymer with high impact resistance; other plastics could substitute."
+          }
+        ],
+        "Data Acquisition And Control Computer": [
+          {
+            "name": "Silicon",
+            "confidence": 0.95,
+            "reasoning": "Primary semiconductor for processors, memory, and integrated circuits, absolutely essential."
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.9,
+            "reasoning": "Used for electrical wiring and PCB traces within computer electronics, industry standard."
+          },
+          {
+            "name": "Epoxy resins",
+            "confidence": 0.8,
+            "reasoning": "Used in PCBs and component encapsulation, very standard in electronics manufacturing."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.7,
+            "reasoning": "Used for heat sinks and some structural components; alternatives exist but aluminum is common."
+          }
+        ],
+        "Sample Injection System": [
+          {
+            "name": "Stainless steel",
+            "confidence": 0.9,
+            "reasoning": "Primary material for fluidic channels, needles, and valves due to corrosion resistance and biocompatibility."
+          },
+          {
+            "name": "Polyethylene",
+            "confidence": 0.7,
+            "reasoning": "Used for tubing and seals because of chemical resistance and flexibility; alternatives exist but polyethylene is common."
+          },
+          {
+            "name": "Glass",
+            "confidence": 0.6,
+            "reasoning": "Used in some flow cell windows or syringes providing chemical inertness and optical transparency."
+          }
+        ],
+        "Waste Collection Assembly": [
+          {
+            "name": "Polypropylene",
+            "confidence": 0.8,
+            "reasoning": "Common polymer for waste containers due to chemical resistance and robustness."
+          },
+          {
+            "name": "Polyethylene",
+            "confidence": 0.7,
+            "reasoning": "Alternative polymer for tubing or liners in waste collection, good chemical resistance."
+          },
+          {
+            "name": "Stainless steel",
+            "confidence": 0.65,
+            "reasoning": "Used in some structural parts or connectors requiring strength and corrosion resistance, but less common in disposable parts."
+          }
+        ]
+      }
+    }
+  }
+}

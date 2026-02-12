@@ -1,0 +1,788 @@
+{
+  "version": "2.0",
+  "metadata": {
+    "technology": "MALE ISR UAV (Generic)",
+    "technology_specification": "MALE ISR UAV (Generic)",
+    "technology_reasoning": "",
+    "timestamp": "2026-02-12T13:37:12.762004",
+    "format_version": "2.0"
+  },
+  "config": {
+    "num_agents": 2,
+    "max_rounds": 2
+  },
+  "component_stage": {
+    "phase1_initial_proposals": [
+      {
+        "agent_id": "Agent_1",
+        "components": [
+          {
+            "name": "Airframe (Fuselage, Wings, Empennage)",
+            "confidence": 0.98,
+            "reasoning": "Essential structural framework providing aerodynamic shape, lift surfaces, and housing for all internal components, typically manufactured and procured as a major assembly."
+          },
+          {
+            "name": "Turboprop or Piston Engine with Propeller",
+            "confidence": 0.95,
+            "reasoning": "Primary propulsion unit providing thrust and endurance; engines are distinct manufactured components with complex supply chains separate from other UAV systems."
+          },
+          {
+            "name": "Avionics Suite (Flight Control Computers, Navigation, Autopilot)",
+            "confidence": 0.95,
+            "reasoning": "Core electronic systems managing flight operations, autonomous control, and navigation, supplied as integrated modules from specialized manufacturers."
+          },
+          {
+            "name": "Electro-Optical/Infrared (EO/IR) Sensor Payload",
+            "confidence": 0.92,
+            "reasoning": "Key ISR payload providing day/night high-resolution imaging and targeting, a specialized sensor assembly procured separately from airframe and avionics."
+          },
+          {
+            "name": "Synthetic Aperture Radar (SAR) Module",
+            "confidence": 0.85,
+            "reasoning": "Optional but common ISR sensor system enabling all-weather ground imaging, considered a distinct subsystems with specialized technology and unique supply chain."
+          },
+          {
+            "name": "Communication Systems Suite (Satcom, Line-of-Sight Radios, Data Links)",
+            "confidence": 0.9,
+            "reasoning": "All command, control, and data transmission hardware packaged as discrete subsystems procured separately for integration."
+          },
+          {
+            "name": "Electrical Power System (Primary Batteries and Power Distribution Unit)",
+            "confidence": 0.8,
+            "reasoning": "Power generation and management components essential for onboard electronics, often separately procured as assemblies."
+          },
+          {
+            "name": "Landing Gear Assembly",
+            "confidence": 0.85,
+            "reasoning": "Structural subsystem enabling takeoff and landing operations, usually a distinct mechanical assembly sourced from specialized manufacturers."
+          },
+          {
+            "name": "Environmental Control System (ECS) or Cooling System",
+            "confidence": 0.7,
+            "reasoning": "Ensures thermal regulation for avionics and sensors; may be modular but sometimes integrated depending on UAV design, so confidence is moderate."
+          },
+          {
+            "name": "Ground Control Station (GCS) Hardware",
+            "confidence": 0.65,
+            "reasoning": "Not part of air vehicle but integral to operational deployment, procured as separate electronic systems; presence depends on analysis scope but typically critical for MALE ISR UAV operation."
+          }
+        ],
+        "technology_specification": "Medium-altitude, long-endurance (MALE) Intelligence, Surveillance, and Reconnaissance (ISR) unmanned aerial vehicle (UAV) designed for persistent aerial monitoring and data collection over extended mission durations, typically equipped with multisensor payloads and autonomous flight systems.",
+        "technology_reasoning": "The MALE ISR UAV category is the standard military platform for persistent surveillance missions at medium altitudes (typically 10,000 to 30,000 feet) with flight endurance of 24+ hours, widely adopted globally by armed forces. It is distinguished by its sensor payload modularity, communication suites, and endurance optimized airframe and propulsion systems, making it the dominant UAV type in military ISR operations as of 2024."
+      },
+      {
+        "agent_id": "Agent_2",
+        "components": [
+          {
+            "name": "Composite Airframe",
+            "confidence": 1.0,
+            "reasoning": "The primary structural assembly that provides shape and strength, typically procured as a manufactured composite fuselage and wings assembly, fundamental and universally present."
+          },
+          {
+            "name": "Wing Assembly with Control Surfaces",
+            "confidence": 0.95,
+            "reasoning": "Separate subassembly integrating wings and control surfaces such as ailerons and flaps; often manufactured and assembled separately for aerodynamic control."
+          },
+          {
+            "name": "Empennage (Tail Assembly)",
+            "confidence": 0.95,
+            "reasoning": "Distinct structural assembly consisting of vertical and horizontal stabilizers and associated control surfaces, procured or built as a separate unit."
+          },
+          {
+            "name": "Landing Gear Assembly",
+            "confidence": 0.9,
+            "reasoning": "Retractable or fixed landing gear is a major mechanical subassembly enabling ground operations, bought as an integrated part distinct from the airframe."
+          },
+          {
+            "name": "Modular Payload Bay",
+            "confidence": 0.9,
+            "reasoning": "Dedicated compartment designed for sensor and mission equipment payloads, often a removable or configurable structural module."
+          },
+          {
+            "name": "Propulsion Assembly (Engine + Propeller/Thrust Unit)",
+            "confidence": 0.98,
+            "reasoning": "Core physical propulsion system procured as a complete engine and propulsor unit, essential and separately supplied."
+          },
+          {
+            "name": "Avionics Housing and Rack Assembly",
+            "confidence": 0.85,
+            "reasoning": "Structural frames and protective enclosures for avionics modules, physically distinct and manufactured separately to protect electronics."
+          },
+          {
+            "name": "Fuel Tank Assembly",
+            "confidence": 0.85,
+            "reasoning": "Aircraft fuel storage units integrated but distinguishable as separately manufactured assemblies, critical for endurance."
+          },
+          {
+            "name": "Control Surface Actuator Assemblies",
+            "confidence": 0.8,
+            "reasoning": "Mechanized actuators for flight control surfaces, procured as distinct mechanical subsystems."
+          },
+          {
+            "name": "Auxiliary Power Unit (APU)",
+            "confidence": 0.6,
+            "reasoning": "Sometimes included as a separate subassembly for electrical power generation on the ground; not universal but common in larger UAV designs."
+          }
+        ],
+        "technology_specification": "Medium Altitude Long Endurance (MALE) Intelligence, Surveillance, and Reconnaissance (ISR) unmanned aerial vehicle (UAV) with composite airframe and modular payload bays.",
+        "technology_reasoning": "MALE ISR UAVs are defined by their operational altitude range (~10,000 to 30,000 feet) and endurance (often 24+ hours) and are widely used by military forces globally for reconnaissance and surveillance. The typical airframe is built from lightweight composites for structural strength and endurance, with modular compartments to accommodate various sensor payloads, making this form the industry standard by capability and market presence."
+      }
+    ],
+    "phase2_debate_rounds": [
+      {
+        "round_num": 1,
+        "convergence": 0.17647058823529413,
+        "threshold": 0.7,
+        "threshold_reached": false,
+        "proposals": {
+          "Agent_1": [
+            {
+              "name": "Airframe (Fuselage, Wings, Empennage)",
+              "confidence": 0.98,
+              "reasoning": "Essential structural framework providing aerodynamic shape, lift surfaces, and housing for all internal components, typically manufactured and procured as a major assembly.",
+              "component": "Airframe (Fuselage, Wings, Empennage)",
+              "normalized_component": "airframe"
+            },
+            {
+              "name": "Turboprop or Piston Engine with Propeller",
+              "confidence": 0.95,
+              "reasoning": "Primary propulsion unit providing thrust and endurance; engines are distinct manufactured components with complex supply chains separate from other UAV systems.",
+              "component": "Turboprop or Piston Engine with Propeller",
+              "normalized_component": "propulsion"
+            },
+            {
+              "name": "Avionics Suite (Flight Control Computers, Navigation, Autopilot)",
+              "confidence": 0.95,
+              "reasoning": "Core electronic systems managing flight operations, autonomous control, and navigation, supplied as integrated modules from specialized manufacturers.",
+              "component": "Avionics Suite (Flight Control Computers, Navigation, Autopilot)",
+              "normalized_component": "avionics suite"
+            },
+            {
+              "name": "Electro-Optical/Infrared (EO/IR) Sensor Payload",
+              "confidence": 0.92,
+              "reasoning": "Key ISR payload providing day/night high-resolution imaging and targeting, a specialized sensor assembly procured separately from airframe and avionics.",
+              "component": "Electro-Optical/Infrared (EO/IR) Sensor Payload",
+              "normalized_component": "eo/ir sensor payload"
+            },
+            {
+              "name": "Synthetic Aperture Radar (SAR) Module",
+              "confidence": 0.85,
+              "reasoning": "Optional but common ISR sensor system enabling all-weather ground imaging, considered a distinct subsystems with specialized technology and unique supply chain.",
+              "component": "Synthetic Aperture Radar (SAR) Module",
+              "normalized_component": "synthetic aperture radar"
+            },
+            {
+              "name": "Communication Systems Suite (Satcom, Line-of-Sight Radios, Data Links)",
+              "confidence": 0.9,
+              "reasoning": "All command, control, and data transmission hardware packaged as discrete subsystems procured separately for integration.",
+              "component": "Communication Systems Suite (Satcom, Line-of-Sight Radios, Data Links)",
+              "normalized_component": "communication systems suite"
+            },
+            {
+              "name": "Electrical Power System (Primary Batteries and Power Distribution Unit)",
+              "confidence": 0.8,
+              "reasoning": "Power generation and management components essential for onboard electronics, often separately procured as assemblies.",
+              "component": "Electrical Power System (Primary Batteries and Power Distribution Unit)",
+              "normalized_component": "electrical power"
+            },
+            {
+              "name": "Landing Gear Assembly",
+              "confidence": 0.85,
+              "reasoning": "Structural subsystem enabling takeoff and landing operations, usually a distinct mechanical assembly sourced from specialized manufacturers.",
+              "component": "Landing Gear Assembly",
+              "normalized_component": "landing gear"
+            },
+            {
+              "name": "Environmental Control System (ECS) or Cooling System",
+              "confidence": 0.7,
+              "reasoning": "Ensures thermal regulation for avionics and sensors; may be modular but sometimes integrated depending on UAV design, so confidence is moderate.",
+              "component": "Environmental Control System (ECS) or Cooling System",
+              "normalized_component": "environmental control"
+            },
+            {
+              "name": "Ground Control Station (GCS) Hardware",
+              "confidence": 0.65,
+              "reasoning": "Not part of air vehicle but integral to operational deployment, procured as separate electronic systems; presence depends on analysis scope but typically critical for MALE ISR UAV operation.",
+              "component": "Ground Control Station (GCS) Hardware",
+              "normalized_component": "ground control station hardware"
+            }
+          ],
+          "Agent_2": [
+            {
+              "name": "Composite Airframe",
+              "confidence": 1.0,
+              "reasoning": "The primary structural assembly that provides shape and strength, typically procured as a manufactured composite fuselage and wings assembly, fundamental and universally present.",
+              "component": "Composite Airframe",
+              "normalized_component": "airframe"
+            },
+            {
+              "name": "Wing Assembly with Control Surfaces",
+              "confidence": 0.95,
+              "reasoning": "Separate subassembly integrating wings and control surfaces such as ailerons and flaps; often manufactured and assembled separately for aerodynamic control.",
+              "component": "Wing Assembly with Control Surfaces",
+              "normalized_component": "wing"
+            },
+            {
+              "name": "Empennage (Tail Assembly)",
+              "confidence": 0.95,
+              "reasoning": "Distinct structural assembly consisting of vertical and horizontal stabilizers and associated control surfaces, procured or built as a separate unit.",
+              "component": "Empennage (Tail Assembly)",
+              "normalized_component": "empennage"
+            },
+            {
+              "name": "Landing Gear Assembly",
+              "confidence": 0.9,
+              "reasoning": "Retractable or fixed landing gear is a major mechanical subassembly enabling ground operations, bought as an integrated part distinct from the airframe.",
+              "component": "Landing Gear Assembly",
+              "normalized_component": "landing gear"
+            },
+            {
+              "name": "Modular Payload Bay",
+              "confidence": 0.9,
+              "reasoning": "Dedicated compartment designed for sensor and mission equipment payloads, often a removable or configurable structural module.",
+              "component": "Modular Payload Bay",
+              "normalized_component": "modular payload bay"
+            },
+            {
+              "name": "Propulsion Assembly (Engine + Propeller/Thrust Unit)",
+              "confidence": 0.98,
+              "reasoning": "Core physical propulsion system procured as a complete engine and propulsor unit, essential and separately supplied.",
+              "component": "Propulsion Assembly (Engine + Propeller/Thrust Unit)",
+              "normalized_component": "propulsion"
+            },
+            {
+              "name": "Avionics Housing and Rack Assembly",
+              "confidence": 0.85,
+              "reasoning": "Structural frames and protective enclosures for avionics modules, physically distinct and manufactured separately to protect electronics.",
+              "component": "Avionics Housing and Rack Assembly",
+              "normalized_component": "avionics rack"
+            },
+            {
+              "name": "Fuel Tank Assembly",
+              "confidence": 0.85,
+              "reasoning": "Aircraft fuel storage units integrated but distinguishable as separately manufactured assemblies, critical for endurance.",
+              "component": "Fuel Tank Assembly",
+              "normalized_component": "fuel tank"
+            },
+            {
+              "name": "Control Surface Actuator Assemblies",
+              "confidence": 0.8,
+              "reasoning": "Mechanized actuators for flight control surfaces, procured as distinct mechanical subsystems.",
+              "component": "Control Surface Actuator Assemblies",
+              "normalized_component": "control surface actuators"
+            },
+            {
+              "name": "Auxiliary Power Unit (APU)",
+              "confidence": 0.6,
+              "reasoning": "Sometimes included as a separate subassembly for electrical power generation on the ground; not universal but common in larger UAV designs.",
+              "component": "Auxiliary Power Unit (APU)",
+              "normalized_component": "auxiliary power"
+            }
+          ]
+        },
+        "rounds_completed": 1,
+        "support_analysis": {
+          "consensus": [],
+          "majority": [
+            "airframe",
+            "propulsion",
+            "landing gear"
+          ],
+          "isolated": [
+            "avionics suite",
+            "eo/ir sensor payload",
+            "synthetic aperture radar",
+            "communication systems suite",
+            "electrical power",
+            "environmental control",
+            "ground control station hardware",
+            "wing",
+            "empennage",
+            "modular payload bay",
+            "avionics rack",
+            "fuel tank",
+            "control surface actuators",
+            "auxiliary power"
+          ]
+        },
+        "critiques": [
+          {
+            "item_name": "airframe",
+            "normalized_name": "airframe",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.99,
+            "critique_text": "Majority support for 'airframe': 2/3 agents agree (conf: 0.99). Consider strengthening consensus."
+          },
+          {
+            "item_name": "propulsion",
+            "normalized_name": "propulsion",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.965,
+            "critique_text": "Majority support for 'propulsion': 2/3 agents agree (conf: 0.96). Consider strengthening consensus."
+          },
+          {
+            "item_name": "avionics suite",
+            "normalized_name": "avionics suite",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2"
+            ],
+            "avg_confidence": 0.95,
+            "critique_text": "Isolated proposal 'avionics suite' from 1 agent(s) (conf: 0.95). Requires justification or peer validation."
+          },
+          {
+            "item_name": "eo/ir sensor payload",
+            "normalized_name": "eo/ir sensor payload",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2"
+            ],
+            "avg_confidence": 0.92,
+            "critique_text": "Isolated proposal 'eo/ir sensor payload' from 1 agent(s) (conf: 0.92). Requires justification or peer validation."
+          },
+          {
+            "item_name": "synthetic aperture radar",
+            "normalized_name": "synthetic aperture radar",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2"
+            ],
+            "avg_confidence": 0.85,
+            "critique_text": "Isolated proposal 'synthetic aperture radar' from 1 agent(s) (conf: 0.85). Requires justification or peer validation."
+          },
+          {
+            "item_name": "communication systems suite",
+            "normalized_name": "communication systems suite",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2"
+            ],
+            "avg_confidence": 0.9,
+            "critique_text": "Isolated proposal 'communication systems suite' from 1 agent(s) (conf: 0.90). Requires justification or peer validation."
+          },
+          {
+            "item_name": "electrical power",
+            "normalized_name": "electrical power",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2"
+            ],
+            "avg_confidence": 0.8,
+            "critique_text": "Isolated proposal 'electrical power' from 1 agent(s) (conf: 0.80). Requires justification or peer validation."
+          },
+          {
+            "item_name": "landing gear",
+            "normalized_name": "landing gear",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.875,
+            "critique_text": "Majority support for 'landing gear': 2/3 agents agree (conf: 0.88). Consider strengthening consensus."
+          },
+          {
+            "item_name": "environmental control",
+            "normalized_name": "environmental control",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2"
+            ],
+            "avg_confidence": 0.7,
+            "critique_text": "Isolated proposal 'environmental control' from 1 agent(s) (conf: 0.70). Requires justification or peer validation."
+          },
+          {
+            "item_name": "ground control station hardware",
+            "normalized_name": "ground control station hardware",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2"
+            ],
+            "avg_confidence": 0.65,
+            "critique_text": "Isolated proposal 'ground control station hardware' from 1 agent(s) (conf: 0.65). Requires justification or peer validation."
+          },
+          {
+            "item_name": "wing",
+            "normalized_name": "wing",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_1"
+            ],
+            "avg_confidence": 0.95,
+            "critique_text": "Isolated proposal 'wing' from 1 agent(s) (conf: 0.95). Requires justification or peer validation."
+          },
+          {
+            "item_name": "empennage",
+            "normalized_name": "empennage",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_1"
+            ],
+            "avg_confidence": 0.95,
+            "critique_text": "Isolated proposal 'empennage' from 1 agent(s) (conf: 0.95). Requires justification or peer validation."
+          },
+          {
+            "item_name": "modular payload bay",
+            "normalized_name": "modular payload bay",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_1"
+            ],
+            "avg_confidence": 0.9,
+            "critique_text": "Isolated proposal 'modular payload bay' from 1 agent(s) (conf: 0.90). Requires justification or peer validation."
+          },
+          {
+            "item_name": "avionics rack",
+            "normalized_name": "avionics rack",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_1"
+            ],
+            "avg_confidence": 0.85,
+            "critique_text": "Isolated proposal 'avionics rack' from 1 agent(s) (conf: 0.85). Requires justification or peer validation."
+          },
+          {
+            "item_name": "fuel tank",
+            "normalized_name": "fuel tank",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_1"
+            ],
+            "avg_confidence": 0.85,
+            "critique_text": "Isolated proposal 'fuel tank' from 1 agent(s) (conf: 0.85). Requires justification or peer validation."
+          },
+          {
+            "item_name": "control surface actuators",
+            "normalized_name": "control surface actuators",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_1"
+            ],
+            "avg_confidence": 0.8,
+            "critique_text": "Isolated proposal 'control surface actuators' from 1 agent(s) (conf: 0.80). Requires justification or peer validation."
+          },
+          {
+            "item_name": "auxiliary power",
+            "normalized_name": "auxiliary power",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_1"
+            ],
+            "avg_confidence": 0.6,
+            "critique_text": "Isolated proposal 'auxiliary power' from 1 agent(s) (conf: 0.60). Requires justification or peer validation."
+          }
+        ],
+        "changes_from_previous": null
+      },
+      {
+        "round_num": 2,
+        "convergence": 1.0,
+        "threshold": 0.7,
+        "threshold_reached": true,
+        "proposals": {
+          "Agent_1": [
+            {
+              "agent_id": "Agent_1",
+              "component": "Composite Airframe",
+              "confidence": 0.99,
+              "reasoning": "Strong consensus from both agents on airframe components with very high confidence. Composite Airframe is preferred for modern UAVs.",
+              "round": 2,
+              "normalized_component": "Aircraft Structure"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Propulsion Assembly (Engine + Propeller/Thrust Unit)",
+              "confidence": 0.96,
+              "reasoning": "Strong consensus on propulsion assembly from both agents with high confidence, critical for UAV operation.",
+              "round": 2,
+              "normalized_component": "Aircraft Engine"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Landing Gear Assembly",
+              "confidence": 0.88,
+              "reasoning": "Strong consensus with good confidence from both agents, essential for takeoff and landing.",
+              "round": 2,
+              "normalized_component": "Landing Gear"
+            }
+          ],
+          "Agent_2": [
+            {
+              "agent_id": "Agent_2",
+              "component": "Composite Airframe",
+              "confidence": 1.0,
+              "reasoning": "Strong consensus to include airframe with highest confidence; this component subsumes fuselage, wings, and empennage as a unified high confidence structure.",
+              "round": 2,
+              "normalized_component": "Aircraft Structure"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Propulsion Assembly (Engine + Propeller/Thrust Unit)",
+              "confidence": 0.97,
+              "reasoning": "Strong consensus from both agents on this component indicating critical propulsion system for UAV; slight confidence adjustment to reflect consensus on propulsion unit rather than split engine and propeller.",
+              "round": 2,
+              "normalized_component": "Aircraft Engine"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Landing Gear Assembly",
+              "confidence": 0.88,
+              "reasoning": "Clear consensus on importance of landing gear assembly for UAV operations and landing capability; confidence retained at averaged peer confidence.",
+              "round": 2,
+              "normalized_component": "Landing Gear"
+            }
+          ],
+          "Agent_3": [
+            {
+              "agent_id": "Agent_3",
+              "component": "Composite Airframe",
+              "confidence": 1.0,
+              "reasoning": "Strong consensus with the highest confidence; foundational structure for the UAV.",
+              "round": 2,
+              "normalized_component": "Aircraft Structure"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Propulsion Assembly (Engine + Propeller/Thrust Unit)",
+              "confidence": 0.96,
+              "reasoning": "Strong consensus for propulsion; essential for UAV flight capability.",
+              "round": 2,
+              "normalized_component": "Aircraft Engine"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Landing Gear Assembly",
+              "confidence": 0.88,
+              "reasoning": "Strong consensus on landing gear; necessary for takeoff and landing stability.",
+              "round": 2,
+              "normalized_component": "Landing Gear"
+            }
+          ]
+        },
+        "rounds_completed": 2,
+        "support_analysis": {
+          "consensus": [
+            "composite airframe",
+            "propulsion assembly (engine + propeller/thrust unit)",
+            "landing gear"
+          ],
+          "majority": [],
+          "isolated": []
+        },
+        "critiques": [
+          {
+            "item_name": "Composite Airframe",
+            "normalized_name": "composite airframe",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.9966666666666667,
+            "critique_text": "Strong consensus on 'Composite Airframe': all 3 agents support with avg confidence 1.00. Preserve this component."
+          },
+          {
+            "item_name": "Propulsion Assembly (Engine + Propeller/Thrust Unit)",
+            "normalized_name": "propulsion assembly (engine + propeller/thrust unit)",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.9633333333333333,
+            "critique_text": "Strong consensus on 'Propulsion Assembly (Engine + Propeller/Thrust Unit)': all 3 agents support with avg confidence 0.96. Preserve this component."
+          },
+          {
+            "item_name": "Landing Gear Assembly",
+            "normalized_name": "landing gear",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.88,
+            "critique_text": "Strong consensus on 'Landing Gear Assembly': all 3 agents support with avg confidence 0.88. Preserve this component."
+          }
+        ],
+        "changes_from_previous": {
+          "items_added": [
+            "propulsion assembly (engine + propeller/thrust unit)",
+            "composite airframe"
+          ],
+          "items_removed": [
+            "electrical power",
+            "communication systems suite",
+            "fuel tank",
+            "auxiliary power",
+            "environmental control",
+            "avionics suite",
+            "eo/ir sensor payload",
+            "ground control station hardware",
+            "empennage",
+            "airframe",
+            "wing",
+            "propulsion",
+            "avionics rack",
+            "modular payload bay",
+            "synthetic aperture radar",
+            "control surface actuators"
+          ],
+          "confidence_changes": {}
+        }
+      }
+    ],
+    "phase3_final_consensus": {
+      "technology": "MALE ISR UAV (Generic)",
+      "technology_specification": "MALE ISR UAV (Generic)",
+      "technology_reasoning": "",
+      "components": [
+        "Aircraft Structure",
+        "Aircraft Engine",
+        "Landing Gear"
+      ],
+      "confidence": 1.0,
+      "rounds": 2,
+      "convergence_score": 1.0
+    }
+  },
+  "materials_debate": {
+    "debate_rounds": [],
+    "final_consensus": {
+      "components": 3,
+      "unique_materials": 8,
+      "total_assignments": 13,
+      "materials_by_component": {
+        "Aircraft Structure": [
+          {
+            "name": "Aluminum",
+            "confidence": 0.95,
+            "reasoning": "Primary structural metal used extensively for aircraft frames due to its high strength-to-weight ratio and corrosion resistance; absolutely essential in modern UAV structures."
+          },
+          {
+            "name": "Titanium",
+            "confidence": 0.85,
+            "reasoning": "Used in critical load-bearing areas of aircraft structure for its strength and corrosion resistance; standard in aerospace applications though costly compared to aluminum."
+          },
+          {
+            "name": "Carbon",
+            "confidence": 0.75,
+            "reasoning": "Used in carbon fiber composites which provide high strength and low weight; common in advanced UAV structures although not universal, some designs opt for metal only."
+          },
+          {
+            "name": "Epoxy resins",
+            "confidence": 0.7,
+            "reasoning": "Essential as a binder matrix in composite structures like carbon fiber; commonly used but other resins exist, so moderately confident."
+          },
+          {
+            "name": "Glass",
+            "confidence": 0.6,
+            "reasoning": "Material for certain composite reinforcements or transparent parts (canopies), used variably so less critical than metals and carbon composites."
+          }
+        ],
+        "Aircraft Engine": [
+          {
+            "name": "Titanium",
+            "confidence": 0.9,
+            "reasoning": "Used in turbine blades and other high-stress engine parts for its high strength, temperature resistance, and corrosion resistance; very commonly used in aircraft engines."
+          },
+          {
+            "name": "Nickel",
+            "confidence": 0.85,
+            "reasoning": "A key component in high-temperature nickel-based superalloys forming turbine blades and combustion sections, essential for engine operation."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.75,
+            "reasoning": "Used in some engine components, especially in auxiliary systems and housings due to lightweight; common but alternatives exist."
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.7,
+            "reasoning": "Used in electrical wiring and cooling systems within the engine, widely used though alternatives exist."
+          },
+          {
+            "name": "Steel Ingots",
+            "confidence": 0.8,
+            "reasoning": "Materials like stainless steel are used for shafts and other structural parts within the engine; relatively standard though alloy types vary."
+          }
+        ],
+        "Landing Gear": [
+          {
+            "name": "Steel Ingots",
+            "confidence": 0.9,
+            "reasoning": "Primary material for landing gear struts and structural parts due to high strength and toughness; absolutely essential in most designs."
+          },
+          {
+            "name": "Titanium",
+            "confidence": 0.8,
+            "reasoning": "Used for weight reduction in some high-end UAV landing gear components; less common but a standard aerospace material."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.7,
+            "reasoning": "Used in non-critical landing gear components and housings to save weight; common alternative but not always used."
+          }
+        ]
+      }
+    }
+  }
+}

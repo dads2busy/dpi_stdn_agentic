@@ -1,0 +1,759 @@
+{
+  "version": "2.0",
+  "metadata": {
+    "technology": "Roller Compactor",
+    "technology_specification": "Roller Compactor",
+    "technology_reasoning": "",
+    "timestamp": "2026-02-12T13:30:02.081858",
+    "format_version": "2.0"
+  },
+  "config": {
+    "num_agents": 2,
+    "max_rounds": 2
+  },
+  "component_stage": {
+    "phase1_initial_proposals": [
+      {
+        "agent_id": "Agent_1",
+        "components": [
+          {
+            "name": "Roller Assembly (including Compression Rolls)",
+            "confidence": 0.98,
+            "reasoning": "This is the central mechanical subassembly responsible for compressing powder into ribbons, typically manufactured separately due to precision machining and material requirements."
+          },
+          {
+            "name": "Feeder System (Powder Feeding Module)",
+            "confidence": 0.95,
+            "reasoning": "A distinct procurable module that delivers consistent powder flow to the rollers, often supplied as a separate assembly with its own control system."
+          },
+          {
+            "name": "Granule Milling Unit (Size Reduction Mill)",
+            "confidence": 0.92,
+            "reasoning": "Post-compaction milling enclosure and blades form a separate subassembly procured independently for flexibility in granule size specifications."
+          },
+          {
+            "name": "Hydraulic or Pneumatic Roll Pressure System",
+            "confidence": 0.9,
+            "reasoning": "This subassembly controls the pressure applied by rollers and is typically a separate, purchasable module involving hydraulic or pneumatic components."
+          },
+          {
+            "name": "Electrical Control Panel (PLC and Drives)",
+            "confidence": 0.93,
+            "reasoning": "Contains programmable logic controllers and motor drives for operational control, procured as a standard electronic subassembly."
+          },
+          {
+            "name": "Drive Motor and Gearbox Assembly",
+            "confidence": 0.94,
+            "reasoning": "Provides the mechanical power to rotate rollers and feeder mechanisms, generally a separately sourced component from specialized suppliers."
+          },
+          {
+            "name": "Product Discharge Conveyor or Collection System",
+            "confidence": 0.78,
+            "reasoning": "In many designs, the discharge conveyor is a modular, purchasable part that handles granule transport post-milling but may be integrated in some models."
+          },
+          {
+            "name": "Frame and Structural Support Assembly",
+            "confidence": 0.83,
+            "reasoning": "Although highly customized, the main structural frame is a fabricated assembly procured or manufactured distinctly to house all components."
+          }
+        ],
+        "technology_specification": "Roller compactor equipment used in pharmaceutical manufacturing for continuous dry granulation, consisting of mechanically driven rolls that compress powder into ribbons or flakes before milling.",
+        "technology_reasoning": "Roller compactors are widely employed in pharmaceutical production due to advantages such as improved flow properties, elimination of wet granulation, and scalability. The standard design involves key procurable mechanical and electronic subassemblies sourced separately due to their complexity and maintenance needs."
+      },
+      {
+        "agent_id": "Agent_2",
+        "components": [
+          {
+            "name": "Feeding Hopper Assembly",
+            "confidence": 0.95,
+            "reasoning": "A dedicated assembly to hold and feed powder material consistently to the rollers, a distinct procurable item essential for controlled material input."
+          },
+          {
+            "name": "Feeding Screw/Feed Screw Module",
+            "confidence": 0.9,
+            "reasoning": "Mechanized screw feeder controls powder flow into rollers, supplied as a separate module distinct from the hopper and roller units."
+          },
+          {
+            "name": "Compression Rollers (Counter-rotating)",
+            "confidence": 0.98,
+            "reasoning": "The core element that compacts powder by high pressure between two cylindrical rollers, always a separate, precision-machined component assembly."
+          },
+          {
+            "name": "Roller Drive Motor and Gearbox Assembly",
+            "confidence": 0.92,
+            "reasoning": "Power and torque transmission system driving the rollers, purchased as a complete motor and gearbox unit from specialized suppliers."
+          },
+          {
+            "name": "Granule Milling/Chopper Unit",
+            "confidence": 0.88,
+            "reasoning": "Subassembly that breaks the compacted ribbons into granules, typically procured as a separate unit and integral for final product form."
+          },
+          {
+            "name": "Machine Frame and Structural Support",
+            "confidence": 0.9,
+            "reasoning": "Robust steel frame providing mechanical stability, separate procurement from mechanical and electrical units, fundamental as the machine\u2019s backbone."
+          },
+          {
+            "name": "Control Panel and Electronics Enclosure",
+            "confidence": 0.85,
+            "reasoning": "Enclosure housing control systems including PLC and user interface, often supplied as an integrated module by automation specialists."
+          },
+          {
+            "name": "Discharge Conveyor or Granule Collection System",
+            "confidence": 0.75,
+            "reasoning": "Physical subassembly designed to transport or collect granules post-milling; may come as an add-on from material handling suppliers."
+          }
+        ],
+        "technology_specification": "Roller Compactor used in pharmaceutical manufacturing for continuous dry granulation, featuring a feeding system, two counter-rotating rollers, and a milling/disintegration unit to produce granules suitable for tablet compression.",
+        "technology_reasoning": "This form of roller compactor is the industry standard in pharmaceutical granulation due to its continuous operation mode, improved material handling, and ability to produce uniform granules without solvents, widely adopted across pharmaceutical production lines globally."
+      }
+    ],
+    "phase2_debate_rounds": [
+      {
+        "round_num": 1,
+        "convergence": 0.45454545454545453,
+        "threshold": 0.7,
+        "threshold_reached": false,
+        "proposals": {
+          "Agent_1": [
+            {
+              "name": "Roller Assembly (including Compression Rolls)",
+              "confidence": 0.98,
+              "reasoning": "This is the central mechanical subassembly responsible for compressing powder into ribbons, typically manufactured separately due to precision machining and material requirements.",
+              "component": "Roller Assembly (including Compression Rolls)",
+              "normalized_component": "compression roller"
+            },
+            {
+              "name": "Feeder System (Powder Feeding Module)",
+              "confidence": 0.95,
+              "reasoning": "A distinct procurable module that delivers consistent powder flow to the rollers, often supplied as a separate assembly with its own control system.",
+              "component": "Feeder System (Powder Feeding Module)",
+              "normalized_component": "powder feeder"
+            },
+            {
+              "name": "Granule Milling Unit (Size Reduction Mill)",
+              "confidence": 0.92,
+              "reasoning": "Post-compaction milling enclosure and blades form a separate subassembly procured independently for flexibility in granule size specifications.",
+              "component": "Granule Milling Unit (Size Reduction Mill)",
+              "normalized_component": "granule milling"
+            },
+            {
+              "name": "Hydraulic or Pneumatic Roll Pressure System",
+              "confidence": 0.9,
+              "reasoning": "This subassembly controls the pressure applied by rollers and is typically a separate, purchasable module involving hydraulic or pneumatic components.",
+              "component": "Hydraulic or Pneumatic Roll Pressure System",
+              "normalized_component": "hydraulic/pneumatic roll pressure"
+            },
+            {
+              "name": "Electrical Control Panel (PLC and Drives)",
+              "confidence": 0.93,
+              "reasoning": "Contains programmable logic controllers and motor drives for operational control, procured as a standard electronic subassembly.",
+              "component": "Electrical Control Panel (PLC and Drives)",
+              "normalized_component": "electrical control panel"
+            },
+            {
+              "name": "Drive Motor and Gearbox Assembly",
+              "confidence": 0.94,
+              "reasoning": "Provides the mechanical power to rotate rollers and feeder mechanisms, generally a separately sourced component from specialized suppliers.",
+              "component": "Drive Motor and Gearbox Assembly",
+              "normalized_component": "main drive motor and gearbox"
+            },
+            {
+              "name": "Product Discharge Conveyor or Collection System",
+              "confidence": 0.78,
+              "reasoning": "In many designs, the discharge conveyor is a modular, purchasable part that handles granule transport post-milling but may be integrated in some models.",
+              "component": "Product Discharge Conveyor or Collection System",
+              "normalized_component": "discharge conveyor/collection"
+            },
+            {
+              "name": "Frame and Structural Support Assembly",
+              "confidence": 0.83,
+              "reasoning": "Although highly customized, the main structural frame is a fabricated assembly procured or manufactured distinctly to house all components.",
+              "component": "Frame and Structural Support Assembly",
+              "normalized_component": "machine frame and structural support"
+            }
+          ],
+          "Agent_2": [
+            {
+              "name": "Feeding Hopper Assembly",
+              "confidence": 0.95,
+              "reasoning": "A dedicated assembly to hold and feed powder material consistently to the rollers, a distinct procurable item essential for controlled material input.",
+              "component": "Feeding Hopper Assembly",
+              "normalized_component": "feeding hopper"
+            },
+            {
+              "name": "Feeding Screw/Feed Screw Module",
+              "confidence": 0.9,
+              "reasoning": "Mechanized screw feeder controls powder flow into rollers, supplied as a separate module distinct from the hopper and roller units.",
+              "component": "Feeding Screw/Feed Screw Module",
+              "normalized_component": "feeding screw"
+            },
+            {
+              "name": "Compression Rollers (Counter-rotating)",
+              "confidence": 0.98,
+              "reasoning": "The core element that compacts powder by high pressure between two cylindrical rollers, always a separate, precision-machined component assembly.",
+              "component": "Compression Rollers (Counter-rotating)",
+              "normalized_component": "compression roller"
+            },
+            {
+              "name": "Roller Drive Motor and Gearbox Assembly",
+              "confidence": 0.92,
+              "reasoning": "Power and torque transmission system driving the rollers, purchased as a complete motor and gearbox unit from specialized suppliers.",
+              "component": "Roller Drive Motor and Gearbox Assembly",
+              "normalized_component": "roller drive motor and gearbox"
+            },
+            {
+              "name": "Granule Milling/Chopper Unit",
+              "confidence": 0.88,
+              "reasoning": "Subassembly that breaks the compacted ribbons into granules, typically procured as a separate unit and integral for final product form.",
+              "component": "Granule Milling/Chopper Unit",
+              "normalized_component": "granule milling"
+            },
+            {
+              "name": "Machine Frame and Structural Support",
+              "confidence": 0.9,
+              "reasoning": "Robust steel frame providing mechanical stability, separate procurement from mechanical and electrical units, fundamental as the machine\u2019s backbone.",
+              "component": "Machine Frame and Structural Support",
+              "normalized_component": "machine frame and structural support"
+            },
+            {
+              "name": "Control Panel and Electronics Enclosure",
+              "confidence": 0.85,
+              "reasoning": "Enclosure housing control systems including PLC and user interface, often supplied as an integrated module by automation specialists.",
+              "component": "Control Panel and Electronics Enclosure",
+              "normalized_component": "electrical control panel"
+            },
+            {
+              "name": "Discharge Conveyor or Granule Collection System",
+              "confidence": 0.75,
+              "reasoning": "Physical subassembly designed to transport or collect granules post-milling; may come as an add-on from material handling suppliers.",
+              "component": "Discharge Conveyor or Granule Collection System",
+              "normalized_component": "discharge conveyor/collection"
+            }
+          ]
+        },
+        "rounds_completed": 1,
+        "support_analysis": {
+          "consensus": [],
+          "majority": [
+            "compression roller",
+            "granule milling",
+            "electrical control panel",
+            "discharge conveyor/collection",
+            "machine frame and structural support"
+          ],
+          "isolated": [
+            "powder feeder",
+            "hydraulic/pneumatic roll pressure",
+            "main drive motor and gearbox",
+            "feeding hopper",
+            "feeding screw",
+            "roller drive motor and gearbox"
+          ]
+        },
+        "critiques": [
+          {
+            "item_name": "compression roller",
+            "normalized_name": "compression roller",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.98,
+            "critique_text": "Majority support for 'compression roller': 2/3 agents agree (conf: 0.98). Consider strengthening consensus."
+          },
+          {
+            "item_name": "powder feeder",
+            "normalized_name": "powder feeder",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2"
+            ],
+            "avg_confidence": 0.95,
+            "critique_text": "Isolated proposal 'powder feeder' from 1 agent(s) (conf: 0.95). Requires justification or peer validation."
+          },
+          {
+            "item_name": "granule milling",
+            "normalized_name": "granule milling",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.9,
+            "critique_text": "Majority support for 'granule milling': 2/3 agents agree (conf: 0.90). Consider strengthening consensus."
+          },
+          {
+            "item_name": "hydraulic/pneumatic roll pressure",
+            "normalized_name": "hydraulic/pneumatic roll pressure",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2"
+            ],
+            "avg_confidence": 0.9,
+            "critique_text": "Isolated proposal 'hydraulic/pneumatic roll pressure' from 1 agent(s) (conf: 0.90). Requires justification or peer validation."
+          },
+          {
+            "item_name": "electrical control panel",
+            "normalized_name": "electrical control panel",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.89,
+            "critique_text": "Majority support for 'electrical control panel': 2/3 agents agree (conf: 0.89). Consider strengthening consensus."
+          },
+          {
+            "item_name": "main drive motor and gearbox",
+            "normalized_name": "main drive motor and gearbox",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2"
+            ],
+            "avg_confidence": 0.94,
+            "critique_text": "Isolated proposal 'main drive motor and gearbox' from 1 agent(s) (conf: 0.94). Requires justification or peer validation."
+          },
+          {
+            "item_name": "discharge conveyor/collection",
+            "normalized_name": "discharge conveyor/collection",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.765,
+            "critique_text": "Majority support for 'discharge conveyor/collection': 2/3 agents agree (conf: 0.77). Consider strengthening consensus."
+          },
+          {
+            "item_name": "machine frame and structural support",
+            "normalized_name": "machine frame and structural support",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.865,
+            "critique_text": "Majority support for 'machine frame and structural support': 2/3 agents agree (conf: 0.86). Consider strengthening consensus."
+          },
+          {
+            "item_name": "feeding hopper",
+            "normalized_name": "feeding hopper",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_1"
+            ],
+            "avg_confidence": 0.95,
+            "critique_text": "Isolated proposal 'feeding hopper' from 1 agent(s) (conf: 0.95). Requires justification or peer validation."
+          },
+          {
+            "item_name": "feeding screw",
+            "normalized_name": "feeding screw",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_1"
+            ],
+            "avg_confidence": 0.9,
+            "critique_text": "Isolated proposal 'feeding screw' from 1 agent(s) (conf: 0.90). Requires justification or peer validation."
+          },
+          {
+            "item_name": "roller drive motor and gearbox",
+            "normalized_name": "roller drive motor and gearbox",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_1"
+            ],
+            "avg_confidence": 0.92,
+            "critique_text": "Isolated proposal 'roller drive motor and gearbox' from 1 agent(s) (conf: 0.92). Requires justification or peer validation."
+          }
+        ],
+        "changes_from_previous": null
+      },
+      {
+        "round_num": 2,
+        "convergence": 1.0,
+        "threshold": 0.7,
+        "threshold_reached": true,
+        "proposals": {
+          "Agent_1": [
+            {
+              "agent_id": "Agent_1",
+              "component": "Roller Assembly (including Compression Rolls)",
+              "confidence": 0.98,
+              "reasoning": "Strong consensus from both agents, very high confidence in its central role in the roller compactor.",
+              "round": 2,
+              "normalized_component": "Roller Assembly"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Granule Milling Unit (Size Reduction Mill)",
+              "confidence": 0.9,
+              "reasoning": "Strong consensus from both agents with average confidence 0.90, important to milling function.",
+              "round": 2,
+              "normalized_component": "Granule Milling Unit"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Electrical Control Panel (PLC and Drives)",
+              "confidence": 0.89,
+              "reasoning": "Strong consensus from both agents with average confidence 0.89, critical for control and automation.",
+              "round": 2,
+              "normalized_component": "Electrical Control Panel"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Product Discharge Conveyor or Collection System",
+              "confidence": 0.77,
+              "reasoning": "Both agents selected similar components with average confidence ~0.77, essential for product handling post-compaction.",
+              "round": 2,
+              "normalized_component": "Product Discharge Conveyor"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Frame and Structural Support Assembly",
+              "confidence": 0.86,
+              "reasoning": "Both agents support frame and support assembly with average confidence 0.86, necessary for machine stability and structure.",
+              "round": 2,
+              "normalized_component": "Aircraft Structural Integrity Components"
+            }
+          ],
+          "Agent_2": [
+            {
+              "agent_id": "Agent_2",
+              "component": "Roller Assembly (including Compression Rolls)",
+              "confidence": 0.98,
+              "reasoning": "Strong consensus between agents with highest confidence; critical primary component for roller compactor functionality.",
+              "round": 2,
+              "normalized_component": "Roller Assembly"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Granule Milling Unit (Size Reduction Mill)",
+              "confidence": 0.9,
+              "reasoning": "Solid consensus with two agents supporting and peer guidance confirming it as essential for granule size reduction.",
+              "round": 2,
+              "normalized_component": "Granule Milling Unit"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Electrical Control Panel (PLC and Drives)",
+              "confidence": 0.89,
+              "reasoning": "Agreed importance by both agents and peer critique; vital for control and automation of the machine.",
+              "round": 2,
+              "normalized_component": "Electrical Control Panel"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Product Discharge Conveyor or Collection System",
+              "confidence": 0.77,
+              "reasoning": "Supported by both agents with moderate confidence; necessary for handling finished product post-compaction.",
+              "round": 2,
+              "normalized_component": "Product Discharge Conveyor"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Frame and Structural Support Assembly",
+              "confidence": 0.86,
+              "reasoning": "Both agents agree on its importance; fundamental to machine stability and support.",
+              "round": 2,
+              "normalized_component": "Aircraft Structural Integrity Components"
+            }
+          ],
+          "Agent_3": [
+            {
+              "agent_id": "Agent_3",
+              "component": "Roller Assembly (including Compression Rolls)",
+              "confidence": 0.98,
+              "reasoning": "Strong consensus from both agents with very high confidence; core component of the roller compactor.",
+              "round": 2,
+              "normalized_component": "Roller Assembly"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Granule Milling Unit (Size Reduction Mill)",
+              "confidence": 0.9,
+              "reasoning": "Strong agreement between agents, important for the size reduction aspect; slightly adjusted to average peer confidence.",
+              "round": 2,
+              "normalized_component": "Granule Milling Unit"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Electrical Control Panel (PLC and Drives)",
+              "confidence": 0.89,
+              "reasoning": "Both agents support this with consistent confidence; essential for machine control.",
+              "round": 2,
+              "normalized_component": "Electrical Control Panel"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Product Discharge Conveyor or Collection System",
+              "confidence": 0.77,
+              "reasoning": "Recognized by both agents with moderate confidence; important for handling finished product.",
+              "round": 2,
+              "normalized_component": "Product Discharge Conveyor"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Frame and Structural Support Assembly",
+              "confidence": 0.86,
+              "reasoning": "Both agents propose similar components with solid confidence; necessary for machine integrity.",
+              "round": 2,
+              "normalized_component": "Aircraft Structural Integrity Components"
+            }
+          ]
+        },
+        "rounds_completed": 2,
+        "support_analysis": {
+          "consensus": [
+            "roller assembly (including compression rolls)",
+            "granule milling unit (size reduction mill)",
+            "electrical control panel (plc and drives)",
+            "product discharge conveyor or collection",
+            "frame and structural support"
+          ],
+          "majority": [],
+          "isolated": []
+        },
+        "critiques": [
+          {
+            "item_name": "Roller Assembly (including Compression Rolls)",
+            "normalized_name": "roller assembly (including compression rolls)",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_2",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.98,
+            "critique_text": "Strong consensus on 'Roller Assembly (including Compression Rolls)': all 3 agents support with avg confidence 0.98. Preserve this component."
+          },
+          {
+            "item_name": "Granule Milling Unit (Size Reduction Mill)",
+            "normalized_name": "granule milling unit (size reduction mill)",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_2",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.9,
+            "critique_text": "Strong consensus on 'Granule Milling Unit (Size Reduction Mill)': all 3 agents support with avg confidence 0.90. Preserve this component."
+          },
+          {
+            "item_name": "Electrical Control Panel (PLC and Drives)",
+            "normalized_name": "electrical control panel (plc and drives)",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_2",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.89,
+            "critique_text": "Strong consensus on 'Electrical Control Panel (PLC and Drives)': all 3 agents support with avg confidence 0.89. Preserve this component."
+          },
+          {
+            "item_name": "Product Discharge Conveyor or Collection System",
+            "normalized_name": "product discharge conveyor or collection",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_2",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.77,
+            "critique_text": "Strong consensus on 'Product Discharge Conveyor or Collection System': all 3 agents support with avg confidence 0.77. Preserve this component."
+          },
+          {
+            "item_name": "Frame and Structural Support Assembly",
+            "normalized_name": "frame and structural support",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_2",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.86,
+            "critique_text": "Strong consensus on 'Frame and Structural Support Assembly': all 3 agents support with avg confidence 0.86. Preserve this component."
+          }
+        ],
+        "changes_from_previous": {
+          "items_added": [
+            "frame and structural support",
+            "electrical control panel (plc and drives)",
+            "product discharge conveyor or collection",
+            "roller assembly (including compression rolls)",
+            "granule milling unit (size reduction mill)"
+          ],
+          "items_removed": [
+            "feeding hopper",
+            "hydraulic/pneumatic roll pressure",
+            "compression roller",
+            "machine frame and structural support",
+            "main drive motor and gearbox",
+            "granule milling",
+            "roller drive motor and gearbox",
+            "powder feeder",
+            "feeding screw",
+            "discharge conveyor/collection",
+            "electrical control panel"
+          ],
+          "confidence_changes": {}
+        }
+      }
+    ],
+    "phase3_final_consensus": {
+      "technology": "Roller Compactor",
+      "technology_specification": "Roller Compactor",
+      "technology_reasoning": "",
+      "components": [
+        "Roller Assembly",
+        "Granule Milling Unit",
+        "Electrical Control Panel",
+        "Aircraft Structural Integrity Components",
+        "Product Discharge Conveyor"
+      ],
+      "confidence": 1.0,
+      "rounds": 2,
+      "convergence_score": 1.0
+    }
+  },
+  "materials_debate": {
+    "debate_rounds": [],
+    "final_consensus": {
+      "components": 5,
+      "unique_materials": 10,
+      "total_assignments": 18,
+      "materials_by_component": {
+        "Roller Assembly": [
+          {
+            "name": "Steel Ingots",
+            "confidence": 0.9,
+            "reasoning": "Primary structural material for roller assembly components due to strength and durability; steel is standard and essential with few substitutes."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.7,
+            "reasoning": "Used for lightweight parts or housings in roller assembly where corrosion resistance and weight reduction are beneficial; commonly used but less than steel."
+          },
+          {
+            "name": "Titanium",
+            "confidence": 0.4,
+            "reasoning": "May be used in high-performance or corrosion-resistant components of the roller; not common so low confidence."
+          }
+        ],
+        "Granule Milling Unit": [
+          {
+            "name": "Steel Ingots",
+            "confidence": 0.9,
+            "reasoning": "Primary material for structural and wear-resistant parts like milling blades and housing; steel is industry standard."
+          },
+          {
+            "name": "Ceramic",
+            "confidence": 0.75,
+            "reasoning": "Used for milling surfaces or inserts for hardness and wear resistance; alternatives exist but ceramics commonly improve durability."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.7,
+            "reasoning": "Used for lighter non-wear parts or housings; common but less critical than steel."
+          },
+          {
+            "name": "Titanium carbide",
+            "confidence": 0.6,
+            "reasoning": "Possible coating or insert material for extreme hardness to increase milling life; used sometimes but alternatives exist."
+          }
+        ],
+        "Electrical Control Panel": [
+          {
+            "name": "Copper",
+            "confidence": 0.95,
+            "reasoning": "Essential for electrical wiring and conductors due to high conductivity; universally used."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.8,
+            "reasoning": "Used for enclosures and some wiring elements as a cost-effective alternative to copper; industry standard but less common than copper."
+          },
+          {
+            "name": "Polycarbonate",
+            "confidence": 0.7,
+            "reasoning": "Used for insulating housings and panel covers due to impact resistance and electrical insulation; commonly used polymer."
+          },
+          {
+            "name": "Silicon",
+            "confidence": 0.85,
+            "reasoning": "Primary semiconductor material for control electronics; essential due to functionality in devices."
+          }
+        ],
+        "Aircraft Structural Integrity Components": [
+          {
+            "name": "Titanium",
+            "confidence": 0.9,
+            "reasoning": "Critical high-strength, lightweight metal widely used in aircraft structural parts; very high confidence due to aerospace industry standards."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.9,
+            "reasoning": "Primary lightweight metal for aircraft structural components; standard and essential."
+          },
+          {
+            "name": "Carbon",
+            "confidence": 0.7,
+            "reasoning": "Used in composites to enhance strength and reduce weight; common but not sole material, alternatives exist."
+          },
+          {
+            "name": "Steel Ingots",
+            "confidence": 0.6,
+            "reasoning": "Used in high-strength critical fasteners and reinforcements; less common than aluminum and titanium but important."
+          }
+        ],
+        "Product Discharge Conveyor": [
+          {
+            "name": "Steel Ingots",
+            "confidence": 0.9,
+            "reasoning": "Primary structural and mechanical material for conveyor frames and rollers; highly standard and essential."
+          },
+          {
+            "name": "Polyethylene",
+            "confidence": 0.7,
+            "reasoning": "Used for conveyor belts and surface layers due to durability and flexibility; common polymer choice with some alternatives."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.6,
+            "reasoning": "Used for lightweight structural parts and frames in conveyors; moderately common but not always essential."
+          }
+        ]
+      }
+    }
+  }
+}

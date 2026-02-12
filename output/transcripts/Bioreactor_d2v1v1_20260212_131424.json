@@ -1,0 +1,826 @@
+{
+  "version": "2.0",
+  "metadata": {
+    "technology": "Bioreactor",
+    "technology_specification": "Bioreactor",
+    "technology_reasoning": "",
+    "timestamp": "2026-02-12T13:26:41.757436",
+    "format_version": "2.0"
+  },
+  "config": {
+    "num_agents": 2,
+    "max_rounds": 2
+  },
+  "component_stage": {
+    "phase1_initial_proposals": [
+      {
+        "agent_id": "Agent_1",
+        "components": [
+          {
+            "name": "Bioreactor Vessel (Stainless Steel)",
+            "confidence": 0.98,
+            "reasoning": "The main physical container where biological reactions occur, procured as a distinct pressure-rated and sanitary vessel, universally present in bioreactor systems."
+          },
+          {
+            "name": "Agitator Assembly (Impeller and Shaft)",
+            "confidence": 0.95,
+            "reasoning": "Critical for mixing and maintaining homogeneity in the reactor, the agitator is a separately supplied mechanical subassembly with its own supply chain."
+          },
+          {
+            "name": "Motor and Drive System",
+            "confidence": 0.92,
+            "reasoning": "Provides rotational power to the agitator, typically supplied as a complete unit including motor, gearbox, and couplings, distinctly procured."
+          },
+          {
+            "name": "Sparger or Aeration System",
+            "confidence": 0.9,
+            "reasoning": "Enables controlled gas (usually air or oxygen) introduction into the culture broth, procured as a separate sparger or diffuser assembly."
+          },
+          {
+            "name": "Temperature Control Jacket or Coil",
+            "confidence": 0.9,
+            "reasoning": "Maintains precise temperature by circulating heating/cooling fluids, supplied as an integrated jacket or internal coil assembly, distinct from the vessel itself."
+          },
+          {
+            "name": "Control Panel and Instrumentation Unit",
+            "confidence": 0.88,
+            "reasoning": "Includes sensors, controllers, and interfaces for process monitoring and control; procured as a modular electronic and instrumentation package."
+          },
+          {
+            "name": "Sampling Port and Valve Assemblies",
+            "confidence": 0.8,
+            "reasoning": "Allows sterile sampling and addition of materials during operation, often provided as separate valve and port assemblies distinct from the vessel."
+          },
+          {
+            "name": "Shaft Seal and Bearing Assembly",
+            "confidence": 0.85,
+            "reasoning": "Mechanical seal subsystem enabling agitator shaft rotation while maintaining sterility; typically procured as a dedicated mechanical component assembly."
+          },
+          {
+            "name": "Sterile Gas Filter Unit",
+            "confidence": 0.75,
+            "reasoning": "Ensures aseptic gas supply to the reactor, usually procured as a separate sterilizing-grade filter assembly in the supply chain."
+          }
+        ],
+        "technology_specification": "Stainless steel bioreactor vessel with integrated agitation, temperature control, aeration, and control system modules for cell culture and fermentation processes in pharmaceutical manufacturing.",
+        "technology_reasoning": "This specification reflects the most common industrial-scale bioreactor used in pharmaceutical production, typically a stainless steel stirred-tank reactor. It is the dominant form due to its robustness, cleanability, and suitability for cGMP production, widely adopted in mammalian cell culture, microbial fermentation, and vaccine manufacturing."
+      },
+      {
+        "agent_id": "Agent_2",
+        "components": [
+          {
+            "name": "Bioreactor Vessel (Jacketed Stainless Steel Tank)",
+            "confidence": 0.98,
+            "reasoning": "The core structural component holding the culture medium, made of corrosion-resistant stainless steel with a jacket for temperature control, always procured as a prefabricated assembly."
+          },
+          {
+            "name": "Agitation System (Impeller and Drive Motor Assembly)",
+            "confidence": 0.95,
+            "reasoning": "Essential for mixing and oxygen transfer, this subassembly includes impellers and a motor, typically procured as a distinct manufactured unit."
+          },
+          {
+            "name": "Sparger Assembly",
+            "confidence": 0.9,
+            "reasoning": "A dedicated sub-component that introduces gas (air or oxygen) into the vessel for cell growth, supplied separately and integrated during assembly."
+          },
+          {
+            "name": "Support Frame and Mounting Structure",
+            "confidence": 0.88,
+            "reasoning": "Structural framework that holds the vessel and associated equipment, commonly a modular steel assembly procured separately."
+          },
+          {
+            "name": "Control Panel Enclosure with Instrumentation",
+            "confidence": 0.85,
+            "reasoning": "Enclosed control system housing sensors and PLCs for process management, often sourced as a pre-assembled unit."
+          },
+          {
+            "name": "Heating and Cooling Jacket or Coil",
+            "confidence": 0.9,
+            "reasoning": "Critical for maintaining process temperature, this is a separate manufactured component integrated with the vessel or as an external assembly."
+          },
+          {
+            "name": "Sampling Port and Sterile Access Assemblies",
+            "confidence": 0.75,
+            "reasoning": "Procurable assemblies that allow aseptic sampling or nutrient addition, typically distinct and purchased separately."
+          },
+          {
+            "name": "Manway Cover and Seals",
+            "confidence": 0.8,
+            "reasoning": "Essential for vessel access and closure, generally a specific manufactured part procured separately for maintenance or installation."
+          },
+          {
+            "name": "Inlet/Outlet Piping Manifolds and Valves",
+            "confidence": 0.85,
+            "reasoning": "Pre-fabricated piping assemblies with sanitary valves to manage fluid flow, usually supplied as distinct functional units."
+          },
+          {
+            "name": "Condenser or Exhaust Gas Filter Assembly",
+            "confidence": 0.7,
+            "reasoning": "Optional but common in pharmaceutical bioreactors for gas exhaust treatment, often modular and procured separately."
+          }
+        ],
+        "technology_specification": "Stainless steel stirred-tank bioreactor with jacketed vessel for temperature control and integrated agitation system, commonly used in pharmaceutical fermentation and cell culture processes.",
+        "technology_reasoning": "This form of bioreactor is the industry standard in pharmaceuticals due to its robust materials compatible with aseptic processing, effective mixing via impellers, and integrated temperature regulation through a jacket or coil, representing over 80% of bioreactor installations in GMP environments."
+      }
+    ],
+    "phase2_debate_rounds": [
+      {
+        "round_num": 1,
+        "convergence": 0.5,
+        "threshold": 0.7,
+        "threshold_reached": false,
+        "proposals": {
+          "Agent_1": [
+            {
+              "name": "Bioreactor Vessel (Stainless Steel)",
+              "confidence": 0.98,
+              "reasoning": "The main physical container where biological reactions occur, procured as a distinct pressure-rated and sanitary vessel, universally present in bioreactor systems.",
+              "component": "Bioreactor Vessel (Stainless Steel)",
+              "normalized_component": "bioreactor vessel (jacketed stainless steel tank)"
+            },
+            {
+              "name": "Agitator Assembly (Impeller and Shaft)",
+              "confidence": 0.95,
+              "reasoning": "Critical for mixing and maintaining homogeneity in the reactor, the agitator is a separately supplied mechanical subassembly with its own supply chain.",
+              "component": "Agitator Assembly (Impeller and Shaft)",
+              "normalized_component": "agitation system (impeller and drive motor assembly)"
+            },
+            {
+              "name": "Motor and Drive System",
+              "confidence": 0.92,
+              "reasoning": "Provides rotational power to the agitator, typically supplied as a complete unit including motor, gearbox, and couplings, distinctly procured.",
+              "component": "Motor and Drive System",
+              "normalized_component": "agitation system (impeller and drive motor assembly)"
+            },
+            {
+              "name": "Sparger or Aeration System",
+              "confidence": 0.9,
+              "reasoning": "Enables controlled gas (usually air or oxygen) introduction into the culture broth, procured as a separate sparger or diffuser assembly.",
+              "component": "Sparger or Aeration System",
+              "normalized_component": "sparger"
+            },
+            {
+              "name": "Temperature Control Jacket or Coil",
+              "confidence": 0.9,
+              "reasoning": "Maintains precise temperature by circulating heating/cooling fluids, supplied as an integrated jacket or internal coil assembly, distinct from the vessel itself.",
+              "component": "Temperature Control Jacket or Coil",
+              "normalized_component": "temperature control jacket or coil"
+            },
+            {
+              "name": "Control Panel and Instrumentation Unit",
+              "confidence": 0.88,
+              "reasoning": "Includes sensors, controllers, and interfaces for process monitoring and control; procured as a modular electronic and instrumentation package.",
+              "component": "Control Panel and Instrumentation Unit",
+              "normalized_component": "control panel enclosure with instrumentation"
+            },
+            {
+              "name": "Sampling Port and Valve Assemblies",
+              "confidence": 0.8,
+              "reasoning": "Allows sterile sampling and addition of materials during operation, often provided as separate valve and port assemblies distinct from the vessel.",
+              "component": "Sampling Port and Valve Assemblies",
+              "normalized_component": "sampling port and sterile access assemblies"
+            },
+            {
+              "name": "Shaft Seal and Bearing Assembly",
+              "confidence": 0.85,
+              "reasoning": "Mechanical seal subsystem enabling agitator shaft rotation while maintaining sterility; typically procured as a dedicated mechanical component assembly.",
+              "component": "Shaft Seal and Bearing Assembly",
+              "normalized_component": "shaft seal and bearing"
+            },
+            {
+              "name": "Sterile Gas Filter Unit",
+              "confidence": 0.75,
+              "reasoning": "Ensures aseptic gas supply to the reactor, usually procured as a separate sterilizing-grade filter assembly in the supply chain.",
+              "component": "Sterile Gas Filter Unit",
+              "normalized_component": "sterile gas filter"
+            }
+          ],
+          "Agent_2": [
+            {
+              "name": "Bioreactor Vessel (Jacketed Stainless Steel Tank)",
+              "confidence": 0.98,
+              "reasoning": "The core structural component holding the culture medium, made of corrosion-resistant stainless steel with a jacket for temperature control, always procured as a prefabricated assembly.",
+              "component": "Bioreactor Vessel (Jacketed Stainless Steel Tank)",
+              "normalized_component": "bioreactor vessel (jacketed stainless steel tank)"
+            },
+            {
+              "name": "Agitation System (Impeller and Drive Motor Assembly)",
+              "confidence": 0.95,
+              "reasoning": "Essential for mixing and oxygen transfer, this subassembly includes impellers and a motor, typically procured as a distinct manufactured unit.",
+              "component": "Agitation System (Impeller and Drive Motor Assembly)",
+              "normalized_component": "agitation system (impeller and drive motor assembly)"
+            },
+            {
+              "name": "Sparger Assembly",
+              "confidence": 0.9,
+              "reasoning": "A dedicated sub-component that introduces gas (air or oxygen) into the vessel for cell growth, supplied separately and integrated during assembly.",
+              "component": "Sparger Assembly",
+              "normalized_component": "sparger"
+            },
+            {
+              "name": "Support Frame and Mounting Structure",
+              "confidence": 0.88,
+              "reasoning": "Structural framework that holds the vessel and associated equipment, commonly a modular steel assembly procured separately.",
+              "component": "Support Frame and Mounting Structure",
+              "normalized_component": "support frame and mounting structure"
+            },
+            {
+              "name": "Control Panel Enclosure with Instrumentation",
+              "confidence": 0.85,
+              "reasoning": "Enclosed control system housing sensors and PLCs for process management, often sourced as a pre-assembled unit.",
+              "component": "Control Panel Enclosure with Instrumentation",
+              "normalized_component": "control panel enclosure with instrumentation"
+            },
+            {
+              "name": "Heating and Cooling Jacket or Coil",
+              "confidence": 0.9,
+              "reasoning": "Critical for maintaining process temperature, this is a separate manufactured component integrated with the vessel or as an external assembly.",
+              "component": "Heating and Cooling Jacket or Coil",
+              "normalized_component": "temperature control jacket or coil"
+            },
+            {
+              "name": "Sampling Port and Sterile Access Assemblies",
+              "confidence": 0.75,
+              "reasoning": "Procurable assemblies that allow aseptic sampling or nutrient addition, typically distinct and purchased separately.",
+              "component": "Sampling Port and Sterile Access Assemblies",
+              "normalized_component": "sampling port and sterile access assemblies"
+            },
+            {
+              "name": "Manway Cover and Seals",
+              "confidence": 0.8,
+              "reasoning": "Essential for vessel access and closure, generally a specific manufactured part procured separately for maintenance or installation.",
+              "component": "Manway Cover and Seals",
+              "normalized_component": "manway cover and seals"
+            },
+            {
+              "name": "Inlet/Outlet Piping Manifolds and Valves",
+              "confidence": 0.85,
+              "reasoning": "Pre-fabricated piping assemblies with sanitary valves to manage fluid flow, usually supplied as distinct functional units.",
+              "component": "Inlet/Outlet Piping Manifolds and Valves",
+              "normalized_component": "inlet/outlet piping manifolds and valves"
+            },
+            {
+              "name": "Condenser or Exhaust Gas Filter Assembly",
+              "confidence": 0.7,
+              "reasoning": "Optional but common in pharmaceutical bioreactors for gas exhaust treatment, often modular and procured separately.",
+              "component": "Condenser or Exhaust Gas Filter Assembly",
+              "normalized_component": "exhaust gas filter"
+            }
+          ]
+        },
+        "rounds_completed": 1,
+        "support_analysis": {
+          "consensus": [],
+          "majority": [
+            "bioreactor vessel (jacketed stainless steel tank)",
+            "agitation system (impeller and drive motor assembly)",
+            "sparger",
+            "temperature control jacket or coil",
+            "control panel enclosure with instrumentation",
+            "sampling port and sterile access assemblies"
+          ],
+          "isolated": [
+            "shaft seal and bearing",
+            "sterile gas filter",
+            "support frame and mounting structure",
+            "manway cover and seals",
+            "inlet/outlet piping manifolds and valves",
+            "exhaust gas filter"
+          ]
+        },
+        "critiques": [
+          {
+            "item_name": "bioreactor vessel (jacketed stainless steel tank)",
+            "normalized_name": "bioreactor vessel (jacketed stainless steel tank)",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.98,
+            "critique_text": "Majority support for 'bioreactor vessel (jacketed stainless steel tank)': 2/3 agents agree (conf: 0.98). Consider strengthening consensus."
+          },
+          {
+            "item_name": "agitation system (impeller and drive motor assembly)",
+            "normalized_name": "agitation system (impeller and drive motor assembly)",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.94,
+            "critique_text": "Majority support for 'agitation system (impeller and drive motor assembly)': 2/3 agents agree (conf: 0.94). Consider strengthening consensus."
+          },
+          {
+            "item_name": "sparger",
+            "normalized_name": "sparger",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.9,
+            "critique_text": "Majority support for 'sparger': 2/3 agents agree (conf: 0.90). Consider strengthening consensus."
+          },
+          {
+            "item_name": "temperature control jacket or coil",
+            "normalized_name": "temperature control jacket or coil",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.9,
+            "critique_text": "Majority support for 'temperature control jacket or coil': 2/3 agents agree (conf: 0.90). Consider strengthening consensus."
+          },
+          {
+            "item_name": "control panel enclosure with instrumentation",
+            "normalized_name": "control panel enclosure with instrumentation",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.865,
+            "critique_text": "Majority support for 'control panel enclosure with instrumentation': 2/3 agents agree (conf: 0.86). Consider strengthening consensus."
+          },
+          {
+            "item_name": "sampling port and sterile access assemblies",
+            "normalized_name": "sampling port and sterile access assemblies",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.775,
+            "critique_text": "Majority support for 'sampling port and sterile access assemblies': 2/3 agents agree (conf: 0.78). Consider strengthening consensus."
+          },
+          {
+            "item_name": "shaft seal and bearing",
+            "normalized_name": "shaft seal and bearing",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2"
+            ],
+            "avg_confidence": 0.85,
+            "critique_text": "Isolated proposal 'shaft seal and bearing' from 1 agent(s) (conf: 0.85). Requires justification or peer validation."
+          },
+          {
+            "item_name": "sterile gas filter",
+            "normalized_name": "sterile gas filter",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2"
+            ],
+            "avg_confidence": 0.75,
+            "critique_text": "Isolated proposal 'sterile gas filter' from 1 agent(s) (conf: 0.75). Requires justification or peer validation."
+          },
+          {
+            "item_name": "support frame and mounting structure",
+            "normalized_name": "support frame and mounting structure",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_1"
+            ],
+            "avg_confidence": 0.88,
+            "critique_text": "Isolated proposal 'support frame and mounting structure' from 1 agent(s) (conf: 0.88). Requires justification or peer validation."
+          },
+          {
+            "item_name": "manway cover and seals",
+            "normalized_name": "manway cover and seals",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_1"
+            ],
+            "avg_confidence": 0.8,
+            "critique_text": "Isolated proposal 'manway cover and seals' from 1 agent(s) (conf: 0.80). Requires justification or peer validation."
+          },
+          {
+            "item_name": "inlet/outlet piping manifolds and valves",
+            "normalized_name": "inlet/outlet piping manifolds and valves",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_1"
+            ],
+            "avg_confidence": 0.85,
+            "critique_text": "Isolated proposal 'inlet/outlet piping manifolds and valves' from 1 agent(s) (conf: 0.85). Requires justification or peer validation."
+          },
+          {
+            "item_name": "exhaust gas filter",
+            "normalized_name": "exhaust gas filter",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_1"
+            ],
+            "avg_confidence": 0.7,
+            "critique_text": "Isolated proposal 'exhaust gas filter' from 1 agent(s) (conf: 0.70). Requires justification or peer validation."
+          }
+        ],
+        "changes_from_previous": null
+      },
+      {
+        "round_num": 2,
+        "convergence": 1.0,
+        "threshold": 0.7,
+        "threshold_reached": true,
+        "proposals": {
+          "Agent_1": [
+            {
+              "agent_id": "Agent_1",
+              "component": "Bioreactor Vessel (Jacketed Stainless Steel Tank)",
+              "confidence": 0.98,
+              "reasoning": "Strong consensus from both agents with maximum confidence; critical as the primary containment vessel with heating/cooling capabilities.",
+              "round": 2,
+              "normalized_component": "Bioreactor Vessel (Jacketed Stainless Steel Tank)"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Agitation System (Impeller and Drive Motor Assembly)",
+              "confidence": 0.94,
+              "reasoning": "Strong agreement and high confidence from both agents; essential for mixing and maintaining culture conditions.",
+              "round": 2,
+              "normalized_component": "Agitation System (Impeller And Drive Motor)"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Sparger Assembly",
+              "confidence": 0.9,
+              "reasoning": "Both agents selected it with high confidence; vital for aeration in bioreactor operations.",
+              "round": 2,
+              "normalized_component": "Sparger"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Heating and Cooling Jacket or Coil",
+              "confidence": 0.9,
+              "reasoning": "Strong consensus with high confidence; necessary for precise temperature control of the vessel.",
+              "round": 2,
+              "normalized_component": "Heating and Cooling Jacket or Coil"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Control Panel Enclosure with Instrumentation",
+              "confidence": 0.86,
+              "reasoning": "Both agents included this with good confidence; required for monitoring and controlling bioreactor parameters.",
+              "round": 2,
+              "normalized_component": "Control Panel Enclosure with Instrumentation"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Sampling Port and Sterile Access Assemblies",
+              "confidence": 0.78,
+              "reasoning": "Agreed upon by both agents with moderate confidence; needed for aseptic sampling during operation.",
+              "round": 2,
+              "normalized_component": "Sampling Port and Sterile Access Assemblies"
+            }
+          ],
+          "Agent_2": [
+            {
+              "agent_id": "Agent_2",
+              "component": "Bioreactor Vessel (Jacketed Stainless Steel Tank)",
+              "confidence": 0.98,
+              "reasoning": "Strong consensus with both agents selecting this component with highest confidence; essential as the main vessel for bioreactor.",
+              "round": 2,
+              "normalized_component": "Bioreactor Vessel (Jacketed Stainless Steel Tank)"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Agitation System (Impeller and Drive Motor Assembly)",
+              "confidence": 0.94,
+              "reasoning": "Strong consensus from both agents with high confidence; core for mixing and aeration in the bioreactor.",
+              "round": 2,
+              "normalized_component": "Agitation System (Impeller And Drive Motor)"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Sparger Assembly",
+              "confidence": 0.9,
+              "reasoning": "Both agents support this component at 0.90 confidence; necessary for gas transfer to culture media.",
+              "round": 2,
+              "normalized_component": "Sparger"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Heating and Cooling Jacket or Coil",
+              "confidence": 0.9,
+              "reasoning": "Strong agreement with both agents listing a temperature control jacket/coil at 0.90; vital for maintaining process conditions.",
+              "round": 2,
+              "normalized_component": "Heating and Cooling Jacket or Coil"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Control Panel Enclosure with Instrumentation",
+              "confidence": 0.86,
+              "reasoning": "Good consensus and high confidence from both agents; important for monitoring and control.",
+              "round": 2,
+              "normalized_component": "Control Panel Enclosure with Instrumentation"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Sampling Port and Sterile Access Assemblies",
+              "confidence": 0.78,
+              "reasoning": "Present in both agents' selections with moderate confidence; enables aseptic sampling, a critical feature.",
+              "round": 2,
+              "normalized_component": "Sampling Port and Sterile Access Assemblies"
+            }
+          ],
+          "Agent_3": [
+            {
+              "agent_id": "Agent_3",
+              "component": "Bioreactor Vessel (Jacketed Stainless Steel Tank)",
+              "confidence": 0.98,
+              "reasoning": "Strong consensus from both agents with high confidence (0.98). This component is fundamental as the main vessel for the bioreactor.",
+              "round": 2,
+              "normalized_component": "Bioreactor Vessel (Jacketed Stainless Steel Tank)"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Agitation System (Impeller and Drive Motor Assembly)",
+              "confidence": 0.94,
+              "reasoning": "Strong consensus from both agents with average confidence ~0.94. Essential for mixing and fluid dynamics in the bioreactor.",
+              "round": 2,
+              "normalized_component": "Agitation System (Impeller And Drive Motor)"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Sparger Assembly",
+              "confidence": 0.9,
+              "reasoning": "Strong consensus with average confidence 0.90 from both agents. Critical for aeration and gas supply in the bioreactor.",
+              "round": 2,
+              "normalized_component": "Sparger"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Heating and Cooling Jacket or Coil",
+              "confidence": 0.9,
+              "reasoning": "Strong consensus and critical to process control for temperature regulation, supported equally by both agents.",
+              "round": 2,
+              "normalized_component": "Heating and Cooling Jacket or Coil"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Control Panel Enclosure with Instrumentation",
+              "confidence": 0.86,
+              "reasoning": "Both agents selected this component with good confidence (~0.86), crucial for monitoring and controlling bioreactor parameters.",
+              "round": 2,
+              "normalized_component": "Control Panel Enclosure with Instrumentation"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Sampling Port and Sterile Access Assemblies",
+              "confidence": 0.78,
+              "reasoning": "Consistent albeit slightly lower confidence selection by both agents (~0.78). Necessary for sample withdrawal and sterile access during operation.",
+              "round": 2,
+              "normalized_component": "Sampling Port and Sterile Access Assemblies"
+            }
+          ]
+        },
+        "rounds_completed": 2,
+        "support_analysis": {
+          "consensus": [
+            "bioreactor vessel (jacketed stainless steel tank)",
+            "agitation system (impeller and drive motor assembly)",
+            "sparger",
+            "heating and cooling jacket or coil",
+            "control panel enclosure with instrumentation",
+            "sampling port and sterile access assemblies"
+          ],
+          "majority": [],
+          "isolated": []
+        },
+        "critiques": [
+          {
+            "item_name": "Bioreactor Vessel (Jacketed Stainless Steel Tank)",
+            "normalized_name": "bioreactor vessel (jacketed stainless steel tank)",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_2",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.98,
+            "critique_text": "Strong consensus on 'Bioreactor Vessel (Jacketed Stainless Steel Tank)': all 3 agents support with avg confidence 0.98. Preserve this component."
+          },
+          {
+            "item_name": "Agitation System (Impeller and Drive Motor Assembly)",
+            "normalized_name": "agitation system (impeller and drive motor assembly)",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_2",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.94,
+            "critique_text": "Strong consensus on 'Agitation System (Impeller and Drive Motor Assembly)': all 3 agents support with avg confidence 0.94. Preserve this component."
+          },
+          {
+            "item_name": "Sparger Assembly",
+            "normalized_name": "sparger",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_2",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.9,
+            "critique_text": "Strong consensus on 'Sparger Assembly': all 3 agents support with avg confidence 0.90. Preserve this component."
+          },
+          {
+            "item_name": "Heating and Cooling Jacket or Coil",
+            "normalized_name": "heating and cooling jacket or coil",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_2",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.9,
+            "critique_text": "Strong consensus on 'Heating and Cooling Jacket or Coil': all 3 agents support with avg confidence 0.90. Preserve this component."
+          },
+          {
+            "item_name": "Control Panel Enclosure with Instrumentation",
+            "normalized_name": "control panel enclosure with instrumentation",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_2",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.86,
+            "critique_text": "Strong consensus on 'Control Panel Enclosure with Instrumentation': all 3 agents support with avg confidence 0.86. Preserve this component."
+          },
+          {
+            "item_name": "Sampling Port and Sterile Access Assemblies",
+            "normalized_name": "sampling port and sterile access assemblies",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_2",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.7799999999999999,
+            "critique_text": "Strong consensus on 'Sampling Port and Sterile Access Assemblies': all 3 agents support with avg confidence 0.78. Preserve this component."
+          }
+        ],
+        "changes_from_previous": {
+          "items_added": [
+            "heating and cooling jacket or coil"
+          ],
+          "items_removed": [
+            "manway cover and seals",
+            "temperature control jacket or coil",
+            "support frame and mounting structure",
+            "exhaust gas filter",
+            "shaft seal and bearing",
+            "sterile gas filter",
+            "inlet/outlet piping manifolds and valves"
+          ],
+          "confidence_changes": {}
+        }
+      }
+    ],
+    "phase3_final_consensus": {
+      "technology": "Bioreactor",
+      "technology_specification": "Bioreactor",
+      "technology_reasoning": "",
+      "components": [
+        "Bioreactor Vessel (jacketed Stainless Steel Tank)",
+        "Agitation System (impeller And Drive Motor)",
+        "Sparger",
+        "Heating And Cooling Jacket Or Coil",
+        "Control Panel Enclosure With Instrumentation",
+        "Sampling Port And Sterile Access Assemblies"
+      ],
+      "confidence": 1.0,
+      "rounds": 2,
+      "convergence_score": 1.0
+    }
+  },
+  "materials_debate": {
+    "debate_rounds": [],
+    "final_consensus": {
+      "components": 6,
+      "unique_materials": 6,
+      "total_assignments": 15,
+      "materials_by_component": {
+        "Bioreactor Vessel (jacketed Stainless Steel Tank)": [
+          {
+            "name": "Stainless steel (SS 304/316)",
+            "confidence": 0.98,
+            "reasoning": "Primary structural material for the vessel and jacket, due to its corrosion resistance and strength, industry standard for bioreactors."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.65,
+            "reasoning": "Sometimes used in fittings or attachments; less common than stainless steel but could be present in ancillary parts, moderate confidence."
+          },
+          {
+            "name": "Glass",
+            "confidence": 0.55,
+            "reasoning": "Glass may be used in sight windows or internal components for inspection, but not in the main vessel structure, moderately uncertain."
+          }
+        ],
+        "Agitation System (impeller And Drive Motor)": [
+          {
+            "name": "Stainless steel (SS 304/316)",
+            "confidence": 0.95,
+            "reasoning": "Impeller and shaft materials typically stainless steel for corrosion resistance and strength, widely standard."
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.85,
+            "reasoning": "Copper is critical for electrical windings in the drive motor, industry standard."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.75,
+            "reasoning": "Used for motor housing due to light weight and heat dissipation properties; common but alternatives exist."
+          }
+        ],
+        "Sparger": [
+          {
+            "name": "Stainless steel (SS 304/316)",
+            "confidence": 0.95,
+            "reasoning": "Primary material for sparger construction due to corrosion resistance and biocompatibility, industry standard."
+          },
+          {
+            "name": "Glass",
+            "confidence": 0.4,
+            "reasoning": "Glass spargers exist mainly in lab scale but not common in industrial vessels, low confidence."
+          }
+        ],
+        "Heating And Cooling Jacket Or Coil": [
+          {
+            "name": "Stainless steel (SS 304/316)",
+            "confidence": 0.97,
+            "reasoning": "Material for jacket and coils due to corrosion resistance and thermal conductivity, widely used."
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.7,
+            "reasoning": "Used for coil tubing in some designs due to excellent thermal conductivity though less corrosion resistant than stainless steel, commonly used alternative."
+          }
+        ],
+        "Control Panel Enclosure With Instrumentation": [
+          {
+            "name": "Aluminum",
+            "confidence": 0.85,
+            "reasoning": "Aluminum used for enclosure body due to lightweight and electrical conductivity, standard material."
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.9,
+            "reasoning": "Copper essential for internal wiring and electronic components, universally standard."
+          },
+          {
+            "name": "Polycarbonate",
+            "confidence": 0.75,
+            "reasoning": "Used for display windows or internal supports due to good durability and insulation, common material choice."
+          }
+        ],
+        "Sampling Port And Sterile Access Assemblies": [
+          {
+            "name": "Stainless steel (SS 304/316)",
+            "confidence": 0.96,
+            "reasoning": "Material for sterile ports and fittings due to corrosion resistance and sterilizability, standard choice."
+          },
+          {
+            "name": "PTFE",
+            "confidence": 0.7,
+            "reasoning": "Used for seals and gaskets, excellent chemical resistance and sterility compatibility, common but some alternatives exist."
+          }
+        ]
+      }
+    }
+  }
+}

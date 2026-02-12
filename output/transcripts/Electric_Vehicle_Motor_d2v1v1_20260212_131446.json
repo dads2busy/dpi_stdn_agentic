@@ -1,0 +1,899 @@
+{
+  "version": "2.0",
+  "metadata": {
+    "technology": "Electric Vehicle Motor",
+    "technology_specification": "Electric Vehicle Motor",
+    "technology_reasoning": "",
+    "timestamp": "2026-02-12T13:19:18.777009",
+    "format_version": "2.0"
+  },
+  "config": {
+    "num_agents": 2,
+    "max_rounds": 3
+  },
+  "component_stage": {
+    "phase1_initial_proposals": [
+      {
+        "agent_id": "Agent_1",
+        "components": [
+          {
+            "name": "Stator Assembly",
+            "confidence": 0.98,
+            "reasoning": "The stator is a fundamental component of the motor, consisting of windings and core laminations. It is a distinct, procurable subassembly made separately and essential for the motor's electromagnetic generation."
+          },
+          {
+            "name": "Rotor Assembly",
+            "confidence": 0.95,
+            "reasoning": "The rotor, including permanent magnets or rotor bars (in induction motors), is a major separate subassembly, procured or manufactured apart from the stator, forming the rotating part of the motor."
+          },
+          {
+            "name": "Housing and End Bells",
+            "confidence": 0.9,
+            "reasoning": "The motor housing, including end bells (bearing supports), is a structural subassembly procured separately, providing mechanical protection and mounting interfaces, critical for motor integrity."
+          },
+          {
+            "name": "Bearings",
+            "confidence": 0.85,
+            "reasoning": "Bearings supporting the rotor shaft are distinct, high-precision procurable components, critical for mechanical rotation but sourced separately from the motor core assemblies."
+          },
+          {
+            "name": "Cooling System Assembly",
+            "confidence": 0.8,
+            "reasoning": "Most EV motors include an integrated cooling system, such as liquid cooling jackets or fan assemblies, which are distinct modular units critical for thermal management."
+          },
+          {
+            "name": "Shaft Assembly",
+            "confidence": 0.78,
+            "reasoning": "The motor shaft is often a separately machined part interfacing rotor and external drivetrain; it is a distinct mechanical component generally procured or manufactured separately."
+          },
+          {
+            "name": "Terminal Box (Connection Box)",
+            "confidence": 0.75,
+            "reasoning": "The terminal or connection box houses electrical connections and is a distinct subassembly procured separately for wiring and electrical interfacing."
+          }
+        ],
+        "technology_specification": "Electric Vehicle (EV) Motor Assembly, typically a Permanent Magnet Synchronous Motor (PMSM) or Induction Motor designed for traction drive in battery electric vehicles.",
+        "technology_reasoning": "Permanent Magnet Synchronous Motors (PMSM) dominate the EV motor market due to their higher efficiency, power density, and torque characteristics, widely adopted by major EV manufacturers globally as of 2024. Induction motors remain common in some models but PMSM is the industry standard for most new production EVs."
+      },
+      {
+        "agent_id": "Agent_2",
+        "components": [
+          {
+            "name": "Rotor Assembly",
+            "confidence": 0.98,
+            "reasoning": "The rotor includes the shaft and embedded permanent magnets, critical for motor rotation and magnetic field generation; it is usually assembled as a separate, procurable unit."
+          },
+          {
+            "name": "Stator Assembly",
+            "confidence": 0.98,
+            "reasoning": "The stator consists of laminated cores and windings forming the stationary electromagnetic field system, universally present and sourced as a complete assembly."
+          },
+          {
+            "name": "Motor Housing (Frame)",
+            "confidence": 0.95,
+            "reasoning": "The structural enclosure that supports and protects internal components, often made from cast aluminum or steel, procured as a finished part."
+          },
+          {
+            "name": "Bearing Assemblies",
+            "confidence": 0.9,
+            "reasoning": "Provide rotational support and reduce friction for the rotor shaft; typically purchased as standardized units and installed separately."
+          },
+          {
+            "name": "End Caps (End Bells)",
+            "confidence": 0.88,
+            "reasoning": "Sealing and mounting components that hold bearings and attachment points for the motor, distinct parts commonly procured independently."
+          },
+          {
+            "name": "Cooling System Components (e.g., liquid cooling jacket)",
+            "confidence": 0.85,
+            "reasoning": "Integral for thermal management, cooling jackets or plates are separate subassemblies that attach to the motor housing."
+          },
+          {
+            "name": "Connector and Terminal Box",
+            "confidence": 0.8,
+            "reasoning": "Houses electrical terminals and connectors for power and signal wiring, commonly a modular assembly connected externally to the motor."
+          },
+          {
+            "name": "Shaft Coupling or Adapter",
+            "confidence": 0.75,
+            "reasoning": "Interfaces the motor shaft to the drivetrain, often a dedicated mechanical part procured separately though designs vary."
+          }
+        ],
+        "technology_specification": "Permanent magnet synchronous electric motor (PMSM) for battery electric vehicles (BEVs), comprising rotor, stator, and housing designed for high efficiency and torque density.",
+        "technology_reasoning": "PMSMs dominate the electric vehicle motor market due to their high power density, efficiency, and wide adoption in BEVs as of 2024, accounting for most propulsion motors in top EV models globally."
+      }
+    ],
+    "phase2_debate_rounds": [
+      {
+        "round_num": 1,
+        "convergence": 0.36363636363636365,
+        "threshold": 0.7,
+        "threshold_reached": false,
+        "proposals": {
+          "Agent_1": [
+            {
+              "name": "Stator Assembly",
+              "confidence": 0.98,
+              "reasoning": "The stator is a fundamental component of the motor, consisting of windings and core laminations. It is a distinct, procurable subassembly made separately and essential for the motor's electromagnetic generation.",
+              "component": "Stator Assembly",
+              "normalized_component": "stator"
+            },
+            {
+              "name": "Rotor Assembly",
+              "confidence": 0.95,
+              "reasoning": "The rotor, including permanent magnets or rotor bars (in induction motors), is a major separate subassembly, procured or manufactured apart from the stator, forming the rotating part of the motor.",
+              "component": "Rotor Assembly",
+              "normalized_component": "rotor"
+            },
+            {
+              "name": "Housing and End Bells",
+              "confidence": 0.9,
+              "reasoning": "The motor housing, including end bells (bearing supports), is a structural subassembly procured separately, providing mechanical protection and mounting interfaces, critical for motor integrity.",
+              "component": "Housing and End Bells",
+              "normalized_component": "motor housing and end bells"
+            },
+            {
+              "name": "Bearings",
+              "confidence": 0.85,
+              "reasoning": "Bearings supporting the rotor shaft are distinct, high-precision procurable components, critical for mechanical rotation but sourced separately from the motor core assemblies.",
+              "component": "Bearings",
+              "normalized_component": "bearing"
+            },
+            {
+              "name": "Cooling System Assembly",
+              "confidence": 0.8,
+              "reasoning": "Most EV motors include an integrated cooling system, such as liquid cooling jackets or fan assemblies, which are distinct modular units critical for thermal management.",
+              "component": "Cooling System Assembly",
+              "normalized_component": "cooling"
+            },
+            {
+              "name": "Shaft Assembly",
+              "confidence": 0.78,
+              "reasoning": "The motor shaft is often a separately machined part interfacing rotor and external drivetrain; it is a distinct mechanical component generally procured or manufactured separately.",
+              "component": "Shaft Assembly",
+              "normalized_component": "shaft"
+            },
+            {
+              "name": "Terminal Box (Connection Box)",
+              "confidence": 0.75,
+              "reasoning": "The terminal or connection box houses electrical connections and is a distinct subassembly procured separately for wiring and electrical interfacing.",
+              "component": "Terminal Box (Connection Box)",
+              "normalized_component": "terminal box"
+            }
+          ],
+          "Agent_2": [
+            {
+              "name": "Rotor Assembly",
+              "confidence": 0.98,
+              "reasoning": "The rotor includes the shaft and embedded permanent magnets, critical for motor rotation and magnetic field generation; it is usually assembled as a separate, procurable unit.",
+              "component": "Rotor Assembly",
+              "normalized_component": "rotor"
+            },
+            {
+              "name": "Stator Assembly",
+              "confidence": 0.98,
+              "reasoning": "The stator consists of laminated cores and windings forming the stationary electromagnetic field system, universally present and sourced as a complete assembly.",
+              "component": "Stator Assembly",
+              "normalized_component": "stator"
+            },
+            {
+              "name": "Motor Housing (Frame)",
+              "confidence": 0.95,
+              "reasoning": "The structural enclosure that supports and protects internal components, often made from cast aluminum or steel, procured as a finished part.",
+              "component": "Motor Housing (Frame)",
+              "normalized_component": "motor housing"
+            },
+            {
+              "name": "Bearing Assemblies",
+              "confidence": 0.9,
+              "reasoning": "Provide rotational support and reduce friction for the rotor shaft; typically purchased as standardized units and installed separately.",
+              "component": "Bearing Assemblies",
+              "normalized_component": "bearing"
+            },
+            {
+              "name": "End Caps (End Bells)",
+              "confidence": 0.88,
+              "reasoning": "Sealing and mounting components that hold bearings and attachment points for the motor, distinct parts commonly procured independently.",
+              "component": "End Caps (End Bells)",
+              "normalized_component": "end bells"
+            },
+            {
+              "name": "Cooling System Components (e.g., liquid cooling jacket)",
+              "confidence": 0.85,
+              "reasoning": "Integral for thermal management, cooling jackets or plates are separate subassemblies that attach to the motor housing.",
+              "component": "Cooling System Components (e.g., liquid cooling jacket)",
+              "normalized_component": "liquid cooling jacket"
+            },
+            {
+              "name": "Connector and Terminal Box",
+              "confidence": 0.8,
+              "reasoning": "Houses electrical terminals and connectors for power and signal wiring, commonly a modular assembly connected externally to the motor.",
+              "component": "Connector and Terminal Box",
+              "normalized_component": "terminal box"
+            },
+            {
+              "name": "Shaft Coupling or Adapter",
+              "confidence": 0.75,
+              "reasoning": "Interfaces the motor shaft to the drivetrain, often a dedicated mechanical part procured separately though designs vary.",
+              "component": "Shaft Coupling or Adapter",
+              "normalized_component": "shaft coupling"
+            }
+          ]
+        },
+        "rounds_completed": 1,
+        "support_analysis": {
+          "consensus": [],
+          "majority": [
+            "stator",
+            "rotor",
+            "bearing",
+            "terminal box"
+          ],
+          "isolated": [
+            "motor housing and end bells",
+            "cooling",
+            "shaft",
+            "motor housing",
+            "end bells",
+            "liquid cooling jacket",
+            "shaft coupling"
+          ]
+        },
+        "critiques": [
+          {
+            "item_name": "stator",
+            "normalized_name": "stator",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.98,
+            "critique_text": "Majority support for 'stator': 2/3 agents agree (conf: 0.98). Consider strengthening consensus."
+          },
+          {
+            "item_name": "rotor",
+            "normalized_name": "rotor",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.965,
+            "critique_text": "Majority support for 'rotor': 2/3 agents agree (conf: 0.96). Consider strengthening consensus."
+          },
+          {
+            "item_name": "motor housing and end bells",
+            "normalized_name": "motor housing and end bells",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2"
+            ],
+            "avg_confidence": 0.9,
+            "critique_text": "Isolated proposal 'motor housing and end bells' from 1 agent(s) (conf: 0.90). Requires justification or peer validation."
+          },
+          {
+            "item_name": "bearing",
+            "normalized_name": "bearing",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.875,
+            "critique_text": "Majority support for 'bearing': 2/3 agents agree (conf: 0.88). Consider strengthening consensus."
+          },
+          {
+            "item_name": "cooling",
+            "normalized_name": "cooling",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2"
+            ],
+            "avg_confidence": 0.8,
+            "critique_text": "Isolated proposal 'cooling' from 1 agent(s) (conf: 0.80). Requires justification or peer validation."
+          },
+          {
+            "item_name": "shaft",
+            "normalized_name": "shaft",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2"
+            ],
+            "avg_confidence": 0.78,
+            "critique_text": "Isolated proposal 'shaft' from 1 agent(s) (conf: 0.78). Requires justification or peer validation."
+          },
+          {
+            "item_name": "terminal box",
+            "normalized_name": "terminal box",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.775,
+            "critique_text": "Majority support for 'terminal box': 2/3 agents agree (conf: 0.78). Consider strengthening consensus."
+          },
+          {
+            "item_name": "motor housing",
+            "normalized_name": "motor housing",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_1"
+            ],
+            "avg_confidence": 0.95,
+            "critique_text": "Isolated proposal 'motor housing' from 1 agent(s) (conf: 0.95). Requires justification or peer validation."
+          },
+          {
+            "item_name": "end bells",
+            "normalized_name": "end bells",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_1"
+            ],
+            "avg_confidence": 0.88,
+            "critique_text": "Isolated proposal 'end bells' from 1 agent(s) (conf: 0.88). Requires justification or peer validation."
+          },
+          {
+            "item_name": "liquid cooling jacket",
+            "normalized_name": "liquid cooling jacket",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_1"
+            ],
+            "avg_confidence": 0.85,
+            "critique_text": "Isolated proposal 'liquid cooling jacket' from 1 agent(s) (conf: 0.85). Requires justification or peer validation."
+          },
+          {
+            "item_name": "shaft coupling",
+            "normalized_name": "shaft coupling",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_1"
+            ],
+            "avg_confidence": 0.75,
+            "critique_text": "Isolated proposal 'shaft coupling' from 1 agent(s) (conf: 0.75). Requires justification or peer validation."
+          }
+        ],
+        "changes_from_previous": null
+      },
+      {
+        "round_num": 2,
+        "convergence": 0.5555555555555555,
+        "threshold": 0.7,
+        "threshold_reached": false,
+        "proposals": {
+          "Agent_1": [
+            {
+              "agent_id": "Agent_1",
+              "component": "Stator Assembly",
+              "confidence": 0.98,
+              "reasoning": "Strong consensus with both agents selecting it at high confidence; essential primary component of an electric vehicle motor.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Rotor Assembly",
+              "confidence": 0.96,
+              "reasoning": "Strong consensus and critical rotating component; average confidence high among agents.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Bearings",
+              "confidence": 0.88,
+              "reasoning": "Strong consensus and central to motor function in supporting the shaft; average confidence high.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Terminal Box (Connection Box)",
+              "confidence": 0.78,
+              "reasoning": "Strong consensus but lower confidence; important for electrical connections in the motor.",
+              "round": 2
+            }
+          ],
+          "Agent_2": [
+            {
+              "agent_id": "Agent_2",
+              "component": "Stator Assembly",
+              "confidence": 0.98,
+              "reasoning": "Strong consensus with both agents supporting it with high confidence, fundamental component for electric vehicle motor operation.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Rotor Assembly",
+              "confidence": 0.96,
+              "reasoning": "Strong consensus with both agents supporting it with high confidence, critical for motor function.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Bearing Assemblies",
+              "confidence": 0.88,
+              "reasoning": "Both agents support bearing related components with good confidence, bearings are essential for rotation and reducing friction.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Connector and Terminal Box",
+              "confidence": 0.78,
+              "reasoning": "Both agents selected a version of terminal box / connector with moderate confidence, necessary for electrical connections in the motor.",
+              "round": 2
+            }
+          ],
+          "Agent_3": [
+            {
+              "agent_id": "Agent_3",
+              "component": "Stator Assembly",
+              "confidence": 0.98,
+              "reasoning": "Strong consensus from both agents with high confidence; essential core component of electric vehicle motor.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Rotor Assembly",
+              "confidence": 0.96,
+              "reasoning": "Strong consensus with highest average confidence; critical moving part in motor operation.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Bearings",
+              "confidence": 0.88,
+              "reasoning": "Supported by both agents with solid confidence; indispensable for smooth rotor rotation.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Terminal Box (Connection Box)",
+              "confidence": 0.78,
+              "reasoning": "Both agents support it with moderate confidence; important for electrical connections.",
+              "round": 2
+            }
+          ]
+        },
+        "rounds_completed": 2,
+        "support_analysis": {
+          "consensus": [
+            "stator",
+            "rotor"
+          ],
+          "majority": [
+            "bearings",
+            "terminal box (connection box)"
+          ],
+          "isolated": [
+            "bearing assemblies",
+            "connector and terminal box"
+          ]
+        },
+        "critiques": [
+          {
+            "item_name": "Stator Assembly",
+            "normalized_name": "stator",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.98,
+            "critique_text": "Strong consensus on 'Stator Assembly': all 3 agents support with avg confidence 0.98. Preserve this component."
+          },
+          {
+            "item_name": "Rotor Assembly",
+            "normalized_name": "rotor",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.96,
+            "critique_text": "Strong consensus on 'Rotor Assembly': all 3 agents support with avg confidence 0.96. Preserve this component."
+          },
+          {
+            "item_name": "Bearings",
+            "normalized_name": "bearings",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2"
+            ],
+            "avg_confidence": 0.88,
+            "critique_text": "Majority support for 'Bearings': 2/3 agents agree (conf: 0.88). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Terminal Box (Connection Box)",
+            "normalized_name": "terminal box (connection box)",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2"
+            ],
+            "avg_confidence": 0.78,
+            "critique_text": "Majority support for 'Terminal Box (Connection Box)': 2/3 agents agree (conf: 0.78). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Bearing Assemblies",
+            "normalized_name": "bearing assemblies",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_3",
+              "Agent_1"
+            ],
+            "avg_confidence": 0.88,
+            "critique_text": "Isolated proposal 'Bearing Assemblies' from 1 agent(s) (conf: 0.88). Requires justification or peer validation."
+          },
+          {
+            "item_name": "Connector and Terminal Box",
+            "normalized_name": "connector and terminal box",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_3",
+              "Agent_1"
+            ],
+            "avg_confidence": 0.78,
+            "critique_text": "Isolated proposal 'Connector and Terminal Box' from 1 agent(s) (conf: 0.78). Requires justification or peer validation."
+          }
+        ],
+        "changes_from_previous": {
+          "items_added": [
+            "bearing assemblies",
+            "terminal box (connection box)",
+            "bearings",
+            "connector and terminal box"
+          ],
+          "items_removed": [
+            "bearing",
+            "end bells",
+            "liquid cooling jacket",
+            "motor housing and end bells",
+            "motor housing",
+            "shaft",
+            "cooling",
+            "shaft coupling",
+            "terminal box"
+          ],
+          "confidence_changes": {}
+        }
+      },
+      {
+        "round_num": 3,
+        "convergence": 1.0,
+        "threshold": 0.7,
+        "threshold_reached": true,
+        "proposals": {
+          "Agent_1": [
+            {
+              "agent_id": "Agent_1",
+              "component": "Stator Assembly",
+              "confidence": 0.98,
+              "reasoning": "Unanimous support from all agents with very high confidence; essential core component of the electric vehicle motor.",
+              "round": 3,
+              "normalized_component": "Motor Components"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Rotor Assembly",
+              "confidence": 0.96,
+              "reasoning": "Unanimous support from all agents with very high confidence; another essential core component.",
+              "round": 3,
+              "normalized_component": "Gearbox"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Bearings",
+              "confidence": 0.88,
+              "reasoning": "Strong majority support (2 out of 3 agents) with good confidence; critical for motor function and consistent naming preferred over 'Bearing Assemblies'.",
+              "round": 3,
+              "normalized_component": "Bearings"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Terminal Box (Connection Box)",
+              "confidence": 0.78,
+              "reasoning": "Supported by 2 agents and consistent naming is preferable; important for electrical connections, though lower confidence than core components.",
+              "round": 3,
+              "normalized_component": "Terminal Box"
+            }
+          ],
+          "Agent_2": [
+            {
+              "agent_id": "Agent_2",
+              "component": "Stator Assembly",
+              "confidence": 0.98,
+              "reasoning": "Unanimous support from all agents with very high confidence, critical component of electric vehicle motor.",
+              "round": 3,
+              "normalized_component": "Motor Components"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Rotor Assembly",
+              "confidence": 0.96,
+              "reasoning": "Unanimous support from all agents with very high confidence, essential rotating component in the motor.",
+              "round": 3,
+              "normalized_component": "Gearbox"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Bearings",
+              "confidence": 0.88,
+              "reasoning": "Strong consensus from two agents with consistent confidence, necessary for smooth rotation and durability.",
+              "round": 3,
+              "normalized_component": "Bearings"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Terminal Box (Connection Box)",
+              "confidence": 0.78,
+              "reasoning": "Majority support from two agents, component necessary for electrical connections and motor integration.",
+              "round": 3,
+              "normalized_component": "Terminal Box"
+            }
+          ],
+          "Agent_3": [
+            {
+              "agent_id": "Agent_3",
+              "component": "Stator Assembly",
+              "confidence": 0.98,
+              "reasoning": "Unanimous strong support from all agents with high confidence; essential primary component for electric vehicle motor.",
+              "round": 3,
+              "normalized_component": "Motor Components"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Rotor Assembly",
+              "confidence": 0.96,
+              "reasoning": "Unanimous strong support from all agents with high confidence; essential primary component for electric vehicle motor.",
+              "round": 3,
+              "normalized_component": "Gearbox"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Bearings",
+              "confidence": 0.88,
+              "reasoning": "Strong consensus from 2 agents with high confidence; critical for smooth rotor operation and motor function.",
+              "round": 3,
+              "normalized_component": "Bearings"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Terminal Box (Connection Box)",
+              "confidence": 0.78,
+              "reasoning": "Supported by 2 agents with moderate confidence; functions as main electrical connection point, important but secondary to mechanical components.",
+              "round": 3,
+              "normalized_component": "Terminal Box"
+            }
+          ]
+        },
+        "rounds_completed": 3,
+        "support_analysis": {
+          "consensus": [
+            "stator",
+            "rotor",
+            "bearings",
+            "terminal box (connection box)"
+          ],
+          "majority": [],
+          "isolated": []
+        },
+        "critiques": [
+          {
+            "item_name": "Stator Assembly",
+            "normalized_name": "stator",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.98,
+            "critique_text": "Strong consensus on 'Stator Assembly': all 3 agents support with avg confidence 0.98. Preserve this component."
+          },
+          {
+            "item_name": "Rotor Assembly",
+            "normalized_name": "rotor",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.96,
+            "critique_text": "Strong consensus on 'Rotor Assembly': all 3 agents support with avg confidence 0.96. Preserve this component."
+          },
+          {
+            "item_name": "Bearings",
+            "normalized_name": "bearings",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.88,
+            "critique_text": "Strong consensus on 'Bearings': all 3 agents support with avg confidence 0.88. Preserve this component."
+          },
+          {
+            "item_name": "Terminal Box (Connection Box)",
+            "normalized_name": "terminal box (connection box)",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.7799999999999999,
+            "critique_text": "Strong consensus on 'Terminal Box (Connection Box)': all 3 agents support with avg confidence 0.78. Preserve this component."
+          }
+        ],
+        "changes_from_previous": {
+          "items_added": [],
+          "items_removed": [
+            "bearing assemblies",
+            "connector and terminal box"
+          ],
+          "confidence_changes": {}
+        }
+      }
+    ],
+    "phase3_final_consensus": {
+      "technology": "Electric Vehicle Motor",
+      "technology_specification": "Electric Vehicle Motor",
+      "technology_reasoning": "",
+      "components": [
+        "Motor Components",
+        "Gearbox",
+        "Bearings",
+        "Terminal Box"
+      ],
+      "confidence": 1.0,
+      "rounds": 3,
+      "convergence_score": 1.0
+    }
+  },
+  "materials_debate": {
+    "debate_rounds": [],
+    "final_consensus": {
+      "components": 4,
+      "unique_materials": 10,
+      "total_assignments": 16,
+      "materials_by_component": {
+        "Motor Components": [
+          {
+            "name": "Copper",
+            "confidence": 0.95,
+            "reasoning": "Copper is essential for motor windings, providing excellent electrical conductivity universally used in electric motor manufacturing."
+          },
+          {
+            "name": "Steel Ingots",
+            "confidence": 0.9,
+            "reasoning": "Steel ingots provide the ferromagnetic core and structural elements of the motor, critical for magnetic flux and mechanical strength."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.75,
+            "reasoning": "Aluminum is commonly used for motor housings and some conductive parts, offering a lightweight alternative to steel; alternatives exist but aluminum is standard."
+          },
+          {
+            "name": "Neodymium",
+            "confidence": 0.85,
+            "reasoning": "Neodymium is a critical rare earth element used in strong permanent magnets for motor efficiency, industry standard though some motors use ferrite magnets."
+          },
+          {
+            "name": "Silicon",
+            "confidence": 0.65,
+            "reasoning": "Silicon is used in semiconductors for motor control electronics often integrated but not part of motor proper; moderately confident since the motor core can be produced without it."
+          }
+        ],
+        "Gearbox": [
+          {
+            "name": "Steel Ingots",
+            "confidence": 0.95,
+            "reasoning": "Steel ingots provide the primary structural and wear-resistant material for gears and shafts, industry standard due to strength and durability."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.7,
+            "reasoning": "Aluminum is often used for gearbox housings for reduced weight, alternatives like steel exist but aluminum is common."
+          },
+          {
+            "name": "Titanium",
+            "confidence": 0.55,
+            "reasoning": "Titanium may be used in high-performance or lightweight gear components but is less common and more costly, so uncertain."
+          },
+          {
+            "name": "Titanium dioxide",
+            "confidence": 0.4,
+            "reasoning": "Titanium dioxide could be used as a coating pigment or filler but is not essential to the gearbox operation, low confidence."
+          }
+        ],
+        "Bearings": [
+          {
+            "name": "Steel Ingots",
+            "confidence": 0.95,
+            "reasoning": "Steel ingots are processed into high-strength bearing steel for rolling elements and races, universally essential for bearing durability."
+          },
+          {
+            "name": "Ceramic",
+            "confidence": 0.65,
+            "reasoning": "Ceramic materials are used in hybrid or full ceramic bearings for performance benefits; alternatives like steel dominate, so moderately confident."
+          },
+          {
+            "name": "Aluminum oxide",
+            "confidence": 0.6,
+            "reasoning": "Aluminum oxide is a common ceramic material used in bearing balls or coatings to improve hardness and wear resistance."
+          }
+        ],
+        "Terminal Box": [
+          {
+            "name": "Aluminum",
+            "confidence": 0.85,
+            "reasoning": "Aluminum is commonly used for terminal box enclosures due to its lightweight, corrosion resistance, and electrical conductivity."
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.8,
+            "reasoning": "Copper is essential for terminal box electrical connections and busbars due to excellent conductivity."
+          },
+          {
+            "name": "Steel Ingots",
+            "confidence": 0.6,
+            "reasoning": "Steel ingots may be used in structural or protective components of terminal boxes, but alternatives exist so moderately confident."
+          },
+          {
+            "name": "Epoxy resins",
+            "confidence": 0.55,
+            "reasoning": "Epoxy resins are used in insulating materials and potting compounds inside terminal boxes, but alternatives include other polymers."
+          }
+        ]
+      }
+    }
+  }
+}

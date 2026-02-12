@@ -1,0 +1,2243 @@
+{
+  "version": "2.0",
+  "metadata": {
+    "technology": "Triple Quadrupole LC\u2013MS Mass Spectrometer",
+    "technology_specification": "Triple Quadrupole LC\u2013MS Mass Spectrometer",
+    "technology_reasoning": "",
+    "timestamp": "2026-02-12T16:08:26.339663",
+    "format_version": "2.0"
+  },
+  "config": {
+    "num_agents": 5,
+    "max_rounds": 3
+  },
+  "component_stage": {
+    "phase1_initial_proposals": [
+      {
+        "agent_id": "Agent_1",
+        "components": [
+          {
+            "name": "Liquid Chromatography (LC) Module",
+            "confidence": 0.95,
+            "reasoning": "This is a complex subassembly comprising pumps, solvent delivery, and column compartment procured as a complete unit, distinct from the mass spectrometer, essential for sample separation prior to MS analysis."
+          },
+          {
+            "name": "Ion Source Assembly (e.g., Electrospray Ionization source)",
+            "confidence": 0.97,
+            "reasoning": "The ion source is a standalone module that ionizes sample molecules and is procurable from suppliers; critical and separable from mass analyzers."
+          },
+          {
+            "name": "Triple Quadrupole Mass Analyzer Unit",
+            "confidence": 1.0,
+            "reasoning": "This is the core mass filtering component consisting of three sequential quadrupole rods and associated RF/DC electronics, always procured as a precise assembly distinct from other modules."
+          },
+          {
+            "name": "Collision Cell (Second Quadrupole with collision gas injection)",
+            "confidence": 0.93,
+            "reasoning": "Often integrated with the triple quadrupole assembly but sometimes a separately procured unit or subassembly, this component allows fragmentation of parent ions for MS/MS analysis."
+          },
+          {
+            "name": "Detector Module (Electron multiplier or similar)",
+            "confidence": 0.95,
+            "reasoning": "The detector converts ions to electrical signals and is a discrete module supplied separately by specialized vendors or integrated manufacturers."
+          },
+          {
+            "name": "Vacuum System Assembly (including turbo molecular pump)",
+            "confidence": 0.9,
+            "reasoning": "The vacuum system, critical for maintaining low pressure in the MS, consists of pumps and chambers procured as separate assemblies distinct from MS electronics."
+          },
+          {
+            "name": "Data Acquisition and Control Electronics Unit",
+            "confidence": 0.88,
+            "reasoning": "Includes the electronics and computer interface board responsible for controlling MS operation and data capture, supplied as a distinct manufactured subsystem."
+          },
+          {
+            "name": "Sample Introduction and Interface Hardware",
+            "confidence": 0.75,
+            "reasoning": "Includes interfaces such as capillary tubes, nebulizers, or heated transfer lines; sometimes procured separately but occasionally integrated within ion source assembly."
+          }
+        ],
+        "technology_specification": "Triple Quadrupole Liquid Chromatography\u2013Mass Spectrometry (LC\u2013MS/MS) system designed for targeted quantitative analysis of complex biological and chemical samples through sequential mass filtering and fragmentation.",
+        "technology_reasoning": "The triple quadrupole LC\u2013MS is the industry-standard mass spectrometer for quantitative bioanalysis, metabolomics, and pharmacokinetics, featuring three quadrupole mass filters in series. Its modular design integrates separate components like LC system, ion source, mass analyzers, and detectors, widely adopted across research and clinical laboratories worldwide by leading manufacturers such as Sciex, Agilent, Thermo Fisher, and Waters."
+      },
+      {
+        "agent_id": "Agent_2",
+        "components": [
+          {
+            "name": "Liquid Chromatography (LC) Module",
+            "confidence": 0.98,
+            "reasoning": "The LC module is a complete subsystems including pumps, injector, and solvent delivery system, critical for sample separation prior to mass analysis and typically procured as a manufactured unit."
+          },
+          {
+            "name": "Electrospray Ionization (ESI) Source",
+            "confidence": 0.95,
+            "reasoning": "The ESI source physically interfaces the LC output with the mass spectrometer, producing ions from liquid samples; it is a specialized, separate assembly standard in LC\u2013MS systems."
+          },
+          {
+            "name": "First Quadrupole Mass Filter (Q1)",
+            "confidence": 0.97,
+            "reasoning": "Q1 serves as the first mass analyzer selecting precursor ions, a discrete component arranged in sequence and procured as a manufactured mass filter assembly."
+          },
+          {
+            "name": "Collision Cell (Second Quadrupole, Q2)",
+            "confidence": 0.96,
+            "reasoning": "Q2 acts as a collision cell where selected ions fragment; it is a dedicated RF-only quadrupole assembly, distinct and procured separately."
+          },
+          {
+            "name": "Third Quadrupole Mass Filter (Q3)",
+            "confidence": 0.97,
+            "reasoning": "Q3 filters the fragment ions before detection; this is a separate mass filter unit critical to the triple quadrupole configuration."
+          },
+          {
+            "name": "Ion Detector Assembly",
+            "confidence": 0.93,
+            "reasoning": "The detector (e.g., electron multiplier or photomultiplier) registers incoming ions; it is a distinct, replaceable electronic subassembly."
+          },
+          {
+            "name": "Vacuum System (Turbomolecular and Rotary Pumps)",
+            "confidence": 0.92,
+            "reasoning": "Maintaining the high vacuum environment is essential for mass spectrometry operation; the vacuum system consists of procurement-ready pump units and is a primary physical assembly."
+          },
+          {
+            "name": "Mass Spectrometer Vacuum Chamber",
+            "confidence": 0.9,
+            "reasoning": "The vacuum chamber houses the quadrupoles and ion optics; it is a machined structural assembly procured as a distinct unit."
+          },
+          {
+            "name": "Ion Optics Assembly",
+            "confidence": 0.88,
+            "reasoning": "Includes lenses and multipoles that guide ions through the mass spectrometer; these are manufactured subassemblies with distinct supply chains."
+          },
+          {
+            "name": "Instrument Control Electronics Module",
+            "confidence": 0.85,
+            "reasoning": "Dedicated boards and electronics for controlling quadrupole voltages, data acquisition, and user interface, procured as separate modules."
+          },
+          {
+            "name": "Instrument Enclosure and Frame",
+            "confidence": 0.9,
+            "reasoning": "Structural housing that contains and supports all internal modules, typically procured as a manufactured metal or composite frame assembly."
+          }
+        ],
+        "technology_specification": "Triple Quadrupole Liquid Chromatography\u2013Mass Spectrometry (LC\u2013MS/MS) system with three sequential quadrupole mass analyzers for targeted quantitative mass analysis of complex biological samples.",
+        "technology_reasoning": "This specification captures the dominant industry configuration as triple quadrupole LC\u2013MS systems are the standard for quantitative bioanalysis due to their high sensitivity, selectivity, and robust quantitation capabilities. The triple quadrupole architecture with electrospray ionization interfaced to LC is the most widely deployed variant in pharmaceutical and clinical laboratories as of 2024."
+      },
+      {
+        "agent_id": "Agent_3",
+        "components": [
+          {
+            "name": "Liquid Chromatography (LC) Module",
+            "confidence": 0.98,
+            "reasoning": "The LC module, consisting of pumps, autosampler, and column oven, is a major functional unit procured as a complete assembly to perform sample separation before mass spectrometry."
+          },
+          {
+            "name": "Electrospray Ionization (ESI) Source",
+            "confidence": 0.95,
+            "reasoning": "The ionization source is a distinct, procurable subassembly converting liquid analyte to gas-phase ions; ESI is standard for biomolecule ionization and typically replaced or upgraded separately."
+          },
+          {
+            "name": "Triple Quadrupole Mass Analyzer",
+            "confidence": 1.0,
+            "reasoning": "The core mass analysis unit made of three sequential quadrupoles (Q1, Q2 collision cell, Q3) is the defining hardware of this technology and is a separately manufactured assembly."
+          },
+          {
+            "name": "Vacuum System (Turbomolecular and Rotary Pumps)",
+            "confidence": 0.93,
+            "reasoning": "Maintains high vacuum required for mass spectrometry operation and is typically purchased as distinct pump assemblies with specific performance parameters."
+          },
+          {
+            "name": "Detector Assembly (Electron Multiplier or Microchannel Plate)",
+            "confidence": 0.9,
+            "reasoning": "Detects ions exiting the mass analyzer, a critical subsystem procured separately due to specificity and sensitivity requirements."
+          },
+          {
+            "name": "Mass Spectrometer Control Electronics (Power Supplies and Signal Processing Unit)",
+            "confidence": 0.9,
+            "reasoning": "Includes the electronic modules responsible for controlling the mass analyzer and processing detection signals; often modular and supplied as distinct units."
+          },
+          {
+            "name": "Data Acquisition and Processing System (Computer and Software Module)",
+            "confidence": 0.88,
+            "reasoning": "Although partially integrated in the instrument, the computer system running the instrument software is a distinct purchasable assembly necessary for data analysis and instrument control."
+          },
+          {
+            "name": "Sample Introduction System (Autosampler Manifold and Injector)",
+            "confidence": 0.85,
+            "reasoning": "Facilitates automated injection of sample into the LC system and is a subassembly often replaced or upgraded independently."
+          },
+          {
+            "name": "Interface Region (Ion Transfer Optics and Skimmer Cone)",
+            "confidence": 0.8,
+            "reasoning": "Physically separates atmospheric pressure ionization source from vacuum mass analyzer, a specialized component often procured separately for optimization purposes."
+          },
+          {
+            "name": "Instrument Frame and Cabinet Enclosure",
+            "confidence": 0.8,
+            "reasoning": "Provides structural support and environmental protection for internal components, typically a separately manufactured and procured chassis assembly."
+          }
+        ],
+        "technology_specification": "Triple Quadrupole Liquid Chromatography\u2013Mass Spectrometry (LC\u2013MS/MS) system with electrospray ionization source and triple quadrupole mass analyzer.",
+        "technology_reasoning": "The triple quadrupole LC\u2013MS system is an industry-standard analytical instrument used widely in biotechnology and pharmaceutical labs for quantitative analysis. It combines a liquid chromatograph for sample separation with a triple quadrupole mass spectrometer for selective, sensitive detection, representing the dominant configuration for targeted quantitative LC-MS analysis as of 2024."
+      },
+      {
+        "agent_id": "Agent_4",
+        "components": [
+          {
+            "name": "Liquid Chromatography (LC) Module",
+            "confidence": 0.98,
+            "reasoning": "This module performs the separation of complex mixtures before MS detection and is a separately manufactured and procured subsystem including pumps, injection system, and columns."
+          },
+          {
+            "name": "Triple Quadrupole Mass Analyzer Assembly",
+            "confidence": 0.99,
+            "reasoning": "The core mass spectrometry component consisting of three quadrupole mass filters configured for precursor selection, collision-induced dissociation, and product ion filtering, procured as a major subassembly."
+          },
+          {
+            "name": "Ionization Source (e.g., Electrospray Ionization, ESI)",
+            "confidence": 0.97,
+            "reasoning": "Crucial for converting liquid phase analytes to gas phase ions compatible with MS; often modular and interchangeable, typically supplied as a distinct unit."
+          },
+          {
+            "name": "Vacuum System (including turbo and roughing pumps)",
+            "confidence": 0.95,
+            "reasoning": "Essential for maintaining high vacuum inside the mass analyzer; vacuum pumps are standard, critical subsystems procured independently."
+          },
+          {
+            "name": "Data Acquisition and Control Electronics",
+            "confidence": 0.93,
+            "reasoning": "Includes signal processing hardware, control boards, and interfaces needed for instrument operation and data collection as a distinct electronics subsystem."
+          },
+          {
+            "name": "Collision Cell (RF-only quadrupole)",
+            "confidence": 0.9,
+            "reasoning": "The integrated collision cell within the triple quadrupole MS that facilitates fragmentation of ions is a specialized subassembly, sometimes serviced separately."
+          },
+          {
+            "name": "Vacuum Chamber and Ion Optics Assembly",
+            "confidence": 0.9,
+            "reasoning": "Structural enclosure and ion transmission elements facilitating ion guidance through the mass analyzer, manufactured and procured as a unit."
+          },
+          {
+            "name": "User Interface Console (Display and Input Controls)",
+            "confidence": 0.85,
+            "reasoning": "Separate computer console or integrated touchscreen for instrument operation and user interaction, commonly procurable independently."
+          }
+        ],
+        "technology_specification": "Triple Quadrupole LC\u2013MS Mass Spectrometer system incorporating liquid chromatography for sample separation coupled with tandem quadrupole mass analyzers for sensitive quantitative and qualitative mass detection.",
+        "technology_reasoning": "Triple quadrupole LC\u2013MS instruments are the industry standard analytical platforms in biotechnology and pharmaceutical labs for targeted quantitative analysis due to their high sensitivity, specificity, and robustness. The combination of LC for sample separation and three quadrupole mass analyzers as tandem MS units is the dominant configuration widely adopted globally."
+      },
+      {
+        "agent_id": "Agent_5",
+        "components": [
+          {
+            "name": "Liquid Chromatography Module",
+            "confidence": 0.98,
+            "reasoning": "This is the front-end separation system, including pumps, injector, and chromatographic columns, procured as a distinct subassembly critical for sample separation before MS analysis."
+          },
+          {
+            "name": "Triple Quadrupole Mass Analyzer",
+            "confidence": 1.0,
+            "reasoning": "The core mass filtering component of the instrument, consisting of three quadrupole rods arranged sequentially; this proprietary module defines the instrument's functionality and has a dedicated supply chain."
+          },
+          {
+            "name": "Ion Source Assembly",
+            "confidence": 0.95,
+            "reasoning": "The ionization interface (commonly Electrospray Ionization - ESI or Atmospheric Pressure Chemical Ionization - APCI) is a modular component procured separately, essential for converting liquid effluent to gas-phase ions."
+          },
+          {
+            "name": "Vacuum System",
+            "confidence": 0.9,
+            "reasoning": "Includes high-vacuum pumps (turbo molecular and backing pumps) necessary to maintain low pressure environments within the mass analyzer; typically procured as discrete vacuum assemblies."
+          },
+          {
+            "name": "Detector Module",
+            "confidence": 0.92,
+            "reasoning": "A standalone unit capturing ion signals (e.g., electron multiplier or photomultiplier tubes), with a separate supply chain, often replaceable or serviced independently."
+          },
+          {
+            "name": "Data Acquisition and Control Electronics",
+            "confidence": 0.88,
+            "reasoning": "The instrument\u2019s computing and electronic control systems are modular assemblies managing instrument parameters and data recording, procured as integrated circuit board assemblies."
+          },
+          {
+            "name": "Sample Introduction System",
+            "confidence": 0.8,
+            "reasoning": "Includes autosamplers and sample trays, separately manufactured units enabling automated sample delivery into the LC module, common but can vary by instrument configuration."
+          },
+          {
+            "name": "Interface Housing and Enclosure",
+            "confidence": 0.75,
+            "reasoning": "The structural chassis and external enclosure are often procured as distinct assemblies, providing mechanical support and environmental protection; designs vary but usually sourced separately."
+          },
+          {
+            "name": "Collision Cell",
+            "confidence": 0.95,
+            "reasoning": "The collision (or collision-induced dissociation) cell is the middle quadrupole assembly where ion fragmentation occurs; it is a distinct module within the triple quadrupole system."
+          },
+          {
+            "name": "Power Supply Unit",
+            "confidence": 0.85,
+            "reasoning": "A dedicated power supply assembly providing regulated power to different instrument subsystems, procured separately for reliability and maintenance considerations."
+          }
+        ],
+        "technology_specification": "Triple Quadrupole Liquid Chromatography-Mass Spectrometer (LC\u2013MS) is an analytical instrument combining a liquid chromatograph with a triple quadrupole mass analyzer to enable highly selective and sensitive detection and quantification of chemical compounds in complex samples.",
+        "technology_reasoning": "The triple quadrupole LC\u2013MS configuration is the industry standard for quantitative bioanalytical applications due to its high specificity and sensitivity, using three quadrupoles in series (two for mass filtering and one for collision-induced dissociation) to perform tandem mass spectrometry (MS/MS). This setup dominates fields such as pharmaceuticals, environmental testing, and proteomics."
+      }
+    ],
+    "phase2_debate_rounds": [
+      {
+        "round_num": 1,
+        "convergence": 0.3474046786546786,
+        "threshold": 0.7,
+        "threshold_reached": false,
+        "proposals": {
+          "Agent_1": [
+            {
+              "name": "Liquid Chromatography (LC) Module",
+              "confidence": 0.95,
+              "reasoning": "This is a complex subassembly comprising pumps, solvent delivery, and column compartment procured as a complete unit, distinct from the mass spectrometer, essential for sample separation prior to MS analysis.",
+              "component": "Liquid Chromatography (LC) Module",
+              "normalized_component": "liquid chromatography"
+            },
+            {
+              "name": "Ion Source Assembly (e.g., Electrospray Ionization source)",
+              "confidence": 0.97,
+              "reasoning": "The ion source is a standalone module that ionizes sample molecules and is procurable from suppliers; critical and separable from mass analyzers.",
+              "component": "Ion Source Assembly (e.g., Electrospray Ionization source)",
+              "normalized_component": "ion source"
+            },
+            {
+              "name": "Triple Quadrupole Mass Analyzer Unit",
+              "confidence": 1.0,
+              "reasoning": "This is the core mass filtering component consisting of three sequential quadrupole rods and associated RF/DC electronics, always procured as a precise assembly distinct from other modules.",
+              "component": "Triple Quadrupole Mass Analyzer Unit",
+              "normalized_component": "triple quadrupole mass analyzer"
+            },
+            {
+              "name": "Collision Cell (Second Quadrupole with collision gas injection)",
+              "confidence": 0.93,
+              "reasoning": "Often integrated with the triple quadrupole assembly but sometimes a separately procured unit or subassembly, this component allows fragmentation of parent ions for MS/MS analysis.",
+              "component": "Collision Cell (Second Quadrupole with collision gas injection)",
+              "normalized_component": "collision cell (q2)"
+            },
+            {
+              "name": "Detector Module (Electron multiplier or similar)",
+              "confidence": 0.95,
+              "reasoning": "The detector converts ions to electrical signals and is a discrete module supplied separately by specialized vendors or integrated manufacturers.",
+              "component": "Detector Module (Electron multiplier or similar)",
+              "normalized_component": "ion detector"
+            },
+            {
+              "name": "Vacuum System Assembly (including turbo molecular pump)",
+              "confidence": 0.9,
+              "reasoning": "The vacuum system, critical for maintaining low pressure in the MS, consists of pumps and chambers procured as separate assemblies distinct from MS electronics.",
+              "component": "Vacuum System Assembly (including turbo molecular pump)",
+              "normalized_component": "vacuum"
+            },
+            {
+              "name": "Data Acquisition and Control Electronics Unit",
+              "confidence": 0.88,
+              "reasoning": "Includes the electronics and computer interface board responsible for controlling MS operation and data capture, supplied as a distinct manufactured subsystem.",
+              "component": "Data Acquisition and Control Electronics Unit",
+              "normalized_component": "data acquisition and control electronics"
+            },
+            {
+              "name": "Sample Introduction and Interface Hardware",
+              "confidence": 0.75,
+              "reasoning": "Includes interfaces such as capillary tubes, nebulizers, or heated transfer lines; sometimes procured separately but occasionally integrated within ion source assembly.",
+              "component": "Sample Introduction and Interface Hardware",
+              "normalized_component": "sample introduction"
+            }
+          ],
+          "Agent_2": [
+            {
+              "name": "Liquid Chromatography (LC) Module",
+              "confidence": 0.98,
+              "reasoning": "The LC module is a complete subsystems including pumps, injector, and solvent delivery system, critical for sample separation prior to mass analysis and typically procured as a manufactured unit.",
+              "component": "Liquid Chromatography (LC) Module",
+              "normalized_component": "liquid chromatography"
+            },
+            {
+              "name": "Electrospray Ionization (ESI) Source",
+              "confidence": 0.95,
+              "reasoning": "The ESI source physically interfaces the LC output with the mass spectrometer, producing ions from liquid samples; it is a specialized, separate assembly standard in LC\u2013MS systems.",
+              "component": "Electrospray Ionization (ESI) Source",
+              "normalized_component": "electrospray ionization (esi) source"
+            },
+            {
+              "name": "First Quadrupole Mass Filter (Q1)",
+              "confidence": 0.97,
+              "reasoning": "Q1 serves as the first mass analyzer selecting precursor ions, a discrete component arranged in sequence and procured as a manufactured mass filter assembly.",
+              "component": "First Quadrupole Mass Filter (Q1)",
+              "normalized_component": "quadrupole mass filter (q1)"
+            },
+            {
+              "name": "Collision Cell (Second Quadrupole, Q2)",
+              "confidence": 0.96,
+              "reasoning": "Q2 acts as a collision cell where selected ions fragment; it is a dedicated RF-only quadrupole assembly, distinct and procured separately.",
+              "component": "Collision Cell (Second Quadrupole, Q2)",
+              "normalized_component": "collision cell (q2)"
+            },
+            {
+              "name": "Third Quadrupole Mass Filter (Q3)",
+              "confidence": 0.97,
+              "reasoning": "Q3 filters the fragment ions before detection; this is a separate mass filter unit critical to the triple quadrupole configuration.",
+              "component": "Third Quadrupole Mass Filter (Q3)",
+              "normalized_component": "quadrupole mass filter (q3)"
+            },
+            {
+              "name": "Ion Detector Assembly",
+              "confidence": 0.93,
+              "reasoning": "The detector (e.g., electron multiplier or photomultiplier) registers incoming ions; it is a distinct, replaceable electronic subassembly.",
+              "component": "Ion Detector Assembly",
+              "normalized_component": "ion detector"
+            },
+            {
+              "name": "Vacuum System (Turbomolecular and Rotary Pumps)",
+              "confidence": 0.92,
+              "reasoning": "Maintaining the high vacuum environment is essential for mass spectrometry operation; the vacuum system consists of procurement-ready pump units and is a primary physical assembly.",
+              "component": "Vacuum System (Turbomolecular and Rotary Pumps)",
+              "normalized_component": "vacuum"
+            },
+            {
+              "name": "Mass Spectrometer Vacuum Chamber",
+              "confidence": 0.9,
+              "reasoning": "The vacuum chamber houses the quadrupoles and ion optics; it is a machined structural assembly procured as a distinct unit.",
+              "component": "Mass Spectrometer Vacuum Chamber",
+              "normalized_component": "vacuum chamber"
+            },
+            {
+              "name": "Ion Optics Assembly",
+              "confidence": 0.88,
+              "reasoning": "Includes lenses and multipoles that guide ions through the mass spectrometer; these are manufactured subassemblies with distinct supply chains.",
+              "component": "Ion Optics Assembly",
+              "normalized_component": "ion optics"
+            },
+            {
+              "name": "Instrument Control Electronics Module",
+              "confidence": 0.85,
+              "reasoning": "Dedicated boards and electronics for controlling quadrupole voltages, data acquisition, and user interface, procured as separate modules.",
+              "component": "Instrument Control Electronics Module",
+              "normalized_component": "mass spectrometer control electronics"
+            },
+            {
+              "name": "Instrument Enclosure and Frame",
+              "confidence": 0.9,
+              "reasoning": "Structural housing that contains and supports all internal modules, typically procured as a manufactured metal or composite frame assembly.",
+              "component": "Instrument Enclosure and Frame",
+              "normalized_component": "instrument enclosure and frame"
+            }
+          ],
+          "Agent_3": [
+            {
+              "name": "Liquid Chromatography (LC) Module",
+              "confidence": 0.98,
+              "reasoning": "The LC module, consisting of pumps, autosampler, and column oven, is a major functional unit procured as a complete assembly to perform sample separation before mass spectrometry.",
+              "component": "Liquid Chromatography (LC) Module",
+              "normalized_component": "liquid chromatography"
+            },
+            {
+              "name": "Electrospray Ionization (ESI) Source",
+              "confidence": 0.95,
+              "reasoning": "The ionization source is a distinct, procurable subassembly converting liquid analyte to gas-phase ions; ESI is standard for biomolecule ionization and typically replaced or upgraded separately.",
+              "component": "Electrospray Ionization (ESI) Source",
+              "normalized_component": "electrospray ionization (esi) source"
+            },
+            {
+              "name": "Triple Quadrupole Mass Analyzer",
+              "confidence": 1.0,
+              "reasoning": "The core mass analysis unit made of three sequential quadrupoles (Q1, Q2 collision cell, Q3) is the defining hardware of this technology and is a separately manufactured assembly.",
+              "component": "Triple Quadrupole Mass Analyzer",
+              "normalized_component": "triple quadrupole mass analyzer"
+            },
+            {
+              "name": "Vacuum System (Turbomolecular and Rotary Pumps)",
+              "confidence": 0.93,
+              "reasoning": "Maintains high vacuum required for mass spectrometry operation and is typically purchased as distinct pump assemblies with specific performance parameters.",
+              "component": "Vacuum System (Turbomolecular and Rotary Pumps)",
+              "normalized_component": "vacuum"
+            },
+            {
+              "name": "Detector Assembly (Electron Multiplier or Microchannel Plate)",
+              "confidence": 0.9,
+              "reasoning": "Detects ions exiting the mass analyzer, a critical subsystem procured separately due to specificity and sensitivity requirements.",
+              "component": "Detector Assembly (Electron Multiplier or Microchannel Plate)",
+              "normalized_component": "ion detector"
+            },
+            {
+              "name": "Mass Spectrometer Control Electronics (Power Supplies and Signal Processing Unit)",
+              "confidence": 0.9,
+              "reasoning": "Includes the electronic modules responsible for controlling the mass analyzer and processing detection signals; often modular and supplied as distinct units.",
+              "component": "Mass Spectrometer Control Electronics (Power Supplies and Signal Processing Unit)",
+              "normalized_component": "mass spectrometer control electronics"
+            },
+            {
+              "name": "Data Acquisition and Processing System (Computer and Software Module)",
+              "confidence": 0.88,
+              "reasoning": "Although partially integrated in the instrument, the computer system running the instrument software is a distinct purchasable assembly necessary for data analysis and instrument control.",
+              "component": "Data Acquisition and Processing System (Computer and Software Module)",
+              "normalized_component": "data acquisition and processing"
+            },
+            {
+              "name": "Sample Introduction System (Autosampler Manifold and Injector)",
+              "confidence": 0.85,
+              "reasoning": "Facilitates automated injection of sample into the LC system and is a subassembly often replaced or upgraded independently.",
+              "component": "Sample Introduction System (Autosampler Manifold and Injector)",
+              "normalized_component": "sample introduction"
+            },
+            {
+              "name": "Interface Region (Ion Transfer Optics and Skimmer Cone)",
+              "confidence": 0.8,
+              "reasoning": "Physically separates atmospheric pressure ionization source from vacuum mass analyzer, a specialized component often procured separately for optimization purposes.",
+              "component": "Interface Region (Ion Transfer Optics and Skimmer Cone)",
+              "normalized_component": "interface region"
+            },
+            {
+              "name": "Instrument Frame and Cabinet Enclosure",
+              "confidence": 0.8,
+              "reasoning": "Provides structural support and environmental protection for internal components, typically a separately manufactured and procured chassis assembly.",
+              "component": "Instrument Frame and Cabinet Enclosure",
+              "normalized_component": "instrument enclosure and frame"
+            }
+          ],
+          "Agent_4": [
+            {
+              "name": "Liquid Chromatography (LC) Module",
+              "confidence": 0.98,
+              "reasoning": "This module performs the separation of complex mixtures before MS detection and is a separately manufactured and procured subsystem including pumps, injection system, and columns.",
+              "component": "Liquid Chromatography (LC) Module",
+              "normalized_component": "liquid chromatography"
+            },
+            {
+              "name": "Triple Quadrupole Mass Analyzer Assembly",
+              "confidence": 0.99,
+              "reasoning": "The core mass spectrometry component consisting of three quadrupole mass filters configured for precursor selection, collision-induced dissociation, and product ion filtering, procured as a major subassembly.",
+              "component": "Triple Quadrupole Mass Analyzer Assembly",
+              "normalized_component": "triple quadrupole mass analyzer"
+            },
+            {
+              "name": "Ionization Source (e.g., Electrospray Ionization, ESI)",
+              "confidence": 0.97,
+              "reasoning": "Crucial for converting liquid phase analytes to gas phase ions compatible with MS; often modular and interchangeable, typically supplied as a distinct unit.",
+              "component": "Ionization Source (e.g., Electrospray Ionization, ESI)",
+              "normalized_component": "electrospray ionization (esi) source"
+            },
+            {
+              "name": "Vacuum System (including turbo and roughing pumps)",
+              "confidence": 0.95,
+              "reasoning": "Essential for maintaining high vacuum inside the mass analyzer; vacuum pumps are standard, critical subsystems procured independently.",
+              "component": "Vacuum System (including turbo and roughing pumps)",
+              "normalized_component": "vacuum"
+            },
+            {
+              "name": "Data Acquisition and Control Electronics",
+              "confidence": 0.93,
+              "reasoning": "Includes signal processing hardware, control boards, and interfaces needed for instrument operation and data collection as a distinct electronics subsystem.",
+              "component": "Data Acquisition and Control Electronics",
+              "normalized_component": "data acquisition and control electronics"
+            },
+            {
+              "name": "Collision Cell (RF-only quadrupole)",
+              "confidence": 0.9,
+              "reasoning": "The integrated collision cell within the triple quadrupole MS that facilitates fragmentation of ions is a specialized subassembly, sometimes serviced separately.",
+              "component": "Collision Cell (RF-only quadrupole)",
+              "normalized_component": "collision cell"
+            },
+            {
+              "name": "Vacuum Chamber and Ion Optics Assembly",
+              "confidence": 0.9,
+              "reasoning": "Structural enclosure and ion transmission elements facilitating ion guidance through the mass analyzer, manufactured and procured as a unit.",
+              "component": "Vacuum Chamber and Ion Optics Assembly",
+              "normalized_component": "vacuum chamber and ion optics"
+            },
+            {
+              "name": "User Interface Console (Display and Input Controls)",
+              "confidence": 0.85,
+              "reasoning": "Separate computer console or integrated touchscreen for instrument operation and user interaction, commonly procurable independently.",
+              "component": "User Interface Console (Display and Input Controls)",
+              "normalized_component": "user interface console"
+            }
+          ],
+          "Agent_5": [
+            {
+              "name": "Liquid Chromatography Module",
+              "confidence": 0.98,
+              "reasoning": "This is the front-end separation system, including pumps, injector, and chromatographic columns, procured as a distinct subassembly critical for sample separation before MS analysis.",
+              "component": "Liquid Chromatography Module",
+              "normalized_component": "liquid chromatography"
+            },
+            {
+              "name": "Triple Quadrupole Mass Analyzer",
+              "confidence": 1.0,
+              "reasoning": "The core mass filtering component of the instrument, consisting of three quadrupole rods arranged sequentially; this proprietary module defines the instrument's functionality and has a dedicated supply chain.",
+              "component": "Triple Quadrupole Mass Analyzer",
+              "normalized_component": "triple quadrupole mass analyzer"
+            },
+            {
+              "name": "Ion Source Assembly",
+              "confidence": 0.95,
+              "reasoning": "The ionization interface (commonly Electrospray Ionization - ESI or Atmospheric Pressure Chemical Ionization - APCI) is a modular component procured separately, essential for converting liquid effluent to gas-phase ions.",
+              "component": "Ion Source Assembly",
+              "normalized_component": "ion source"
+            },
+            {
+              "name": "Vacuum System",
+              "confidence": 0.9,
+              "reasoning": "Includes high-vacuum pumps (turbo molecular and backing pumps) necessary to maintain low pressure environments within the mass analyzer; typically procured as discrete vacuum assemblies.",
+              "component": "Vacuum System",
+              "normalized_component": "vacuum"
+            },
+            {
+              "name": "Detector Module",
+              "confidence": 0.92,
+              "reasoning": "A standalone unit capturing ion signals (e.g., electron multiplier or photomultiplier tubes), with a separate supply chain, often replaceable or serviced independently.",
+              "component": "Detector Module",
+              "normalized_component": "ion detector"
+            },
+            {
+              "name": "Data Acquisition and Control Electronics",
+              "confidence": 0.88,
+              "reasoning": "The instrument\u2019s computing and electronic control systems are modular assemblies managing instrument parameters and data recording, procured as integrated circuit board assemblies.",
+              "component": "Data Acquisition and Control Electronics",
+              "normalized_component": "data acquisition and control electronics"
+            },
+            {
+              "name": "Sample Introduction System",
+              "confidence": 0.8,
+              "reasoning": "Includes autosamplers and sample trays, separately manufactured units enabling automated sample delivery into the LC module, common but can vary by instrument configuration.",
+              "component": "Sample Introduction System",
+              "normalized_component": "sample introduction"
+            },
+            {
+              "name": "Interface Housing and Enclosure",
+              "confidence": 0.75,
+              "reasoning": "The structural chassis and external enclosure are often procured as distinct assemblies, providing mechanical support and environmental protection; designs vary but usually sourced separately.",
+              "component": "Interface Housing and Enclosure",
+              "normalized_component": "interface region"
+            },
+            {
+              "name": "Collision Cell",
+              "confidence": 0.95,
+              "reasoning": "The collision (or collision-induced dissociation) cell is the middle quadrupole assembly where ion fragmentation occurs; it is a distinct module within the triple quadrupole system.",
+              "component": "Collision Cell",
+              "normalized_component": "collision cell"
+            },
+            {
+              "name": "Power Supply Unit",
+              "confidence": 0.85,
+              "reasoning": "A dedicated power supply assembly providing regulated power to different instrument subsystems, procured separately for reliability and maintenance considerations.",
+              "component": "Power Supply Unit",
+              "normalized_component": "power supply"
+            }
+          ]
+        },
+        "rounds_completed": 1,
+        "support_analysis": {
+          "consensus": [
+            "data acquisition and control electronics",
+            "sample introduction",
+            "electrospray ionization (esi) source"
+          ],
+          "majority": [
+            "liquid chromatography",
+            "ion source",
+            "triple quadrupole mass analyzer",
+            "collision cell (q2)",
+            "ion detector",
+            "vacuum",
+            "mass spectrometer control electronics",
+            "instrument enclosure and frame",
+            "interface region",
+            "collision cell"
+          ],
+          "isolated": [
+            "quadrupole mass filter (q1)",
+            "quadrupole mass filter (q3)",
+            "vacuum chamber",
+            "ion optics",
+            "data acquisition and processing",
+            "vacuum chamber and ion optics",
+            "user interface console",
+            "power supply"
+          ]
+        },
+        "critiques": [
+          {
+            "item_name": "liquid chromatography",
+            "normalized_name": "liquid chromatography",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_4",
+              "Agent_2",
+              "Agent_5",
+              "Agent_3"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.974,
+            "critique_text": "Majority support for 'liquid chromatography': 5/3 agents agree (conf: 0.97). Consider strengthening consensus."
+          },
+          {
+            "item_name": "ion source",
+            "normalized_name": "ion source",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_5"
+            ],
+            "opposing_agents": [
+              "Agent_3",
+              "Agent_4",
+              "Agent_2"
+            ],
+            "avg_confidence": 0.96,
+            "critique_text": "Majority support for 'ion source': 2/3 agents agree (conf: 0.96). Consider strengthening consensus."
+          },
+          {
+            "item_name": "triple quadrupole mass analyzer",
+            "normalized_name": "triple quadrupole mass analyzer",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_5",
+              "Agent_4",
+              "Agent_3"
+            ],
+            "opposing_agents": [
+              "Agent_2"
+            ],
+            "avg_confidence": 0.9975,
+            "critique_text": "Majority support for 'triple quadrupole mass analyzer': 4/3 agents agree (conf: 1.00). Consider strengthening consensus."
+          },
+          {
+            "item_name": "collision cell (q2)",
+            "normalized_name": "collision cell (q2)",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_5",
+              "Agent_4",
+              "Agent_3"
+            ],
+            "avg_confidence": 0.9450000000000001,
+            "critique_text": "Majority support for 'collision cell (q2)': 2/3 agents agree (conf: 0.95). Consider strengthening consensus."
+          },
+          {
+            "item_name": "ion detector",
+            "normalized_name": "ion detector",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_5",
+              "Agent_3",
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_4"
+            ],
+            "avg_confidence": 0.925,
+            "critique_text": "Majority support for 'ion detector': 4/3 agents agree (conf: 0.93). Consider strengthening consensus."
+          },
+          {
+            "item_name": "vacuum",
+            "normalized_name": "vacuum",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_4",
+              "Agent_2",
+              "Agent_5",
+              "Agent_3"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.9199999999999999,
+            "critique_text": "Majority support for 'vacuum': 5/3 agents agree (conf: 0.92). Consider strengthening consensus."
+          },
+          {
+            "item_name": "data acquisition and control electronics",
+            "normalized_name": "data acquisition and control electronics",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_5",
+              "Agent_4"
+            ],
+            "opposing_agents": [
+              "Agent_3",
+              "Agent_2"
+            ],
+            "avg_confidence": 0.8966666666666666,
+            "critique_text": "Strong consensus on 'data acquisition and control electronics': all 3 agents support with avg confidence 0.90. Preserve this component."
+          },
+          {
+            "item_name": "sample introduction",
+            "normalized_name": "sample introduction",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_5",
+              "Agent_3"
+            ],
+            "opposing_agents": [
+              "Agent_4",
+              "Agent_2"
+            ],
+            "avg_confidence": 0.7999999999999999,
+            "critique_text": "Strong consensus on 'sample introduction': all 3 agents support with avg confidence 0.80. Preserve this component."
+          },
+          {
+            "item_name": "electrospray ionization (esi) source",
+            "normalized_name": "electrospray ionization (esi) source",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_4",
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_1",
+              "Agent_5"
+            ],
+            "avg_confidence": 0.9566666666666667,
+            "critique_text": "Strong consensus on 'electrospray ionization (esi) source': all 3 agents support with avg confidence 0.96. Preserve this component."
+          },
+          {
+            "item_name": "quadrupole mass filter (q1)",
+            "normalized_name": "quadrupole mass filter (q1)",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_1",
+              "Agent_5",
+              "Agent_4",
+              "Agent_3"
+            ],
+            "avg_confidence": 0.97,
+            "critique_text": "Isolated proposal 'quadrupole mass filter (q1)' from 1 agent(s) (conf: 0.97). Requires justification or peer validation."
+          },
+          {
+            "item_name": "quadrupole mass filter (q3)",
+            "normalized_name": "quadrupole mass filter (q3)",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_1",
+              "Agent_5",
+              "Agent_4",
+              "Agent_3"
+            ],
+            "avg_confidence": 0.97,
+            "critique_text": "Isolated proposal 'quadrupole mass filter (q3)' from 1 agent(s) (conf: 0.97). Requires justification or peer validation."
+          },
+          {
+            "item_name": "vacuum chamber",
+            "normalized_name": "vacuum chamber",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_1",
+              "Agent_5",
+              "Agent_4",
+              "Agent_3"
+            ],
+            "avg_confidence": 0.9,
+            "critique_text": "Isolated proposal 'vacuum chamber' from 1 agent(s) (conf: 0.90). Requires justification or peer validation."
+          },
+          {
+            "item_name": "ion optics",
+            "normalized_name": "ion optics",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_1",
+              "Agent_5",
+              "Agent_4",
+              "Agent_3"
+            ],
+            "avg_confidence": 0.88,
+            "critique_text": "Isolated proposal 'ion optics' from 1 agent(s) (conf: 0.88). Requires justification or peer validation."
+          },
+          {
+            "item_name": "mass spectrometer control electronics",
+            "normalized_name": "mass spectrometer control electronics",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_1",
+              "Agent_5",
+              "Agent_4"
+            ],
+            "avg_confidence": 0.875,
+            "critique_text": "Majority support for 'mass spectrometer control electronics': 2/3 agents agree (conf: 0.88). Consider strengthening consensus."
+          },
+          {
+            "item_name": "instrument enclosure and frame",
+            "normalized_name": "instrument enclosure and frame",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_1",
+              "Agent_5",
+              "Agent_4"
+            ],
+            "avg_confidence": 0.8500000000000001,
+            "critique_text": "Majority support for 'instrument enclosure and frame': 2/3 agents agree (conf: 0.85). Consider strengthening consensus."
+          },
+          {
+            "item_name": "data acquisition and processing",
+            "normalized_name": "data acquisition and processing",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_3"
+            ],
+            "opposing_agents": [
+              "Agent_1",
+              "Agent_5",
+              "Agent_4",
+              "Agent_2"
+            ],
+            "avg_confidence": 0.88,
+            "critique_text": "Isolated proposal 'data acquisition and processing' from 1 agent(s) (conf: 0.88). Requires justification or peer validation."
+          },
+          {
+            "item_name": "interface region",
+            "normalized_name": "interface region",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_5",
+              "Agent_3"
+            ],
+            "opposing_agents": [
+              "Agent_1",
+              "Agent_4",
+              "Agent_2"
+            ],
+            "avg_confidence": 0.775,
+            "critique_text": "Majority support for 'interface region': 2/3 agents agree (conf: 0.78). Consider strengthening consensus."
+          },
+          {
+            "item_name": "collision cell",
+            "normalized_name": "collision cell",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_5",
+              "Agent_4"
+            ],
+            "opposing_agents": [
+              "Agent_1",
+              "Agent_3",
+              "Agent_2"
+            ],
+            "avg_confidence": 0.925,
+            "critique_text": "Majority support for 'collision cell': 2/3 agents agree (conf: 0.93). Consider strengthening consensus."
+          },
+          {
+            "item_name": "vacuum chamber and ion optics",
+            "normalized_name": "vacuum chamber and ion optics",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_4"
+            ],
+            "opposing_agents": [
+              "Agent_1",
+              "Agent_3",
+              "Agent_5",
+              "Agent_2"
+            ],
+            "avg_confidence": 0.9,
+            "critique_text": "Isolated proposal 'vacuum chamber and ion optics' from 1 agent(s) (conf: 0.90). Requires justification or peer validation."
+          },
+          {
+            "item_name": "user interface console",
+            "normalized_name": "user interface console",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_4"
+            ],
+            "opposing_agents": [
+              "Agent_1",
+              "Agent_3",
+              "Agent_5",
+              "Agent_2"
+            ],
+            "avg_confidence": 0.85,
+            "critique_text": "Isolated proposal 'user interface console' from 1 agent(s) (conf: 0.85). Requires justification or peer validation."
+          },
+          {
+            "item_name": "power supply",
+            "normalized_name": "power supply",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_5"
+            ],
+            "opposing_agents": [
+              "Agent_1",
+              "Agent_3",
+              "Agent_4",
+              "Agent_2"
+            ],
+            "avg_confidence": 0.85,
+            "critique_text": "Isolated proposal 'power supply' from 1 agent(s) (conf: 0.85). Requires justification or peer validation."
+          }
+        ],
+        "changes_from_previous": null
+      },
+      {
+        "round_num": 2,
+        "convergence": 0.6319191919191919,
+        "threshold": 0.7,
+        "threshold_reached": false,
+        "proposals": {
+          "Agent_1": [
+            {
+              "agent_id": "Agent_1",
+              "component": "Liquid Chromatography (LC) Module",
+              "confidence": 0.97,
+              "reasoning": "Strong consensus from all 5 agents with average confidence 0.97; essential initial separation module for LC-MS.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Triple Quadrupole Mass Analyzer Unit",
+              "confidence": 1.0,
+              "reasoning": "Unanimous full support with average confidence 1.00; core mass analysis component for triple quad LC-MS.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Ion Source Assembly (e.g., Electrospray Ionization source)",
+              "confidence": 0.96,
+              "reasoning": "Strong consensus among 3+ agents with average confidence ~0.96; critical for ionizing analytes for MS detection.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Collision Cell (Second Quadrupole, Q2)",
+              "confidence": 0.94,
+              "reasoning": "Multiple agents choose collision cell variants with high confidence ~0.93-0.96; key for fragmentation in MS/MS.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Detector Module (Electron multiplier or similar)",
+              "confidence": 0.93,
+              "reasoning": "Strong consensus with average confidence ~0.93; required to detect ions after mass filtering.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Vacuum System Assembly (including turbo molecular pump)",
+              "confidence": 0.92,
+              "reasoning": "Strong consensus with average confidence 0.92; necessary to maintain vacuum for ion transmission and MS operation.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Data Acquisition and Control Electronics Unit",
+              "confidence": 0.9,
+              "reasoning": "Multiple agents support with average confidence ~0.90; needed for controlling spectrometer functions and acquiring data.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Sample Introduction and Interface Hardware",
+              "confidence": 0.8,
+              "reasoning": "Supported by 3 agents averaging 0.80 confidence; needed to introduce and interface samples from LC to MS.",
+              "round": 2
+            }
+          ],
+          "Agent_2": [
+            {
+              "agent_id": "Agent_2",
+              "component": "Liquid Chromatography (LC) Module",
+              "confidence": 0.97,
+              "reasoning": "Strong consensus from all agents with high average confidence of 0.97, essential for initial sample separation.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Triple Quadrupole Mass Analyzer Assembly",
+              "confidence": 1.0,
+              "reasoning": "Unanimous and very high confidence (avg 1.00) from agents; core component defining this instrument type.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Ion Source Assembly (e.g., Electrospray Ionization source)",
+              "confidence": 0.96,
+              "reasoning": "High consensus with three agents supporting ESI sources averaging ~0.96 confidence; critical for ionization.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Collision Cell (Second Quadrupole, Q2)",
+              "confidence": 0.94,
+              "reasoning": "Multiple agents support collision cell variants with strong confidence ~0.93-0.96; essential for fragmentation in triple quad.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Detector Module (Electron multiplier or similar)",
+              "confidence": 0.93,
+              "reasoning": "Four agents support ion detection modules with an average confidence ~0.93, crucial for signal detection.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Vacuum System (including turbo and roughing pumps)",
+              "confidence": 0.92,
+              "reasoning": "Strong consensus across all agents on vacuum system importance with ~0.92 average confidence; fundamental to maintain ion path.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Data Acquisition and Control Electronics",
+              "confidence": 0.9,
+              "reasoning": "Good support from multiple agents (avg ~0.90), essential for control and data handling of the instrument.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Sample Introduction System (Autosampler Manifold and Injector)",
+              "confidence": 0.8,
+              "reasoning": "Grabbed support from three agents averaging 0.80 confidence; necessary for automated, reproducible sample injection.",
+              "round": 2
+            }
+          ],
+          "Agent_3": [
+            {
+              "agent_id": "Agent_3",
+              "component": "Liquid Chromatography (LC) Module",
+              "confidence": 0.97,
+              "reasoning": "Strong consensus among all agents with high average confidence; essential for the system.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Triple Quadrupole Mass Analyzer Unit",
+              "confidence": 1.0,
+              "reasoning": "Unanimous strong support with perfect confidence; core component of the instrument.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Ion Source Assembly (e.g., Electrospray Ionization source)",
+              "confidence": 0.96,
+              "reasoning": "High consensus with average confidence around 0.96; key component for ionization; includes ESI source.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Collision Cell (Second Quadrupole with collision gas injection)",
+              "confidence": 0.94,
+              "reasoning": "Multiple agents support collision cell; critical for fragmentation; choosing the most representative variant with high confidence.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Detector Module (Electron multiplier or similar)",
+              "confidence": 0.93,
+              "reasoning": "Strong peer support for ion detector therefore including detector module with high confidence.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Vacuum System Assembly (including turbo molecular pump)",
+              "confidence": 0.92,
+              "reasoning": "Strong consensus on vacuum system with average confidence around 0.92; essential for mass spectrometer operation.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Data Acquisition and Control Electronics Unit",
+              "confidence": 0.9,
+              "reasoning": "Three agents agree on data acquisition and control electronics with around 0.90 confidence; crucial for system management and data capture.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Sample Introduction and Interface Hardware",
+              "confidence": 0.8,
+              "reasoning": "Good support with average confidence 0.80; important for sample delivery to LC and MS.",
+              "round": 2
+            }
+          ],
+          "Agent_4": [
+            {
+              "agent_id": "Agent_4",
+              "component": "Liquid Chromatography (LC) Module",
+              "confidence": 0.97,
+              "reasoning": "Strong consensus among all agents with high confidence averaging 0.97; essential for sample separation before MS analysis.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "Triple Quadrupole Mass Analyzer Unit",
+              "confidence": 1.0,
+              "reasoning": "Unanimous and maximal confidence across agents; core component defining the instrument's capability and identity.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "Ion Source Assembly (e.g., Electrospray Ionization source)",
+              "confidence": 0.96,
+              "reasoning": "Widely supported with high confidence; crucial for ionizing the analytes, particularly electrospray ionization in LC-MS.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "Collision Cell (Second Quadrupole with collision gas injection)",
+              "confidence": 0.94,
+              "reasoning": "Strong multi-agent support with high confidence and critical for fragmentation in triple quadrupole setup.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "Detector Module (Electron multiplier or similar)",
+              "confidence": 0.93,
+              "reasoning": "Strong support across agents; indispensable for detecting ions and converting into measurable signals.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "Vacuum System Assembly (including turbo molecular pump)",
+              "confidence": 0.92,
+              "reasoning": "Strong consensus with high confidence; necessary for maintaining ultra-high vacuum conditions in MS system.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "Data Acquisition and Control Electronics Unit",
+              "confidence": 0.9,
+              "reasoning": "Multiple agents support with solid confidence; needed for system operation, data collection, and control.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "Sample Introduction and Interface Hardware",
+              "confidence": 0.8,
+              "reasoning": "Good peer support with reasonable confidence; essential for introducing samples efficiently and interfaces between LC and MS.",
+              "round": 2
+            }
+          ],
+          "Agent_5": [
+            {
+              "agent_id": "Agent_5",
+              "component": "Liquid Chromatography (LC) Module",
+              "confidence": 0.97,
+              "reasoning": "Strong consensus from all 5 agents with high confidence; a crucial component for separation in LC-MS.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_5",
+              "component": "Triple Quadrupole Mass Analyzer",
+              "confidence": 1.0,
+              "reasoning": "Unanimous and high confidence support as the core analyzer of the instrument.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_5",
+              "component": "Ion Source Assembly (e.g., Electrospray Ionization source)",
+              "confidence": 0.96,
+              "reasoning": "Strong support and central to ionization; slight preference to generalized name encompassing ESI.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_5",
+              "component": "Collision Cell (Second Quadrupole with collision gas injection)",
+              "confidence": 0.94,
+              "reasoning": "Well supported with high confidence; essential for fragmentation in tandem MS.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_5",
+              "component": "Detector Module (Electron multiplier or similar)",
+              "confidence": 0.93,
+              "reasoning": "High support and critical for ion detection; slightly adjust down to reflect combined detector naming.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_5",
+              "component": "Vacuum System (including turbo and roughing pumps)",
+              "confidence": 0.92,
+              "reasoning": "Strong peer support and critical for maintaining instrument vacuum.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_5",
+              "component": "Data Acquisition and Control Electronics",
+              "confidence": 0.9,
+              "reasoning": "Consensus among multiple agents; central for data and instrument control.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_5",
+              "component": "Sample Introduction System",
+              "confidence": 0.8,
+              "reasoning": "Supported by multiple agents; key for delivering sample to ionization source.",
+              "round": 2
+            }
+          ]
+        },
+        "rounds_completed": 2,
+        "support_analysis": {
+          "consensus": [
+            "vacuum system assembly (including turbo molecular pump)",
+            "sample introduction and interface hardware",
+            "collision cell (second quadrupole with collision gas injection)"
+          ],
+          "majority": [
+            "liquid chromatography (lc)",
+            "triple quadrupole mass analyzer",
+            "ion source assembly (e.g., electrospray ionization source)",
+            "collision cell (second quadrupole, q2)",
+            "detector module (electron multiplier or similar)",
+            "data acquisition and control electronics",
+            "vacuum system (including turbo and roughing pumps)"
+          ],
+          "isolated": [
+            "sample introduction system (autosampler manifold and injector)",
+            "sample introduction"
+          ]
+        },
+        "critiques": [
+          {
+            "item_name": "Liquid Chromatography (LC) Module",
+            "normalized_name": "liquid chromatography (lc)",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_4",
+              "Agent_2",
+              "Agent_5",
+              "Agent_3"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.97,
+            "critique_text": "Majority support for 'Liquid Chromatography (LC) Module': 5/3 agents agree (conf: 0.97). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Triple Quadrupole Mass Analyzer Unit",
+            "normalized_name": "triple quadrupole mass analyzer",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_4",
+              "Agent_2",
+              "Agent_5",
+              "Agent_3"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 1.0,
+            "critique_text": "Majority support for 'Triple Quadrupole Mass Analyzer Unit': 5/3 agents agree (conf: 1.00). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Ion Source Assembly (e.g., Electrospray Ionization source)",
+            "normalized_name": "ion source assembly (e.g., electrospray ionization source)",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_4",
+              "Agent_2",
+              "Agent_5",
+              "Agent_3"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.96,
+            "critique_text": "Majority support for 'Ion Source Assembly (e.g., Electrospray Ionization source)': 5/3 agents agree (conf: 0.96). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Collision Cell (Second Quadrupole, Q2)",
+            "normalized_name": "collision cell (second quadrupole, q2)",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_5",
+              "Agent_4",
+              "Agent_3"
+            ],
+            "avg_confidence": 0.94,
+            "critique_text": "Majority support for 'Collision Cell (Second Quadrupole, Q2)': 2/3 agents agree (conf: 0.94). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Detector Module (Electron multiplier or similar)",
+            "normalized_name": "detector module (electron multiplier or similar)",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_4",
+              "Agent_2",
+              "Agent_5",
+              "Agent_3"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.93,
+            "critique_text": "Majority support for 'Detector Module (Electron multiplier or similar)': 5/3 agents agree (conf: 0.93). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Vacuum System Assembly (including turbo molecular pump)",
+            "normalized_name": "vacuum system assembly (including turbo molecular pump)",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_4",
+              "Agent_3"
+            ],
+            "opposing_agents": [
+              "Agent_5",
+              "Agent_2"
+            ],
+            "avg_confidence": 0.92,
+            "critique_text": "Strong consensus on 'Vacuum System Assembly (including turbo molecular pump)': all 3 agents support with avg confidence 0.92. Preserve this component."
+          },
+          {
+            "item_name": "Data Acquisition and Control Electronics Unit",
+            "normalized_name": "data acquisition and control electronics",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_4",
+              "Agent_2",
+              "Agent_5",
+              "Agent_3"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.9,
+            "critique_text": "Majority support for 'Data Acquisition and Control Electronics Unit': 5/3 agents agree (conf: 0.90). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Sample Introduction and Interface Hardware",
+            "normalized_name": "sample introduction and interface hardware",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_4",
+              "Agent_3"
+            ],
+            "opposing_agents": [
+              "Agent_5",
+              "Agent_2"
+            ],
+            "avg_confidence": 0.8000000000000002,
+            "critique_text": "Strong consensus on 'Sample Introduction and Interface Hardware': all 3 agents support with avg confidence 0.80. Preserve this component."
+          },
+          {
+            "item_name": "Vacuum System (including turbo and roughing pumps)",
+            "normalized_name": "vacuum system (including turbo and roughing pumps)",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_5",
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_1",
+              "Agent_4",
+              "Agent_3"
+            ],
+            "avg_confidence": 0.92,
+            "critique_text": "Majority support for 'Vacuum System (including turbo and roughing pumps)': 2/3 agents agree (conf: 0.92). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Sample Introduction System (Autosampler Manifold and Injector)",
+            "normalized_name": "sample introduction system (autosampler manifold and injector)",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_1",
+              "Agent_5",
+              "Agent_4",
+              "Agent_3"
+            ],
+            "avg_confidence": 0.8,
+            "critique_text": "Isolated proposal 'Sample Introduction System (Autosampler Manifold and Injector)' from 1 agent(s) (conf: 0.80). Requires justification or peer validation."
+          },
+          {
+            "item_name": "Collision Cell (Second Quadrupole with collision gas injection)",
+            "normalized_name": "collision cell (second quadrupole with collision gas injection)",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_5",
+              "Agent_4",
+              "Agent_3"
+            ],
+            "opposing_agents": [
+              "Agent_1",
+              "Agent_2"
+            ],
+            "avg_confidence": 0.94,
+            "critique_text": "Strong consensus on 'Collision Cell (Second Quadrupole with collision gas injection)': all 3 agents support with avg confidence 0.94. Preserve this component."
+          },
+          {
+            "item_name": "Sample Introduction System",
+            "normalized_name": "sample introduction",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_5"
+            ],
+            "opposing_agents": [
+              "Agent_1",
+              "Agent_3",
+              "Agent_4",
+              "Agent_2"
+            ],
+            "avg_confidence": 0.8,
+            "critique_text": "Isolated proposal 'Sample Introduction System' from 1 agent(s) (conf: 0.80). Requires justification or peer validation."
+          }
+        ],
+        "changes_from_previous": {
+          "items_added": [
+            "collision cell (second quadrupole with collision gas injection)",
+            "detector module (electron multiplier or similar)",
+            "liquid chromatography (lc)",
+            "sample introduction and interface hardware",
+            "ion source assembly (e.g., electrospray ionization source)",
+            "vacuum system assembly (including turbo molecular pump)",
+            "sample introduction system (autosampler manifold and injector)",
+            "collision cell (second quadrupole, q2)",
+            "vacuum system (including turbo and roughing pumps)"
+          ],
+          "items_removed": [
+            "collision cell (q2)",
+            "interface region",
+            "data acquisition and processing",
+            "instrument enclosure and frame",
+            "vacuum chamber and ion optics",
+            "electrospray ionization (esi) source",
+            "ion optics",
+            "collision cell",
+            "liquid chromatography",
+            "mass spectrometer control electronics",
+            "quadrupole mass filter (q1)",
+            "power supply",
+            "ion detector",
+            "quadrupole mass filter (q3)",
+            "vacuum",
+            "user interface console",
+            "vacuum chamber",
+            "ion source"
+          ],
+          "confidence_changes": {}
+        }
+      },
+      {
+        "round_num": 3,
+        "convergence": 0.8666666666666666,
+        "threshold": 0.7,
+        "threshold_reached": true,
+        "proposals": {
+          "Agent_1": [
+            {
+              "agent_id": "Agent_1",
+              "component": "Liquid Chromatography (LC) Module",
+              "confidence": 0.97,
+              "reasoning": "Strong consensus among all agents with high confidence and peer critique supports preserving it as essential.",
+              "round": 3,
+              "normalized_component": "Liquid Chromatography Module"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Triple Quadrupole Mass Analyzer",
+              "confidence": 1.0,
+              "reasoning": "Unanimous full consensus from all agents with perfect confidence; critical core component for this technology.",
+              "round": 3,
+              "normalized_component": "Mass Analyzer"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Ion Source Assembly (e.g., Electrospray Ionization source)",
+              "confidence": 0.96,
+              "reasoning": "Unanimous support with high confidence; essential for ionization and interface with mass analyzer.",
+              "round": 3,
+              "normalized_component": "Ion Source Assembly"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Collision Cell (Second Quadrupole with collision gas injection)",
+              "confidence": 0.94,
+              "reasoning": "Majority support and peer critique recommend preserving the version with collision gas injection for completeness and function.",
+              "round": 3,
+              "normalized_component": "Collision Cell"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Detector Module (Electron multiplier or similar)",
+              "confidence": 0.93,
+              "reasoning": "Unanimous agent support with good confidence; critical for detection of ions post-analysis.",
+              "round": 3,
+              "normalized_component": "Electron Multiplier Detector"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Vacuum System (including turbo and roughing pumps)",
+              "confidence": 0.92,
+              "reasoning": "High confidence and peer critique consolidates around this naming and inclusion for proper vacuum necessary in MS.",
+              "round": 3,
+              "normalized_component": "Vacuum System"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Data Acquisition and Control Electronics",
+              "confidence": 0.9,
+              "reasoning": "Consistent agent support and critical for controlling instrument functions and data capture.",
+              "round": 3,
+              "normalized_component": "Data Acquisition and Control Electronics"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Sample Introduction and Interface Hardware",
+              "confidence": 0.8,
+              "reasoning": "Supported by multiple agents and peer critique suggests maintaining this broader encompassing term rather than less supported narrower variations.",
+              "round": 3,
+              "normalized_component": "Sample Introduction Interface"
+            }
+          ],
+          "Agent_2": [
+            {
+              "agent_id": "Agent_2",
+              "component": "Liquid Chromatography (LC) Module",
+              "confidence": 0.97,
+              "reasoning": "Strong support from all agents and peer critiques, essential for separation in Triple Quadrupole LC-MS.",
+              "round": 3,
+              "normalized_component": "Liquid Chromatography Module"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Triple Quadrupole Mass Analyzer",
+              "confidence": 1.0,
+              "reasoning": "Unanimous support with perfect confidence, core analyzing component of the system.",
+              "round": 3,
+              "normalized_component": "Mass Analyzer"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Ion Source Assembly (e.g., Electrospray Ionization source)",
+              "confidence": 0.96,
+              "reasoning": "Consistently selected by all agents with high confidence, crucial for ion generation.",
+              "round": 3,
+              "normalized_component": "Ion Source Assembly"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Collision Cell (Second Quadrupole with collision gas injection)",
+              "confidence": 0.94,
+              "reasoning": "Strong multi-agent consensus and peer guidance, important for fragmentation in MS/MS analysis.",
+              "round": 3,
+              "normalized_component": "Collision Cell"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Detector Module (Electron multiplier or similar)",
+              "confidence": 0.93,
+              "reasoning": "Selected by all agents with high confidence, important for ion detection sensitivity.",
+              "round": 3,
+              "normalized_component": "Electron Multiplier Detector"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Vacuum System Assembly (including turbo molecular pump)",
+              "confidence": 0.92,
+              "reasoning": "Supported in majority of agent selections and critiques, vital for maintaining required MS vacuum conditions.",
+              "round": 3,
+              "normalized_component": "Vacuum System"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Data Acquisition and Control Electronics Unit",
+              "confidence": 0.9,
+              "reasoning": "Consistently supported by all agents, essential for data capture and system operation control.",
+              "round": 3,
+              "normalized_component": "Data Acquisition And Control Electronics Board"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Sample Introduction and Interface Hardware",
+              "confidence": 0.8,
+              "reasoning": "Selected by multiple agents and peer critique suggests preservation, necessary for sample handling and interface with LC.",
+              "round": 3,
+              "normalized_component": "Sample Introduction Interface"
+            }
+          ],
+          "Agent_3": [
+            {
+              "agent_id": "Agent_3",
+              "component": "Liquid Chromatography (LC) Module",
+              "confidence": 0.97,
+              "reasoning": "Unanimous support from all agents with very high confidence; essential for the LC-MS system.",
+              "round": 3,
+              "normalized_component": "Liquid Chromatography Module"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Triple Quadrupole Mass Analyzer",
+              "confidence": 1.0,
+              "reasoning": "Complete consensus on the triple quadrupole mass analyzer as core component, critical for instrument function.",
+              "round": 3,
+              "normalized_component": "Mass Analyzer"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Ion Source Assembly (e.g., Electrospray Ionization source)",
+              "confidence": 0.96,
+              "reasoning": "Fully supported by all agents and crucial for ionization of analytes.",
+              "round": 3,
+              "normalized_component": "Ion Source Assembly"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Collision Cell (Second Quadrupole with collision gas injection)",
+              "confidence": 0.94,
+              "reasoning": "Strong consensus on this specific collision cell with collision gas injection, important for fragmentation.",
+              "round": 3,
+              "normalized_component": "Collision Cell"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Detector Module (Electron multiplier or similar)",
+              "confidence": 0.93,
+              "reasoning": "Strong agreement by all on the detector module, essential for signal detection.",
+              "round": 3,
+              "normalized_component": "Electron Multiplier Detector"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Vacuum System Assembly (including turbo molecular pump)",
+              "confidence": 0.92,
+              "reasoning": "Multiple agent support; vacuum system is necessary for mass spectrometry operation.",
+              "round": 3,
+              "normalized_component": "Vacuum System"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Data Acquisition and Control Electronics",
+              "confidence": 0.9,
+              "reasoning": "Essential for operation and data management with full support.",
+              "round": 3,
+              "normalized_component": "Data Acquisition and Control Electronics"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Sample Introduction and Interface Hardware",
+              "confidence": 0.8,
+              "reasoning": "Supported by multiple agents; crucial for handling sample introduction to the instrument.",
+              "round": 3,
+              "normalized_component": "Sample Introduction Interface"
+            }
+          ],
+          "Agent_4": [
+            {
+              "agent_id": "Agent_4",
+              "component": "Liquid Chromatography (LC) Module",
+              "confidence": 0.97,
+              "reasoning": "Strong consensus from all agents with uniformly high confidence; critical for sample separation prior to mass analysis.",
+              "round": 3,
+              "normalized_component": "Liquid Chromatography Module"
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "Triple Quadrupole Mass Analyzer",
+              "confidence": 1.0,
+              "reasoning": "Unanimous full confidence from all agents, essential as the core mass analyzer in the system.",
+              "round": 3,
+              "normalized_component": "Mass Analyzer"
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "Ion Source Assembly (e.g., Electrospray Ionization source)",
+              "confidence": 0.96,
+              "reasoning": "High consensus and confidence; pivotal for ion generation from the sample.",
+              "round": 3,
+              "normalized_component": "Ion Source Assembly"
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "Collision Cell (Second Quadrupole with collision gas injection)",
+              "confidence": 0.94,
+              "reasoning": "Consensus among most agents and critique supports collision gas injection version; critical for fragmentation in tandem MS.",
+              "round": 3,
+              "normalized_component": "Collision Cell"
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "Detector Module (Electron multiplier or similar)",
+              "confidence": 0.93,
+              "reasoning": "Strong multi-agent support, necessary for detecting ions post-analysis.",
+              "round": 3,
+              "normalized_component": "Electron Multiplier Detector"
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "Vacuum System (including turbo and roughing pumps)",
+              "confidence": 0.92,
+              "reasoning": "Multiple agents support vacuum system with turbo and roughing pumps, essential for maintaining the vacuum environment.",
+              "round": 3,
+              "normalized_component": "Vacuum System"
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "Data Acquisition and Control Electronics",
+              "confidence": 0.9,
+              "reasoning": "All agents support core electronics component responsible for data acquisition and system control.",
+              "round": 3,
+              "normalized_component": "Data Acquisition and Control Electronics"
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "Sample Introduction and Interface Hardware",
+              "confidence": 0.8,
+              "reasoning": "Supported consistently by multiple agents; involved in introducing samples into the system, though confidence slightly lower due to naming variations.",
+              "round": 3,
+              "normalized_component": "Sample Introduction Interface"
+            }
+          ],
+          "Agent_5": [
+            {
+              "agent_id": "Agent_5",
+              "component": "Liquid Chromatography (LC) Module",
+              "confidence": 0.97,
+              "reasoning": "Strong unanimous support from all agents with high confidence; fundamental to the LC-MS system for sample separation.",
+              "round": 3,
+              "normalized_component": "Liquid Chromatography Module"
+            },
+            {
+              "agent_id": "Agent_5",
+              "component": "Triple Quadrupole Mass Analyzer",
+              "confidence": 1.0,
+              "reasoning": "Unanimous and consistent naming across all agents; the core component of the triple quadrupole mass spectrometer system.",
+              "round": 3,
+              "normalized_component": "Mass Analyzer"
+            },
+            {
+              "agent_id": "Agent_5",
+              "component": "Ion Source Assembly (e.g., Electrospray Ionization source)",
+              "confidence": 0.96,
+              "reasoning": "Uniformly supported by all agents as essential for ionizing sample molecules prior to mass analysis.",
+              "round": 3,
+              "normalized_component": "Ion Source Assembly"
+            },
+            {
+              "agent_id": "Agent_5",
+              "component": "Collision Cell (Second Quadrupole with collision gas injection)",
+              "confidence": 0.94,
+              "reasoning": "Strong multi-agent backing; critical for fragmentation of ions in tandem MS operations.",
+              "round": 3,
+              "normalized_component": "Collision Cell"
+            },
+            {
+              "agent_id": "Agent_5",
+              "component": "Detector Module (Electron multiplier or similar)",
+              "confidence": 0.93,
+              "reasoning": "Consensus from all agents; necessary for detecting and amplifying the ion signals post analysis.",
+              "round": 3,
+              "normalized_component": "Electron Multiplier Detector"
+            },
+            {
+              "agent_id": "Agent_5",
+              "component": "Vacuum System (including turbo and roughing pumps)",
+              "confidence": 0.92,
+              "reasoning": "Highly supported with slightly varying naming; essential to maintain vacuum conditions for accurate mass spectrometry.",
+              "round": 3,
+              "normalized_component": "Vacuum System"
+            },
+            {
+              "agent_id": "Agent_5",
+              "component": "Data Acquisition and Control Electronics",
+              "confidence": 0.9,
+              "reasoning": "Consistently selected across agents; key for instrument control, data collection, and processing.",
+              "round": 3,
+              "normalized_component": "Data Acquisition and Control Electronics"
+            },
+            {
+              "agent_id": "Agent_5",
+              "component": "Sample Introduction and Interface Hardware",
+              "confidence": 0.8,
+              "reasoning": "Moderate support from multiple agents; important for introducing samples into the LC-MS system effectively.",
+              "round": 3,
+              "normalized_component": "Sample Introduction Interface"
+            }
+          ]
+        },
+        "rounds_completed": 3,
+        "support_analysis": {
+          "consensus": [
+            "vacuum system (including turbo and roughing pumps)"
+          ],
+          "majority": [
+            "liquid chromatography (lc)",
+            "triple quadrupole mass analyzer",
+            "ion source assembly (e.g., electrospray ionization source)",
+            "collision cell (second quadrupole with collision gas injection)",
+            "detector module (electron multiplier or similar)",
+            "data acquisition and control electronics",
+            "sample introduction and interface hardware",
+            "vacuum system assembly (including turbo molecular pump)"
+          ],
+          "isolated": []
+        },
+        "critiques": [
+          {
+            "item_name": "Liquid Chromatography (LC) Module",
+            "normalized_name": "liquid chromatography (lc)",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_4",
+              "Agent_2",
+              "Agent_5",
+              "Agent_3"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.97,
+            "critique_text": "Majority support for 'Liquid Chromatography (LC) Module': 5/3 agents agree (conf: 0.97). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Triple Quadrupole Mass Analyzer",
+            "normalized_name": "triple quadrupole mass analyzer",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_4",
+              "Agent_2",
+              "Agent_5",
+              "Agent_3"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 1.0,
+            "critique_text": "Majority support for 'Triple Quadrupole Mass Analyzer': 5/3 agents agree (conf: 1.00). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Ion Source Assembly (e.g., Electrospray Ionization source)",
+            "normalized_name": "ion source assembly (e.g., electrospray ionization source)",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_4",
+              "Agent_2",
+              "Agent_5",
+              "Agent_3"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.96,
+            "critique_text": "Majority support for 'Ion Source Assembly (e.g., Electrospray Ionization source)': 5/3 agents agree (conf: 0.96). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Collision Cell (Second Quadrupole with collision gas injection)",
+            "normalized_name": "collision cell (second quadrupole with collision gas injection)",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_4",
+              "Agent_2",
+              "Agent_5",
+              "Agent_3"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.9399999999999998,
+            "critique_text": "Majority support for 'Collision Cell (Second Quadrupole with collision gas injection)': 5/3 agents agree (conf: 0.94). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Detector Module (Electron multiplier or similar)",
+            "normalized_name": "detector module (electron multiplier or similar)",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_4",
+              "Agent_2",
+              "Agent_5",
+              "Agent_3"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.93,
+            "critique_text": "Majority support for 'Detector Module (Electron multiplier or similar)': 5/3 agents agree (conf: 0.93). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Vacuum System (including turbo and roughing pumps)",
+            "normalized_name": "vacuum system (including turbo and roughing pumps)",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_5",
+              "Agent_4"
+            ],
+            "opposing_agents": [
+              "Agent_3",
+              "Agent_2"
+            ],
+            "avg_confidence": 0.92,
+            "critique_text": "Strong consensus on 'Vacuum System (including turbo and roughing pumps)': all 3 agents support with avg confidence 0.92. Preserve this component."
+          },
+          {
+            "item_name": "Data Acquisition and Control Electronics",
+            "normalized_name": "data acquisition and control electronics",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_4",
+              "Agent_2",
+              "Agent_5",
+              "Agent_3"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.9,
+            "critique_text": "Majority support for 'Data Acquisition and Control Electronics': 5/3 agents agree (conf: 0.90). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Sample Introduction and Interface Hardware",
+            "normalized_name": "sample introduction and interface hardware",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_4",
+              "Agent_2",
+              "Agent_5",
+              "Agent_3"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.8,
+            "critique_text": "Majority support for 'Sample Introduction and Interface Hardware': 5/3 agents agree (conf: 0.80). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Vacuum System Assembly (including turbo molecular pump)",
+            "normalized_name": "vacuum system assembly (including turbo molecular pump)",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_1",
+              "Agent_5",
+              "Agent_4"
+            ],
+            "avg_confidence": 0.92,
+            "critique_text": "Majority support for 'Vacuum System Assembly (including turbo molecular pump)': 2/3 agents agree (conf: 0.92). Consider strengthening consensus."
+          }
+        ],
+        "changes_from_previous": {
+          "items_added": [],
+          "items_removed": [
+            "collision cell (second quadrupole, q2)",
+            "sample introduction",
+            "sample introduction system (autosampler manifold and injector)"
+          ],
+          "confidence_changes": {}
+        }
+      }
+    ],
+    "phase3_final_consensus": {
+      "technology": "Triple Quadrupole LC\u2013MS Mass Spectrometer",
+      "technology_specification": "Triple Quadrupole LC\u2013MS Mass Spectrometer",
+      "technology_reasoning": "",
+      "components": [
+        "Mass Analyzer",
+        "Liquid Chromatography Module",
+        "Ion Source Assembly",
+        "Collision Cell",
+        "Electron Multiplier Detector",
+        "Vacuum System",
+        "Sample Introduction Interface",
+        "Data Acquisition And Control Electronics"
+      ],
+      "confidence": 0.8666666666666666,
+      "rounds": 3,
+      "convergence_score": 0.8666666666666666
+    }
+  },
+  "materials_debate": {
+    "debate_rounds": [],
+    "final_consensus": {
+      "components": 8,
+      "unique_materials": 14,
+      "total_assignments": 30,
+      "materials_by_component": {
+        "Mass Analyzer": [
+          {
+            "name": "Stainless steel (SS 304/316)",
+            "confidence": 0.95,
+            "reasoning": "Structural and vacuum-compatible material for mass analyzer electrodes and housing, industry standard for corrosion resistance and mechanical strength."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.75,
+            "reasoning": "Used for lightweight structural parts and electromagnetic shielding with good conductivity; common but sometimes replaced by stainless steel."
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.8,
+            "reasoning": "Essential for electrical connections and RF components due to high conductivity; standard material though silver can be alternatives in some cases."
+          },
+          {
+            "name": "Ceramic",
+            "confidence": 0.7,
+            "reasoning": "Used as electrical insulators in mass analyzer, common choice for high voltage and vacuum compatibility but alternatives like glass exist."
+          },
+          {
+            "name": "Graphite",
+            "confidence": 0.6,
+            "reasoning": "Used as a conductive surface coating or component in some mass analyzers for durability; alternatives exist and is somewhat application-specific."
+          }
+        ],
+        "Liquid Chromatography Module": [
+          {
+            "name": "Stainless steel (SS 304/316)",
+            "confidence": 0.9,
+            "reasoning": "Primary structural material and fluid pathway tubing due to corrosion resistance and strength, industry standard in LC systems."
+          },
+          {
+            "name": "C18 silica",
+            "confidence": 0.95,
+            "reasoning": "Critical stationary phase material for chromatographic separation, universally used in reversed-phase LC columns."
+          },
+          {
+            "name": "Acrylic",
+            "confidence": 0.65,
+            "reasoning": "Used for housing and some low-pressure fluidic components; alternatives like polycarbonate exist but acrylic is common for optical clarity."
+          }
+        ],
+        "Ion Source Assembly": [
+          {
+            "name": "Stainless steel (SS 304/316)",
+            "confidence": 0.9,
+            "reasoning": "Vacuum compatible and corrosion resistant for ion source housing and components, industry standard."
+          },
+          {
+            "name": "Tungsten",
+            "confidence": 0.85,
+            "reasoning": "Filament material for thermionic ion sources due to high melting point and electrical conductivity, common in many MS ion sources."
+          },
+          {
+            "name": "Ceramic",
+            "confidence": 0.7,
+            "reasoning": "Used for electrical insulation and vacuum feedthroughs; common but alternatives available."
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.75,
+            "reasoning": "For electrical contacts and cooling components due to high thermal and electrical conductivity."
+          }
+        ],
+        "Collision Cell": [
+          {
+            "name": "Stainless steel (SS 304/316)",
+            "confidence": 0.9,
+            "reasoning": "Material for vacuum-tight collision cell body due to corrosion resistance and mechanical strength."
+          },
+          {
+            "name": "Argon",
+            "confidence": 0.95,
+            "reasoning": "Common collision gas used to induce fragmentation of ions; essential for triple quadrupole operation."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.7,
+            "reasoning": "Used for some structural parts and possibly RF coils; common but not universal."
+          },
+          {
+            "name": "Ceramic",
+            "confidence": 0.6,
+            "reasoning": "Used as electrical insulator inside collision cell; alternatives exist."
+          }
+        ],
+        "Electron Multiplier Detector": [
+          {
+            "name": "Dynode material",
+            "confidence": 0.95,
+            "reasoning": "Core component enabling electron multiplication, absolutely essential and defining for detector function."
+          },
+          {
+            "name": "Stainless steel (SS 304/316)",
+            "confidence": 0.85,
+            "reasoning": "Structural and vacuum compatible housing material, industry standard."
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.7,
+            "reasoning": "Electrical connections and mounting; commonly used but alternatives exist."
+          },
+          {
+            "name": "Ceramic",
+            "confidence": 0.6,
+            "reasoning": "Used for electrical isolation and vacuum compatibility."
+          }
+        ],
+        "Vacuum System": [
+          {
+            "name": "Stainless steel (SS 304/316)",
+            "confidence": 0.95,
+            "reasoning": "Primary material for vacuum chamber and vacuum pump housings due to excellent corrosion resistance and strength."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.6,
+            "reasoning": "Possible lightweight parts in vacuum system, but less common than stainless steel."
+          },
+          {
+            "name": "Vacuum pump materials",
+            "confidence": 0.9,
+            "reasoning": "Specialized materials for vacuum pumps including seals and rotors, critical for maintaining vacuum."
+          }
+        ],
+        "Sample Introduction Interface": [
+          {
+            "name": "Stainless steel (SS 304/316)",
+            "confidence": 0.9,
+            "reasoning": "Material for sample inlet and tubing components requiring corrosion resistance and vacuum integrity."
+          },
+          {
+            "name": "Quartz",
+            "confidence": 0.7,
+            "reasoning": "Used in some interfaces for optical windows or capillaries; common but not universal."
+          },
+          {
+            "name": "Ceramic",
+            "confidence": 0.6,
+            "reasoning": "Electrical insulators and vacuum feedthroughs for sample introduction parts."
+          }
+        ],
+        "Data Acquisition And Control Electronics": [
+          {
+            "name": "Silicon",
+            "confidence": 0.95,
+            "reasoning": "Fundamental semiconductor material for integrated circuits and sensors essential for data acquisition and control."
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.9,
+            "reasoning": "Primary conductor in printed circuit boards and wiring due to excellent electrical conductivity."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.7,
+            "reasoning": "Used in heat sinks and some conductive parts; common but alternatives like copper exist."
+          },
+          {
+            "name": "Epoxy resins",
+            "confidence": 0.75,
+            "reasoning": "Used as encapsulants and PCB substrate materials; standard in electronics though some other polymers exist."
+          }
+        ]
+      }
+    }
+  }
+}

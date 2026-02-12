@@ -1,0 +1,792 @@
+================================================================================
+STDN ANALYSIS: Electric Vehicle Battery
+Generated: 2026-02-12 15:34:52
+================================================================================
+
+LEGEND
+--------------------------------------------------------------------------------
+Support Levels:
+  [C] CONSENSUS  - All agents agree (3/3)
+  [M] MAJORITY   - Majority agrees (2/3)
+  [I] ISOLATED   - Single agent only (1/3)
+
+Confidence Scale: 0.0-1.0 (higher = more certain)
+  0.9-1.0: High certainty - universal/essential
+  0.7-0.9: Confident - industry standard
+  0.5-0.7: Moderate - common but varies
+  <0.5:    Low - optional or uncertain
+
+================================================================================
+TECHNOLOGY SPECIFICATION
+================================================================================
+
+Query: Electric Vehicle Battery
+Specification: Electric Vehicle Battery
+
+================================================================================
+STAGE 1: COMPONENT EXTRACTION
+================================================================================
+
+ROUND 1: Independent Proposals
+--------------------------------------------------------------------------------
+
+Agent_1 (Expert):
+  • Battery Cell Modules (0.98) - Battery cell modules composed of multiple lithium-ion cells ...
+  • Battery Management System (BMS) (0.96) - The BMS is a critical electronic control unit responsible fo...
+  • Thermal Management System (0.92) - This system includes cooling plates, pumps, and fluid circui...
+  • Battery Pack Structural Enclosure (0.90) - The physical housing or enclosure that provides mechanical p...
+  • Electrical Wiring Harness and Connectors (0.85) - The wiring harness connects cells, modules, sensors, and the...
+  • High-Voltage Interconnects and Busbars (0.88) - These conductors link cells and modules electrically within ...
+  • Fusing and Safety Devices (0.80) - Includes fuses, circuit breakers, and other protective hardw...
+  • Charging Port Interface (Battery Inlet) (0.70) - While sometimes integrated, the charging inlet or interface ...
+
+Agent_2 (Expert):
+  • Cell Modules (NMC Lithium-ion cells grouped into modules) (1.00) - Core functional units containing the electrochemical cells; ...
+  • Battery Pack Enclosure (Steel or Aluminum Housing) (0.95) - Rigid protective casing that provides mechanical protection,...
+  • Battery Management System (BMS) Electronics Module (0.95) - Electronic control unit managing cell balancing, safety, and...
+  • Thermal Management System (Cooling Plates, Pumps, and Piping) (0.90) - Dedicated system to regulate temperature of cells, often com...
+  • High-Voltage Busbars and Electrical Interconnects (0.90) - Conductive metal assemblies that electrically connect module...
+  • Structural Mounting Frame and Brackets (0.85) - Internal supporting framework within the pack enclosure desi...
+  • Service Disconnect and Safety Devices (0.80) - Mechanical and electrical disconnect units allowing safe iso...
+
+Agent_3 (Expert):
+  • Battery Cell Module (0.98) - This is the fundamental energy storage unit, usually assembl...
+  • Battery Management System (BMS) (0.95) - An electronic control module managing cell balancing, safety...
+  • Thermal Management System (Coolant Channels, Pumps, Heat Exchangers) (0.90) - Critical for maintaining optimal operating temperature and b...
+  • Battery Pack Enclosure (Housing) (0.92) - The structural casing that protects all internal components ...
+  • High Voltage Interconnects and Busbars (0.88) - Electrical conductors connecting cells and modules, often pr...
+  • Electrical Connector Interface (Plug and Harness Assembly) (0.85) - External interfaces for power and data connections to vehicl...
+  • Fuses and Circuit Protection Modules (0.80) - Discrete components or modules installed within the pack for...
+
+Agent_4 (Expert):
+  • Battery Cells (Lithium-ion) (0.98) - Fundamental energy storage units assembled into modules; uni...
+  • Battery Management System (BMS) (0.95) - Electronic control module monitoring and managing battery pe...
+  • Battery Module Assembly (0.92) - Grouped sets of cells in mechanical and electrical assemblie...
+  • Thermal Management System (0.90) - Subsystem responsible for active and passive cooling or heat...
+  • Battery Pack Enclosure (Housing) (0.88) - Structural and protective casing for the battery pack, disti...
+  • High Voltage Wiring Harness (0.80) - Electrical cabling assembly for power and communication link...
+  • Contactors and Fuses (0.75) - Electrical safety components for managing high-voltage conne...
+  • Electrical Connectors and Busbars (0.70) - Conductive components linking cells and modules electrically...
+
+Agent_5 (Expert):
+  • Battery Cells (0.99) - Fundamental electrochemical units providing energy storage; ...
+  • Battery Modules (0.95) - Assemblies that group multiple cells with integrated thermal...
+  • Battery Management System (BMS) (0.95) - Electronic subsystem that monitors and controls cell voltage...
+  • Thermal Management System (0.92) - Includes cooling/heating components such as liquid cooling p...
+  • Battery Pack Housing/Enclosure (0.90) - Structural enclosure providing mechanical protection, electr...
+  • High-Voltage Connectors and Wiring Harness (0.85) - Critical for safe power transmission between cells, modules,...
+  • Battery Fuse and Safety Devices (0.80) - Protective electrical components to prevent fault conditions...
+  • Contactors and Relays (0.85) - High-current switches that control power flow in and out of ...
+  • Service Disconnect Unit (SDU) (0.80) - Mechanical/electrical device allowing safe isolation of the ...
+  • Cell Balancing Electronics (0.75) - Circuits managing equal charge distribution across cells; so...
+
+Initial Support Analysis:
+  [M] Majority (2 items):
+      • Battery Management System (BMS) (0.95) - 4/5 agents
+      • Thermal Management System (0.91) - 3/5 agents
+  [I] Isolated (32 items):
+      • Cell Modules (NMC Lithium-ion cells grouped into modules) (1.00) - needs peer support
+      • Battery Cells (0.99) - needs peer support
+      • Battery Cell Modules (0.98) - needs peer support
+
+ROUND 2: Refinement
+--------------------------------------------------------------------------------
+Convergence: 46.8% (threshold: 70%)
+
+Changes from Previous Round:
+  + Added: cell modules (nmc lithium ion cells grouped into modules), electrical wiring harness and connectors, high voltage connectors and wiring harness, battery management system (bms) electronics, battery pack enclosure (steel or aluminum housing) (+5 more)
+  - Removed: structural mounting frame, busbars and interconnects, electrical connectors, battery cells, charging port (+6 more)
+
+Key Critiques:
+  [C] 2 items have full consensus
+  [I] Battery Pack Enclosure (Housing) (conf: 0.91) - needs peer support
+  [I] Cell Modules (NMC Lithium-ion cells grouped into modules) (conf: 0.98) - needs peer support
+  [I] Battery Management System (BMS) Electronics Module (conf: 0.95) - needs peer support
+      ... and 1 more isolated items
+
+Round 2 Support Analysis:
+  [C] Consensus (2 items):
+      • thermal management
+      • high voltage interconnects and busbars
+  [M] Majority (7 items):
+      • battery cells (lithium ion) - partial agreement
+      • battery management system (bms) - partial agreement
+      • electrical wiring harness and connectors - partial agreement
+      • fusing and safety devices - partial agreement
+      • thermal management system (cooling plates, pumps, and piping) - partial agreement
+      ... and 2 more
+  [I] Isolated (4 items):
+      • battery pack enclosure (housing) - needs peer support
+      • cell modules (nmc lithium ion cells grouped into modules) - needs peer support
+      • battery management system (bms) electronics - needs peer support
+      ... and 1 more
+
+ROUND 3: Consensus Reached
+--------------------------------------------------------------------------------
+Convergence: 90.0% ✓ (threshold reached)
+
+Changes from Previous Round:
+  - Removed: cell modules (nmc lithium ion cells grouped into modules), high voltage connectors and wiring harness, battery management system (bms) electronics, battery pack enclosure (housing), thermal management
+
+Key Critiques:
+  [I] High-Voltage Busbars and Electrical Interconnects (conf: 0.84) - needs peer support
+
+Round 3 Support Analysis:
+  [M] Majority (7 items):
+      • battery cells (lithium ion) - partial agreement
+      • battery management system (bms) - partial agreement
+      • thermal management system (cooling plates, pumps, and piping) - partial agreement
+      • battery pack enclosure (steel or aluminum housing) - partial agreement
+      • high voltage interconnects and busbars - partial agreement
+      ... and 2 more
+  [I] Isolated (1 items):
+      • high voltage busbars and electrical interconnects - needs peer support
+
+================================================================================
+FINAL CONSENSUS: Components
+================================================================================
+
+Rounds Completed: 3
+Final Convergence: 90.0%
+Components Selected: 7
+
+  1. Battery Cells (lithium-ion)
+  2. Battery Management System
+  3. Thermal Management System
+  4. Battery Pack Enclosure
+  5. Wiring Harness And Connectors
+  6. Fusing And Safety Devices
+  7. Electrical Interconnects And Busbars
+
+================================================================================
+END OF COMPONENT EXTRACTION
+================================================================================
+
+
+================================================================================
+MATERIALS EXTRACTION DEBATE
+================================================================================
+
+COMPONENTS PROCESSED:
+--------------------------------------------------------------------------------
+Total Components: 7
+  - Battery Cells (lithium-ion)
+  - Battery Management System
+  - Thermal Management System
+  - Battery Pack Enclosure
+  - Wiring Harness And Connectors
+  - Fusing And Safety Devices
+  - Electrical Interconnects And Busbars
+
+================================================================================
+MATERIAL DEBATE ROUNDS
+================================================================================
+
+================================================================================
+FINAL MATERIAL ASSIGNMENTS
+================================================================================
+
+Components: 7
+Unique Materials: 14
+Total Assignments: 26
+
+Materials by Component:
+--------------------------------------------------------------------------------
+
+Battery Cells (lithium-ion):
+  • Lithium (confidence: 0.95)
+    → Primary electrochemical active element in lithium-ion battery cells, essential for charge storage with no commercial alternatives.
+  • Copper (confidence: 0.90)
+    → Essential current collector for the anode, universally used in lithium-ion cells for its conductivity.
+  • Graphite (confidence: 0.90)
+    → Primary anode material allowing lithium intercalation, nearly universal in commercial lithium-ion.
+  • Aluminum (confidence: 0.85)
+    → Used for cathode current collector and sometimes cell casing, standard industry material.
+  • Cobalt (confidence: 0.85)
+    → Critical cathode material enhancing energy density and stability, industry standard though some cells may reduce or substitute it.
+  • Nickel (confidence: 0.80)
+    → Common cathode material improving energy capacity and lifespan, standard in many lithium-ion formulations.
+
+Battery Management System:
+  • Silicon (confidence: 0.95)
+    → Semiconductor base material for integrated circuits controlling battery function, universal in electronic control systems.
+  • Copper (confidence: 0.85)
+    → Widely used for wiring and circuit interconnects due to excellent electrical conductivity.
+  • Polycarbonate (confidence: 0.75)
+    → Common polymer for protective housings due to strength and electrical insulation properties.
+  • Aluminum (confidence: 0.65)
+    → Occasionally used for heat sinks and casing, though plastics and other metals are viable alternatives.
+
+Battery Pack Enclosure:
+  • Aluminum (confidence: 0.95)
+    → Primary structural metal for battery enclosures, chosen for strength, weight, and corrosion resistance.
+  • Steel Ingots (confidence: 0.75)
+    → Often used alternatively or in combination for enclosure framing and reinforcements.
+  • Polypropylene (confidence: 0.70)
+    → Polymer used for insulating parts and sometimes internal brackets, with various polymer choices available.
+
+Electrical Interconnects And Busbars:
+  • Copper (confidence: 0.95)
+    → Primary conductive metal for busbars and interconnects due to high conductivity and reliability.
+  • Aluminum (confidence: 0.80)
+    → Widely used lightweight metal for busbars, sometimes substituting copper where weight saving is prioritized.
+  • Silver (confidence: 0.65)
+    → Used as coating or plating material on interconnects to enhance conductivity, alternatives available.
+
+Fusing And Safety Devices:
+  • Copper (confidence: 0.90)
+    → Key conductive material for fuse elements and connectors, necessary for current flow and safety function.
+  • Silver (confidence: 0.70)
+    → Used in fuse contacts and coatings to improve conductivity and corrosion resistance, alternatives exist.
+  • Polyethylene terephthalate (confidence: 0.60)
+    → Polymer used in fuse housings and insulating layers, other polymers may substitute.
+
+Thermal Management System:
+  • Copper (confidence: 0.90)
+    → High thermal conductivity essential for heat dissipation in cooling pipes and plates, industry standard.
+  • Aluminum (confidence: 0.85)
+    → Lightweight metal with good thermal conductivity used in heat exchangers and cooling fins.
+  • Polyethylene (confidence: 0.60)
+    → Used in tubing insulation and fluid containment, multiple polymer options possible.
+  • Silicon (confidence: 0.50)
+    → May be used in thermoelectric or sensor components, but alternatives exist widely.
+
+Wiring Harness And Connectors:
+  • Copper (confidence: 0.95)
+    → Essential conductor material for wiring harnesses due to excellent electrical conductivity and ductility.
+  • Polyvinyl chloride (confidence: 0.80)
+    → Common plastic insulation material for wiring, standard in automotive wiring harnesses.
+  • Aluminum (confidence: 0.60)
+    → Used as conductor in some lightweight wiring applications, less common than copper but still present.
+
+================================================================================
+END OF COMBINED TRANSCRIPT
+================================================================================
+
+
+============================================================
+TOP PRODUCING COUNTRIES: Polycarbonate
+Data Source: LLM Fallback Cache
+============================================================
+1. China
+   Production: 0.00 metric tons
+   Global Share: 52.0%
+   Confidence: 0.90
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Polycarbonate
+2. South Korea
+   Production: 0.00 metric tons
+   Global Share: 15.0%
+   Confidence: 0.85
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Polycarbonate
+3. United States
+   Production: 0.00 metric tons
+   Global Share: 10.0%
+   Confidence: 0.85
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Polycarbonate
+4. Germany
+   Production: 0.00 metric tons
+   Global Share: 8.0%
+   Confidence: 0.80
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Polycarbonate
+5. Japan
+   Production: 0.00 metric tons
+   Global Share: 7.0%
+   Confidence: 0.80
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Polycarbonate
+============================================================
+
+
+============================================================
+TOP PRODUCING COUNTRIES: Polyethylene
+Data Source: LLM Fallback Cache
+============================================================
+1. China
+   Production: 36,283,333.33 metric tons
+   Global Share: 31.2%
+   Confidence: 0.88
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Polyethylene
+2. United States
+   Production: 19,506,666.67 metric tons
+   Global Share: 16.7%
+   Confidence: 0.87
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Polyethylene
+3. Saudi Arabia
+   Production: 10,090,000.00 metric tons
+   Global Share: 8.7%
+   Confidence: 0.81
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Polyethylene
+4. South Korea
+   Production: 6,446,666.67 metric tons
+   Global Share: 5.5%
+   Confidence: 0.84
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Polyethylene
+5. Iran
+   Production: 6,470,000.00 metric tons
+   Global Share: 5.6%
+   Confidence: 0.65
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Polyethylene
+============================================================
+
+
+============================================================
+TOP PRODUCING COUNTRIES: Polypropylene
+Data Source: LLM Fallback Cache
+============================================================
+1. China
+   Production: 0.00 metric tons
+   Global Share: 30.0%
+   Confidence: 0.90
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Polypropylene
+2. United States
+   Production: 0.00 metric tons
+   Global Share: 25.0%
+   Confidence: 0.90
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Polypropylene
+3. India
+   Production: 0.00 metric tons
+   Global Share: 12.0%
+   Confidence: 0.80
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Polypropylene
+4. South Korea
+   Production: 0.00 metric tons
+   Global Share: 10.0%
+   Confidence: 0.80
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Polypropylene
+5. Saudi Arabia
+   Production: 0.00 metric tons
+   Global Share: 8.0%
+   Confidence: 0.80
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Polypropylene
+============================================================
+
+
+============================================================
+TOP PRODUCING COUNTRIES: Polyvinyl chloride
+Data Source: LLM Fallback Cache
+============================================================
+1. China
+   Production: 0.00 metric tons
+   Global Share: 45.0%
+   Confidence: 0.90
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Polyvinyl chloride
+2. India
+   Production: 0.00 metric tons
+   Global Share: 12.0%
+   Confidence: 0.85
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Polyvinyl chloride
+3. Germany
+   Production: 0.00 metric tons
+   Global Share: 7.0%
+   Confidence: 0.80
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Polyvinyl chloride
+4. Italy
+   Production: 0.00 metric tons
+   Global Share: 5.0%
+   Confidence: 0.75
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Polyvinyl chloride
+5. United States
+   Production: 0.00 metric tons
+   Global Share: 4.0%
+   Confidence: 0.80
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Polyvinyl chloride
+============================================================
+
+
+================================================================================
+COUNTRY PRODUCTION DATA
+================================================================================
+
+Battery Cells (lithium-ion):
+--------------------------------------------------------------------------------
+
+  Material: Aluminum
+  Confidence: 0.850
+  Countries (5):
+    • CHINA: 41000.0 THOUSAND METRIC TONS (58.57%)
+      Confidence: 0.950
+    • OTHER: 7000.0 THOUSAND METRIC TONS (10.0%)
+      Confidence: 0.950
+    • INDIA: 4100.0 THOUSAND METRIC TONS (5.86%)
+      Confidence: 0.950
+    • RUSSIA: 3800.0 THOUSAND METRIC TONS (5.43%)
+      Confidence: 0.950
+    • CANADA: 3000.0 THOUSAND METRIC TONS (4.29%)
+      Confidence: 0.950
+
+  Material: Cobalt
+  Confidence: 0.850
+  Countries (5):
+    • CONGO: 170000.0 METRIC TONS (73.91%)
+      Confidence: 0.950
+    • INDONESIA: 17000.0 METRIC TONS (7.39%)
+      Confidence: 0.950
+    • RUSSIA: 8800.0 METRIC TONS (3.83%)
+      Confidence: 0.950
+    • OTHER: 6600.0 METRIC TONS (2.87%)
+      Confidence: 0.950
+    • AUSTRALIA: 4600.0 METRIC TONS (2.0%)
+      Confidence: 0.950
+
+  Material: Copper
+  Confidence: 0.900
+  Countries (5):
+    • CHINA: 1700.0 THOUSAND METRIC TONS (3.47%)
+      Confidence: 0.950
+    • CHILE: 5000.0 THOUSAND METRIC TONS (10.2%)
+      Confidence: 0.950
+    • OTHER: 3100.0 THOUSAND METRIC TONS (6.33%)
+      Confidence: 0.950
+    • CONGO: 2500.0 THOUSAND METRIC TONS (5.1%)
+      Confidence: 0.950
+    • PERU: 2600.0 THOUSAND METRIC TONS (5.31%)
+      Confidence: 0.950
+
+  Material: Graphite
+  Confidence: 0.900
+  Countries (5):
+    • CHINA: 1230000.0 METRIC TONS (76.88%)
+      Confidence: 0.950
+    • MADAGASCAR: 100000.0 METRIC TONS (6.25%)
+      Confidence: 0.950
+    • MOZAMBIQUE: 96000.0 METRIC TONS (6.0%)
+      Confidence: 0.950
+    • BRAZIL: 73000.0 METRIC TONS (4.56%)
+      Confidence: 0.950
+    • KOREA, REPUBLIC OF: 27000.0 METRIC TONS (1.69%)
+      Confidence: 0.950
+
+  Material: Lithium
+  Confidence: 0.950
+  Countries (5):
+    • AUSTRALIA: 86000.0 METRIC TONS (47.78%)
+      Confidence: 0.950
+    • CHILE: 44000.0 METRIC TONS (24.44%)
+      Confidence: 0.950
+    • CHINA: 33000.0 METRIC TONS (18.33%)
+      Confidence: 0.950
+    • ARGENTINA: 9600.0 METRIC TONS (5.33%)
+      Confidence: 0.950
+    • BRAZIL: 4900.0 METRIC TONS (2.72%)
+      Confidence: 0.950
+
+  Material: Nickel
+  Confidence: 0.800
+  Countries (5):
+    • INDONESIA: 1800000.0 METRIC TONS (50.0%)
+      Confidence: 0.950
+    • PHILIPPINES: 400000.0 METRIC TONS (11.11%)
+      Confidence: 0.950
+    • OTHER: 380000.0 METRIC TONS (10.56%)
+      Confidence: 0.950
+    • NEW CALEDONIA: 230000.0 METRIC TONS (6.39%)
+      Confidence: 0.950
+    • RUSSIA: 200000.0 METRIC TONS (5.56%)
+      Confidence: 0.950
+
+Battery Management System:
+--------------------------------------------------------------------------------
+
+  Material: Aluminum
+  Confidence: 0.650
+  Countries (5):
+    • CHINA: 41000.0 THOUSAND METRIC TONS (58.57%)
+      Confidence: 0.950
+    • OTHER: 7000.0 THOUSAND METRIC TONS (10.0%)
+      Confidence: 0.950
+    • INDIA: 4100.0 THOUSAND METRIC TONS (5.86%)
+      Confidence: 0.950
+    • RUSSIA: 3800.0 THOUSAND METRIC TONS (5.43%)
+      Confidence: 0.950
+    • CANADA: 3000.0 THOUSAND METRIC TONS (4.29%)
+      Confidence: 0.950
+
+  Material: Copper
+  Confidence: 0.850
+  Countries (5):
+    • CHINA: 1700.0 THOUSAND METRIC TONS (3.47%)
+      Confidence: 0.950
+    • CHILE: 5000.0 THOUSAND METRIC TONS (10.2%)
+      Confidence: 0.950
+    • OTHER: 3100.0 THOUSAND METRIC TONS (6.33%)
+      Confidence: 0.950
+    • CONGO: 2500.0 THOUSAND METRIC TONS (5.1%)
+      Confidence: 0.950
+    • PERU: 2600.0 THOUSAND METRIC TONS (5.31%)
+      Confidence: 0.950
+
+  Material: Polycarbonate
+  Confidence: 0.750
+  Countries (5):
+    • China: 0.0 metric tons (52.0%)
+      Confidence: 0.900
+    • South Korea: 0.0 metric tons (15.0%)
+      Confidence: 0.850
+    • United States: 0.0 metric tons (10.0%)
+      Confidence: 0.850
+    • Germany: 0.0 metric tons (8.0%)
+      Confidence: 0.800
+    • Japan: 0.0 metric tons (7.0%)
+      Confidence: 0.800
+
+  Material: Silicon
+  Confidence: 0.950
+  Countries (5):
+    • CHINA: 3600.0 THOUSAND METRIC TONS (40.0%)
+      Confidence: 0.950
+    • RUSSIA: 570.0 THOUSAND METRIC TONS (6.33%)
+      Confidence: 0.950
+    • BRAZIL: 190.0 THOUSAND METRIC TONS (2.11%)
+      Confidence: 0.950
+    • NORWAY: 200.0 THOUSAND METRIC TONS (2.22%)
+      Confidence: 0.950
+    • OTHER: 100.0 THOUSAND METRIC TONS (1.11%)
+      Confidence: 0.950
+
+Battery Pack Enclosure:
+--------------------------------------------------------------------------------
+
+  Material: Aluminum
+  Confidence: 0.950
+  Countries (5):
+    • CHINA: 41000.0 THOUSAND METRIC TONS (58.57%)
+      Confidence: 0.950
+    • OTHER: 7000.0 THOUSAND METRIC TONS (10.0%)
+      Confidence: 0.950
+    • INDIA: 4100.0 THOUSAND METRIC TONS (5.86%)
+      Confidence: 0.950
+    • RUSSIA: 3800.0 THOUSAND METRIC TONS (5.43%)
+      Confidence: 0.950
+    • CANADA: 3000.0 THOUSAND METRIC TONS (4.29%)
+      Confidence: 0.950
+
+  Material: Polypropylene
+  Confidence: 0.700
+  Countries (5):
+    • China: 0.0 metric tons (30.0%)
+      Confidence: 0.900
+    • United States: 0.0 metric tons (25.0%)
+      Confidence: 0.900
+    • India: 0.0 metric tons (12.0%)
+      Confidence: 0.800
+    • South Korea: 0.0 metric tons (10.0%)
+      Confidence: 0.800
+    • Saudi Arabia: 0.0 metric tons (8.0%)
+      Confidence: 0.800
+
+  Material: Steel Ingots
+  Confidence: 0.750
+  Countries (5):
+    • China: 0.0 metric tons (52.0%)
+      Confidence: 0.950
+    • Japan: 0.0 metric tons (6.0%)
+      Confidence: 0.900
+    • India: 0.0 metric tons (5.0%)
+      Confidence: 0.900
+    • South Korea: 0.0 metric tons (5.0%)
+      Confidence: 0.850
+    • Germany: 0.0 metric tons (4.0%)
+      Confidence: 0.850
+
+Electrical Interconnects And Busbars:
+--------------------------------------------------------------------------------
+
+  Material: Aluminum
+  Confidence: 0.800
+  Countries (5):
+    • CHINA: 41000.0 THOUSAND METRIC TONS (58.57%)
+      Confidence: 0.950
+    • OTHER: 7000.0 THOUSAND METRIC TONS (10.0%)
+      Confidence: 0.950
+    • INDIA: 4100.0 THOUSAND METRIC TONS (5.86%)
+      Confidence: 0.950
+    • RUSSIA: 3800.0 THOUSAND METRIC TONS (5.43%)
+      Confidence: 0.950
+    • CANADA: 3000.0 THOUSAND METRIC TONS (4.29%)
+      Confidence: 0.950
+
+  Material: Copper
+  Confidence: 0.950
+  Countries (5):
+    • CHINA: 1700.0 THOUSAND METRIC TONS (3.47%)
+      Confidence: 0.950
+    • CHILE: 5000.0 THOUSAND METRIC TONS (10.2%)
+      Confidence: 0.950
+    • OTHER: 3100.0 THOUSAND METRIC TONS (6.33%)
+      Confidence: 0.950
+    • CONGO: 2500.0 THOUSAND METRIC TONS (5.1%)
+      Confidence: 0.950
+    • PERU: 2600.0 THOUSAND METRIC TONS (5.31%)
+      Confidence: 0.950
+
+  Material: Silver
+  Confidence: 0.650
+  Countries (5):
+    • MEXICO: 6400.0 METRIC TONS (24.62%)
+      Confidence: 0.950
+    • CHINA: 3400.0 METRIC TONS (13.08%)
+      Confidence: 0.950
+    • PERU: 3100.0 METRIC TONS (11.92%)
+      Confidence: 0.950
+    • OTHER: 3000.0 METRIC TONS (11.54%)
+      Confidence: 0.950
+    • CHILE: 1400.0 METRIC TONS (5.38%)
+      Confidence: 0.950
+
+Fusing And Safety Devices:
+--------------------------------------------------------------------------------
+
+  Material: Copper
+  Confidence: 0.900
+  Countries (5):
+    • CHINA: 1700.0 THOUSAND METRIC TONS (3.47%)
+      Confidence: 0.950
+    • CHILE: 5000.0 THOUSAND METRIC TONS (10.2%)
+      Confidence: 0.950
+    • OTHER: 3100.0 THOUSAND METRIC TONS (6.33%)
+      Confidence: 0.950
+    • CONGO: 2500.0 THOUSAND METRIC TONS (5.1%)
+      Confidence: 0.950
+    • PERU: 2600.0 THOUSAND METRIC TONS (5.31%)
+      Confidence: 0.950
+
+  Material: Polyethylene terephthalate
+  Confidence: 0.600
+  Countries (5):
+    • China: 0.0 metric tons (35.0%)
+      Confidence: 0.950
+    • Saudi Arabia: 0.0 metric tons (17.0%)
+      Confidence: 0.900
+    • South Korea: 0.0 metric tons (15.0%)
+      Confidence: 0.850
+    • Turkey: 0.0 metric tons (12.0%)
+      Confidence: 0.800
+    • United States: 0.0 metric tons (10.0%)
+      Confidence: 0.750
+
+  Material: Silver
+  Confidence: 0.700
+  Countries (5):
+    • MEXICO: 6400.0 METRIC TONS (24.62%)
+      Confidence: 0.950
+    • CHINA: 3400.0 METRIC TONS (13.08%)
+      Confidence: 0.950
+    • PERU: 3100.0 METRIC TONS (11.92%)
+      Confidence: 0.950
+    • OTHER: 3000.0 METRIC TONS (11.54%)
+      Confidence: 0.950
+    • CHILE: 1400.0 METRIC TONS (5.38%)
+      Confidence: 0.950
+
+Thermal Management System:
+--------------------------------------------------------------------------------
+
+  Material: Aluminum
+  Confidence: 0.850
+  Countries (5):
+    • CHINA: 41000.0 THOUSAND METRIC TONS (58.57%)
+      Confidence: 0.950
+    • OTHER: 7000.0 THOUSAND METRIC TONS (10.0%)
+      Confidence: 0.950
+    • INDIA: 4100.0 THOUSAND METRIC TONS (5.86%)
+      Confidence: 0.950
+    • RUSSIA: 3800.0 THOUSAND METRIC TONS (5.43%)
+      Confidence: 0.950
+    • CANADA: 3000.0 THOUSAND METRIC TONS (4.29%)
+      Confidence: 0.950
+
+  Material: Copper
+  Confidence: 0.900
+  Countries (5):
+    • CHINA: 1700.0 THOUSAND METRIC TONS (3.47%)
+      Confidence: 0.950
+    • CHILE: 5000.0 THOUSAND METRIC TONS (10.2%)
+      Confidence: 0.950
+    • OTHER: 3100.0 THOUSAND METRIC TONS (6.33%)
+      Confidence: 0.950
+    • CONGO: 2500.0 THOUSAND METRIC TONS (5.1%)
+      Confidence: 0.950
+    • PERU: 2600.0 THOUSAND METRIC TONS (5.31%)
+      Confidence: 0.950
+
+  Material: Polyethylene
+  Confidence: 0.600
+  Countries (5):
+    • China: 36283333.333333336 metric tons (31.17%)
+      Confidence: 0.877
+    • United States: 19506666.666666668 metric tons (16.73%)
+      Confidence: 0.870
+    • Saudi Arabia: 10090000.0 metric tons (8.7%)
+      Confidence: 0.807
+    • South Korea: 6446666.666666667 metric tons (5.53%)
+      Confidence: 0.840
+    • Iran: 6470000.0 metric tons (5.6%)
+      Confidence: 0.650
+
+  Material: Silicon
+  Confidence: 0.500
+  Countries (5):
+    • CHINA: 3600.0 THOUSAND METRIC TONS (40.0%)
+      Confidence: 0.950
+    • RUSSIA: 570.0 THOUSAND METRIC TONS (6.33%)
+      Confidence: 0.950
+    • BRAZIL: 190.0 THOUSAND METRIC TONS (2.11%)
+      Confidence: 0.950
+    • NORWAY: 200.0 THOUSAND METRIC TONS (2.22%)
+      Confidence: 0.950
+    • OTHER: 100.0 THOUSAND METRIC TONS (1.11%)
+      Confidence: 0.950
+
+Wiring Harness And Connectors:
+--------------------------------------------------------------------------------
+
+  Material: Aluminum
+  Confidence: 0.600
+  Countries (5):
+    • CHINA: 41000.0 THOUSAND METRIC TONS (58.57%)
+      Confidence: 0.950
+    • OTHER: 7000.0 THOUSAND METRIC TONS (10.0%)
+      Confidence: 0.950
+    • INDIA: 4100.0 THOUSAND METRIC TONS (5.86%)
+      Confidence: 0.950
+    • RUSSIA: 3800.0 THOUSAND METRIC TONS (5.43%)
+      Confidence: 0.950
+    • CANADA: 3000.0 THOUSAND METRIC TONS (4.29%)
+      Confidence: 0.950
+
+  Material: Copper
+  Confidence: 0.950
+  Countries (5):
+    • CHINA: 1700.0 THOUSAND METRIC TONS (3.47%)
+      Confidence: 0.950
+    • CHILE: 5000.0 THOUSAND METRIC TONS (10.2%)
+      Confidence: 0.950
+    • OTHER: 3100.0 THOUSAND METRIC TONS (6.33%)
+      Confidence: 0.950
+    • CONGO: 2500.0 THOUSAND METRIC TONS (5.1%)
+      Confidence: 0.950
+    • PERU: 2600.0 THOUSAND METRIC TONS (5.31%)
+      Confidence: 0.950
+
+  Material: Polyvinyl chloride
+  Confidence: 0.800
+  Countries (5):
+    • China: 0.0 metric tons (45.0%)
+      Confidence: 0.900
+    • India: 0.0 metric tons (12.0%)
+      Confidence: 0.850
+    • Germany: 0.0 metric tons (7.0%)
+      Confidence: 0.800
+    • Italy: 0.0 metric tons (5.0%)
+      Confidence: 0.750
+    • United States: 0.0 metric tons (4.0%)
+      Confidence: 0.800
+
+
+================================================================================
+SUMMARY
+================================================================================
+Total records: 130
+Components: 7
+Unique materials: 14
+Records with country  130
+Average country confidence: 0.925

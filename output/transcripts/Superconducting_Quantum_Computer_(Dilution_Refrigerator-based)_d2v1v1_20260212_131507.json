@@ -1,0 +1,798 @@
+{
+  "version": "2.0",
+  "metadata": {
+    "technology": "Superconducting Quantum Computer (Dilution Refrigerator-based)",
+    "technology_specification": "Superconducting Quantum Computer (Dilution Refrigerator-based)",
+    "technology_reasoning": "",
+    "timestamp": "2026-02-12T13:18:53.812667",
+    "format_version": "2.0"
+  },
+  "config": {
+    "num_agents": 2,
+    "max_rounds": 2
+  },
+  "component_stage": {
+    "phase1_initial_proposals": [
+      {
+        "agent_id": "Agent_1",
+        "components": [
+          {
+            "name": "Dilution Refrigerator",
+            "confidence": 0.99,
+            "reasoning": "The core cryogenic system that achieves millikelvin temperatures, a uniquely procurable and complex subassembly essential for superconducting qubits operation."
+          },
+          {
+            "name": "Superconducting Qubit Chip Module",
+            "confidence": 0.95,
+            "reasoning": "The fabricated qubit chip mounted on a specialized carrier or module, usually procured as a distinct unit from foundries or specialized quantum hardware vendors."
+          },
+          {
+            "name": "Cryogenic Microwave Wiring and Filtering Assembly",
+            "confidence": 0.9,
+            "reasoning": "Includes coaxial cables, attenuators, circulators, and filters designed for cryogenic operation to route and condition qubit control signals, a separately supplied subassembly."
+          },
+          {
+            "name": "Magnetic Shielding Enclosure",
+            "confidence": 0.85,
+            "reasoning": "Mu-metal or superconducting shielding assemblies that surround the qubit module to suppress ambient magnetic noise, typically procured as a separate module."
+          },
+          {
+            "name": "Input/Output (I/O) Electronics Module",
+            "confidence": 0.85,
+            "reasoning": "Includes room-temperature control electronics such as arbitrary waveform generators and mixers housed separately, forming a distinct supply chain component connected to the cryostat."
+          },
+          {
+            "name": "Cryostat Vacuum Can and Structural Frame",
+            "confidence": 0.8,
+            "reasoning": "Vacuum vessel and mechanical frame supporting and isolating the dilution refrigerator and qubit assembly, procured as a distinct hardware subassembly."
+          },
+          {
+            "name": "Thermal Anchoring and Heat Sinking Components",
+            "confidence": 0.75,
+            "reasoning": "Assemblies of specialized thermal interface components and heat sinks used at each fridge stage; although integrated into the fridge, these are specialized procurements and can be modular."
+          },
+          {
+            "name": "RF Signal Conditioning Modules",
+            "confidence": 0.7,
+            "reasoning": "Separate high-frequency mixers, amplifiers at room temperature for signal readout and control, often bought as distinct modules interfacing with the quantum processor."
+          }
+        ],
+        "technology_specification": "Superconducting quantum computers based on dilution refrigerators are quantum processors operating at millikelvin temperatures enabled by cryogenic refrigeration systems that maintain superconducting qubits in a highly isolated environment, combining ultra-low temperature refrigeration, qubit control electronics, and specialized shielding.",
+        "technology_reasoning": "This specification is based on the current industry standard for superconducting quantum computers, which universally rely on dilution refrigerators to reach temperatures below 20 mK essential for qubit coherence. The technology is widely adopted by leading creators such as IBM, Google, and Rigetti, representing the dominant architecture for near-term quantum computing applications."
+      },
+      {
+        "agent_id": "Agent_2",
+        "components": [
+          {
+            "name": "Dilution Refrigerator",
+            "confidence": 1.0,
+            "reasoning": "Central cryogenic system providing ultra-low temperature environment (around 10 mK) necessary for superconducting qubit coherence, procured as a distinct, complex manufactured assembly."
+          },
+          {
+            "name": "Superconducting Quantum Processor Chip",
+            "confidence": 0.95,
+            "reasoning": "The silicon-based chip hosting the superconducting qubits is a discrete, fabricated component fundamental to the quantum computer's function and is sourced separately."
+          },
+          {
+            "name": "Cryogenic Wiring and Filtering Assembly",
+            "confidence": 0.9,
+            "reasoning": "Includes coaxial cables, attenuators, and microwave filters optimized for ultra-low temperatures, forming a dedicated subsystem with its own supply chain."
+          },
+          {
+            "name": "Magnetic Shielding Enclosure",
+            "confidence": 0.85,
+            "reasoning": "Specialized multi-layer magnetic shielding (e.g., mu-metal shields) to reduce ambient magnetic noise, procurable as a separate structural assembly."
+          },
+          {
+            "name": "Vacuum Chamber (Cryostat Housing)",
+            "confidence": 0.9,
+            "reasoning": "Structural enclosure maintaining vacuum environment integral to refrigeration and thermal insulation, a distinct manufactured component often sourced separately."
+          },
+          {
+            "name": "Cold Finger and Sample Holder",
+            "confidence": 0.8,
+            "reasoning": "Mechanical interface holding the quantum processor inside the refrigerator at the coldest stage, typically a manufactured subassembly which can be procured independently."
+          },
+          {
+            "name": "Pulse Generation and Control Electronics Module",
+            "confidence": 0.75,
+            "reasoning": "Electronic rack or assembly generating microwave pulses and controlling qubit operations, often provided as separate vendor modules interfacing with cryogenic systems."
+          },
+          {
+            "name": "Thermal Anchoring and Heat Sinking Assemblies",
+            "confidence": 0.8,
+            "reasoning": "Assemblies that connect components thermally to different refrigerator temperature stages, distinct mechanical modules needed for optimal thermal management."
+          },
+          {
+            "name": "Readout Resonator Assembly",
+            "confidence": 0.75,
+            "reasoning": "Separate microwave resonators used for qubit readout, often fabricated and procured as discrete components integrated near the processor chip."
+          }
+        ],
+        "technology_specification": "Superconducting quantum computers operated at millikelvin temperatures using dilution refrigerators for thermal isolation and cryogenic environment control.",
+        "technology_reasoning": "This technology specification highlights the dominant architecture of superconducting qubits which require extreme cryogenic cooling provided by dilution refrigerators to enable coherent quantum states. Dilution refrigerators have become the standard platform for practical superconducting quantum processors due to their ability to reach sub-20 millikelvin temperatures required for qubit operation."
+      }
+    ],
+    "phase2_debate_rounds": [
+      {
+        "round_num": 1,
+        "convergence": 0.4166666666666667,
+        "threshold": 0.7,
+        "threshold_reached": false,
+        "proposals": {
+          "Agent_1": [
+            {
+              "name": "Dilution Refrigerator",
+              "confidence": 0.99,
+              "reasoning": "The core cryogenic system that achieves millikelvin temperatures, a uniquely procurable and complex subassembly essential for superconducting qubits operation.",
+              "component": "Dilution Refrigerator",
+              "normalized_component": "dilution refrigerator"
+            },
+            {
+              "name": "Superconducting Qubit Chip Module",
+              "confidence": 0.95,
+              "reasoning": "The fabricated qubit chip mounted on a specialized carrier or module, usually procured as a distinct unit from foundries or specialized quantum hardware vendors.",
+              "component": "Superconducting Qubit Chip Module",
+              "normalized_component": "superconducting quantum processor chip"
+            },
+            {
+              "name": "Cryogenic Microwave Wiring and Filtering Assembly",
+              "confidence": 0.9,
+              "reasoning": "Includes coaxial cables, attenuators, circulators, and filters designed for cryogenic operation to route and condition qubit control signals, a separately supplied subassembly.",
+              "component": "Cryogenic Microwave Wiring and Filtering Assembly",
+              "normalized_component": "cryogenic microwave wiring and filtering"
+            },
+            {
+              "name": "Magnetic Shielding Enclosure",
+              "confidence": 0.85,
+              "reasoning": "Mu-metal or superconducting shielding assemblies that surround the qubit module to suppress ambient magnetic noise, typically procured as a separate module.",
+              "component": "Magnetic Shielding Enclosure",
+              "normalized_component": "magnetic shielding enclosure"
+            },
+            {
+              "name": "Input/Output (I/O) Electronics Module",
+              "confidence": 0.85,
+              "reasoning": "Includes room-temperature control electronics such as arbitrary waveform generators and mixers housed separately, forming a distinct supply chain component connected to the cryostat.",
+              "component": "Input/Output (I/O) Electronics Module",
+              "normalized_component": "input/output electronics"
+            },
+            {
+              "name": "Cryostat Vacuum Can and Structural Frame",
+              "confidence": 0.8,
+              "reasoning": "Vacuum vessel and mechanical frame supporting and isolating the dilution refrigerator and qubit assembly, procured as a distinct hardware subassembly.",
+              "component": "Cryostat Vacuum Can and Structural Frame",
+              "normalized_component": "cryostat vacuum can and structural frame"
+            },
+            {
+              "name": "Thermal Anchoring and Heat Sinking Components",
+              "confidence": 0.75,
+              "reasoning": "Assemblies of specialized thermal interface components and heat sinks used at each fridge stage; although integrated into the fridge, these are specialized procurements and can be modular.",
+              "component": "Thermal Anchoring and Heat Sinking Components",
+              "normalized_component": "thermal anchoring and heat sinking"
+            },
+            {
+              "name": "RF Signal Conditioning Modules",
+              "confidence": 0.7,
+              "reasoning": "Separate high-frequency mixers, amplifiers at room temperature for signal readout and control, often bought as distinct modules interfacing with the quantum processor.",
+              "component": "RF Signal Conditioning Modules",
+              "normalized_component": "rf signal conditioning"
+            }
+          ],
+          "Agent_2": [
+            {
+              "name": "Dilution Refrigerator",
+              "confidence": 1.0,
+              "reasoning": "Central cryogenic system providing ultra-low temperature environment (around 10 mK) necessary for superconducting qubit coherence, procured as a distinct, complex manufactured assembly.",
+              "component": "Dilution Refrigerator",
+              "normalized_component": "dilution refrigerator"
+            },
+            {
+              "name": "Superconducting Quantum Processor Chip",
+              "confidence": 0.95,
+              "reasoning": "The silicon-based chip hosting the superconducting qubits is a discrete, fabricated component fundamental to the quantum computer's function and is sourced separately.",
+              "component": "Superconducting Quantum Processor Chip",
+              "normalized_component": "superconducting quantum processor chip"
+            },
+            {
+              "name": "Cryogenic Wiring and Filtering Assembly",
+              "confidence": 0.9,
+              "reasoning": "Includes coaxial cables, attenuators, and microwave filters optimized for ultra-low temperatures, forming a dedicated subsystem with its own supply chain.",
+              "component": "Cryogenic Wiring and Filtering Assembly",
+              "normalized_component": "cryogenic wiring and filtering"
+            },
+            {
+              "name": "Magnetic Shielding Enclosure",
+              "confidence": 0.85,
+              "reasoning": "Specialized multi-layer magnetic shielding (e.g., mu-metal shields) to reduce ambient magnetic noise, procurable as a separate structural assembly.",
+              "component": "Magnetic Shielding Enclosure",
+              "normalized_component": "magnetic shielding enclosure"
+            },
+            {
+              "name": "Vacuum Chamber (Cryostat Housing)",
+              "confidence": 0.9,
+              "reasoning": "Structural enclosure maintaining vacuum environment integral to refrigeration and thermal insulation, a distinct manufactured component often sourced separately.",
+              "component": "Vacuum Chamber (Cryostat Housing)",
+              "normalized_component": "cryostat vacuum can and structural frame"
+            },
+            {
+              "name": "Cold Finger and Sample Holder",
+              "confidence": 0.8,
+              "reasoning": "Mechanical interface holding the quantum processor inside the refrigerator at the coldest stage, typically a manufactured subassembly which can be procured independently.",
+              "component": "Cold Finger and Sample Holder",
+              "normalized_component": "cold finger and sample holder"
+            },
+            {
+              "name": "Pulse Generation and Control Electronics Module",
+              "confidence": 0.75,
+              "reasoning": "Electronic rack or assembly generating microwave pulses and controlling qubit operations, often provided as separate vendor modules interfacing with cryogenic systems.",
+              "component": "Pulse Generation and Control Electronics Module",
+              "normalized_component": "pulse generation and control electronics"
+            },
+            {
+              "name": "Thermal Anchoring and Heat Sinking Assemblies",
+              "confidence": 0.8,
+              "reasoning": "Assemblies that connect components thermally to different refrigerator temperature stages, distinct mechanical modules needed for optimal thermal management.",
+              "component": "Thermal Anchoring and Heat Sinking Assemblies",
+              "normalized_component": "thermal anchoring and heat sinking"
+            },
+            {
+              "name": "Readout Resonator Assembly",
+              "confidence": 0.75,
+              "reasoning": "Separate microwave resonators used for qubit readout, often fabricated and procured as discrete components integrated near the processor chip.",
+              "component": "Readout Resonator Assembly",
+              "normalized_component": "readout resonator"
+            }
+          ]
+        },
+        "rounds_completed": 1,
+        "support_analysis": {
+          "consensus": [],
+          "majority": [
+            "dilution refrigerator",
+            "superconducting quantum processor chip",
+            "magnetic shielding enclosure",
+            "cryostat vacuum can and structural frame",
+            "thermal anchoring and heat sinking"
+          ],
+          "isolated": [
+            "cryogenic microwave wiring and filtering",
+            "input/output electronics",
+            "rf signal conditioning",
+            "cryogenic wiring and filtering",
+            "cold finger and sample holder",
+            "pulse generation and control electronics",
+            "readout resonator"
+          ]
+        },
+        "critiques": [
+          {
+            "item_name": "dilution refrigerator",
+            "normalized_name": "dilution refrigerator",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.995,
+            "critique_text": "Majority support for 'dilution refrigerator': 2/3 agents agree (conf: 0.99). Consider strengthening consensus."
+          },
+          {
+            "item_name": "superconducting quantum processor chip",
+            "normalized_name": "superconducting quantum processor chip",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.95,
+            "critique_text": "Majority support for 'superconducting quantum processor chip': 2/3 agents agree (conf: 0.95). Consider strengthening consensus."
+          },
+          {
+            "item_name": "cryogenic microwave wiring and filtering",
+            "normalized_name": "cryogenic microwave wiring and filtering",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2"
+            ],
+            "avg_confidence": 0.9,
+            "critique_text": "Isolated proposal 'cryogenic microwave wiring and filtering' from 1 agent(s) (conf: 0.90). Requires justification or peer validation."
+          },
+          {
+            "item_name": "magnetic shielding enclosure",
+            "normalized_name": "magnetic shielding enclosure",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.85,
+            "critique_text": "Majority support for 'magnetic shielding enclosure': 2/3 agents agree (conf: 0.85). Consider strengthening consensus."
+          },
+          {
+            "item_name": "input/output electronics",
+            "normalized_name": "input/output electronics",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2"
+            ],
+            "avg_confidence": 0.85,
+            "critique_text": "Isolated proposal 'input/output electronics' from 1 agent(s) (conf: 0.85). Requires justification or peer validation."
+          },
+          {
+            "item_name": "cryostat vacuum can and structural frame",
+            "normalized_name": "cryostat vacuum can and structural frame",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.8500000000000001,
+            "critique_text": "Majority support for 'cryostat vacuum can and structural frame': 2/3 agents agree (conf: 0.85). Consider strengthening consensus."
+          },
+          {
+            "item_name": "thermal anchoring and heat sinking",
+            "normalized_name": "thermal anchoring and heat sinking",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_1"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.775,
+            "critique_text": "Majority support for 'thermal anchoring and heat sinking': 2/3 agents agree (conf: 0.78). Consider strengthening consensus."
+          },
+          {
+            "item_name": "rf signal conditioning",
+            "normalized_name": "rf signal conditioning",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_1"
+            ],
+            "opposing_agents": [
+              "Agent_2"
+            ],
+            "avg_confidence": 0.7,
+            "critique_text": "Isolated proposal 'rf signal conditioning' from 1 agent(s) (conf: 0.70). Requires justification or peer validation."
+          },
+          {
+            "item_name": "cryogenic wiring and filtering",
+            "normalized_name": "cryogenic wiring and filtering",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_1"
+            ],
+            "avg_confidence": 0.9,
+            "critique_text": "Isolated proposal 'cryogenic wiring and filtering' from 1 agent(s) (conf: 0.90). Requires justification or peer validation."
+          },
+          {
+            "item_name": "cold finger and sample holder",
+            "normalized_name": "cold finger and sample holder",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_1"
+            ],
+            "avg_confidence": 0.8,
+            "critique_text": "Isolated proposal 'cold finger and sample holder' from 1 agent(s) (conf: 0.80). Requires justification or peer validation."
+          },
+          {
+            "item_name": "pulse generation and control electronics",
+            "normalized_name": "pulse generation and control electronics",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_1"
+            ],
+            "avg_confidence": 0.75,
+            "critique_text": "Isolated proposal 'pulse generation and control electronics' from 1 agent(s) (conf: 0.75). Requires justification or peer validation."
+          },
+          {
+            "item_name": "readout resonator",
+            "normalized_name": "readout resonator",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_1"
+            ],
+            "avg_confidence": 0.75,
+            "critique_text": "Isolated proposal 'readout resonator' from 1 agent(s) (conf: 0.75). Requires justification or peer validation."
+          }
+        ],
+        "changes_from_previous": null
+      },
+      {
+        "round_num": 2,
+        "convergence": 1.0,
+        "threshold": 0.7,
+        "threshold_reached": true,
+        "proposals": {
+          "Agent_1": [
+            {
+              "agent_id": "Agent_1",
+              "component": "Dilution Refrigerator",
+              "confidence": 0.99,
+              "reasoning": "Strong consensus with highest confidence (average 0.99) and essential as the base cooling system for superconducting quantum computers.",
+              "round": 2,
+              "normalized_component": "Dilution Refrigerator"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Superconducting Quantum Processor Chip",
+              "confidence": 0.95,
+              "reasoning": "Strong consensus with average confidence 0.95; this is the core quantum computing element, critical to the technology.",
+              "round": 2,
+              "normalized_component": "Quantum Processor"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Magnetic Shielding Enclosure",
+              "confidence": 0.85,
+              "reasoning": "Strong consensus (2 agents, avg confidence 0.85); magnetic shielding is essential for protecting the qubits from external magnetic noise.",
+              "round": 2,
+              "normalized_component": "Magnetic Shielding Enclosure"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Cryostat Vacuum Can and Structural Frame",
+              "confidence": 0.85,
+              "reasoning": "Strong consensus with average confidence 0.85; structural frame and vacuum can are critical for maintaining an isolated, cryogenic environment.",
+              "round": 2,
+              "normalized_component": "Cryostat Vacuum Can and Structural Frame"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Thermal Anchoring and Heat Sinking Assemblies",
+              "confidence": 0.78,
+              "reasoning": "Strong consensus (two versions with average confidence around 0.78); critical for managing heat transport in the dilution refrigerator system and preserving qubit temperature stability.",
+              "round": 2,
+              "normalized_component": "Thermal Anchoring and Heat Sinking Assemblies"
+            }
+          ],
+          "Agent_2": [
+            {
+              "agent_id": "Agent_2",
+              "component": "Dilution Refrigerator",
+              "confidence": 0.99,
+              "reasoning": "Strong consensus from both agents with high confidence. It is a fundamental component for the superconducting quantum computer operating at millikelvin temperatures.",
+              "round": 2,
+              "normalized_component": "Dilution Refrigerator"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Superconducting Quantum Processor Chip",
+              "confidence": 0.95,
+              "reasoning": "Strong consensus with high confidence from both agents. This is the core quantum computing element.",
+              "round": 2,
+              "normalized_component": "Quantum Processor"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Magnetic Shielding Enclosure",
+              "confidence": 0.85,
+              "reasoning": "Both agents agree on its inclusion with moderate-high confidence. Essential for minimizing magnetic interference affecting qubit coherence.",
+              "round": 2,
+              "normalized_component": "Magnetic Shielding Enclosure"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Cryostat Vacuum Can and Structural Frame",
+              "confidence": 0.85,
+              "reasoning": "Strong consensus and moderate-high confidence. Provides mechanical support and vacuum environment critical for the dilution refrigerator and qubits.",
+              "round": 2,
+              "normalized_component": "Cryostat Vacuum Can and Structural Frame"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Thermal Anchoring and Heat Sinking Assemblies",
+              "confidence": 0.78,
+              "reasoning": "Agreed upon by agents at moderate confidence. Vital for managing thermal load and maintaining low operational temperature.",
+              "round": 2,
+              "normalized_component": "Thermal Anchoring and Heat Sinking Assemblies"
+            }
+          ],
+          "Agent_3": [
+            {
+              "agent_id": "Agent_3",
+              "component": "Dilution Refrigerator",
+              "confidence": 0.99,
+              "reasoning": "Strong consensus from both agents with very high confidence; this is essential for cooling the superconducting qubits.",
+              "round": 2,
+              "normalized_component": "Dilution Refrigerator"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Superconducting Quantum Processor Chip",
+              "confidence": 0.95,
+              "reasoning": "Strong consensus and high confidence from both agents; core component hosting the qubits.",
+              "round": 2,
+              "normalized_component": "Quantum Processor"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Magnetic Shielding Enclosure",
+              "confidence": 0.85,
+              "reasoning": "Both agents agree with good confidence; essential for shielding qubits from magnetic noise.",
+              "round": 2,
+              "normalized_component": "Magnetic Shielding Enclosure"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Cryostat Vacuum Can and Structural Frame",
+              "confidence": 0.85,
+              "reasoning": "Supported by both agents and critiques; necessary structural and vacuum housing for the cryogenic environment.",
+              "round": 2,
+              "normalized_component": "Cryostat Vacuum Can and Structural Frame"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Thermal Anchoring and Heat Sinking Assemblies",
+              "confidence": 0.8,
+              "reasoning": "Both agents select similar components relating to thermal anchoring; critical for maintaining low temperatures and thermal stability.",
+              "round": 2,
+              "normalized_component": "Thermal Anchoring and Heat Sinking Assemblies"
+            }
+          ]
+        },
+        "rounds_completed": 2,
+        "support_analysis": {
+          "consensus": [
+            "dilution refrigerator",
+            "superconducting quantum processor chip",
+            "magnetic shielding enclosure",
+            "cryostat vacuum can and structural frame",
+            "thermal anchoring and heat sinking assemblies"
+          ],
+          "majority": [],
+          "isolated": []
+        },
+        "critiques": [
+          {
+            "item_name": "Dilution Refrigerator",
+            "normalized_name": "dilution refrigerator",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_1",
+              "Agent_3"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.9899999999999999,
+            "critique_text": "Strong consensus on 'Dilution Refrigerator': all 3 agents support with avg confidence 0.99. Preserve this component."
+          },
+          {
+            "item_name": "Superconducting Quantum Processor Chip",
+            "normalized_name": "superconducting quantum processor chip",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_1",
+              "Agent_3"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.9499999999999998,
+            "critique_text": "Strong consensus on 'Superconducting Quantum Processor Chip': all 3 agents support with avg confidence 0.95. Preserve this component."
+          },
+          {
+            "item_name": "Magnetic Shielding Enclosure",
+            "normalized_name": "magnetic shielding enclosure",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_1",
+              "Agent_3"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.85,
+            "critique_text": "Strong consensus on 'Magnetic Shielding Enclosure': all 3 agents support with avg confidence 0.85. Preserve this component."
+          },
+          {
+            "item_name": "Cryostat Vacuum Can and Structural Frame",
+            "normalized_name": "cryostat vacuum can and structural frame",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_1",
+              "Agent_3"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.85,
+            "critique_text": "Strong consensus on 'Cryostat Vacuum Can and Structural Frame': all 3 agents support with avg confidence 0.85. Preserve this component."
+          },
+          {
+            "item_name": "Thermal Anchoring and Heat Sinking Assemblies",
+            "normalized_name": "thermal anchoring and heat sinking assemblies",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_1",
+              "Agent_3"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.7866666666666667,
+            "critique_text": "Strong consensus on 'Thermal Anchoring and Heat Sinking Assemblies': all 3 agents support with avg confidence 0.79. Preserve this component."
+          }
+        ],
+        "changes_from_previous": {
+          "items_added": [
+            "thermal anchoring and heat sinking assemblies"
+          ],
+          "items_removed": [
+            "thermal anchoring and heat sinking",
+            "readout resonator",
+            "cold finger and sample holder",
+            "cryogenic wiring and filtering",
+            "rf signal conditioning",
+            "pulse generation and control electronics",
+            "cryogenic microwave wiring and filtering",
+            "input/output electronics"
+          ],
+          "confidence_changes": {}
+        }
+      }
+    ],
+    "phase3_final_consensus": {
+      "technology": "Superconducting Quantum Computer (Dilution Refrigerator-based)",
+      "technology_specification": "Superconducting Quantum Computer (Dilution Refrigerator-based)",
+      "technology_reasoning": "",
+      "components": [
+        "Dilution Refrigerator",
+        "Quantum Processor",
+        "Magnetic Shielding Enclosure",
+        "Cryostat Vacuum Can And Structural Frame",
+        "Thermal Anchoring And Heat Sinking Assemblies"
+      ],
+      "confidence": 1.0,
+      "rounds": 2,
+      "convergence_score": 1.0
+    }
+  },
+  "materials_debate": {
+    "debate_rounds": [],
+    "final_consensus": {
+      "components": 5,
+      "unique_materials": 12,
+      "total_assignments": 22,
+      "materials_by_component": {
+        "Dilution Refrigerator": [
+          {
+            "name": "Copper",
+            "confidence": 0.95,
+            "reasoning": "Copper is essential for thermal conduction and wiring inside the refrigerator; it is a standard material with excellent conductivity."
+          },
+          {
+            "name": "Stainless steel",
+            "confidence": 0.9,
+            "reasoning": "Stainless steel is commonly used for vacuum chambers and structural parts due to its strength and low thermal conductivity compared to pure metals."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.85,
+            "reasoning": "Aluminum is used for heat exchangers and radiation shields because of its good thermal conductivity and light weight; common industry use."
+          },
+          {
+            "name": "Helium",
+            "confidence": 1.0,
+            "reasoning": "Helium is absolutely essential as the working fluid for the dilution process providing cooling at millikelvin temperatures."
+          },
+          {
+            "name": "Gold",
+            "confidence": 0.6,
+            "reasoning": "Gold may be used for plating connections and contacts inside the fridge; alternatives exist but gold's corrosion resistance is valued."
+          },
+          {
+            "name": "Epoxy resins",
+            "confidence": 0.55,
+            "reasoning": "Epoxy resins may be used for electrical insulation and structural bonding within the refrigerator; alternatives exist."
+          }
+        ],
+        "Quantum Processor": [
+          {
+            "name": "Silicon",
+            "confidence": 0.85,
+            "reasoning": "Silicon substrate is standard for many quantum processors; it serves as the semiconductor base for qubits."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.9,
+            "reasoning": "Aluminum is widely used for superconducting wiring and electrodes in quantum processors; it provides superconductivity at low temperatures."
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.8,
+            "reasoning": "Copper may be used in wiring and interconnects supporting the quantum processor; common conductor with low resistance."
+          },
+          {
+            "name": "Niobium",
+            "confidence": 0.75,
+            "reasoning": "Niobium is a superconducting material used in some quantum processor circuits; alternatives exist but it is common."
+          },
+          {
+            "name": "Silicon dioxide",
+            "confidence": 0.85,
+            "reasoning": "Silicon dioxide is used as an insulator and dielectric layer on silicon wafers; industry standard."
+          },
+          {
+            "name": "Gold",
+            "confidence": 0.65,
+            "reasoning": "Gold is used for wire bonding and contacts due to its excellent conductivity and resistance to oxidation; alternatives exist but gold is standard."
+          }
+        ],
+        "Magnetic Shielding Enclosure": [
+          {
+            "name": "Copper",
+            "confidence": 0.8,
+            "reasoning": "Copper is used as a conductive layer to shield magnetic fields via eddy currents; commonly employed in shielding."
+          },
+          {
+            "name": "Nickel",
+            "confidence": 0.75,
+            "reasoning": "Nickel and its alloys provide magnetic shielding due to their high magnetic permeability; common but other alloys can be used."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.65,
+            "reasoning": "Aluminum can be used for structural parts of shielding enclosure; less effective magnetically but mechanically useful."
+          },
+          {
+            "name": "Steel Ingots",
+            "confidence": 0.7,
+            "reasoning": "Steel alloys are used for magnetic shields known as mu-metal or similar; steel ingots provide base material."
+          }
+        ],
+        "Cryostat Vacuum Can And Structural Frame": [
+          {
+            "name": "Stainless steel",
+            "confidence": 0.95,
+            "reasoning": "Stainless steel is essential for vacuum chambers and structural frames due to its strength, corrosion resistance, and vacuum compatibility."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.8,
+            "reasoning": "Aluminum is used for lighter structural components and some vacuum parts due to its low weight and thermal conductivity."
+          },
+          {
+            "name": "Glass",
+            "confidence": 0.6,
+            "reasoning": "Glass can be used as vacuum viewports or insulators; alternatives exist but glass is a common choice."
+          }
+        ],
+        "Thermal Anchoring And Heat Sinking Assemblies": [
+          {
+            "name": "Copper",
+            "confidence": 0.95,
+            "reasoning": "Copper is the primary material for thermal anchoring and heat sinking due to exceptional thermal conductivity."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.8,
+            "reasoning": "Aluminum may be used for lighter heat sinks and structural thermal anchoring parts; standard alternative."
+          },
+          {
+            "name": "Epoxy resins",
+            "confidence": 0.55,
+            "reasoning": "Epoxy resins could be used for bonding thermal components; but alternatives exist and it's not always required."
+          }
+        ]
+      }
+    }
+  }
+}

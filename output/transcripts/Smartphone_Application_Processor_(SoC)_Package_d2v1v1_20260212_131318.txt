@@ -1,0 +1,1003 @@
+================================================================================
+STDN ANALYSIS: Smartphone Application Processor (SoC) Package
+Generated: 2026-02-12 13:20:56
+================================================================================
+
+LEGEND
+--------------------------------------------------------------------------------
+Support Levels:
+  [C] CONSENSUS  - All agents agree (3/3)
+  [M] MAJORITY   - Majority agrees (2/3)
+  [I] ISOLATED   - Single agent only (1/3)
+
+Confidence Scale: 0.0-1.0 (higher = more certain)
+  0.9-1.0: High certainty - universal/essential
+  0.7-0.9: Confident - industry standard
+  0.5-0.7: Moderate - common but varies
+  <0.5:    Low - optional or uncertain
+
+================================================================================
+TECHNOLOGY SPECIFICATION
+================================================================================
+
+Query: Smartphone Application Processor (SoC) Package
+Specification: Smartphone Application Processor (SoC) Package
+
+================================================================================
+STAGE 1: COMPONENT EXTRACTION
+================================================================================
+
+ROUND 1: Independent Proposals
+--------------------------------------------------------------------------------
+
+Agent_1 (Expert):
+  • Semiconductor Die (SoC Chip) (1.00) - The core silicon chip containing all active circuitry is the...
+  • Package Substrate (0.98) - A multi-layer organic substrate supporting the die, providin...
+  • Encapsulation Mold Compound (0.90) - Protective resin encapsulating the die and wire bonds, procu...
+  • Ball Grid Array (BGA) Solder Balls (0.85) - An array of solder spheres applied to the substrate bottom a...
+  • Wire Bonds or Flip-Chip Microbumps (0.80) - Interconnects between die and substrate used in packaging; t...
+  • Thermal Interface Material (TIM) (0.70) - Applied material or pad facilitating heat dissipation from d...
+  • Underfill Adhesive (0.65) - A specialized epoxy used to reinforce mechanical connection ...
+  • Heat Spreader or Lid (Metal Cap) (0.75) - A metal or ceramic lid mounted on top of the package for mec...
+
+Agent_2 (Expert):
+  • Semiconductor Die (SoC) (1.00) - The core silicon chip containing the processor and integrate...
+  • Substrate (Organic or Fan-Out Redistribution Layer) (0.95) - Provides mechanical support and electrical routing for the d...
+  • Encapsulation Mold Compound (0.90) - Protective polymer encapsulating the die and substrate, mold...
+  • Interconnect Balls (Solder Balls) / Ball Grid Array (0.85) - The array of solder balls or bumps used for electrical conne...
+  • Underfill Adhesive (0.60) - Material filling beneath the die to improve mechanical relia...
+  • Thermal Interface Material (TIM) (0.55) - Layer between package and heat spreader to enhance heat diss...
+  • Leadframe (for certain package variants) (0.50) - Some traditional packages use a metal leadframe for die supp...
+
+Initial Support Analysis:
+  [C] Consensus (3 items):
+      • Encapsulation Mold Compound (0.90)
+      • Thermal Interface Material (TIM) (0.62)
+      • Underfill Adhesive (0.62)
+  [I] Isolated (9 items):
+      • Semiconductor Die (SoC Chip) (1.00) - needs peer support
+      • Semiconductor Die (SoC) (1.00) - needs peer support
+      • Package Substrate (0.98) - needs peer support
+
+ROUND 2: Consensus Reached
+--------------------------------------------------------------------------------
+Convergence: 81.0% ✓ (threshold reached)
+
+Changes from Previous Round:
+  + Added: ball grid array (bga) solder balls, semiconductor die (soc), semiconductor die (soc chip), thermal interface material (tim)
+  - Removed: heat spreader, bga solder balls, wire bonds / flip chip microbumps, thermal interface material, leadframe (+1 more)
+
+Key Critiques:
+  [C] 5 items have full consensus
+  [I] Semiconductor Die (SoC Chip) (conf: 1.00) - needs peer support
+
+Round 2 Support Analysis:
+  [C] Consensus (5 items):
+      • package substrate
+      • encapsulation mold compound
+      • ball grid array (bga) solder balls
+      • thermal interface material (tim)
+      • underfill adhesive
+  [M] Majority (1 items):
+      • semiconductor die (soc) - partial agreement
+  [I] Isolated (1 items):
+      • semiconductor die (soc chip) - needs peer support
+
+================================================================================
+FINAL CONSENSUS: Components
+================================================================================
+
+Rounds Completed: 2
+Final Convergence: 81.0%
+Components Selected: 4
+
+  1. Semiconductor Die
+  2. Ic Package
+  3. Encapsulation Mold Compound
+  4. Ball Grid Array (bga)
+
+================================================================================
+END OF COMPONENT EXTRACTION
+================================================================================
+
+
+================================================================================
+MATERIALS EXTRACTION DEBATE
+================================================================================
+
+COMPONENTS PROCESSED:
+--------------------------------------------------------------------------------
+Total Components: 4
+  - Semiconductor Die
+  - Ic Package
+  - Encapsulation Mold Compound
+  - Ball Grid Array (bga)
+
+================================================================================
+MATERIAL DEBATE ROUNDS
+================================================================================
+
+================================================================================
+FINAL MATERIAL ASSIGNMENTS
+================================================================================
+
+Components: 4
+Unique Materials: 14
+Total Assignments: 19
+
+Materials by Component:
+--------------------------------------------------------------------------------
+
+Ball Grid Array (bga):
+  • Tin (confidence: 0.90)
+    → Primary solder material forming the balls, essential for reliable electrical and mechanical connection.
+  • Copper (confidence: 0.80)
+    → Used as pad and interconnect base material beneath the solder balls, critical for conduction.
+  • Silver (confidence: 0.70)
+    → Often alloyed with tin to improve properties of solder balls but can be substituted.
+  • Nickel (confidence: 0.60)
+    → Commonly used as a plating layer on pads to prevent copper diffusion and improve solderability; alternatives exist.
+
+Encapsulation Mold Compound:
+  • Epoxy resins (confidence: 0.95)
+    → Primary material forming the mold compound encapsulating the IC, essential for mechanical protection and insulation.
+  • Aluminum oxide (confidence: 0.50)
+    → Possible filler material in mold compounds to improve thermal conductivity, but substitution possible.
+  • Ceramic (confidence: 0.50)
+    → May be present as filler to improve mechanical properties, but not universal.
+  • Silicon dioxide (confidence: 0.50)
+    → May be present as filler or in passivation layers but not primary mold compound material; moderately uncertain.
+
+Ic Package:
+  • Aluminum (confidence: 0.90)
+    → Used in bonding wires and lead frames, common and critical conductive material.
+  • Copper (confidence: 0.90)
+    → Primary conductor material for internal leads and lead frames, essential for electrical conduction and thermal management.
+  • Epoxy resins (confidence: 0.90)
+    → Base material for substrate and adhesives in IC packaging, essential to hold components and provide insulation.
+  • Ceramic (confidence: 0.70)
+    → Used in some high-performance IC packages for substrate or heat spreaders, alternatives include polymers.
+  • Silver (confidence: 0.60)
+    → Sometimes used in plating or conductor paths in IC packages but can be substituted by copper or gold.
+
+Semiconductor Die:
+  • Silicon (confidence: 1.00)
+    → Primary semiconductor material for the die, absolutely essential as the substrate and active layer in the SoC.
+  • Aluminum (confidence: 0.80)
+    → Used for interconnect metallization layers and bonding pads; standard conductive material, rarely substituted.
+  • Boron (confidence: 0.80)
+    → Standard p-type dopant in semiconductor fabrication, critical for transistor function in silicon die.
+  • Arsenic (confidence: 0.70)
+    → Commonly used as an n-type dopant in silicon semiconductor manufacturing; important but alternatives like phosphorus exist.
+  • Gallium (confidence: 0.70)
+    → Used as a dopant or in compound semiconductors such as gallium arsenide for specialized layers; commonly used but alternatives exist.
+  • Phosphorus (confidence: 0.70)
+    → Widely used as an n-type dopant creating the PN junction; standard but can be substituted with arsenic.
+
+================================================================================
+END OF COMBINED TRANSCRIPT
+================================================================================
+
+
+============================================================
+TOP PRODUCING COUNTRIES: Gallium
+Data Source: USGS Database
+============================================================
+1. CHINA
+   Production: 600,000.00 KILOGRAMS
+   Global Share: 98.4%
+   Confidence: 0.95
+   Reasoning: USGS Mineral Commodity Summaries 2024/2023 - authoritative U.S. government production data with global coverage
+2. RUSSIA
+   Production: 5,000.00 KILOGRAMS
+   Global Share: 0.8%
+   Confidence: 0.95
+   Reasoning: USGS Mineral Commodity Summaries 2024/2023 - authoritative U.S. government production data with global coverage
+3. JAPAN
+   Production: 3,000.00 KILOGRAMS
+   Global Share: 0.5%
+   Confidence: 0.95
+   Reasoning: USGS Mineral Commodity Summaries 2024/2023 - authoritative U.S. government production data with global coverage
+4. KOREA, REPUBLIC OF
+   Production: 2,000.00 KILOGRAMS
+   Global Share: 0.3%
+   Confidence: 0.95
+   Reasoning: USGS Mineral Commodity Summaries 2024/2023 - authoritative U.S. government production data with global coverage
+5. OTHER
+   Production: 0.00 KILOGRAMS
+   Global Share: 0.0%
+   Confidence: 0.95
+   Reasoning: USGS Mineral Commodity Summaries 2024/2023 - authoritative U.S. government production data with global coverage
+============================================================
+
+
+============================================================
+TOP PRODUCING COUNTRIES: Arsenic
+Data Source: USGS Database
+============================================================
+1. PERU
+   Production: 27,000.00 METRIC TONS
+   Global Share: 45.0%
+   Confidence: 0.95
+   Reasoning: USGS Mineral Commodity Summaries 2024/2023 - authoritative U.S. government production data with global coverage
+2. CHINA
+   Production: 24,000.00 METRIC TONS
+   Global Share: 40.0%
+   Confidence: 0.95
+   Reasoning: USGS Mineral Commodity Summaries 2024/2023 - authoritative U.S. government production data with global coverage
+3. MOROCCO
+   Production: 8,000.00 METRIC TONS
+   Global Share: 13.3%
+   Confidence: 0.95
+   Reasoning: USGS Mineral Commodity Summaries 2024/2023 - authoritative U.S. government production data with global coverage
+4. BELGIUM
+   Production: 1,000.00 METRIC TONS
+   Global Share: 1.7%
+   Confidence: 0.95
+   Reasoning: USGS Mineral Commodity Summaries 2024/2023 - authoritative U.S. government production data with global coverage
+5. RUSSIA
+   Production: 200.00 METRIC TONS
+   Global Share: 0.3%
+   Confidence: 0.95
+   Reasoning: USGS Mineral Commodity Summaries 2024/2023 - authoritative U.S. government production data with global coverage
+============================================================
+
+
+================================================================================
+COUNTRY PRODUCTION DATA
+================================================================================
+
+Ball Grid Array (bga):
+--------------------------------------------------------------------------------
+
+  Material: Copper
+  Confidence: 0.800
+  Countries (5):
+    • CHINA: 1700.0 THOUSAND METRIC TONS (3.47%)
+      Confidence: 0.950
+    • CHILE: 5000.0 THOUSAND METRIC TONS (10.2%)
+      Confidence: 0.950
+    • OTHER: 3100.0 THOUSAND METRIC TONS (6.33%)
+      Confidence: 0.950
+    • CONGO: 2500.0 THOUSAND METRIC TONS (5.1%)
+      Confidence: 0.950
+    • PERU: 2600.0 THOUSAND METRIC TONS (5.31%)
+      Confidence: 0.950
+
+  Material: Nickel
+  Confidence: 0.600
+  Countries (5):
+    • INDONESIA: 1800000.0 METRIC TONS (50.0%)
+      Confidence: 0.950
+    • PHILIPPINES: 400000.0 METRIC TONS (11.11%)
+      Confidence: 0.950
+    • OTHER: 380000.0 METRIC TONS (10.56%)
+      Confidence: 0.950
+    • NEW CALEDONIA: 230000.0 METRIC TONS (6.39%)
+      Confidence: 0.950
+    • RUSSIA: 200000.0 METRIC TONS (5.56%)
+      Confidence: 0.950
+
+  Material: Silver
+  Confidence: 0.700
+  Countries (5):
+    • MEXICO: 6400.0 METRIC TONS (24.62%)
+      Confidence: 0.950
+    • CHINA: 3400.0 METRIC TONS (13.08%)
+      Confidence: 0.950
+    • PERU: 3100.0 METRIC TONS (11.92%)
+      Confidence: 0.950
+    • OTHER: 3000.0 METRIC TONS (11.54%)
+      Confidence: 0.950
+    • CHILE: 1400.0 METRIC TONS (5.38%)
+      Confidence: 0.950
+
+  Material: Tin
+  Confidence: 0.900
+  Countries (5):
+    • CHINA: 68000.0 METRIC TONS (23.45%)
+      Confidence: 0.950
+    • BURMA: 54000.0 METRIC TONS (18.62%)
+      Confidence: 0.950
+    • INDONESIA: 52000.0 METRIC TONS (17.93%)
+      Confidence: 0.950
+    • PERU: 23000.0 METRIC TONS (7.93%)
+      Confidence: 0.950
+    • CONGO: 19000.0 METRIC TONS (6.55%)
+      Confidence: 0.950
+
+Encapsulation Mold Compound:
+--------------------------------------------------------------------------------
+
+  Material: Aluminum oxide
+  Confidence: 0.500
+  Countries (5):
+    • China: 0.0 metric tons (56.0%)
+      Confidence: 0.900
+    • India: 0.0 metric tons (9.0%)
+      Confidence: 0.850
+    • Russia: 0.0 metric tons (7.0%)
+      Confidence: 0.800
+    • Australia: 0.0 metric tons (6.0%)
+      Confidence: 0.850
+    • Brazil: 0.0 metric tons (5.0%)
+      Confidence: 0.800
+
+  Material: Ceramic
+  Confidence: 0.500
+  Countries (5):
+    • China: 0.0 metric tons (60.0%)
+      Confidence: 0.950
+    • India: 0.0 metric tons (15.0%)
+      Confidence: 0.850
+    • United States: 0.0 metric tons (8.0%)
+      Confidence: 0.800
+    • Brazil: 0.0 metric tons (7.0%)
+      Confidence: 0.750
+    • Italy: 0.0 metric tons (5.0%)
+      Confidence: 0.780
+
+  Material: Epoxy resins
+  Confidence: 0.950
+  Countries (5):
+    • Germany: 0.0 metric tons (30.0%)
+      Confidence: 0.800
+    • Japan: 0.0 metric tons (25.0%)
+      Confidence: 0.800
+    • United States: 0.0 metric tons (18.0%)
+      Confidence: 0.700
+    • China: 0.0 metric tons (15.0%)
+      Confidence: 0.800
+    • South Korea: 0.0 metric tons (9.0%)
+      Confidence: 0.600
+
+  Material: Silicon dioxide
+  Confidence: 0.500
+  Countries (5):
+    • China: 0.0 metric tons (48.0%)
+      Confidence: 0.900
+    • United States: 0.0 metric tons (15.0%)
+      Confidence: 0.850
+    • India: 0.0 metric tons (12.0%)
+      Confidence: 0.800
+    • Brazil: 0.0 metric tons (8.0%)
+      Confidence: 0.750
+    • Australia: 0.0 metric tons (7.0%)
+      Confidence: 0.750
+
+Ic Package:
+--------------------------------------------------------------------------------
+
+  Material: Aluminum
+  Confidence: 0.900
+  Countries (5):
+    • CHINA: 41000.0 THOUSAND METRIC TONS (58.57%)
+      Confidence: 0.950
+    • OTHER: 7000.0 THOUSAND METRIC TONS (10.0%)
+      Confidence: 0.950
+    • INDIA: 4100.0 THOUSAND METRIC TONS (5.86%)
+      Confidence: 0.950
+    • RUSSIA: 3800.0 THOUSAND METRIC TONS (5.43%)
+      Confidence: 0.950
+    • CANADA: 3000.0 THOUSAND METRIC TONS (4.29%)
+      Confidence: 0.950
+
+  Material: Ceramic
+  Confidence: 0.700
+  Countries (5):
+    • China: 0.0 metric tons (60.0%)
+      Confidence: 0.950
+    • India: 0.0 metric tons (15.0%)
+      Confidence: 0.850
+    • United States: 0.0 metric tons (8.0%)
+      Confidence: 0.800
+    • Brazil: 0.0 metric tons (7.0%)
+      Confidence: 0.750
+    • Italy: 0.0 metric tons (5.0%)
+      Confidence: 0.780
+
+  Material: Copper
+  Confidence: 0.900
+  Countries (5):
+    • CHINA: 1700.0 THOUSAND METRIC TONS (3.47%)
+      Confidence: 0.950
+    • CHILE: 5000.0 THOUSAND METRIC TONS (10.2%)
+      Confidence: 0.950
+    • OTHER: 3100.0 THOUSAND METRIC TONS (6.33%)
+      Confidence: 0.950
+    • CONGO: 2500.0 THOUSAND METRIC TONS (5.1%)
+      Confidence: 0.950
+    • PERU: 2600.0 THOUSAND METRIC TONS (5.31%)
+      Confidence: 0.950
+
+  Material: Epoxy resins
+  Confidence: 0.900
+  Countries (5):
+    • Germany: 0.0 metric tons (30.0%)
+      Confidence: 0.800
+    • Japan: 0.0 metric tons (25.0%)
+      Confidence: 0.800
+    • United States: 0.0 metric tons (18.0%)
+      Confidence: 0.700
+    • China: 0.0 metric tons (15.0%)
+      Confidence: 0.800
+    • South Korea: 0.0 metric tons (9.0%)
+      Confidence: 0.600
+
+  Material: Silver
+  Confidence: 0.600
+  Countries (5):
+    • MEXICO: 6400.0 METRIC TONS (24.62%)
+      Confidence: 0.950
+    • CHINA: 3400.0 METRIC TONS (13.08%)
+      Confidence: 0.950
+    • PERU: 3100.0 METRIC TONS (11.92%)
+      Confidence: 0.950
+    • OTHER: 3000.0 METRIC TONS (11.54%)
+      Confidence: 0.950
+    • CHILE: 1400.0 METRIC TONS (5.38%)
+      Confidence: 0.950
+
+Semiconductor Die:
+--------------------------------------------------------------------------------
+
+  Material: Aluminum
+  Confidence: 0.800
+  Countries (5):
+    • CHINA: 41000.0 THOUSAND METRIC TONS (58.57%)
+      Confidence: 0.950
+    • OTHER: 7000.0 THOUSAND METRIC TONS (10.0%)
+      Confidence: 0.950
+    • INDIA: 4100.0 THOUSAND METRIC TONS (5.86%)
+      Confidence: 0.950
+    • RUSSIA: 3800.0 THOUSAND METRIC TONS (5.43%)
+      Confidence: 0.950
+    • CANADA: 3000.0 THOUSAND METRIC TONS (4.29%)
+      Confidence: 0.950
+
+  Material: Arsenic
+  Confidence: 0.700
+  Countries (5):
+    • PERU: 27000.0 METRIC TONS (45.0%)
+      Confidence: 0.950
+    • CHINA: 24000.0 METRIC TONS (40.0%)
+      Confidence: 0.950
+    • MOROCCO: 8000.0 METRIC TONS (13.33%)
+      Confidence: 0.950
+    • BELGIUM: 1000.0 METRIC TONS (1.67%)
+      Confidence: 0.950
+    • RUSSIA: 200.0 METRIC TONS (0.33%)
+      Confidence: 0.950
+
+  Material: Boron
+  Confidence: 0.800
+  Countries (5):
+    • Turkey: 0.0 metric tons (47.0%)
+      Confidence: 0.920
+    • United States: 0.0 metric tons (29.0%)
+      Confidence: 0.900
+    • Russia: 0.0 metric tons (10.0%)
+      Confidence: 0.850
+    • Argentina: 0.0 metric tons (7.0%)
+      Confidence: 0.750
+    • Chile: 0.0 metric tons (5.0%)
+      Confidence: 0.700
+
+  Material: Gallium
+  Confidence: 0.700
+  Countries (5):
+    • CHINA: 600000.0 KILOGRAMS (98.36%)
+      Confidence: 0.950
+    • RUSSIA: 5000.0 KILOGRAMS (0.82%)
+      Confidence: 0.950
+    • JAPAN: 3000.0 KILOGRAMS (0.49%)
+      Confidence: 0.950
+    • KOREA, REPUBLIC OF: 2000.0 KILOGRAMS (0.33%)
+      Confidence: 0.950
+    • OTHER: 0.0 KILOGRAMS (0.0%)
+      Confidence: 0.950
+
+  Material: Phosphorus
+  Confidence: 0.700
+  Countries (5):
+    • China: 0.0 metric tons (P2O5 equivalent) (50.0%)
+      Confidence: 0.950
+    • Morocco: 0.0 metric tons (P2O5 equivalent) (30.0%)
+      Confidence: 0.920
+    • United States: 0.0 metric tons (P2O5 equivalent) (6.0%)
+      Confidence: 0.900
+    • Russia: 0.0 metric tons (P2O5 equivalent) (4.0%)
+      Confidence: 0.850
+    • Jordan: 0.0 metric tons (P2O5 equivalent) (3.0%)
+      Confidence: 0.800
+
+  Material: Silicon
+  Confidence: 1.000
+  Countries (5):
+    • CHINA: 3600.0 THOUSAND METRIC TONS (40.0%)
+      Confidence: 0.950
+    • RUSSIA: 570.0 THOUSAND METRIC TONS (6.33%)
+      Confidence: 0.950
+    • BRAZIL: 190.0 THOUSAND METRIC TONS (2.11%)
+      Confidence: 0.950
+    • NORWAY: 200.0 THOUSAND METRIC TONS (2.22%)
+      Confidence: 0.950
+    • OTHER: 100.0 THOUSAND METRIC TONS (1.11%)
+      Confidence: 0.950
+
+
+================================================================================
+SUMMARY
+================================================================================
+Total records: 95
+Components: 4
+Unique materials: 14
+Records with country  95
+Average country confidence: 0.892
+
+
+================================================================================
+MATERIALS EXTRACTION DEBATE
+================================================================================
+
+COMPONENTS PROCESSED:
+--------------------------------------------------------------------------------
+Total Components: 4
+  - Power Amplifier Module
+  - Low Noise Amplifier (lna)
+  - Rf Switch
+  - Ic Package
+
+================================================================================
+MATERIAL DEBATE ROUNDS
+================================================================================
+
+================================================================================
+FINAL MATERIAL ASSIGNMENTS
+================================================================================
+
+Components: 4
+Unique Materials: 11
+Total Assignments: 21
+
+Materials by Component:
+--------------------------------------------------------------------------------
+
+Ic Package:
+  • Silicon (confidence: 0.95)
+    → Silicon is the primary semiconductor wafer material for ICs; absolutely essential for integrated circuit fabrication.
+  • Copper (confidence: 0.85)
+    → Copper is commonly used for interconnect metallization inside the IC package and package leads; standard material.
+  • Aluminum oxide (confidence: 0.80)
+    → Aluminum oxide is a ceramic used in IC package substrates and insulating layers; provides mechanical strength and electrical insulation.
+  • Ceramic (confidence: 0.75)
+    → Ceramic materials are also extensively used for IC package substrates and housings for heat dissipation and insulation.
+  • Gold (confidence: 0.70)
+    → Gold is often used in wire bonding and plating in IC packages to ensure reliable electrical connection and prevent corrosion.
+  • Epoxy resins (confidence: 0.65)
+    → Epoxy resins are used as encapsulants and adhesives in IC packaging; common though plastic alternatives exist.
+
+Low Noise Amplifier (lna):
+  • Gallium arsenide (confidence: 0.95)
+    → Gallium arsenide is the primary semiconductor material used in LNAs for low noise and high-frequency performance; it is the industry standard with minimal substitutes.
+  • Copper (confidence: 0.90)
+    → Copper is critical for internal electrical connections and heat spreading; universal use in electronic components.
+  • Gold (confidence: 0.80)
+    → Gold is often used for bonding wires and plating to ensure high conductivity and corrosion resistance in LNA modules; alternatives exist but less common.
+  • Ceramic (confidence: 0.75)
+    → Ceramic substrates and packaging materials provide insulation and mechanical support; common though some plastic alternatives exist.
+  • Aluminum (confidence: 0.70)
+    → Aluminum used in casing and heat sinking; widely applied though not absolutely mandatory depending on design.
+
+Power Amplifier Module:
+  • Gallium nitride (confidence: 0.95)
+    → Gallium nitride is the fundamental semiconductor material used in power amplifiers for high frequency and high power efficiency in 5G/4G RF front-end modules; this is industry standard technology with no practical substitutes at scale.
+  • Copper (confidence: 0.90)
+    → Copper is essential for internal interconnections and heat dissipation in the amplifier; universal in electronic modules for conductivity and thermal management.
+  • Aluminum (confidence: 0.85)
+    → Aluminum is commonly used for the module casing and heat spreaders due to its good thermal conductivity and lightweight, standard in these components though alternatives exist.
+  • Ceramic (confidence: 0.80)
+    → Ceramic materials are used for substrates and insulating layers providing structural integrity and electrical isolation; standard in RF modules.
+  • Silicon carbide (confidence: 0.70)
+    → Silicon carbide may be used optionally in substrate or packaging for thermal handling; less common but known in high power RF devices; alternatives include other ceramics.
+
+Rf Switch:
+  • Silicon (confidence: 0.90)
+    → Silicon forms the semiconductor base of many RF switches, providing the electronic switching function; standard material used broadly in RF switch chips.
+  • Copper (confidence: 0.85)
+    → Copper is used for interconnects and contacts inside the switch for electrical conduction; standard and widespread use.
+  • Nickel (confidence: 0.70)
+    → Nickel is commonly used in plating and contact materials in RF switches to enhance durability and conductivity; alternatives like gold or palladium exist but nickel is common.
+  • Ceramic (confidence: 0.65)
+    → Ceramic often used in packaging and substrate providing insulation and mechanical support; alternatives exist but ceramic is very common.
+  • Gold (confidence: 0.60)
+    → Gold plating for contacts may be used in premium RF switches to ensure corrosion resistance and contact quality; alternatives exist to reduce costs.
+
+================================================================================
+END OF COMBINED TRANSCRIPT
+================================================================================
+
+
+============================================================
+TOP PRODUCING COUNTRIES: Gallium nitride
+Data Source: LLM Fallback Cache
+============================================================
+1. China
+   Production: 0.00 metric tons
+   Global Share: 65.0%
+   Confidence: 0.85
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Gallium nitride
+2. United States
+   Production: 0.00 metric tons
+   Global Share: 15.0%
+   Confidence: 0.80
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Gallium nitride
+3. Japan
+   Production: 0.00 metric tons
+   Global Share: 10.0%
+   Confidence: 0.75
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Gallium nitride
+4. South Korea
+   Production: 0.00 metric tons
+   Global Share: 7.0%
+   Confidence: 0.70
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Gallium nitride
+5. Taiwan
+   Production: 0.00 metric tons
+   Global Share: 3.0%
+   Confidence: 0.65
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Gallium nitride
+============================================================
+
+
+============================================================
+TOP PRODUCING COUNTRIES: Silicon carbide
+Data Source: LLM Fallback Cache
+============================================================
+1. China
+   Production: 0.00 metric tons
+   Global Share: 55.0%
+   Confidence: 0.90
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Silicon carbide
+2. United States
+   Production: 0.00 metric tons
+   Global Share: 20.0%
+   Confidence: 0.85
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Silicon carbide
+3. Ukraine
+   Production: 0.00 metric tons
+   Global Share: 10.0%
+   Confidence: 0.75
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Silicon carbide
+4. Norway
+   Production: 0.00 metric tons
+   Global Share: 8.0%
+   Confidence: 0.70
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Silicon carbide
+5. Brazil
+   Production: 0.00 metric tons
+   Global Share: 7.0%
+   Confidence: 0.65
+   Reasoning: LLM fallback cache (previously computed) - no USGS data available for Silicon carbide
+============================================================
+
+
+================================================================================
+COUNTRY PRODUCTION DATA
+================================================================================
+
+Ic Package:
+--------------------------------------------------------------------------------
+
+  Material: Aluminum oxide
+  Confidence: 0.800
+  Countries (5):
+    • China: 0.0 metric tons (56.0%)
+      Confidence: 0.900
+    • India: 0.0 metric tons (9.0%)
+      Confidence: 0.850
+    • Russia: 0.0 metric tons (7.0%)
+      Confidence: 0.800
+    • Australia: 0.0 metric tons (6.0%)
+      Confidence: 0.850
+    • Brazil: 0.0 metric tons (5.0%)
+      Confidence: 0.800
+
+  Material: Ceramic
+  Confidence: 0.750
+  Countries (5):
+    • China: 0.0 metric tons (60.0%)
+      Confidence: 0.950
+    • India: 0.0 metric tons (15.0%)
+      Confidence: 0.850
+    • United States: 0.0 metric tons (8.0%)
+      Confidence: 0.800
+    • Brazil: 0.0 metric tons (7.0%)
+      Confidence: 0.750
+    • Italy: 0.0 metric tons (5.0%)
+      Confidence: 0.780
+
+  Material: Copper
+  Confidence: 0.850
+  Countries (5):
+    • CHINA: 1700.0 THOUSAND METRIC TONS (3.47%)
+      Confidence: 0.950
+    • CHILE: 5000.0 THOUSAND METRIC TONS (10.2%)
+      Confidence: 0.950
+    • OTHER: 3100.0 THOUSAND METRIC TONS (6.33%)
+      Confidence: 0.950
+    • CONGO: 2500.0 THOUSAND METRIC TONS (5.1%)
+      Confidence: 0.950
+    • PERU: 2600.0 THOUSAND METRIC TONS (5.31%)
+      Confidence: 0.950
+
+  Material: Epoxy resins
+  Confidence: 0.650
+  Countries (5):
+    • Germany: 0.0 metric tons (30.0%)
+      Confidence: 0.800
+    • Japan: 0.0 metric tons (25.0%)
+      Confidence: 0.800
+    • United States: 0.0 metric tons (18.0%)
+      Confidence: 0.700
+    • China: 0.0 metric tons (15.0%)
+      Confidence: 0.800
+    • South Korea: 0.0 metric tons (9.0%)
+      Confidence: 0.600
+
+  Material: Gold
+  Confidence: 0.700
+  Countries (5):
+    • OTHER: 700.0 METRIC TONS (23.33%)
+      Confidence: 0.950
+    • CHINA: 370.0 METRIC TONS (12.33%)
+      Confidence: 0.950
+    • RUSSIA: 310.0 METRIC TONS (10.33%)
+      Confidence: 0.950
+    • AUSTRALIA: 310.0 METRIC TONS (10.33%)
+      Confidence: 0.950
+    • CANADA: 200.0 METRIC TONS (6.67%)
+      Confidence: 0.950
+
+  Material: Silicon
+  Confidence: 0.950
+  Countries (5):
+    • CHINA: 3600.0 THOUSAND METRIC TONS (40.0%)
+      Confidence: 0.950
+    • RUSSIA: 570.0 THOUSAND METRIC TONS (6.33%)
+      Confidence: 0.950
+    • BRAZIL: 190.0 THOUSAND METRIC TONS (2.11%)
+      Confidence: 0.950
+    • NORWAY: 200.0 THOUSAND METRIC TONS (2.22%)
+      Confidence: 0.950
+    • OTHER: 100.0 THOUSAND METRIC TONS (1.11%)
+      Confidence: 0.950
+
+Low Noise Amplifier (lna):
+--------------------------------------------------------------------------------
+
+  Material: Aluminum
+  Confidence: 0.700
+  Countries (5):
+    • CHINA: 41000.0 THOUSAND METRIC TONS (58.57%)
+      Confidence: 0.950
+    • OTHER: 7000.0 THOUSAND METRIC TONS (10.0%)
+      Confidence: 0.950
+    • INDIA: 4100.0 THOUSAND METRIC TONS (5.86%)
+      Confidence: 0.950
+    • RUSSIA: 3800.0 THOUSAND METRIC TONS (5.43%)
+      Confidence: 0.950
+    • CANADA: 3000.0 THOUSAND METRIC TONS (4.29%)
+      Confidence: 0.950
+
+  Material: Ceramic
+  Confidence: 0.750
+  Countries (5):
+    • China: 0.0 metric tons (60.0%)
+      Confidence: 0.950
+    • India: 0.0 metric tons (15.0%)
+      Confidence: 0.850
+    • United States: 0.0 metric tons (8.0%)
+      Confidence: 0.800
+    • Brazil: 0.0 metric tons (7.0%)
+      Confidence: 0.750
+    • Italy: 0.0 metric tons (5.0%)
+      Confidence: 0.780
+
+  Material: Copper
+  Confidence: 0.900
+  Countries (5):
+    • CHINA: 1700.0 THOUSAND METRIC TONS (3.47%)
+      Confidence: 0.950
+    • CHILE: 5000.0 THOUSAND METRIC TONS (10.2%)
+      Confidence: 0.950
+    • OTHER: 3100.0 THOUSAND METRIC TONS (6.33%)
+      Confidence: 0.950
+    • CONGO: 2500.0 THOUSAND METRIC TONS (5.1%)
+      Confidence: 0.950
+    • PERU: 2600.0 THOUSAND METRIC TONS (5.31%)
+      Confidence: 0.950
+
+  Material: Gallium arsenide
+  Confidence: 0.950
+  Countries (5):
+    • China: 0.0 metric tons (60.0%)
+      Confidence: 0.850
+    • Russia: 0.0 metric tons (15.0%)
+      Confidence: 0.650
+    • Germany: 0.0 metric tons (10.0%)
+      Confidence: 0.700
+    • United States: 0.0 metric tons (8.0%)
+      Confidence: 0.750
+    • Japan: 0.0 metric tons (7.0%)
+      Confidence: 0.700
+
+  Material: Gold
+  Confidence: 0.800
+  Countries (5):
+    • OTHER: 700.0 METRIC TONS (23.33%)
+      Confidence: 0.950
+    • CHINA: 370.0 METRIC TONS (12.33%)
+      Confidence: 0.950
+    • RUSSIA: 310.0 METRIC TONS (10.33%)
+      Confidence: 0.950
+    • AUSTRALIA: 310.0 METRIC TONS (10.33%)
+      Confidence: 0.950
+    • CANADA: 200.0 METRIC TONS (6.67%)
+      Confidence: 0.950
+
+Power Amplifier Module:
+--------------------------------------------------------------------------------
+
+  Material: Aluminum
+  Confidence: 0.850
+  Countries (5):
+    • CHINA: 41000.0 THOUSAND METRIC TONS (58.57%)
+      Confidence: 0.950
+    • OTHER: 7000.0 THOUSAND METRIC TONS (10.0%)
+      Confidence: 0.950
+    • INDIA: 4100.0 THOUSAND METRIC TONS (5.86%)
+      Confidence: 0.950
+    • RUSSIA: 3800.0 THOUSAND METRIC TONS (5.43%)
+      Confidence: 0.950
+    • CANADA: 3000.0 THOUSAND METRIC TONS (4.29%)
+      Confidence: 0.950
+
+  Material: Ceramic
+  Confidence: 0.800
+  Countries (5):
+    • China: 0.0 metric tons (60.0%)
+      Confidence: 0.950
+    • India: 0.0 metric tons (15.0%)
+      Confidence: 0.850
+    • United States: 0.0 metric tons (8.0%)
+      Confidence: 0.800
+    • Brazil: 0.0 metric tons (7.0%)
+      Confidence: 0.750
+    • Italy: 0.0 metric tons (5.0%)
+      Confidence: 0.780
+
+  Material: Copper
+  Confidence: 0.900
+  Countries (5):
+    • CHINA: 1700.0 THOUSAND METRIC TONS (3.47%)
+      Confidence: 0.950
+    • CHILE: 5000.0 THOUSAND METRIC TONS (10.2%)
+      Confidence: 0.950
+    • OTHER: 3100.0 THOUSAND METRIC TONS (6.33%)
+      Confidence: 0.950
+    • CONGO: 2500.0 THOUSAND METRIC TONS (5.1%)
+      Confidence: 0.950
+    • PERU: 2600.0 THOUSAND METRIC TONS (5.31%)
+      Confidence: 0.950
+
+  Material: Gallium nitride
+  Confidence: 0.950
+  Countries (5):
+    • China: 0.0 metric tons (65.0%)
+      Confidence: 0.850
+    • United States: 0.0 metric tons (15.0%)
+      Confidence: 0.800
+    • Japan: 0.0 metric tons (10.0%)
+      Confidence: 0.750
+    • South Korea: 0.0 metric tons (7.0%)
+      Confidence: 0.700
+    • Taiwan: 0.0 metric tons (3.0%)
+      Confidence: 0.650
+
+  Material: Silicon carbide
+  Confidence: 0.700
+  Countries (5):
+    • China: 0.0 metric tons (55.0%)
+      Confidence: 0.900
+    • United States: 0.0 metric tons (20.0%)
+      Confidence: 0.850
+    • Ukraine: 0.0 metric tons (10.0%)
+      Confidence: 0.750
+    • Norway: 0.0 metric tons (8.0%)
+      Confidence: 0.700
+    • Brazil: 0.0 metric tons (7.0%)
+      Confidence: 0.650
+
+Rf Switch:
+--------------------------------------------------------------------------------
+
+  Material: Ceramic
+  Confidence: 0.650
+  Countries (5):
+    • China: 0.0 metric tons (60.0%)
+      Confidence: 0.950
+    • India: 0.0 metric tons (15.0%)
+      Confidence: 0.850
+    • United States: 0.0 metric tons (8.0%)
+      Confidence: 0.800
+    • Brazil: 0.0 metric tons (7.0%)
+      Confidence: 0.750
+    • Italy: 0.0 metric tons (5.0%)
+      Confidence: 0.780
+
+  Material: Copper
+  Confidence: 0.850
+  Countries (5):
+    • CHINA: 1700.0 THOUSAND METRIC TONS (3.47%)
+      Confidence: 0.950
+    • CHILE: 5000.0 THOUSAND METRIC TONS (10.2%)
+      Confidence: 0.950
+    • OTHER: 3100.0 THOUSAND METRIC TONS (6.33%)
+      Confidence: 0.950
+    • CONGO: 2500.0 THOUSAND METRIC TONS (5.1%)
+      Confidence: 0.950
+    • PERU: 2600.0 THOUSAND METRIC TONS (5.31%)
+      Confidence: 0.950
+
+  Material: Gold
+  Confidence: 0.600
+  Countries (5):
+    • OTHER: 700.0 METRIC TONS (23.33%)
+      Confidence: 0.950
+    • CHINA: 370.0 METRIC TONS (12.33%)
+      Confidence: 0.950
+    • RUSSIA: 310.0 METRIC TONS (10.33%)
+      Confidence: 0.950
+    • AUSTRALIA: 310.0 METRIC TONS (10.33%)
+      Confidence: 0.950
+    • CANADA: 200.0 METRIC TONS (6.67%)
+      Confidence: 0.950
+
+  Material: Nickel
+  Confidence: 0.700
+  Countries (5):
+    • INDONESIA: 1800000.0 METRIC TONS (50.0%)
+      Confidence: 0.950
+    • PHILIPPINES: 400000.0 METRIC TONS (11.11%)
+      Confidence: 0.950
+    • OTHER: 380000.0 METRIC TONS (10.56%)
+      Confidence: 0.950
+    • NEW CALEDONIA: 230000.0 METRIC TONS (6.39%)
+      Confidence: 0.950
+    • RUSSIA: 200000.0 METRIC TONS (5.56%)
+      Confidence: 0.950
+
+  Material: Silicon
+  Confidence: 0.900
+  Countries (5):
+    • CHINA: 3600.0 THOUSAND METRIC TONS (40.0%)
+      Confidence: 0.950
+    • RUSSIA: 570.0 THOUSAND METRIC TONS (6.33%)
+      Confidence: 0.950
+    • BRAZIL: 190.0 THOUSAND METRIC TONS (2.11%)
+      Confidence: 0.950
+    • NORWAY: 200.0 THOUSAND METRIC TONS (2.22%)
+      Confidence: 0.950
+    • OTHER: 100.0 THOUSAND METRIC TONS (1.11%)
+      Confidence: 0.950
+
+
+================================================================================
+SUMMARY
+================================================================================
+Total records: 105
+Components: 4
+Unique materials: 11
+Records with country  105
+Average country confidence: 0.883

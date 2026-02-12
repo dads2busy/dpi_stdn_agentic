@@ -1,0 +1,1818 @@
+{
+  "version": "2.0",
+  "metadata": {
+    "technology": "DNA Sequencer (NGS platform)",
+    "technology_specification": "DNA Sequencer (NGS platform)",
+    "technology_reasoning": "",
+    "timestamp": "2026-02-12T16:15:25.402951",
+    "format_version": "2.0"
+  },
+  "config": {
+    "num_agents": 5,
+    "max_rounds": 3
+  },
+  "component_stage": {
+    "phase1_initial_proposals": [
+      {
+        "agent_id": "Agent_1",
+        "components": [
+          {
+            "name": "Optical Detection Module (including lasers, cameras, and filters)",
+            "confidence": 0.98,
+            "reasoning": "This module is essential for detecting fluorescent signals from nucleotides and is typically procured as a distinct assembly with its own supply chain."
+          },
+          {
+            "name": "Fluidics System (microfluidic pumps, valves, and channels)",
+            "confidence": 0.95,
+            "reasoning": "Critical for moving reagents and samples precisely through the system, this is a separate subassembly often sourced from specialized manufacturers."
+          },
+          {
+            "name": "Thermal Control Unit (temperature regulation for sample incubation)",
+            "confidence": 0.9,
+            "reasoning": "Maintains optimal temperatures for enzymatic reactions during sequencing, commonly a standalone module with dedicated hardware."
+          },
+          {
+            "name": "Reagent Cartridge or Consumables Module (pre-packaged reagents and flow cells)",
+            "confidence": 0.85,
+            "reasoning": "Although consumable, the cartridge itself is a manufactured subassembly integral to operation and typically purchased separately from the instrument."
+          },
+          {
+            "name": "Main Electronics Control Board (including processor and communication interfaces)",
+            "confidence": 0.93,
+            "reasoning": "Acts as the central processing and control unit of the sequencer, standardized as a separate electronic assembly."
+          },
+          {
+            "name": "Enclosure and Mechanical Frame (chassis and protective casing)",
+            "confidence": 0.8,
+            "reasoning": "Provides structural integrity and physical protection, often procured separately as a manufactured assembly."
+          },
+          {
+            "name": "User Interface Module (touchscreen display and control panel)",
+            "confidence": 0.75,
+            "reasoning": "Facilitates operator control and monitoring; though integrated, often designed as a distinct purchasable assembly for replacement and upgrades."
+          },
+          {
+            "name": "Data Storage and Networking Module (hard drive/SSD and network interfaces)",
+            "confidence": 0.7,
+            "reasoning": "Provides local data storage and connectivity, commonly a separately sourced subsystem within the instrument."
+          }
+        ],
+        "technology_specification": "Next-Generation Sequencing (NGS) platform DNA sequencer",
+        "technology_reasoning": "NGS platforms are the dominant form of modern DNA sequencing technology due to their high-throughput capabilities, scalability, and broad adoption in research and clinical applications. These systems integrate complex optical, fluidic, and electronic modules making them distinct from traditional Sanger sequencers."
+      },
+      {
+        "agent_id": "Agent_2",
+        "components": [
+          {
+            "name": "Fluidic Sample Processing Module",
+            "confidence": 0.95,
+            "reasoning": "A key modular subassembly comprising pumps, valves, microfluidic channels, and reagent reservoirs responsible for automated sample loading and reagent delivery. This module is often procured or manufactured as a standalone engineered unit with its specific supply chain."
+          },
+          {
+            "name": "High-Resolution Imaging Optics System",
+            "confidence": 0.96,
+            "reasoning": "The optical subsystem involving lenses, lasers or LEDs, filters, and high-sensitivity cameras is critical for detecting fluorescent signals during sequencing. It is a specialized, complex assembly procured from optical component manufacturers."
+          },
+          {
+            "name": "Sequencing Flow Cell Assembly",
+            "confidence": 0.97,
+            "reasoning": "The flow cell is a consumable but highly engineered component, often supplied independently due to its complex microfabrication. It physically houses DNA templates during sequencing and integrates as a removable structural assembly."
+          },
+          {
+            "name": "Illumination and Excitation Light Source Module",
+            "confidence": 0.92,
+            "reasoning": "Includes lasers or LEDs and associated drive electronics to excite fluorescent labels on nucleotides. Generally a discrete module sourced from specialized laser or LED component manufacturers."
+          },
+          {
+            "name": "Instrument Chassis and Frame",
+            "confidence": 0.89,
+            "reasoning": "The mechanical housing provides structural integrity and supports alignment of optical and fluidics components. Typically manufactured as a distinct assembly engineered for vibration isolation and thermal management."
+          },
+          {
+            "name": "Thermal Control and Cooling System",
+            "confidence": 0.87,
+            "reasoning": "Maintains operational temperature stability for sensitive optics and fluidics. Often includes Peltier elements, heat exchangers, and cooling fans as integrated procured assemblies."
+          },
+          {
+            "name": "Electronics Control Board Assembly",
+            "confidence": 0.88,
+            "reasoning": "The main printed circuit boards (PCBs) with FPGA or microcontroller units controlling fluidics, optics, and data acquisition, procured as a separate, complex manufactured assembly."
+          },
+          {
+            "name": "Data Acquisition and Processing Unit",
+            "confidence": 0.85,
+            "reasoning": "Computing hardware proprietary to the sequencer handles imaging data capture, processing, and storage. It is typically a modular server or embedded computer included in the system architecture."
+          }
+        ],
+        "technology_specification": "High-throughput next-generation sequencing (NGS) platform DNA sequencer utilizing massively parallel sequencing optics, fluidics, and integrated bioinformatics hardware.",
+        "technology_reasoning": "This specification reflects the dominant commercial DNA sequencing instruments from companies like Illumina and Thermo Fisher, which utilize massively parallel sequencing-by-synthesis or sequencing-by-ligation technologies. These platforms integrate fluidic sample handling, optical imaging systems, and computational hardware as distinct manufactured modules, comprising the core structure and physical assemblies of NGS sequencers in 2024."
+      },
+      {
+        "agent_id": "Agent_3",
+        "components": [
+          {
+            "name": "Optical Detection Module",
+            "confidence": 0.95,
+            "reasoning": "This integral subsystem houses lasers, cameras (e.g., CCD or CMOS sensors), and optics for detecting fluorescent signals during sequencing, procured as a distinct, precision assembly."
+          },
+          {
+            "name": "Fluidic System Module",
+            "confidence": 0.93,
+            "reasoning": "Includes pumps, valves, microfluidic chips, and tubing assemblies; separately manufactured to deliver reagents and samples with high precision, critical for sequencing workflows."
+          },
+          {
+            "name": "Sequencing Consumables Cartridge / Flow Cell",
+            "confidence": 0.9,
+            "reasoning": "Although partially consumable, this cartridge or flow cell is a precision-manufactured microfluidic chip integral to the system's operation, sourced as a defined component."
+          },
+          {
+            "name": "Main Control Electronics Board (PCB)",
+            "confidence": 0.92,
+            "reasoning": "Contains the processor, memory, and circuitry for coordinating instrument functions; a separately manufactured electronic assembly standardized across platforms."
+          },
+          {
+            "name": "Thermal Management Unit",
+            "confidence": 0.85,
+            "reasoning": "Includes Peltier elements or heat exchangers to precisely control reaction temperature, normally procured as a subsystem distinct from chassis or electronics."
+          },
+          {
+            "name": "Mechanical Motion Stage / Sample Handling System",
+            "confidence": 0.88,
+            "reasoning": "Precisely moves samples or optics during sequencing; a manufactured mechanical assembly with integrated motors and controllers."
+          },
+          {
+            "name": "Power Supply Unit (PSU)",
+            "confidence": 0.9,
+            "reasoning": "Converts mains power to required voltages for internal components; a standardized, procurable subassembly essential to all NGS instruments."
+          },
+          {
+            "name": "User Interface Touchscreen Display",
+            "confidence": 0.8,
+            "reasoning": "Provides system control and feedback, usually an off-the-shelf module integrated but procured independently by manufacturers."
+          },
+          {
+            "name": "Enclosure / Chassis Assembly",
+            "confidence": 0.87,
+            "reasoning": "The structural housing that integrates components; often a separately manufactured metal or plastic assembly conforming to design standards."
+          }
+        ],
+        "technology_specification": "Next-Generation Sequencing (NGS) platform DNA sequencer, integrating optical detection, fluidics, and computational modules for massively parallel DNA sequencing.",
+        "technology_reasoning": "NGS platforms dominate commercial DNA sequencing markets due to their high-throughput, accuracy, and cost-efficiency, making this integration the industry standard form used in research and clinical applications worldwide as of 2024."
+      },
+      {
+        "agent_id": "Agent_4",
+        "components": [
+          {
+            "name": "Fluidic and reagent delivery system",
+            "confidence": 0.95,
+            "reasoning": "Critical for handling and delivering sequencing reagents and samples across microfluidic channels; typically modular and procured separately as a complex subassembly."
+          },
+          {
+            "name": "Optical detection module (camera and illumination)",
+            "confidence": 0.92,
+            "reasoning": "In optical NGS platforms, this module captures fluorescence signals during sequencing; includes lasers, LEDs, filters, and CCD/CMOS cameras, procured as a distinct subsystem."
+          },
+          {
+            "name": "Semiconductor detection chip",
+            "confidence": 0.85,
+            "reasoning": "In non-optical platforms, this sensor measures pH changes or ion release during nucleotide incorporation; a specialized chip procured separately and critical for signal detection."
+          },
+          {
+            "name": "Sample loading and cartridge interface",
+            "confidence": 0.89,
+            "reasoning": "Provides the mechanical and fluidic interface to prepare and load DNA libraries into sequencing flow cells; often a modular consumable or replaceable handleable unit."
+          },
+          {
+            "name": "Computing and control electronics board",
+            "confidence": 0.9,
+            "reasoning": "Central electronic control boards handle instrument control, data acquisition and initial processing; a distinct procurable electronic subassembly."
+          },
+          {
+            "name": "Microfluidic flow cell or sequencing chip",
+            "confidence": 0.95,
+            "reasoning": "Contains the immobilized DNA template arrays and reaction chambers for sequencing; produced as a specialized consumable chip or cartridge."
+          },
+          {
+            "name": "Thermal control system (Peltier elements and heat sinks)",
+            "confidence": 0.8,
+            "reasoning": "Maintains precise temperature control of enzymatic reactions during sequencing, typically a modular subsystem with separate supply chain."
+          },
+          {
+            "name": "Instrument chassis and enclosure",
+            "confidence": 0.88,
+            "reasoning": "Structural frame housing all components, often manufactured separately using standardized materials and assembly processes."
+          },
+          {
+            "name": "Optical path alignment and scanning mechanism",
+            "confidence": 0.75,
+            "reasoning": "Mechanical and optical subsystem to guide and scan light during sequencing, modular but sometimes integrated; usually separate in high-end instruments."
+          },
+          {
+            "name": "Power supply unit",
+            "confidence": 0.85,
+            "reasoning": "Provides regulated power to the instrument\u2019s subsystems; standard industrial component with dedicated supply chain."
+          }
+        ],
+        "technology_specification": "Next-generation DNA sequencer (NGS platform) based on massively parallel sequencing of DNA fragments using optical detection or semiconductor detection methods.",
+        "technology_reasoning": "NGS platforms are the dominant commercial technology for high-throughput DNA sequencing since early 2010s, using either optical imaging of fluorescently labeled nucleotides or non-optical electrical detection (semiconductor-based) for base calling. They enable massively parallel reads and have standardized core instrument architectures, widely adopted across life science research and clinical markets."
+      },
+      {
+        "agent_id": "Agent_5",
+        "components": [
+          {
+            "name": "Optical Detection System (High-sensitivity fluorescence microscope and camera)",
+            "confidence": 0.98,
+            "reasoning": "The core subsystem that captures fluorescent signals emitted during nucleotide incorporation events; a specialized, separately procured optical assembly essential for sequence determination."
+          },
+          {
+            "name": "Fluidics System (Reagent delivery and microfluidic flow cells)",
+            "confidence": 0.97,
+            "reasoning": "Responsible for precise handling and delivery of reagents and samples to the sequencing flow cell; a complex machining and assembly item often sourced from specialized suppliers."
+          },
+          {
+            "name": "Flow Cell (Microfluidic sequencing substrate)",
+            "confidence": 0.99,
+            "reasoning": "The consumable microfluidic chip where DNA templates are immobilized and sequenced; procured as a distinct manufactured item with a dedicated supply chain."
+          },
+          {
+            "name": "Sample Preparation Module (Automated library preparation and amplification unit)",
+            "confidence": 0.85,
+            "reasoning": "Automated subassembly enabling preprocessing of DNA/RNA samples into sequencing-ready libraries; though some users perform external prep, integrated modules are common in high-throughput systems."
+          },
+          {
+            "name": "Thermal Control System (Temperature regulation units including Peltier elements)",
+            "confidence": 0.88,
+            "reasoning": "Maintains precise temperature conditions critical to enzymatic reactions during sequencing; procured as a separate cooling/heating subsystem in most platforms."
+          },
+          {
+            "name": "Data Processing and Control Electronics (Main computer board and control units)",
+            "confidence": 0.95,
+            "reasoning": "Contains central processing hardware and firmware controlling sequencing operations and data acquisition; clearly a distinct electronic subsystem."
+          },
+          {
+            "name": "Illumination Source (LED or laser excitation modules)",
+            "confidence": 0.92,
+            "reasoning": "Provides excitation light for fluorescent dyes during sequencing-by-synthesis; technologically specialized and procured separately from optics and electronics."
+          },
+          {
+            "name": "Enclosure and Instrument Frame (Structural housing and mechanical supports)",
+            "confidence": 0.85,
+            "reasoning": "Protects and supports internal components, often designed to precise specifications and procured as a manufactured assembly or kit."
+          },
+          {
+            "name": "Waste Management System (Fluid disposal pumps and reservoirs)",
+            "confidence": 0.75,
+            "reasoning": "Separately manufactured fluid handling subsystem managing used reagents and waste liquids; common in automated sequencers to maintain cleanliness and safety, but some designs integrate it closely with fluidics."
+          }
+        ],
+        "technology_specification": "Next-generation sequencing (NGS) platform utilizing massively parallel sequencing-by-synthesis technology with high-throughput DNA/RNA sample processing capabilities.",
+        "technology_reasoning": "NGS platforms dominate modern DNA sequencing due to their ability to rapidly sequence large volumes of nucleic acids with high accuracy and scalability, making sequencing-by-synthesis the prevalent technology in commercial systems as of 2024-2025."
+      }
+    ],
+    "phase2_debate_rounds": [
+      {
+        "round_num": 1,
+        "convergence": 0.5496386946386946,
+        "threshold": 0.7,
+        "threshold_reached": false,
+        "proposals": {
+          "Agent_1": [
+            {
+              "name": "Optical Detection Module (including lasers, cameras, and filters)",
+              "confidence": 0.98,
+              "reasoning": "This module is essential for detecting fluorescent signals from nucleotides and is typically procured as a distinct assembly with its own supply chain.",
+              "component": "Optical Detection Module (including lasers, cameras, and filters)",
+              "normalized_component": "optical detection"
+            },
+            {
+              "name": "Fluidics System (microfluidic pumps, valves, and channels)",
+              "confidence": 0.95,
+              "reasoning": "Critical for moving reagents and samples precisely through the system, this is a separate subassembly often sourced from specialized manufacturers.",
+              "component": "Fluidics System (microfluidic pumps, valves, and channels)",
+              "normalized_component": "fluidics"
+            },
+            {
+              "name": "Thermal Control Unit (temperature regulation for sample incubation)",
+              "confidence": 0.9,
+              "reasoning": "Maintains optimal temperatures for enzymatic reactions during sequencing, commonly a standalone module with dedicated hardware.",
+              "component": "Thermal Control Unit (temperature regulation for sample incubation)",
+              "normalized_component": "thermal control"
+            },
+            {
+              "name": "Reagent Cartridge or Consumables Module (pre-packaged reagents and flow cells)",
+              "confidence": 0.85,
+              "reasoning": "Although consumable, the cartridge itself is a manufactured subassembly integral to operation and typically purchased separately from the instrument.",
+              "component": "Reagent Cartridge or Consumables Module (pre-packaged reagents and flow cells)",
+              "normalized_component": "reagent and sequencing flow cell cartridge"
+            },
+            {
+              "name": "Main Electronics Control Board (including processor and communication interfaces)",
+              "confidence": 0.93,
+              "reasoning": "Acts as the central processing and control unit of the sequencer, standardized as a separate electronic assembly.",
+              "component": "Main Electronics Control Board (including processor and communication interfaces)",
+              "normalized_component": "main electronics control board"
+            },
+            {
+              "name": "Enclosure and Mechanical Frame (chassis and protective casing)",
+              "confidence": 0.8,
+              "reasoning": "Provides structural integrity and physical protection, often procured separately as a manufactured assembly.",
+              "component": "Enclosure and Mechanical Frame (chassis and protective casing)",
+              "normalized_component": "instrument chassis and enclosure"
+            },
+            {
+              "name": "User Interface Module (touchscreen display and control panel)",
+              "confidence": 0.75,
+              "reasoning": "Facilitates operator control and monitoring; though integrated, often designed as a distinct purchasable assembly for replacement and upgrades.",
+              "component": "User Interface Module (touchscreen display and control panel)",
+              "normalized_component": "user interface touchscreen display"
+            },
+            {
+              "name": "Data Storage and Networking Module (hard drive/SSD and network interfaces)",
+              "confidence": 0.7,
+              "reasoning": "Provides local data storage and connectivity, commonly a separately sourced subsystem within the instrument.",
+              "component": "Data Storage and Networking Module (hard drive/SSD and network interfaces)",
+              "normalized_component": "data storage and networking"
+            }
+          ],
+          "Agent_2": [
+            {
+              "name": "Fluidic Sample Processing Module",
+              "confidence": 0.95,
+              "reasoning": "A key modular subassembly comprising pumps, valves, microfluidic channels, and reagent reservoirs responsible for automated sample loading and reagent delivery. This module is often procured or manufactured as a standalone engineered unit with its specific supply chain.",
+              "component": "Fluidic Sample Processing Module",
+              "normalized_component": "fluidics"
+            },
+            {
+              "name": "High-Resolution Imaging Optics System",
+              "confidence": 0.96,
+              "reasoning": "The optical subsystem involving lenses, lasers or LEDs, filters, and high-sensitivity cameras is critical for detecting fluorescent signals during sequencing. It is a specialized, complex assembly procured from optical component manufacturers.",
+              "component": "High-Resolution Imaging Optics System",
+              "normalized_component": "optical path alignment and imaging optics"
+            },
+            {
+              "name": "Sequencing Flow Cell Assembly",
+              "confidence": 0.97,
+              "reasoning": "The flow cell is a consumable but highly engineered component, often supplied independently due to its complex microfabrication. It physically houses DNA templates during sequencing and integrates as a removable structural assembly.",
+              "component": "Sequencing Flow Cell Assembly",
+              "normalized_component": "reagent and sequencing flow cell cartridge"
+            },
+            {
+              "name": "Illumination and Excitation Light Source Module",
+              "confidence": 0.92,
+              "reasoning": "Includes lasers or LEDs and associated drive electronics to excite fluorescent labels on nucleotides. Generally a discrete module sourced from specialized laser or LED component manufacturers.",
+              "component": "Illumination and Excitation Light Source Module",
+              "normalized_component": "illumination source"
+            },
+            {
+              "name": "Instrument Chassis and Frame",
+              "confidence": 0.89,
+              "reasoning": "The mechanical housing provides structural integrity and supports alignment of optical and fluidics components. Typically manufactured as a distinct assembly engineered for vibration isolation and thermal management.",
+              "component": "Instrument Chassis and Frame",
+              "normalized_component": "instrument chassis and enclosure"
+            },
+            {
+              "name": "Thermal Control and Cooling System",
+              "confidence": 0.87,
+              "reasoning": "Maintains operational temperature stability for sensitive optics and fluidics. Often includes Peltier elements, heat exchangers, and cooling fans as integrated procured assemblies.",
+              "component": "Thermal Control and Cooling System",
+              "normalized_component": "thermal control"
+            },
+            {
+              "name": "Electronics Control Board Assembly",
+              "confidence": 0.88,
+              "reasoning": "The main printed circuit boards (PCBs) with FPGA or microcontroller units controlling fluidics, optics, and data acquisition, procured as a separate, complex manufactured assembly.",
+              "component": "Electronics Control Board Assembly",
+              "normalized_component": "main electronics control board"
+            },
+            {
+              "name": "Data Acquisition and Processing Unit",
+              "confidence": 0.85,
+              "reasoning": "Computing hardware proprietary to the sequencer handles imaging data capture, processing, and storage. It is typically a modular server or embedded computer included in the system architecture.",
+              "component": "Data Acquisition and Processing Unit",
+              "normalized_component": "data storage and networking"
+            }
+          ],
+          "Agent_3": [
+            {
+              "name": "Optical Detection Module",
+              "confidence": 0.95,
+              "reasoning": "This integral subsystem houses lasers, cameras (e.g., CCD or CMOS sensors), and optics for detecting fluorescent signals during sequencing, procured as a distinct, precision assembly.",
+              "component": "Optical Detection Module",
+              "normalized_component": "optical detection"
+            },
+            {
+              "name": "Fluidic System Module",
+              "confidence": 0.93,
+              "reasoning": "Includes pumps, valves, microfluidic chips, and tubing assemblies; separately manufactured to deliver reagents and samples with high precision, critical for sequencing workflows.",
+              "component": "Fluidic System Module",
+              "normalized_component": "fluidics"
+            },
+            {
+              "name": "Sequencing Consumables Cartridge / Flow Cell",
+              "confidence": 0.9,
+              "reasoning": "Although partially consumable, this cartridge or flow cell is a precision-manufactured microfluidic chip integral to the system's operation, sourced as a defined component.",
+              "component": "Sequencing Consumables Cartridge / Flow Cell",
+              "normalized_component": "reagent and sequencing flow cell cartridge"
+            },
+            {
+              "name": "Main Control Electronics Board (PCB)",
+              "confidence": 0.92,
+              "reasoning": "Contains the processor, memory, and circuitry for coordinating instrument functions; a separately manufactured electronic assembly standardized across platforms.",
+              "component": "Main Control Electronics Board (PCB)",
+              "normalized_component": "main electronics control board"
+            },
+            {
+              "name": "Thermal Management Unit",
+              "confidence": 0.85,
+              "reasoning": "Includes Peltier elements or heat exchangers to precisely control reaction temperature, normally procured as a subsystem distinct from chassis or electronics.",
+              "component": "Thermal Management Unit",
+              "normalized_component": "thermal control"
+            },
+            {
+              "name": "Mechanical Motion Stage / Sample Handling System",
+              "confidence": 0.88,
+              "reasoning": "Precisely moves samples or optics during sequencing; a manufactured mechanical assembly with integrated motors and controllers.",
+              "component": "Mechanical Motion Stage / Sample Handling System",
+              "normalized_component": "mechanical motion stage and sample handling"
+            },
+            {
+              "name": "Power Supply Unit (PSU)",
+              "confidence": 0.9,
+              "reasoning": "Converts mains power to required voltages for internal components; a standardized, procurable subassembly essential to all NGS instruments.",
+              "component": "Power Supply Unit (PSU)",
+              "normalized_component": "power supply"
+            },
+            {
+              "name": "User Interface Touchscreen Display",
+              "confidence": 0.8,
+              "reasoning": "Provides system control and feedback, usually an off-the-shelf module integrated but procured independently by manufacturers.",
+              "component": "User Interface Touchscreen Display",
+              "normalized_component": "user interface touchscreen display"
+            },
+            {
+              "name": "Enclosure / Chassis Assembly",
+              "confidence": 0.87,
+              "reasoning": "The structural housing that integrates components; often a separately manufactured metal or plastic assembly conforming to design standards.",
+              "component": "Enclosure / Chassis Assembly",
+              "normalized_component": "instrument chassis and enclosure"
+            }
+          ],
+          "Agent_4": [
+            {
+              "name": "Fluidic and reagent delivery system",
+              "confidence": 0.95,
+              "reasoning": "Critical for handling and delivering sequencing reagents and samples across microfluidic channels; typically modular and procured separately as a complex subassembly.",
+              "component": "Fluidic and reagent delivery system",
+              "normalized_component": "fluidics"
+            },
+            {
+              "name": "Optical detection module (camera and illumination)",
+              "confidence": 0.92,
+              "reasoning": "In optical NGS platforms, this module captures fluorescence signals during sequencing; includes lasers, LEDs, filters, and CCD/CMOS cameras, procured as a distinct subsystem.",
+              "component": "Optical detection module (camera and illumination)",
+              "normalized_component": "optical detection"
+            },
+            {
+              "name": "Semiconductor detection chip",
+              "confidence": 0.85,
+              "reasoning": "In non-optical platforms, this sensor measures pH changes or ion release during nucleotide incorporation; a specialized chip procured separately and critical for signal detection.",
+              "component": "Semiconductor detection chip",
+              "normalized_component": "semiconductor detection chip"
+            },
+            {
+              "name": "Sample loading and cartridge interface",
+              "confidence": 0.89,
+              "reasoning": "Provides the mechanical and fluidic interface to prepare and load DNA libraries into sequencing flow cells; often a modular consumable or replaceable handleable unit.",
+              "component": "Sample loading and cartridge interface",
+              "normalized_component": "mechanical motion stage and sample handling"
+            },
+            {
+              "name": "Computing and control electronics board",
+              "confidence": 0.9,
+              "reasoning": "Central electronic control boards handle instrument control, data acquisition and initial processing; a distinct procurable electronic subassembly.",
+              "component": "Computing and control electronics board",
+              "normalized_component": "main electronics control board"
+            },
+            {
+              "name": "Microfluidic flow cell or sequencing chip",
+              "confidence": 0.95,
+              "reasoning": "Contains the immobilized DNA template arrays and reaction chambers for sequencing; produced as a specialized consumable chip or cartridge.",
+              "component": "Microfluidic flow cell or sequencing chip",
+              "normalized_component": "reagent and sequencing flow cell cartridge"
+            },
+            {
+              "name": "Thermal control system (Peltier elements and heat sinks)",
+              "confidence": 0.8,
+              "reasoning": "Maintains precise temperature control of enzymatic reactions during sequencing, typically a modular subsystem with separate supply chain.",
+              "component": "Thermal control system (Peltier elements and heat sinks)",
+              "normalized_component": "thermal control"
+            },
+            {
+              "name": "Instrument chassis and enclosure",
+              "confidence": 0.88,
+              "reasoning": "Structural frame housing all components, often manufactured separately using standardized materials and assembly processes.",
+              "component": "Instrument chassis and enclosure",
+              "normalized_component": "instrument chassis and enclosure"
+            },
+            {
+              "name": "Optical path alignment and scanning mechanism",
+              "confidence": 0.75,
+              "reasoning": "Mechanical and optical subsystem to guide and scan light during sequencing, modular but sometimes integrated; usually separate in high-end instruments.",
+              "component": "Optical path alignment and scanning mechanism",
+              "normalized_component": "optical path alignment and imaging optics"
+            },
+            {
+              "name": "Power supply unit",
+              "confidence": 0.85,
+              "reasoning": "Provides regulated power to the instrument\u2019s subsystems; standard industrial component with dedicated supply chain.",
+              "component": "Power supply unit",
+              "normalized_component": "power supply"
+            }
+          ],
+          "Agent_5": [
+            {
+              "name": "Optical Detection System (High-sensitivity fluorescence microscope and camera)",
+              "confidence": 0.98,
+              "reasoning": "The core subsystem that captures fluorescent signals emitted during nucleotide incorporation events; a specialized, separately procured optical assembly essential for sequence determination.",
+              "component": "Optical Detection System (High-sensitivity fluorescence microscope and camera)",
+              "normalized_component": "optical detection"
+            },
+            {
+              "name": "Fluidics System (Reagent delivery and microfluidic flow cells)",
+              "confidence": 0.97,
+              "reasoning": "Responsible for precise handling and delivery of reagents and samples to the sequencing flow cell; a complex machining and assembly item often sourced from specialized suppliers.",
+              "component": "Fluidics System (Reagent delivery and microfluidic flow cells)",
+              "normalized_component": "fluidics"
+            },
+            {
+              "name": "Flow Cell (Microfluidic sequencing substrate)",
+              "confidence": 0.99,
+              "reasoning": "The consumable microfluidic chip where DNA templates are immobilized and sequenced; procured as a distinct manufactured item with a dedicated supply chain.",
+              "component": "Flow Cell (Microfluidic sequencing substrate)",
+              "normalized_component": "reagent and sequencing flow cell cartridge"
+            },
+            {
+              "name": "Sample Preparation Module (Automated library preparation and amplification unit)",
+              "confidence": 0.85,
+              "reasoning": "Automated subassembly enabling preprocessing of DNA/RNA samples into sequencing-ready libraries; though some users perform external prep, integrated modules are common in high-throughput systems.",
+              "component": "Sample Preparation Module (Automated library preparation and amplification unit)",
+              "normalized_component": "sample preparation"
+            },
+            {
+              "name": "Thermal Control System (Temperature regulation units including Peltier elements)",
+              "confidence": 0.88,
+              "reasoning": "Maintains precise temperature conditions critical to enzymatic reactions during sequencing; procured as a separate cooling/heating subsystem in most platforms.",
+              "component": "Thermal Control System (Temperature regulation units including Peltier elements)",
+              "normalized_component": "thermal control"
+            },
+            {
+              "name": "Data Processing and Control Electronics (Main computer board and control units)",
+              "confidence": 0.95,
+              "reasoning": "Contains central processing hardware and firmware controlling sequencing operations and data acquisition; clearly a distinct electronic subsystem.",
+              "component": "Data Processing and Control Electronics (Main computer board and control units)",
+              "normalized_component": "main electronics control board"
+            },
+            {
+              "name": "Illumination Source (LED or laser excitation modules)",
+              "confidence": 0.92,
+              "reasoning": "Provides excitation light for fluorescent dyes during sequencing-by-synthesis; technologically specialized and procured separately from optics and electronics.",
+              "component": "Illumination Source (LED or laser excitation modules)",
+              "normalized_component": "illumination source"
+            },
+            {
+              "name": "Enclosure and Instrument Frame (Structural housing and mechanical supports)",
+              "confidence": 0.85,
+              "reasoning": "Protects and supports internal components, often designed to precise specifications and procured as a manufactured assembly or kit.",
+              "component": "Enclosure and Instrument Frame (Structural housing and mechanical supports)",
+              "normalized_component": "instrument chassis and enclosure"
+            },
+            {
+              "name": "Waste Management System (Fluid disposal pumps and reservoirs)",
+              "confidence": 0.75,
+              "reasoning": "Separately manufactured fluid handling subsystem managing used reagents and waste liquids; common in automated sequencers to maintain cleanliness and safety, but some designs integrate it closely with fluidics.",
+              "component": "Waste Management System (Fluid disposal pumps and reservoirs)",
+              "normalized_component": "waste management"
+            }
+          ]
+        },
+        "rounds_completed": 1,
+        "support_analysis": {
+          "consensus": [],
+          "majority": [
+            "optical detection",
+            "fluidics",
+            "thermal control",
+            "reagent and sequencing flow cell cartridge",
+            "main electronics control board",
+            "instrument chassis and enclosure",
+            "user interface touchscreen display",
+            "data storage and networking",
+            "optical path alignment and imaging optics",
+            "illumination source",
+            "mechanical motion stage and sample handling",
+            "power supply"
+          ],
+          "isolated": [
+            "semiconductor detection chip",
+            "sample preparation",
+            "waste management"
+          ]
+        },
+        "critiques": [
+          {
+            "item_name": "optical detection",
+            "normalized_name": "optical detection",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_5",
+              "Agent_1",
+              "Agent_4",
+              "Agent_3"
+            ],
+            "opposing_agents": [
+              "Agent_2"
+            ],
+            "avg_confidence": 0.9575,
+            "critique_text": "Majority support for 'optical detection': 4/3 agents agree (conf: 0.96). Consider strengthening consensus."
+          },
+          {
+            "item_name": "fluidics",
+            "normalized_name": "fluidics",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_5",
+              "Agent_1",
+              "Agent_2",
+              "Agent_4"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.95,
+            "critique_text": "Majority support for 'fluidics': 5/3 agents agree (conf: 0.95). Consider strengthening consensus."
+          },
+          {
+            "item_name": "thermal control",
+            "normalized_name": "thermal control",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_5",
+              "Agent_1",
+              "Agent_2",
+              "Agent_4"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.86,
+            "critique_text": "Majority support for 'thermal control': 5/3 agents agree (conf: 0.86). Consider strengthening consensus."
+          },
+          {
+            "item_name": "reagent and sequencing flow cell cartridge",
+            "normalized_name": "reagent and sequencing flow cell cartridge",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_5",
+              "Agent_1",
+              "Agent_2",
+              "Agent_4"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.932,
+            "critique_text": "Majority support for 'reagent and sequencing flow cell cartridge': 5/3 agents agree (conf: 0.93). Consider strengthening consensus."
+          },
+          {
+            "item_name": "main electronics control board",
+            "normalized_name": "main electronics control board",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_5",
+              "Agent_1",
+              "Agent_2",
+              "Agent_4"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.916,
+            "critique_text": "Majority support for 'main electronics control board': 5/3 agents agree (conf: 0.92). Consider strengthening consensus."
+          },
+          {
+            "item_name": "instrument chassis and enclosure",
+            "normalized_name": "instrument chassis and enclosure",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_5",
+              "Agent_1",
+              "Agent_2",
+              "Agent_4"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.858,
+            "critique_text": "Majority support for 'instrument chassis and enclosure': 5/3 agents agree (conf: 0.86). Consider strengthening consensus."
+          },
+          {
+            "item_name": "user interface touchscreen display",
+            "normalized_name": "user interface touchscreen display",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_3"
+            ],
+            "opposing_agents": [
+              "Agent_5",
+              "Agent_2",
+              "Agent_4"
+            ],
+            "avg_confidence": 0.775,
+            "critique_text": "Majority support for 'user interface touchscreen display': 2/3 agents agree (conf: 0.78). Consider strengthening consensus."
+          },
+          {
+            "item_name": "data storage and networking",
+            "normalized_name": "data storage and networking",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_5",
+              "Agent_4",
+              "Agent_3"
+            ],
+            "avg_confidence": 0.7749999999999999,
+            "critique_text": "Majority support for 'data storage and networking': 2/3 agents agree (conf: 0.77). Consider strengthening consensus."
+          },
+          {
+            "item_name": "optical path alignment and imaging optics",
+            "normalized_name": "optical path alignment and imaging optics",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_4"
+            ],
+            "opposing_agents": [
+              "Agent_5",
+              "Agent_1",
+              "Agent_3"
+            ],
+            "avg_confidence": 0.855,
+            "critique_text": "Majority support for 'optical path alignment and imaging optics': 2/3 agents agree (conf: 0.85). Consider strengthening consensus."
+          },
+          {
+            "item_name": "illumination source",
+            "normalized_name": "illumination source",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_5",
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_1",
+              "Agent_4",
+              "Agent_3"
+            ],
+            "avg_confidence": 0.92,
+            "critique_text": "Majority support for 'illumination source': 2/3 agents agree (conf: 0.92). Consider strengthening consensus."
+          },
+          {
+            "item_name": "mechanical motion stage and sample handling",
+            "normalized_name": "mechanical motion stage and sample handling",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_4",
+              "Agent_3"
+            ],
+            "opposing_agents": [
+              "Agent_5",
+              "Agent_1",
+              "Agent_2"
+            ],
+            "avg_confidence": 0.885,
+            "critique_text": "Majority support for 'mechanical motion stage and sample handling': 2/3 agents agree (conf: 0.89). Consider strengthening consensus."
+          },
+          {
+            "item_name": "power supply",
+            "normalized_name": "power supply",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_4",
+              "Agent_3"
+            ],
+            "opposing_agents": [
+              "Agent_5",
+              "Agent_1",
+              "Agent_2"
+            ],
+            "avg_confidence": 0.875,
+            "critique_text": "Majority support for 'power supply': 2/3 agents agree (conf: 0.88). Consider strengthening consensus."
+          },
+          {
+            "item_name": "semiconductor detection chip",
+            "normalized_name": "semiconductor detection chip",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_4"
+            ],
+            "opposing_agents": [
+              "Agent_5",
+              "Agent_1",
+              "Agent_2",
+              "Agent_3"
+            ],
+            "avg_confidence": 0.85,
+            "critique_text": "Isolated proposal 'semiconductor detection chip' from 1 agent(s) (conf: 0.85). Requires justification or peer validation."
+          },
+          {
+            "item_name": "sample preparation",
+            "normalized_name": "sample preparation",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_5"
+            ],
+            "opposing_agents": [
+              "Agent_4",
+              "Agent_1",
+              "Agent_2",
+              "Agent_3"
+            ],
+            "avg_confidence": 0.85,
+            "critique_text": "Isolated proposal 'sample preparation' from 1 agent(s) (conf: 0.85). Requires justification or peer validation."
+          },
+          {
+            "item_name": "waste management",
+            "normalized_name": "waste management",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_5"
+            ],
+            "opposing_agents": [
+              "Agent_4",
+              "Agent_1",
+              "Agent_2",
+              "Agent_3"
+            ],
+            "avg_confidence": 0.75,
+            "critique_text": "Isolated proposal 'waste management' from 1 agent(s) (conf: 0.75). Requires justification or peer validation."
+          }
+        ],
+        "changes_from_previous": null
+      },
+      {
+        "round_num": 2,
+        "convergence": 0.34155844155844156,
+        "threshold": 0.7,
+        "threshold_reached": false,
+        "proposals": {
+          "Agent_1": [
+            {
+              "agent_id": "Agent_1",
+              "component": "Optical Detection Module (including lasers, cameras, and filters)",
+              "confidence": 0.97,
+              "reasoning": "Strong consensus with 4 agents supporting it and high average confidence (0.96). Essential for fluorescence detection in NGS.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Fluidics System (microfluidic pumps, valves, and channels)",
+              "confidence": 0.95,
+              "reasoning": "Unanimous support from all 5 agents with average confidence 0.95. Core for reagent/sample handling in NGS.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Thermal Control Unit (temperature regulation for sample incubation)",
+              "confidence": 0.86,
+              "reasoning": "Strong consensus from 5 agents, average confidence ~0.86. Crucial for temperature sensitive reactions in sequencing.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Reagent Cartridge or Consumables Module (pre-packaged reagents and flow cells)",
+              "confidence": 0.93,
+              "reasoning": "Strong agreement with 5 agents supporting and average confidence ~0.93, critical consumable for NGS workflow.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Main Electronics Control Board (including processor and communication interfaces)",
+              "confidence": 0.92,
+              "reasoning": "5 agents agree with strong average confidence 0.92; essential for system control and data processing.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Enclosure and Mechanical Frame (chassis and protective casing)",
+              "confidence": 0.86,
+              "reasoning": "Unanimous support with average confidence 0.86; necessary for structural integrity and protection.",
+              "round": 2
+            }
+          ],
+          "Agent_2": [
+            {
+              "agent_id": "Agent_2",
+              "component": "Optical Detection System (High-sensitivity fluorescence microscope and camera)",
+              "confidence": 0.98,
+              "reasoning": "Strong multi-agent consensus with high confidence (average ~0.96). Optical detection is critical for reading fluorescence signals in NGS platforms.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Fluidics System (Reagent delivery and microfluidic flow cells)",
+              "confidence": 0.96,
+              "reasoning": "Unanimous strong support from all agents with very high confidence (average ~0.95). Essential for reagent delivery and flow cell operations.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Thermal Control System (Temperature regulation units including Peltier elements)",
+              "confidence": 0.87,
+              "reasoning": "Uniform support across agents with average confidence around 0.86-0.87. Thermal regulation is crucial for sample incubation and sequencing chemistry stability.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Flow Cell (Microfluidic sequencing substrate)",
+              "confidence": 0.97,
+              "reasoning": "High consensus and critical component for sequencing reactions; selected by multiple agents with near 0.99 confidence.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Data Processing and Control Electronics (Main computer board and control units)",
+              "confidence": 0.94,
+              "reasoning": "Strong multi-agent agreement with average confidence ~0.92. Key for instrument control and data acquisition.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Enclosure and Instrument Frame (Structural housing and mechanical supports)",
+              "confidence": 0.85,
+              "reasoning": "Consistent moderate-to-high confidence (average ~0.86) indicating necessity for physical integrity and protection of internal components.",
+              "round": 2
+            }
+          ],
+          "Agent_3": [
+            {
+              "agent_id": "Agent_3",
+              "component": "Optical Detection System (High-sensitivity fluorescence microscope and camera)",
+              "confidence": 0.98,
+              "reasoning": "Strong consensus among 4 agents with very high average confidence (0.96+). Core component for detecting sequencing signals.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Fluidics System (Reagent delivery and microfluidic flow cells)",
+              "confidence": 0.96,
+              "reasoning": "Full consensus among all 5 agents with consistently high confidence (~0.95). Critical for reagent delivery and sample handling.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Thermal Control System (Temperature regulation units including Peltier elements)",
+              "confidence": 0.87,
+              "reasoning": "Unanimous support by all agents with a good average confidence (~0.86). Essential for sample incubation and reaction temperature control.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Flow Cell (Microfluidic sequencing substrate)",
+              "confidence": 0.95,
+              "reasoning": "Strong consensus with high confidence across multiple agents. Fundamental consumable where sequencing occurs.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Main Electronics Control Board (including processor and communication interfaces)",
+              "confidence": 0.92,
+              "reasoning": "Unanimous support with strong confidence. Central for instrument operations and data handling.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Enclosure and Instrument Frame (Structural housing and mechanical supports)",
+              "confidence": 0.86,
+              "reasoning": "Clear consensus with good confidence. Provides necessary mechanical stability and protection.",
+              "round": 2
+            }
+          ],
+          "Agent_4": [
+            {
+              "agent_id": "Agent_4",
+              "component": "Optical Detection Module (including lasers, cameras, and filters)",
+              "confidence": 0.96,
+              "reasoning": "Strong consensus from 4 agents with average confidence 0.96; critical for fluorescence detection in NGS.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "Fluidics System (microfluidic pumps, valves, and channels)",
+              "confidence": 0.95,
+              "reasoning": "Unanimous support from all 5 agents with average confidence 0.95; essential for reagent delivery and sample handling.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "Thermal Control Unit (temperature regulation for sample incubation)",
+              "confidence": 0.86,
+              "reasoning": "Strong consensus and critical for sample incubation and temperature regulation; 5 agents support with average 0.86.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "Reagent Cartridge or Consumables Module (pre-packaged reagents and flow cells)",
+              "confidence": 0.93,
+              "reasoning": "Highly supported by all agents (average 0.93); key consumables for sequencing process.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "Main Electronics Control Board (including processor and communication interfaces)",
+              "confidence": 0.92,
+              "reasoning": "Supported by all agents; central for system control and data processing with average confidence 0.92.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "Enclosure and Mechanical Frame (chassis and protective casing)",
+              "confidence": 0.86,
+              "reasoning": "Strongly supported by all agents (average 0.86); provides structural integrity and protection.",
+              "round": 2
+            }
+          ],
+          "Agent_5": [
+            {
+              "agent_id": "Agent_5",
+              "component": "Optical Detection Module (including lasers, cameras, and filters)",
+              "confidence": 0.96,
+              "reasoning": "Strong consensus across 4-5 agents with high confidence (avg ~0.96). Critical component for detection in DNA sequencers.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_5",
+              "component": "Fluidics System (microfluidic pumps, valves, and channels)",
+              "confidence": 0.95,
+              "reasoning": "Unanimous support among all agents (5) with very high confidence (avg 0.95). Essential for reagent and sample handling.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_5",
+              "component": "Thermal Control Unit (temperature regulation for sample incubation)",
+              "confidence": 0.86,
+              "reasoning": "Strong agreement (5 agents) with consistent confidence (~0.86). Necessary to maintain reaction conditions in the sequencer.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_5",
+              "component": "Reagent Cartridge or Consumables Module (pre-packaged reagents and flow cells)",
+              "confidence": 0.93,
+              "reasoning": "Strong support from all agents with average confidence ~0.93. Key consumable for sequencing.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_5",
+              "component": "Main Electronics Control Board (including processor and communication interfaces)",
+              "confidence": 0.92,
+              "reasoning": "Consensus on main electronics across all agents with avg 0.92 confidence. Crucial for system control and data communication.",
+              "round": 2
+            },
+            {
+              "agent_id": "Agent_5",
+              "component": "Instrument Chassis and Frame",
+              "confidence": 0.86,
+              "reasoning": "All agents support enclosure/chassis with avg confidence ~0.86. Provides structural support and protection.",
+              "round": 2
+            }
+          ]
+        },
+        "rounds_completed": 2,
+        "support_analysis": {
+          "consensus": [
+            "optical detection module (including lasers, cameras, and filters)",
+            "fluidics system (microfluidic pumps, valves, and channels)",
+            "thermal control unit (temperature regulation for sample incubation)",
+            "reagent cartridge or consumables module (pre packaged reagents and flow cells)"
+          ],
+          "majority": [
+            "main electronics control board (including processor and communication interfaces)",
+            "enclosure and mechanical frame (chassis and protective casing)",
+            "optical detection system (high sensitivity fluorescence microscope and camera)",
+            "fluidics system (reagent delivery and microfluidic flow cells)",
+            "thermal control system (temperature regulation units including peltier elements)",
+            "flow cell (microfluidic sequencing substrate)",
+            "enclosure and instrument frame (structural housing and mechanical supports)"
+          ],
+          "isolated": [
+            "data processing and control electronics (main computer board and control units)",
+            "instrument chassis and frame"
+          ]
+        },
+        "critiques": [
+          {
+            "item_name": "Optical Detection Module (including lasers, cameras, and filters)",
+            "normalized_name": "optical detection module (including lasers, cameras, and filters)",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_5",
+              "Agent_1",
+              "Agent_4"
+            ],
+            "opposing_agents": [
+              "Agent_2",
+              "Agent_3"
+            ],
+            "avg_confidence": 0.9633333333333333,
+            "critique_text": "Strong consensus on 'Optical Detection Module (including lasers, cameras, and filters)': all 3 agents support with avg confidence 0.96. Preserve this component."
+          },
+          {
+            "item_name": "Fluidics System (microfluidic pumps, valves, and channels)",
+            "normalized_name": "fluidics system (microfluidic pumps, valves, and channels)",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_5",
+              "Agent_1",
+              "Agent_4"
+            ],
+            "opposing_agents": [
+              "Agent_2",
+              "Agent_3"
+            ],
+            "avg_confidence": 0.9499999999999998,
+            "critique_text": "Strong consensus on 'Fluidics System (microfluidic pumps, valves, and channels)': all 3 agents support with avg confidence 0.95. Preserve this component."
+          },
+          {
+            "item_name": "Thermal Control Unit (temperature regulation for sample incubation)",
+            "normalized_name": "thermal control unit (temperature regulation for sample incubation)",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_5",
+              "Agent_1",
+              "Agent_4"
+            ],
+            "opposing_agents": [
+              "Agent_2",
+              "Agent_3"
+            ],
+            "avg_confidence": 0.86,
+            "critique_text": "Strong consensus on 'Thermal Control Unit (temperature regulation for sample incubation)': all 3 agents support with avg confidence 0.86. Preserve this component."
+          },
+          {
+            "item_name": "Reagent Cartridge or Consumables Module (pre-packaged reagents and flow cells)",
+            "normalized_name": "reagent cartridge or consumables module (pre packaged reagents and flow cells)",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_5",
+              "Agent_1",
+              "Agent_4"
+            ],
+            "opposing_agents": [
+              "Agent_2",
+              "Agent_3"
+            ],
+            "avg_confidence": 0.93,
+            "critique_text": "Strong consensus on 'Reagent Cartridge or Consumables Module (pre-packaged reagents and flow cells)': all 3 agents support with avg confidence 0.93. Preserve this component."
+          },
+          {
+            "item_name": "Main Electronics Control Board (including processor and communication interfaces)",
+            "normalized_name": "main electronics control board (including processor and communication interfaces)",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_5",
+              "Agent_1",
+              "Agent_4",
+              "Agent_3"
+            ],
+            "opposing_agents": [
+              "Agent_2"
+            ],
+            "avg_confidence": 0.92,
+            "critique_text": "Majority support for 'Main Electronics Control Board (including processor and communication interfaces)': 4/3 agents agree (conf: 0.92). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Enclosure and Mechanical Frame (chassis and protective casing)",
+            "normalized_name": "enclosure and mechanical frame (chassis and protective casing)",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_4"
+            ],
+            "opposing_agents": [
+              "Agent_5",
+              "Agent_2",
+              "Agent_3"
+            ],
+            "avg_confidence": 0.86,
+            "critique_text": "Majority support for 'Enclosure and Mechanical Frame (chassis and protective casing)': 2/3 agents agree (conf: 0.86). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Optical Detection System (High-sensitivity fluorescence microscope and camera)",
+            "normalized_name": "optical detection system (high sensitivity fluorescence microscope and camera)",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_3"
+            ],
+            "opposing_agents": [
+              "Agent_5",
+              "Agent_1",
+              "Agent_4"
+            ],
+            "avg_confidence": 0.98,
+            "critique_text": "Majority support for 'Optical Detection System (High-sensitivity fluorescence microscope and camera)': 2/3 agents agree (conf: 0.98). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Fluidics System (Reagent delivery and microfluidic flow cells)",
+            "normalized_name": "fluidics system (reagent delivery and microfluidic flow cells)",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_3"
+            ],
+            "opposing_agents": [
+              "Agent_5",
+              "Agent_1",
+              "Agent_4"
+            ],
+            "avg_confidence": 0.96,
+            "critique_text": "Majority support for 'Fluidics System (Reagent delivery and microfluidic flow cells)': 2/3 agents agree (conf: 0.96). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Thermal Control System (Temperature regulation units including Peltier elements)",
+            "normalized_name": "thermal control system (temperature regulation units including peltier elements)",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_3"
+            ],
+            "opposing_agents": [
+              "Agent_5",
+              "Agent_1",
+              "Agent_4"
+            ],
+            "avg_confidence": 0.87,
+            "critique_text": "Majority support for 'Thermal Control System (Temperature regulation units including Peltier elements)': 2/3 agents agree (conf: 0.87). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Flow Cell (Microfluidic sequencing substrate)",
+            "normalized_name": "flow cell (microfluidic sequencing substrate)",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_3"
+            ],
+            "opposing_agents": [
+              "Agent_5",
+              "Agent_1",
+              "Agent_4"
+            ],
+            "avg_confidence": 0.96,
+            "critique_text": "Majority support for 'Flow Cell (Microfluidic sequencing substrate)': 2/3 agents agree (conf: 0.96). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Data Processing and Control Electronics (Main computer board and control units)",
+            "normalized_name": "data processing and control electronics (main computer board and control units)",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_2"
+            ],
+            "opposing_agents": [
+              "Agent_5",
+              "Agent_1",
+              "Agent_4",
+              "Agent_3"
+            ],
+            "avg_confidence": 0.94,
+            "critique_text": "Isolated proposal 'Data Processing and Control Electronics (Main computer board and control units)' from 1 agent(s) (conf: 0.94). Requires justification or peer validation."
+          },
+          {
+            "item_name": "Enclosure and Instrument Frame (Structural housing and mechanical supports)",
+            "normalized_name": "enclosure and instrument frame (structural housing and mechanical supports)",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_3"
+            ],
+            "opposing_agents": [
+              "Agent_5",
+              "Agent_1",
+              "Agent_4"
+            ],
+            "avg_confidence": 0.855,
+            "critique_text": "Majority support for 'Enclosure and Instrument Frame (Structural housing and mechanical supports)': 2/3 agents agree (conf: 0.85). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Instrument Chassis and Frame",
+            "normalized_name": "instrument chassis and frame",
+            "support_level": "isolated",
+            "supporting_agents": [
+              "Agent_5"
+            ],
+            "opposing_agents": [
+              "Agent_4",
+              "Agent_1",
+              "Agent_2",
+              "Agent_3"
+            ],
+            "avg_confidence": 0.86,
+            "critique_text": "Isolated proposal 'Instrument Chassis and Frame' from 1 agent(s) (conf: 0.86). Requires justification or peer validation."
+          }
+        ],
+        "changes_from_previous": {
+          "items_added": [
+            "reagent cartridge or consumables module (pre packaged reagents and flow cells)",
+            "fluidics system (microfluidic pumps, valves, and channels)",
+            "instrument chassis and frame",
+            "thermal control unit (temperature regulation for sample incubation)",
+            "main electronics control board (including processor and communication interfaces)",
+            "enclosure and mechanical frame (chassis and protective casing)",
+            "fluidics system (reagent delivery and microfluidic flow cells)",
+            "thermal control system (temperature regulation units including peltier elements)",
+            "optical detection system (high sensitivity fluorescence microscope and camera)",
+            "flow cell (microfluidic sequencing substrate)",
+            "data processing and control electronics (main computer board and control units)",
+            "optical detection module (including lasers, cameras, and filters)",
+            "enclosure and instrument frame (structural housing and mechanical supports)"
+          ],
+          "items_removed": [
+            "instrument chassis and enclosure",
+            "main electronics control board",
+            "power supply",
+            "illumination source",
+            "thermal control",
+            "fluidics",
+            "optical detection",
+            "optical path alignment and imaging optics",
+            "semiconductor detection chip",
+            "sample preparation",
+            "waste management",
+            "data storage and networking",
+            "mechanical motion stage and sample handling",
+            "user interface touchscreen display",
+            "reagent and sequencing flow cell cartridge"
+          ],
+          "confidence_changes": {}
+        }
+      },
+      {
+        "round_num": 3,
+        "convergence": 0.9333333333333333,
+        "threshold": 0.7,
+        "threshold_reached": true,
+        "proposals": {
+          "Agent_1": [
+            {
+              "agent_id": "Agent_1",
+              "component": "Optical Detection Module (including lasers, cameras, and filters)",
+              "confidence": 0.96,
+              "reasoning": "Strong multiple agent support with high confidence (avg ~0.96). Critical for DNA sequencing detection.",
+              "round": 3,
+              "normalized_component": "Optical Detection Module"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Fluidics System (microfluidic pumps, valves, and channels)",
+              "confidence": 0.95,
+              "reasoning": "Strong multiple agent support with high confidence (avg 0.95). Essential for reagent delivery and sample handling.",
+              "round": 3,
+              "normalized_component": "Fluidics System"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Thermal Control Unit (temperature regulation for sample incubation)",
+              "confidence": 0.86,
+              "reasoning": "Supported by multiple agents at consistent confidence of 0.86. Important for sample temperature management during sequencing.",
+              "round": 3,
+              "normalized_component": "Thermal Control Unit"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Reagent Cartridge or Consumables Module (pre-packaged reagents and flow cells)",
+              "confidence": 0.93,
+              "reasoning": "Consistently supported with high confidence (avg 0.93). Necessary for reagent storage and usage in sequencing runs.",
+              "round": 3,
+              "normalized_component": "Reagent Cartridge and Consumables Module"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Main Electronics Control Board (including processor and communication interfaces)",
+              "confidence": 0.92,
+              "reasoning": "Broad support by multiple agents with steady confidence (avg 0.92). Core component for instrument control and data communication.",
+              "round": 3,
+              "normalized_component": "Main Electronics Control Board"
+            },
+            {
+              "agent_id": "Agent_1",
+              "component": "Enclosure and Mechanical Frame (chassis and protective casing)",
+              "confidence": 0.86,
+              "reasoning": "Multiple agents support collectively for physical housing and protection (avg confidence 0.86). Important for durability and integration.",
+              "round": 3,
+              "normalized_component": "Chassis and Protective Enclosure"
+            }
+          ],
+          "Agent_2": [
+            {
+              "agent_id": "Agent_2",
+              "component": "Optical Detection Module (including lasers, cameras, and filters)",
+              "confidence": 0.96,
+              "reasoning": "Strong multi-agent consensus with average confidence of 0.96, critical for fluorescence excitation and detection in NGS.",
+              "round": 3,
+              "normalized_component": "Optical Detection Module"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Fluidics System (microfluidic pumps, valves, and channels)",
+              "confidence": 0.95,
+              "reasoning": "Strong multi-agent consensus with average confidence of 0.95, essential for precise reagent handling and sample flow.",
+              "round": 3,
+              "normalized_component": "Fluidics System"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Thermal Control Unit (temperature regulation for sample incubation)",
+              "confidence": 0.86,
+              "reasoning": "Strong multi-agent support, average confidence 0.86; important for maintaining temperature conditions during reactions.",
+              "round": 3,
+              "normalized_component": "Thermal Control Unit"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Reagent Cartridge or Consumables Module (pre-packaged reagents and flow cells)",
+              "confidence": 0.93,
+              "reasoning": "Good multi-agent support, average confidence 0.93, necessary for providing consistent reagent supply and sequencing substrates.",
+              "round": 3,
+              "normalized_component": "Reagent Cartridge and Consumables Module"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Main Electronics Control Board (including processor and communication interfaces)",
+              "confidence": 0.92,
+              "reasoning": "Broad multi-agent support with average confidence 0.92, vital for device control and communication.",
+              "round": 3,
+              "normalized_component": "Main Electronics Control Board"
+            },
+            {
+              "agent_id": "Agent_2",
+              "component": "Enclosure and Mechanical Frame (chassis and protective casing)",
+              "confidence": 0.86,
+              "reasoning": "Moderate consensus with average confidence about 0.86, important for structural integrity and protection of internal components.",
+              "round": 3,
+              "normalized_component": "Chassis and Protective Enclosure"
+            }
+          ],
+          "Agent_3": [
+            {
+              "agent_id": "Agent_3",
+              "component": "Optical Detection Module (including lasers, cameras, and filters)",
+              "confidence": 0.96,
+              "reasoning": "Strong consensus among multiple agents with average confidence 0.96; critical for DNA sequencer optics and detection.",
+              "round": 3,
+              "normalized_component": "Optical Detection Module"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Fluidics System (microfluidic pumps, valves, and channels)",
+              "confidence": 0.95,
+              "reasoning": "Clear strong multi-agent support with average confidence 0.95; essential for reagent delivery and fluid handling.",
+              "round": 3,
+              "normalized_component": "Fluidics System"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Thermal Control Unit (temperature regulation for sample incubation)",
+              "confidence": 0.86,
+              "reasoning": "Supported by multiple agents with consistent confidence 0.86; necessary for precise temperature regulation during sequencing.",
+              "round": 3,
+              "normalized_component": "Thermal Control Unit"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Reagent Cartridge or Consumables Module (pre-packaged reagents and flow cells)",
+              "confidence": 0.93,
+              "reasoning": "Strong consensus with average confidence 0.93; important for reagent management and consistent operation.",
+              "round": 3,
+              "normalized_component": "Reagent Cartridge and Consumables Module"
+            },
+            {
+              "agent_id": "Agent_3",
+              "component": "Main Electronics Control Board (including processor and communication interfaces)",
+              "confidence": 0.92,
+              "reasoning": "Widespread support among agents with confidence 0.92; fundamental for system control and communication.",
+              "round": 3,
+              "normalized_component": "Main Electronics Control Board"
+            }
+          ],
+          "Agent_4": [
+            {
+              "agent_id": "Agent_4",
+              "component": "Optical Detection Module (including lasers, cameras, and filters)",
+              "confidence": 0.96,
+              "reasoning": "Strong consensus from multiple agents with high confidence averaging 0.96. Critiques also recommend preserving this primary optical component.",
+              "round": 3,
+              "normalized_component": "Optical Detection Module"
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "Fluidics System (microfluidic pumps, valves, and channels)",
+              "confidence": 0.95,
+              "reasoning": "Strong multi-agent support with an average confidence of 0.95. Peer critiques confirm this is essential and should be preserved.",
+              "round": 3,
+              "normalized_component": "Fluidics System"
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "Thermal Control Unit (temperature regulation for sample incubation)",
+              "confidence": 0.86,
+              "reasoning": "Consistent selection by multiple agents with confidence 0.86. Critiques specifically recommend preserving this unit for temperature-sensitive steps.",
+              "round": 3,
+              "normalized_component": "Thermal Control Unit"
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "Reagent Cartridge or Consumables Module (pre-packaged reagents and flow cells)",
+              "confidence": 0.93,
+              "reasoning": "Widely endorsed by agents with average confidence 0.93. Critiques agree it is a key component enabling reagent delivery and sample processing.",
+              "round": 3,
+              "normalized_component": "Reagent Cartridge and Consumables Module"
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "Main Electronics Control Board (including processor and communication interfaces)",
+              "confidence": 0.92,
+              "reasoning": "Strongly supported by four agents at 0.92 confidence. Peer feedback suggests consolidating to this component rather than isolated data processing boards.",
+              "round": 3,
+              "normalized_component": "Main Electronics Control Board"
+            },
+            {
+              "agent_id": "Agent_4",
+              "component": "Enclosure and Mechanical Frame (chassis and protective casing)",
+              "confidence": 0.86,
+              "reasoning": "Selected by multiple agents and recommended by critiques to include a protective and structural component with similar confidence levels.",
+              "round": 3,
+              "normalized_component": "Chassis and Protective Enclosure"
+            }
+          ],
+          "Agent_5": [
+            {
+              "agent_id": "Agent_5",
+              "component": "Optical Detection Module (including lasers, cameras, and filters)",
+              "confidence": 0.96,
+              "reasoning": "Strong multi-agent support (3 agents), high average confidence (0.96), and critical for detection in NGS platforms.",
+              "round": 3,
+              "normalized_component": "Optical Detection Module"
+            },
+            {
+              "agent_id": "Agent_5",
+              "component": "Fluidics System (microfluidic pumps, valves, and channels)",
+              "confidence": 0.95,
+              "reasoning": "Strong multi-agent support (3 agents), high average confidence (0.95), essential for reagent delivery and sample handling.",
+              "round": 3,
+              "normalized_component": "Fluidics System"
+            },
+            {
+              "agent_id": "Agent_5",
+              "component": "Thermal Control Unit (temperature regulation for sample incubation)",
+              "confidence": 0.86,
+              "reasoning": "Strong multi-agent support (3 agents), moderate confidence (0.86), important for precise temperature control during sequencing.",
+              "round": 3,
+              "normalized_component": "Thermal Control Unit"
+            },
+            {
+              "agent_id": "Agent_5",
+              "component": "Reagent Cartridge or Consumables Module (pre-packaged reagents and flow cells)",
+              "confidence": 0.93,
+              "reasoning": "Strong multi-agent support (3 agents), high average confidence (0.93), essential for reagent handling and flow cells.",
+              "round": 3,
+              "normalized_component": "Reagent Cartridge and Consumables Module"
+            },
+            {
+              "agent_id": "Agent_5",
+              "component": "Main Electronics Control Board (including processor and communication interfaces)",
+              "confidence": 0.92,
+              "reasoning": "High multi-agent support (4 agents), high confidence (0.92), critical for control and data processing of the sequencer.",
+              "round": 3,
+              "normalized_component": "Main Electronics Control Board"
+            },
+            {
+              "agent_id": "Agent_5",
+              "component": "Enclosure and Mechanical Frame (chassis and protective casing)",
+              "confidence": 0.86,
+              "reasoning": "Moderate support with multiple similar proposals (3 agents), moderate confidence (0.86), necessary for structural integrity and protection of components.",
+              "round": 3,
+              "normalized_component": "Chassis and Protective Enclosure"
+            }
+          ]
+        },
+        "rounds_completed": 3,
+        "support_analysis": {
+          "consensus": [],
+          "majority": [
+            "optical detection module (including lasers, cameras, and filters)",
+            "fluidics system (microfluidic pumps, valves, and channels)",
+            "thermal control unit (temperature regulation for sample incubation)",
+            "reagent cartridge or consumables module (pre packaged reagents and flow cells)",
+            "main electronics control board (including processor and communication interfaces)",
+            "enclosure and mechanical frame (chassis and protective casing)"
+          ],
+          "isolated": []
+        },
+        "critiques": [
+          {
+            "item_name": "Optical Detection Module (including lasers, cameras, and filters)",
+            "normalized_name": "optical detection module (including lasers, cameras, and filters)",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_5",
+              "Agent_1",
+              "Agent_2",
+              "Agent_4"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.96,
+            "critique_text": "Majority support for 'Optical Detection Module (including lasers, cameras, and filters)': 5/3 agents agree (conf: 0.96). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Fluidics System (microfluidic pumps, valves, and channels)",
+            "normalized_name": "fluidics system (microfluidic pumps, valves, and channels)",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_5",
+              "Agent_1",
+              "Agent_2",
+              "Agent_4"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.95,
+            "critique_text": "Majority support for 'Fluidics System (microfluidic pumps, valves, and channels)': 5/3 agents agree (conf: 0.95). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Thermal Control Unit (temperature regulation for sample incubation)",
+            "normalized_name": "thermal control unit (temperature regulation for sample incubation)",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_5",
+              "Agent_1",
+              "Agent_2",
+              "Agent_4"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.86,
+            "critique_text": "Majority support for 'Thermal Control Unit (temperature regulation for sample incubation)': 5/3 agents agree (conf: 0.86). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Reagent Cartridge or Consumables Module (pre-packaged reagents and flow cells)",
+            "normalized_name": "reagent cartridge or consumables module (pre packaged reagents and flow cells)",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_5",
+              "Agent_1",
+              "Agent_2",
+              "Agent_4"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.93,
+            "critique_text": "Majority support for 'Reagent Cartridge or Consumables Module (pre-packaged reagents and flow cells)': 5/3 agents agree (conf: 0.93). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Main Electronics Control Board (including processor and communication interfaces)",
+            "normalized_name": "main electronics control board (including processor and communication interfaces)",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_3",
+              "Agent_5",
+              "Agent_1",
+              "Agent_2",
+              "Agent_4"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.9200000000000002,
+            "critique_text": "Majority support for 'Main Electronics Control Board (including processor and communication interfaces)': 5/3 agents agree (conf: 0.92). Consider strengthening consensus."
+          },
+          {
+            "item_name": "Enclosure and Mechanical Frame (chassis and protective casing)",
+            "normalized_name": "enclosure and mechanical frame (chassis and protective casing)",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_5",
+              "Agent_1",
+              "Agent_2",
+              "Agent_4"
+            ],
+            "opposing_agents": [
+              "Agent_3"
+            ],
+            "avg_confidence": 0.86,
+            "critique_text": "Majority support for 'Enclosure and Mechanical Frame (chassis and protective casing)': 4/3 agents agree (conf: 0.86). Consider strengthening consensus."
+          }
+        ],
+        "changes_from_previous": {
+          "items_added": [],
+          "items_removed": [
+            "instrument chassis and frame",
+            "flow cell (microfluidic sequencing substrate)",
+            "fluidics system (reagent delivery and microfluidic flow cells)",
+            "thermal control system (temperature regulation units including peltier elements)",
+            "optical detection system (high sensitivity fluorescence microscope and camera)",
+            "data processing and control electronics (main computer board and control units)",
+            "enclosure and instrument frame (structural housing and mechanical supports)"
+          ],
+          "confidence_changes": {}
+        }
+      }
+    ],
+    "phase3_final_consensus": {
+      "technology": "DNA Sequencer (NGS platform)",
+      "technology_specification": "DNA Sequencer (NGS platform)",
+      "technology_reasoning": "",
+      "components": [
+        "Optical Detection Module",
+        "Fluidics System",
+        "Reagent Cartridge And Consumables Module",
+        "Main Electronics Control Board",
+        "Thermal Control Unit",
+        "Chassis And Protective Enclosure"
+      ],
+      "confidence": 0.9333333333333333,
+      "rounds": 3,
+      "convergence_score": 0.9333333333333333
+    }
+  },
+  "materials_debate": {
+    "debate_rounds": [],
+    "final_consensus": {
+      "components": 3,
+      "unique_materials": 6,
+      "total_assignments": 12,
+      "materials_by_component": {
+        "Chromatographic Column": [
+          {
+            "name": "Stainless steel (SS 316)",
+            "confidence": 0.9,
+            "reasoning": "Commonly used for column housing due to corrosion resistance and mechanical strength, standard in chromatography columns."
+          },
+          {
+            "name": "PTFE",
+            "confidence": 0.85,
+            "reasoning": "Widely used for column seals and tubing because of chemical resistance and inertness, standard in chromatography systems."
+          },
+          {
+            "name": "C18 silica",
+            "confidence": 0.95,
+            "reasoning": "Critical stationary phase material for reverse phase chromatographic separations, universally employed in these columns."
+          },
+          {
+            "name": "Glass",
+            "confidence": 0.6,
+            "reasoning": "Used in some column jackets or windows to allow optical detection, alternatives exist but glass is common in transparent components."
+          }
+        ],
+        "Detector Module": [
+          {
+            "name": "Silicon",
+            "confidence": 0.9,
+            "reasoning": "Fundamental semiconductor material for photodiodes and solid-state detectors, industry standard in detector modules."
+          },
+          {
+            "name": "Glass",
+            "confidence": 0.85,
+            "reasoning": "Used for optical windows and lenses in detector modules due to its transparency and optical clarity."
+          },
+          {
+            "name": "Stainless steel (SS 316)",
+            "confidence": 0.7,
+            "reasoning": "Used for structural components and housings to provide durability and chemical resistance; alternatives like aluminum exist but stainless steel is common."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.65,
+            "reasoning": "Used for detector module casings and heat sinks; aluminum's light weight and thermal conductivity make it suitable though alternatives are available."
+          }
+        ],
+        "Solvent Degasser Module": [
+          {
+            "name": "Stainless steel (SS 316)",
+            "confidence": 0.85,
+            "reasoning": "Used for fluidic components and housing due to chemical resistance and strength, standard in solvent handling units."
+          },
+          {
+            "name": "PTFE",
+            "confidence": 0.9,
+            "reasoning": "Critical for tubing and seals as it is chemically inert and resistant to solvents, essential to prevent contamination."
+          },
+          {
+            "name": "Glass",
+            "confidence": 0.7,
+            "reasoning": "Used in optical flow cells and degasser windows, common material though some plastic alternatives exist."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.6,
+            "reasoning": "Used in structural parts and heat dissipation elements; used but less critical than other materials and alternatives exist."
+          }
+        ]
+      }
+    }
+  }
+}
