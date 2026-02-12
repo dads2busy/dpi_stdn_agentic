@@ -125,6 +125,7 @@ Environment variables do **not** automatically override every `config.json` fiel
 
 - Raw CSVs are written under `output/raw/`
 - Normalized CSVs and JSON are written under `output/normalized/`
+- Debate transcripts (JSON + TXT) are written under `output/transcripts/`
 
 ### Filename markers
 
@@ -159,7 +160,7 @@ src/stdn_agentic/
 ├── orchestrator/           # Pipeline coordination and stage logic
 ├── debate/                 # Multi-agent debate orchestrators
 ├── data/                   # Data loaders, USGS client, caching
-└── debate_transcripts/     # Saved debate transcripts
+└── debate_transcripts/     # Legacy transcript writer location (transcripts are saved under output/ in normal runs)
 ```
 
 ## Key Features

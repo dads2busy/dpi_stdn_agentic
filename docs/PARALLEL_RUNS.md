@@ -107,7 +107,7 @@ The `_runN_` segment prevents collisions when multiple runs write files around t
 - Launcher log: whatever you redirect `stdn-parallel` to (recommended).
 
 ### Debate transcripts
-- Directory: `src/stdn_agentic/debate_transcripts/results/`
+- Directory: `output/transcripts/`
 - These are written when transcript saving is enabled.
 
 ---
