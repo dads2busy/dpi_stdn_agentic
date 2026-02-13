@@ -384,7 +384,7 @@ class DebateReporter:
         majority = []
         isolated = []
 
-        for name, data in support.items():
+        for _name, data in support.items():
             count = len(data["agents"])
             avg_conf = (
                 sum(data["confidences"]) / len(data["confidences"]) if data["confidences"] else 0
@@ -400,18 +400,18 @@ class DebateReporter:
 
         if consensus:
             lines.append(f"  [C] Consensus ({len(consensus)} items):\n")
-            for name, conf, count in sorted(consensus, key=lambda x: -x[1])[:5]:
-                lines.append(f"      • {name} ({conf:.2f})\n")
+            for display, conf, _count in sorted(consensus, key=lambda x: -x[1])[:5]:
+                lines.append(f"      • {display} ({conf:.2f})\n")
 
         if majority:
             lines.append(f"  [M] Majority ({len(majority)} items):\n")
-            for name, conf, count in sorted(majority, key=lambda x: -x[1])[:5]:
-                lines.append(f"      • {name} ({conf:.2f}) - {count}/{num_agents} agents\n")
+            for display, conf, count in sorted(majority, key=lambda x: -x[1])[:5]:
+                lines.append(f"      • {display} ({conf:.2f}) - {count}/{num_agents} agents\n")
 
         if isolated:
             lines.append(f"  [I] Isolated ({len(isolated)} items):\n")
-            for name, conf, count in sorted(isolated, key=lambda x: -x[1])[:3]:
-                lines.append(f"      • {name} ({conf:.2f}) - needs peer support\n")
+            for display, conf, _count in sorted(isolated, key=lambda x: -x[1])[:3]:
+                lines.append(f"      • {display} ({conf:.2f}) - needs peer support\n")
 
         return "".join(lines)
 
