@@ -203,7 +203,8 @@ def combine_per_config(
 
         with files[0].open("r", encoding="utf-8", newline="") as f0:
             r0 = csv.DictReader(f0)
-            fieldnames = r0.fieldnames or []
+            # csv.DictReader.fieldnames is Optional[Sequence[str]]; cast to list for safe concatenation
+            fieldnames = list(r0.fieldnames or [])
             if not fieldnames:
                 continue
 
