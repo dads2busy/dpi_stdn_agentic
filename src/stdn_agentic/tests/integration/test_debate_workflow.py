@@ -14,12 +14,11 @@ from stdn_agentic.orchestrator import DebateReporter, MultiAgentDebater
 
 # Define persistent output directory for transcripts
 PROJECT_ROOT = Path(__file__).parent.parent.parent.parent
-DEBATE_TRANSCRIPT_DIR = PROJECT_ROOT / "debate_transcripts"
-DEBATE_RESULTS_DIR = DEBATE_TRANSCRIPT_DIR / "results"
+DEBATE_RESULTS_DIR = PROJECT_ROOT / "output" / "transcripts"
 DEBATE_RESULTS_DIR.mkdir(parents=True, exist_ok=True)
 
 print(f"\n{'=' * 80}")
-print(f"DEBATE TRANSCRIPTS WILL BE SAVED TO:")
+print("DEBATE TRANSCRIPTS WILL BE SAVED TO:")
 print(f"  {DEBATE_RESULTS_DIR.resolve()}")
 print(f"{'=' * 80}\n")
 
@@ -59,7 +58,7 @@ class TestComponentDebate:
         result = debater.run_debate("smartphone_components", agent_proposals)
 
         assert len(debater.debate_history) > 0
-        print(f"\n✓ Component debate completed")
+        print("\n✓ Component debate completed")
         print(f"  Rounds: {result['num_rounds']}")
         print(f"  Convergence: {result['final_convergence']:.1%}")
         print(f"  Consensus: {[c['component'] for c in result['final_consensus']['components']]}")
@@ -144,7 +143,7 @@ class TestMaterialDebate:
             file_format="json",
         )
 
-        print(f"\n✓ Material debate completed")
+        print("\n✓ Material debate completed")
         print(f"  Text transcript: {text_file}")
         print(f"  JSON transcript: {json_file}")
         print(f"  Rounds: {result['num_rounds']}")
@@ -337,7 +336,7 @@ class TestFullPipeline:
         for transcript_file in all_material_transcripts:
             print(f"  - {transcript_file.name}")
 
-        print(f"\n✓ All transcripts available at:")
+        print("\n✓ All transcripts available at:")
         print(f"  {DEBATE_RESULTS_DIR.resolve()}")
 
 

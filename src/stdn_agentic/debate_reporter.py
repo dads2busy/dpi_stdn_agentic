@@ -31,7 +31,7 @@ class DebateReporter:
         output_dir: Directory where transcripts are saved
 
     Example:
-        >>> reporter = DebateReporter(output_dir="./debate_transcripts")
+        >>> reporter = DebateReporter(output_dir="./output/transcripts")
         >>> filepath = reporter.save_debate_transcript(
         ...     technology="smartphone",
         ...     agent_responses=agent_data,
@@ -40,7 +40,7 @@ class DebateReporter:
         ... )
     """
 
-    def __init__(self, output_dir: str = "./debate_transcripts"):
+    def __init__(self, output_dir: str = "./output/transcripts"):
         """
         Initialize the debate reporter.
 

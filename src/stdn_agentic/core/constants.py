@@ -19,6 +19,6 @@ MAX_CACHE_SIZE_MB = 500
 SUPPORTED_EXPORT_FORMATS = ["csv", "json", "excel"]
 
 # File paths
-DEBATE_RESULTS_DIR = ".debate_transcripts"
+DEBATE_RESULTS_DIR = "output/transcripts"
 CHECKPOINT_DIR = ".checkpoints"
 CACHE_DIR = ".cache"

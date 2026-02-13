@@ -35,7 +35,7 @@ class DebateReporter:
         output_dir: Directory where transcripts are saved
     """
 
-    def __init__(self, output_dir: str = "./debate_transcripts"):
+    def __init__(self, output_dir: str = "./output/transcripts"):
         """
         Initialize the debate reporter.
 
