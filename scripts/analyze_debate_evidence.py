@@ -701,7 +701,10 @@ def main():
     # Set up paths
     base_dir = Path(__file__).parent.parent
     normalized_dir = base_dir / "output" / "normalized"
-    transcript_dir = base_dir / "src" / "stdn_agentic" / "debate_transcripts" / "results"
+
+    # Debate transcripts are now saved under output/transcripts (legacy src path removed).
+    transcript_dir = base_dir / "output" / "transcripts"
+
     output_dir = base_dir / "output" / "analysis"
 
     os.makedirs(output_dir, exist_ok=True)
