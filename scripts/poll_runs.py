@@ -12,6 +12,10 @@ like:
 The script prints a status table every N seconds until all runs are complete
 (or until you stop it).
 
+Stale detection:
+- If a run is not DONE and its log file hasn't been modified in N seconds,
+  the run is flagged as STALE so stalled runs are obvious.
+
 Examples:
   # Default: poll all 3x3 runs every 120s
   python scripts/poll_runs.py
@@ -21,6 +25,9 @@ Examples:
 
   # Custom log directory (if you later move logs under output/logs/)
   python scripts/poll_runs.py --log-dir output/logs
+
+  # Flag as STALE if no log updates for 10 minutes
+  python scripts/poll_runs.py --stale-seconds 600
 """
 
 from __future__ import annotations
@@ -76,27 +83,49 @@ def iter_targets(configs: Iterable[str], runs: int) -> list[RunTarget]:
     return targets
 
 
-def format_table(rows: list[tuple[str, str, str]]) -> str:
+def _fmt_age(seconds: float | None) -> str:
+    if seconds is None:
+        return "n/a"
+    s = int(seconds)
+    if s < 60:
+        return f"{s}s"
+    if s < 3600:
+        return f"{s // 60}m"
+    return f"{s // 3600}h{(s % 3600) // 60:02d}m"
+
+
+def format_table(rows: list[tuple[str, str, str, str]]) -> str:
     """
-    rows: list of (name, status, last_line)
+    rows: list of (name, status, age, last_line)
     """
     name_w = max(len(r[0]) for r in rows) if rows else 0
     status_w = max(len(r[1]) for r in rows) if rows else 0
+    age_w = max(len(r[2]) for r in rows) if rows else 0
 
     out = []
-    out.append(f"{'run':<{name_w}}  {'status':<{status_w}}  last")
-    out.append(f"{'-' * name_w}  {'-' * status_w}  {'-' * 4}")
-    for name, status, last in rows:
-        out.append(f"{name:<{name_w}}  {status:<{status_w}}  {last}")
+    out.append(f"{'run':<{name_w}}  {'status':<{status_w}}  {'age':<{age_w}}  last")
+    out.append(f"{'-' * name_w}  {'-' * status_w}  {'-' * age_w}  {'-' * 4}")
+    for name, status, age, last in rows:
+        out.append(f"{name:<{name_w}}  {status:<{status_w}}  {age:<{age_w}}  {last}")
     return "\n".join(out)
 
 
-def poll_once(targets: list[RunTarget], log_dir: Path) -> tuple[bool, str]:
+def poll_once(
+    targets: list[RunTarget],
+    log_dir: Path,
+    *,
+    stale_seconds: int | None = None,
+) -> tuple[bool, str]:
     """
     Returns: (all_done, formatted_report)
+
+    stale_seconds:
+      If set, runs that are not DONE and whose log file mtime is older than this
+      threshold will be flagged as STALE.
     """
-    rows: list[tuple[str, str, str]] = []
+    rows: list[tuple[str, str, str, str]] = []
     all_done = True
+    now = time.time()
 
     for t in targets:
         p = t.log_path(log_dir)
@@ -104,10 +133,28 @@ def poll_once(targets: list[RunTarget], log_dir: Path) -> tuple[bool, str]:
         done = _is_done(txt) if txt and not txt.startswith("<error reading") else False
         all_done = all_done and done
 
+        # Age since last modification
+        age_s: float | None = None
+        try:
+            age_s = now - p.stat().st_mtime
+        except FileNotFoundError:
+            age_s = None
+        except Exception:
+            age_s = None
+
         name = f"{t.config} run{t.run_num}"
+
         status = "DONE" if done else "RUNNING"
+        if (
+            (not done)
+            and stale_seconds is not None
+            and age_s is not None
+            and age_s >= stale_seconds
+        ):
+            status = "STALE"
+
         last = _last_nonempty_line(txt)
-        rows.append((name, status, last))
+        rows.append((name, status, _fmt_age(age_s), last))
 
     report = format_table(rows)
     return all_done, report
@@ -141,6 +188,12 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         help="Polling interval in seconds (default: 120).",
     )
     p.add_argument(
+        "--stale-seconds",
+        type=int,
+        default=600,
+        help="Flag a run as STALE if its log hasn't been modified in this many seconds (default: 600).",
+    )
+    p.add_argument(
         "--once",
         action="store_true",
         help="Print one status snapshot and exit.",
@@ -162,19 +215,26 @@ def main(argv: list[str] | None = None) -> int:
     log_dir = Path(args.log_dir)
     targets = iter_targets(args.configs, args.runs)
 
+    stale_seconds = args.stale_seconds if args.stale_seconds and args.stale_seconds > 0 else None
+
     if args.once:
-        all_done, report = poll_once(targets, log_dir)
+        all_done, report = poll_once(targets, log_dir, stale_seconds=stale_seconds)
         print(report)
         return 0 if all_done else 1
 
     print(f"Polling every {args.interval}s for completion of {len(targets)} runs...")
     print(f"Log dir: {log_dir.resolve()}")
     print(f"Done marker: {DONE_MARKER!r}")
+    print(
+        f"Stale threshold: {stale_seconds}s"
+        if stale_seconds is not None
+        else "Stale threshold: disabled"
+    )
     print("Press Ctrl+C to stop.\n")
 
     try:
         while True:
-            all_done, report = poll_once(targets, log_dir)
+            all_done, report = poll_once(targets, log_dir, stale_seconds=stale_seconds)
             now = time.strftime("%Y-%m-%d %H:%M:%S")
             print(f"[{now}]\n{report}\n")
 

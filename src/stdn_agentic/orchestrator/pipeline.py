@@ -18,6 +18,11 @@ Enhanced features:
 - Dynamic confidence scoring for all components
 - Detailed logging and progress reporting
 - Post-run component normalization with persistent vocabulary
+
+Checkpoint/resume:
+- When enabled via config (`enable_checkpoints`), the orchestrator writes a checkpoint
+  after every N technologies (`checkpoint_interval`) and resumes from the most recent
+  checkpoint on restart (for the same effective run configuration).
 """
 
 import csv
@@ -39,6 +44,7 @@ from ..logging_config import get_logger
 from ..models import ConfigModel, STDNDependencies
 from ..normalization.canonical_vocab import CanonicalVocab
 from ..reporting import DebateReporter
+from .checkpoint import CheckpointManager
 from .component_extractor import ComponentExtractor
 from .country_data_enricher import CountryDataEnricher
 from .materials_extractor import MaterialsExtractor
@@ -98,6 +104,13 @@ class STDNOrchestrator:
         self.convergence_threshold = convergence_threshold
         self.save_transcripts = save_transcripts
         self.debate_top_p = debate_top_p
+
+        # Checkpointing (config-controlled)
+        self.enable_checkpoints = bool(getattr(config, "enable_checkpoints", False))
+        self.checkpoint_interval = int(getattr(config, "checkpoint_interval", 5) or 5)
+        self.checkpoint_manager: Optional[CheckpointManager] = (
+            CheckpointManager(checkpoint_dir=".checkpoints") if self.enable_checkpoints else None
+        )
 
         # Initialize dependencies
         self.deps = initialize_dependencies(config)
@@ -764,31 +777,61 @@ For each input name, output the canonical form it should map to."""
         successful = 0
         failed = 0
 
-        # Initialize CSV file with headers
-        with open(self.output_file, "w", newline="") as f:
-            writer = csv.DictWriter(
-                f,
-                fieldnames=[
-                    "technology",
-                    "component",
-                    "component_confidence",
-                    "component_reasoning",
-                    "material",
-                    "material_confidence",
-                    "material_reasoning",
-                    "hs_code",
-                    "country",
-                    "meas_unit",
-                    "amount",
-                    "percentage",
-                    "country_confidence",
-                    "country_reasoning",
-                ],
-            )
-            writer.writeheader()
+        # Checkpoint/resume setup
+        resume_index = 0
+        processed_techs: list[str] = []
+        checkpoint_config: Optional[dict[str, Any]] = None
+        if self.enable_checkpoints and self.checkpoint_manager:
+            # Use a small, deterministic config signature so restarts can find the same checkpoint.
+            checkpoint_config = {
+                "import_tech_list": self.config.tech_list_path,
+                "debate_config": getattr(self, "debate_config_str", None),
+                "output_file": self.output_file,
+            }
+            checkpoint = self.checkpoint_manager.load_checkpoint(checkpoint_config)
+            if checkpoint:
+                resume_index = int(checkpoint.get("current_index", 0) or 0)
+                processed_techs = list(checkpoint.get("processed_techs", []) or [])
+                logger.info(
+                    "Resuming from checkpoint: index=%d (%.1f%%) processed=%d/%d",
+                    resume_index,
+                    float(checkpoint.get("progress_pct", 0.0) or 0.0),
+                    resume_index,
+                    len(technologies),
+                )
 
-        # Process each technology
-        for tech in technologies:
+        # Initialize CSV file with headers
+        # - Fresh run (no checkpoint): start a new file
+        # - Resume run (checkpoint present): keep existing file and continue appending
+        csv_mode = "a" if resume_index > 0 else "w"
+        if resume_index == 0:
+            with open(self.output_file, "w", newline="") as f:
+                writer = csv.DictWriter(
+                    f,
+                    fieldnames=[
+                        "technology",
+                        "component",
+                        "component_confidence",
+                        "component_reasoning",
+                        "material",
+                        "material_confidence",
+                        "material_reasoning",
+                        "hs_code",
+                        "country",
+                        "meas_unit",
+                        "amount",
+                        "percentage",
+                        "country_confidence",
+                        "country_reasoning",
+                    ],
+                )
+                writer.writeheader()
+
+        # Process each technology (with optional resume)
+        for idx, tech in enumerate(technologies):
+            if idx < resume_index:
+                continue
+
             # Use tech-specific role/domain if provided, otherwise use defaults
             tech_role = tech_roles.get(tech, role) if tech_roles else role
             tech_domain = tech_domains.get(tech, domain) if tech_domains else domain
@@ -829,9 +872,37 @@ For each input name, output the canonical form it should map to."""
                 logger.info("Output written to %s", self.output_file)
                 logger.info("Successfully processed: %s", tech)
                 successful += 1
+                processed_techs.append(tech)
             else:
                 logger.warning("Failed to process: %s", tech)
                 failed += 1
+
+            # Save checkpoint periodically (after completing a technology)
+            if self.enable_checkpoints and self.checkpoint_manager:
+                if (idx + 1) % max(1, self.checkpoint_interval) == 0:
+                    try:
+                        # Reuse the precomputed checkpoint_config so the checkpoint key remains stable.
+                        if checkpoint_config is None:
+                            checkpoint_config = {
+                                "import_tech_list": self.config.tech_list_path,
+                                "debate_config": getattr(self, "debate_config_str", None),
+                                "output_file": self.output_file,
+                            }
+                        self.checkpoint_manager.save_checkpoint(
+                            config=checkpoint_config,
+                            processed_techs=processed_techs,
+                            results=[],
+                            current_index=idx + 1,
+                            total_count=len(technologies),
+                        )
+                        logger.info(
+                            "Saved checkpoint (%d/%d) to %s",
+                            idx + 1,
+                            len(technologies),
+                            self.checkpoint_manager._get_checkpoint_file(checkpoint_config),
+                        )
+                    except Exception as e:
+                        logger.warning("Failed to save checkpoint: %s", e)
 
         logger.info("=" * 60)
         logger.info("STDN Generation Completed: %s", datetime.now())
@@ -840,6 +911,28 @@ For each input name, output the canonical form it should map to."""
         logger.info("Raw output saved to: %s", self.output_file)
         if self.use_debate and self.reporter:
             logger.info("Debate transcripts saved to: %s", self.reporter.output_dir)
+
+        # On successful completion, delete the checkpoint so subsequent runs start fresh
+        # (and only resume if interrupted), unless config.keep_checkpoints_on_success is true.
+        keep_on_success = bool(getattr(self.config, "keep_checkpoints_on_success", False))
+        if (
+            self.enable_checkpoints
+            and self.checkpoint_manager
+            and checkpoint_config is not None
+            and failed == 0
+            and successful == len(technologies)
+        ):
+            if keep_on_success:
+                logger.info(
+                    "Keeping checkpoint after successful completion (config.keep_checkpoints_on_success=True)."
+                )
+            else:
+                try:
+                    deleted = self.checkpoint_manager.delete_checkpoint(checkpoint_config)
+                    if deleted:
+                        logger.info("Deleted checkpoint after successful completion.")
+                except Exception as e:
+                    logger.warning("Failed to delete checkpoint after completion: %s", e)
 
         logger.debug("Usage: %s", usage)
 

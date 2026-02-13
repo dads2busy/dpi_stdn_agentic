@@ -124,6 +124,18 @@ class ConfigModel(BaseModel):
     # Post-Processing / Output Control (useful for parallel child runs)
     # ========================================================================
 
+    # ========================================================================
+    # Checkpointing / Resume Control
+    # ========================================================================
+
+    keep_checkpoints_on_success: bool = Field(
+        default=False,
+        description=(
+            "If false (default), delete the run's checkpoint file after a successful completion so subsequent runs "
+            "start fresh. If true, retain checkpoints even on success (useful for audit/debugging)."
+        ),
+    )
+
     skip_postprocess_normalization: bool = Field(
         default=False,
         description=(
