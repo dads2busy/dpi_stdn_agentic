@@ -50,10 +50,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterable, Optional
 
-
-_RX_CFG_FROM_FILENAME = re.compile(
-    r"^stdns_output_([a-z0-9]+)_\d{8}_\d{6}\.csv$", re.IGNORECASE
-)
+_RX_CFG_FROM_FILENAME = re.compile(r"^stdns_output_([a-z0-9]+)_\d{8}_\d{6}\.csv$", re.IGNORECASE)
 
 # Config tag token: 'v' or 'd' + 1-2 digits, repeated 3 times (stage order).
 # Examples: v1v1v1, d3v1v1, v1d12d19, d5v1d9
@@ -373,4 +370,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-"""
