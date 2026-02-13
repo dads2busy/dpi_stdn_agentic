@@ -52,7 +52,7 @@ class DebateReporter:
         debate_history: List[Dict[str, Any]],
         final_consensus: Dict[str, Any],
         file_format: str = "txt",
-        timestamp: str = None,
+        timestamp: str | None = None,
         config_tag: str | None = None,
     ) -> Path:
         """
