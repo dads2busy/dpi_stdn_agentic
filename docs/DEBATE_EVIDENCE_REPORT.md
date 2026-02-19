@@ -4,12 +4,15 @@ This document consolidates:
 - the **paper-aligned evaluation summary** from `D-PI-2026-01-STDN_AGENTIC_SIGIR/sections/validity_robustness_cost.tex`, and
 - the former internal “agent count plan/recommendation” notes (merged here to avoid duplication).
 
-Scope: **Stage 1 (component extraction)** debate strength, because component extraction drives downstream materials and producing-country dependencies.
+Scope:
+- **Stage 1 (component extraction)** debate strength (paper-aligned; primary).
+- **Stage 2 (materials generation)** debate strength (new; added here as complementary evidence).
 
 ---
 
-## Executive Summary (Headline Finding)
+## Executive Summary (Headline Findings)
 
+### Stage 1 (Components)
 Across **26 technologies** (see paper Appendix A for the technology list), increasing **component-stage debate strength** reduces an **LLM-judge invalid rate** (a precision proxy) relative to a no-debate baseline, **without evidence that improvements are driven solely by shorter component lists**. We also quantify:
 
 - **Robustness** via **run-to-run stability** (set overlap)
@@ -17,18 +20,30 @@ Across **26 technologies** (see paper Appendix A for the technology list), incre
 
 A practical “sweet spot” emerges around **N = 3** debating agents for the component stage.
 
+### Stage 2 (Materials)
+Across **24 technologies**, increasing **materials-stage debate strength** yields a measurable stability/quality tradeoff for final materials lists. Using our Stage 2 materials judge (plausibility of primary materials) and run-to-run stability, a practical “sweet spot” emerges around **N = 2** debating agents for the materials stage (with our current constraints and data availability; see Stage 2 section below).
+
+---
+
+## Stage 1: Components (Paper-aligned)
+(Details below; retained for paper alignment.)
+
 ---
 
 ## Configurations (What “N” Means)
 
-We compare a no-debate baseline to multi-agent debate configurations, tagged like:
+We compare no-debate baselines to multi-agent debate configurations, tagged like:
 
-- `v1v1v1` (no debate at component stage; single component agent)
-- `d2v1v1`, `d3v1v1`, `d4v1v1`, `d5v1v1` (N-agent debate for **component extraction**, downstream stages held fixed here)
+- `v1v1v1` (no debate at components stage; single component agent)
+- `d2v1v1`, `d3v1v1`, `d4v1v1`, `d5v1v1` (N-agent debate for **component extraction**, downstream stages held fixed)
 
-In these tags, the **first token** is the component-extraction stage:
-- `v1` = single agent (no debate)
-- `dN` = N-agent debate
+Stage 2 (materials) debate configurations are tagged like:
+- `v1d2v1`, `v1d3v1`, `v1d4v1`, `v1d5v1` (N-agent debate for **materials generation**, components held fixed)
+
+In these tags:
+- **Token 1** is the *components* stage (Stage 1): `v1` or `dN`
+- **Token 2** is the *materials* stage (Stage 2): `v1` or `dN`
+- Token 3 is downstream/other (held fixed here)
 
 ---
 
@@ -42,6 +57,9 @@ Unless stated otherwise:
 - Uncertainty is computed using **nonparametric bootstrap 95% CIs** by resampling technologies with replacement
 - For comparisons vs baseline `N=1`, we report **paired bootstrap CIs** for differences
 - We also report a **sign-test style** summary: the % of technologies that improve vs baseline
+
+Stage 2 note:
+- In our current dataset, **Stage 2 plausibility judging exists for `v1dNv1` configs** (materials debate), while some `*v1v1` configs map to materials `N=1` but were not judged for Stage 2 plausibility. Stage 2 recommendation therefore uses a **guardrail**: compute the sweet-spot recommendation using only Ns where **macro plausibility is non-NA**.
 
 ---
 
@@ -168,15 +186,49 @@ Use **`d3v1v1` (N = 3)** as the default component-stage debate strength.
 - Robustness improves (Jaccard **0.100 → 0.145** macro-median).
 - N=3 avoids the much higher runtimes seen at stronger debate (e.g., N=5).
 
+### Default recommendation (Stage 2 / materials)
+Use **`v1d2v1` (materials N = 2)** as the default materials-stage debate strength.
+
+**Why (macro-level, across 24 technologies):**
+- The Stage 2 “sweet-spot” analysis recommends **N=2** as the smallest N within a near-best stability threshold (default: within **98%** of best feasible stability).
+- Plausibility judging is available for the `v1dNv1` family; recommendation can be computed with a guardrail that excludes Ns with **NA** macro plausibility.
+
+**Key Stage 2 macro metrics (from `output/analysis/stage2_materials_by_n_macro.csv`):**
+- Stability (macro-median Jaccard):
+  - N=1: **0.297**
+  - N=2: **0.325**
+  - N=3: **0.326**
+  - N=4: **0.299**
+  - N=5: **0.329**
+- Not-plausible rate (macro-median; Stage 2 judge; NA where unavailable):
+  - N=2: **0.481** (precision proxy ≈ **0.519**)
+  - N=3: **0.434** (precision proxy ≈ **0.566**)
+  - N=4: **0.470** (precision proxy ≈ **0.530**)
+  - N=5: **0.471** (precision proxy ≈ **0.529**)
+- Final materials count (macro-median; from transcripts):
+  - N=1: **163.64**
+  - N=2: **60.30**
+  - N=3: **56.80**
+  - N=4: **49.95**
+  - N=5: **40.85**
+- Silver recall proxy (macro-median; relative to judged-plausible “silver” set):
+  - N=1: **0.549**
+  - N=2: **0.393**
+  - N=3: **0.354**
+  - N=4: **0.329**
+  - N=5: **0.301**
+
+Interpretation: materials debate tends to reduce list size strongly with increasing N; stability rises from N=1 to N=2–3 and then varies. With a near-best stability criterion and cost held constant here, **N=2** is a practical default.
+
 ### When to use N=1 instead
-Choose `v1v1v1` (N=1 at component stage) when:
+Choose `v1v1v1` (N=1 at component stage, N=1 at materials stage) when:
 - you need fast turnaround / exploratory runs
 - cost/latency constraints dominate and you can tolerate higher judged invalid rates and lower stability
 
 ### When to consider N>3
-Consider `d4v1v1` / `d5v1v1` only if:
-- you have a high-stakes technology where additional gains justify runtime increases, and
-- you have empirical evidence for your subset that gains beyond N=3 are worth it (diminishing returns are plausible)
+Consider stronger debate only if:
+- you have a high-stakes technology where additional gains justify cost increases, and
+- you have empirical evidence for your subset that gains beyond the default are worth it (diminishing returns are plausible)
 
 ---
 
