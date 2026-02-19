@@ -148,7 +148,7 @@ During parallel runs, per-run raw files include `_runN_` to avoid collisions, an
 | [PARALLEL_RUNS.md](docs/PARALLEL_RUNS.md) | Parallel batch experiments (`stdn-parallel`), collision-proof outputs, and monitoring |
 | [PROMPTS.md](docs/PROMPTS.md) | Reference of LLM prompts |
 | [DEBATE_SYSTEM.md](docs/DEBATE_SYSTEM.md) | Multi-agent debate mechanism including convergence and voting |
-| [DEBATE_EVIDENCE_REPORT.md](docs/DEBATE_EVIDENCE_REPORT.md) | Empirical analysis comparing debate vs. single-agent mode |
+| [DEBATE_EVIDENCE_REPORT.md](docs/DEBATE_EVIDENCE_REPORT.md) | Consolidated evaluation results (validity/robustness/cost) and the default agent-count “sweet spot” recommendation |
 | [SAMPLE_TRANSCRIPT.md](docs/SAMPLE_TRANSCRIPT.md) | Annotated example debate transcript |
 
 ## Project Structure
