@@ -16,7 +16,7 @@ The system uses **11 distinct prompt types** across four categories:
 
 ## Prompt Flow Summary
 
-The following diagram shows how prompts are used across the three-stage pipeline:
+The following diagram shows how prompts are used across the four-stage pipeline (including post-processing normalization):
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐

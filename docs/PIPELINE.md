@@ -1,6 +1,6 @@
 # STDN Pipeline Stages
 
-This document describes the three-stage pipeline that transforms technology descriptions into Shallow Technology Dependency Networks (STDNs), and how to run it in **single-run** and **parallel batch** modes.
+This document describes the four-stage pipeline that transforms technology descriptions into Shallow Technology Dependency Networks (STDNs), including post-processing normalization (Stage 4), and how to run it in **single-run** and **parallel batch** modes.
 
 ## Running: single vs parallel
 
@@ -62,22 +62,22 @@ CLI / stdn (single run) or stdn-parallel (batch launcher)
           ↓
    STDNOrchestrator (orchestrator/pipeline.py)
           ↓
- ┌──────────────────────┬──────────────────────┬──────────────────────┐
- │ Stage 1:             │ Stage 2:             │ Stage 3:             │
- │ Component Extraction │ Materials Mapping    │ Country Data         │
- ├──────────────────────┼──────────────────────┼──────────────────────┤
- │ • N debating agents  │ • N debating agents  │ • USGS Database      │
- │ • Jaccard-based      │ • Jaccard-based      │ • LLM fallback       │
- │   convergence        │   convergence        │ • voting/consensus   │
- │ • Semantic name      │ • Rule-based +       │ • Caching            │
- │   normalization      │   ontology matching  │                      │
- │ • Confidence scoring │ • Confidence scoring │ • Confidence scoring │
- └──────────────────────┴──────────────────────┴──────────────────────┘
+ ┌──────────────────────┬──────────────────────┬──────────────────────┬────────────────────────┐
+ │ Stage 1:             │ Stage 2:             │ Stage 3:             │ Stage 4:               │
+ │ Component Extraction │ Materials Mapping    │ Country Data         │ Post-Processing Norm.  │
+ ├──────────────────────┼──────────────────────┼──────────────────────┼────────────────────────┤
+ │ • N debating agents  │ • N debating agents  │ • USGS Database      │ • Batch normalization  │
+ │ • Jaccard-based      │ • Jaccard-based      │ • LLM fallback       │ • Canonical vocab      │
+ │   convergence        │   convergence        │ • voting/consensus   │ • JSON output          │
+ │ • Semantic name      │ • Rule-based +       │ • Caching            │                        │
+ │   normalization      │   ontology matching  │                      │                        │
+ │ • Confidence scoring │ • Confidence scoring │ • Confidence scoring │                        │
+ └──────────────────────┴──────────────────────┴──────────────────────┴────────────────────────┘
           ↓
    Raw CSV output (output/raw/)
           ↓
  ┌─────────────────────────────────────────────────────────────────────┐
- │              Post-Processing Batch Normalization (Step 2)           │
+ │              Stage 4: Post-Processing Normalization                │
  ├─────────────────────────────────────────────────────────────────────┤
  │ • Batch component name normalization across a run group             │
  │ • Canonical vocabulary lookup (cached mappings)                     │
@@ -146,7 +146,7 @@ The component extraction stage turns a high-level technology entry (such as "Sol
 
 ### Single-Agent Mode (no debate)
 
-Single-agent mode is achieved by setting the debate flags to false (or leaving them unset) and using agent counts of 1:
+Single-agent mode is achieved by setting the debate flags to false (country voting defaults to true if unset) and using agent counts of 1:
 
 ```bash
 uv run stdn -i config.json \

@@ -14,17 +14,17 @@ Each link includes confidence scores and reasoning, making the analysis auditabl
 
 ## Architecture
 
-The system uses a three-stage pipeline with optional multi-agent debate at each stage:
+The system uses a four-stage pipeline with optional multi-agent debate in Stages 1–3:
 
 ```
-┌──────────────────────┬──────────────────────┬──────────────────────┐
-│ Stage 1:             │ Stage 2:             │ Stage 3:             │
-│ Component Extraction │ Materials Mapping    │ Country Data         │
-├──────────────────────┼──────────────────────┼──────────────────────┤
-│ • N debating agents  │ • N debating agents  │ • USGS Database      │
-│ • Jaccard-based      │ • Jaccard-based      │ • LLM fallback       │
-│   convergence        │   convergence        │ • Voting/consensus   │
-└──────────────────────┴──────────────────────┴──────────────────────┘
+┌──────────────────────┬──────────────────────┬──────────────────────┬────────────────────────┐
+│ Stage 1:             │ Stage 2:             │ Stage 3:             │ Stage 4:               │
+│ Component Extraction │ Materials Mapping    │ Country Data         │ Post-Processing Norm.  │
+├──────────────────────┼──────────────────────┼──────────────────────┼────────────────────────┤
+│ • N debating agents  │ • N debating agents  │ • USGS Database      │ • Batch normalization  │
+│ • Jaccard-based      │ • Jaccard-based      │ • LLM fallback       │ • Canonical vocab      │
+│   convergence        │   convergence        │ • Voting/consensus   │ • JSON output          │
+└──────────────────────┴──────────────────────┴──────────────────────┴────────────────────────┘
 ```
 
 ## Quick Start
@@ -103,7 +103,7 @@ Environment variables do **not** automatically override every `config.json` fiel
 |----------|---------|-------------|
 | `ENABLE_COMPONENT_DEBATE` | false | Enable multi-agent debate for components (CLI can override) |
 | `ENABLE_MATERIAL_DEBATE` | false | Enable multi-agent debate for materials (CLI can override) |
-| `ENABLE_COUNTRY_DEBATE` | false | Enable voting/consensus for countries (CLI can override) |
+| `ENABLE_COUNTRY_DEBATE` | true | Enable voting/consensus for countries (CLI can override) |
 | `NUM_AGENTS_COMPONENT` | 3 | Number of agents for component debate |
 | `NUM_AGENTS_MATERIAL` | 3 | Number of agents for material debate |
 | `NUM_AGENTS_COUNTRY` | 3 | Number of agents for country voting |

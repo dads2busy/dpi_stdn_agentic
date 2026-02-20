@@ -1319,9 +1319,9 @@ The debate system can be configured via CLI or config file:
 ```bash
 # Full debate mode (recommended for best quality)
 python -m stdn_agentic.main \
-    --enable-debate \
-    --enable-material-debate \
-    --enable-country-debate \
+    --enable-component-debate true \
+    --enable-material-debate true \
+    --enable-country-debate true \
     --num-agents-component 3 \
     --num-agents-material 3 \
     --num-agents-country 3 \
@@ -1329,7 +1329,10 @@ python -m stdn_agentic.main \
     --convergence-threshold 0.75
 
 # No debate mode (faster, lower quality)
-python -m stdn_agentic.main  # defaults to no debate
+python -m stdn_agentic.main \
+    --enable-component-debate false \
+    --enable-material-debate false \
+    --enable-country-debate false
 ```
 
 ### Output File Naming Convention

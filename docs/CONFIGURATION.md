@@ -49,7 +49,7 @@ You can also use an Ollama model, e.g. `"model": "ollama:qwen2.5:7b"`, as long a
 
   "usgs_database": "./data/world_mineral_commodity_reports_2022-2025_v8.db",
   "top_n_countries": 5,
-  "years_to_query": [2024, 2023],
+  "years_to_query": [2023, 2024],
   "write_nulls_to_output": true,
 
   "enable_llm_fallback_cache": true,
@@ -84,7 +84,7 @@ Notes:
 | `materials_hs_codes_listing` | string | — | Path to HS codes and material names CSV |
 | `materials_column_name` | string | `Elements_Compounds` | Column name for materials in HS codes file |
 | `top_n_countries` | int | 5 | Number of top countries to return per material |
-| `years_to_query` | list[int] | `[2024, 2023]` | Years to query for production data |
+| `years_to_query` | list[int] | `[2023, 2024]` | Years to query for production data |
 | `write_nulls_to_output` | bool | true | Include null values in output |
 | `enable_llm_fallback_cache` | bool | true | Cache LLM fallback results for a TTL period |
 | `llm_fallback_cache_dir` | string | `./data/llm_fallback_cache` | Directory for LLM fallback cache |
@@ -108,7 +108,7 @@ Debate/voting settings can be provided as:
 |----------|------|---------|-------------|
 | `ENABLE_COMPONENT_DEBATE` | bool | false | Enable multi-agent debate for components (CLI can override) |
 | `ENABLE_MATERIAL_DEBATE` | bool | false | Enable multi-agent debate for materials (CLI can override) |
-| `ENABLE_COUNTRY_DEBATE` | bool | false | Enable voting/consensus for countries (CLI can override) |
+| `ENABLE_COUNTRY_DEBATE` | bool | true | Enable voting/consensus for countries (CLI can override) |
 | `NUM_AGENTS_COMPONENT` | int | 3 | Number of agents for component debate |
 | `NUM_AGENTS_MATERIAL` | int | 3 | Number of agents for material debate |
 | `NUM_AGENTS_COUNTRY` | int | 3 | Number of agents for country voting |

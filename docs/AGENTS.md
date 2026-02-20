@@ -1,6 +1,6 @@
 # STDN Agent System
 
-STDN Agentic uses specialized agents for the three pipeline stages (components, materials, countries) plus a factory helper for constructing agents. The agents can operate both independently (single-agent mode) and collaboratively (multi-agent debate/voting mode) to reach consensus on technology dependencies.
+STDN Agentic uses specialized agents for the three agent-driven stages (Stages 1–3: components, materials, countries) within the four-stage pipeline; Stage 4 is post-processing normalization. The agents can operate both independently (single-agent mode) and collaboratively (multi-agent debate/voting mode) to reach consensus on technology dependencies.
 
 ## Configuration Precedence (config-first)
 
