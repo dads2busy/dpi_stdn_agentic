@@ -28,7 +28,8 @@ def initialize_dependencies(config: ConfigModel) -> STDNDependencies:
         years_to_query=config.years_to_query,
         client=client,
         model=config.model,
-        top_p=config.topp,
+        top_p=config.component_no_debate_top_p,
+        temperature=config.component_no_debate_temperature,
         # Per-agent models (fallback to config.model if not set)
         component_model=config.component_model,
         materials_model=config.materials_model,

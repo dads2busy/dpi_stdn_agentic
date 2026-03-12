@@ -1,12 +1,12 @@
 {
   "_comment": "STDN Configuration file - specifies input data sources, model settings, and output options",
   "import_tech_list": "./data/tech_list.csv",
-  "model": "openai:gpt-4.1-mini",
+  "model": "ollama:gpt-oss:20b",
   "output_dir": "./output",
   "output_csv_filename": "stdns_output",
 
   "_comment_component_normalization_model": "Model used specifically for semantic component-name normalization mappings (more reliable model recommended)",
-  "component_normalization_model": "openai:gpt-4.1",
+  "component_normalization_model": "ollama:qwen2.5:32b",
 
   "materials_hs_codes_listing": "./data/hs_codes_and_usgs_names.csv",
   "materials_column_name": "Elements_Compounds",
@@ -22,7 +22,19 @@
 
   "years_to_query": [2024, 2023],
   "write_nulls_to_output": true,
-  "topp": 0.000001,
+  "component_debate_top_p": 0.01,
+  "component_no_debate_top_p": 1.0,
+  "component_debate_temperature": 0.03,
+  "component_no_debate_temperature": 1.5,
+  "component_debate_use_personas": false,
+  "material_debate_top_p": 0.9,
+  "material_no_debate_top_p": 1.0,
+  "material_debate_temperature": 0.9,
+  "material_no_debate_temperature": 1.5,
+  "country_debate_top_p": 0.9,
+  "country_no_debate_top_p": 1.0,
+  "country_debate_temperature": 0.9,
+  "country_no_debate_temperature": 1.5,
   "materials_use_topp": true,
   "materials_iteration_count": 10,
   "materials_count_threshold": 5,
@@ -38,9 +50,9 @@
   "model_temperature": 0.1,
 
   "_comment_per_agent_models": "Optional: Use different models for different agents",
-  "component_model": "openai:gpt-4.1-mini",
-  "materials_model": "openai:gpt-4.1-mini",
-  "country_model": "openai:gpt-4.1-mini",
+  "component_model": "ollama:gpt-oss:20b",
+  "materials_model": "ollama:gpt-oss:20b",
+  "country_model": "ollama:gpt-oss:20b",
 
   "_comment_retries": "Increase generation-time output validation retries for pydantic_ai Agents (applies when the code reads this config field)",
   "agent_retries": 5,

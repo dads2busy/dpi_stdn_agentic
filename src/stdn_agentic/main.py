@@ -168,8 +168,6 @@ async def process_all_technologies(config: ConfigModel, cli_args: argparse.Names
     else:
         save_transcripts = os.getenv("SAVE_TRANSCRIPTS", "true").lower() == "true"
 
-    debate_top_p = float(os.getenv("DEBATE_TOP_P", 0.0001))
-
     orchestrator = STDNOrchestrator(
         config,
         enable_debate=enable_debate,
@@ -181,7 +179,6 @@ async def process_all_technologies(config: ConfigModel, cli_args: argparse.Names
         max_debate_rounds=max_debate_rounds,
         convergence_threshold=convergence_threshold,
         save_transcripts=save_transcripts,
-        debate_top_p=debate_top_p,
     )
 
     tech_list_path = Path(config.tech_list_path)

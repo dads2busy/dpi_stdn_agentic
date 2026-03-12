@@ -62,15 +62,15 @@ def find_new_output_file(
       stdns_output_{config_type}_run{N}
 
     The orchestrator then appends:
-      _{debate_config_marker}_{timestamp}.csv
+      _{timestamp}.csv
 
     So for detection we must match:
-      stdns_output_*_run{N}_{filename_config_marker}_{date_prefix}*.csv
+      stdns_output_{filename_config_marker}_run{N}_{date_prefix}*.csv
     """
     if run_num is None:
         pattern = f"stdns_output_{filename_config_marker}_{date_prefix}*.csv"
     else:
-        pattern = f"stdns_output_*_run{run_num}_{filename_config_marker}_{date_prefix}*.csv"
+        pattern = f"stdns_output_{filename_config_marker}_run{run_num}_{date_prefix}*.csv"
 
     for f in output_dir.glob(pattern):
         if f.name not in known_files:
@@ -203,6 +203,7 @@ def create_config_files(
     project_dir: Path,
     *,
     base_output_dir: Path,
+    filename_config_marker: str | None = None,
 ) -> list[Path]:
     """
     Create config files for each parallel run.
@@ -393,7 +394,7 @@ def rename_raw_outputs_to_standard(
     Rename collision-proof raw outputs back to standard naming.
 
     From:
-      output/raw/stdns_output_{config_type}_run{N}_{config_type}_{date_prefix}*.csv
+      output/raw/stdns_output_{config_type}_run{N}_{date_prefix}*.csv
     To:
       output/raw/stdns_output_{config_type}_{date_prefix}*.csv
 
@@ -404,8 +405,9 @@ def rename_raw_outputs_to_standard(
     raw_dir.mkdir(parents=True, exist_ok=True)
 
     for run_num in range(1, num_runs + 1):
-        run_prefix = f"stdns_output_{config_type}_run{run_num}_{config_type}_{date_prefix}"
+        run_prefix = f"stdns_output_{config_type}_run{run_num}_{date_prefix}"
         standard_prefix = f"stdns_output_{config_type}_{date_prefix}"
+        renamed_for_run = False
 
         for f in raw_dir.glob(f"{run_prefix}*.csv"):
             new_name = f.name.replace(run_prefix, standard_prefix, 1)
@@ -418,6 +420,24 @@ def rename_raw_outputs_to_standard(
             print(f"Renaming raw: {f.name} -> {target.name}")
             f.rename(target)
             renamed.append(target)
+            renamed_for_run = True
+
+        if not renamed_for_run:
+            run_prefix_any = f"stdns_output_{config_type}_run{run_num}_"
+            standard_prefix_any = f"stdns_output_{config_type}_"
+
+            for f in raw_dir.glob(f"{run_prefix_any}*.csv"):
+                ts_part = f.name[len(run_prefix_any) :]
+                new_name = f"{standard_prefix_any}{ts_part}"
+                target = f.with_name(new_name)
+
+                if target.exists():
+                    print(f"WARNING: Cannot rename (target exists): {f.name} -> {target.name}")
+                    continue
+
+                print(f"Renaming raw (fallback): {f.name} -> {target.name}")
+                f.rename(target)
+                renamed.append(target)
 
     return renamed
 
@@ -506,6 +526,7 @@ def rename_json_outputs_to_standard(
 
     for run_num in range(1, num_runs + 1):
         run_prefix = f"stdns_output_{config_type}_run{run_num}_"
+        renamed_for_run = False
 
         for f in output_dir.glob(f"{run_prefix}*.json"):
             # Extract the timestamp suffix after the run-specific prefix
@@ -520,6 +541,26 @@ def rename_json_outputs_to_standard(
             print(f"Renaming json: {f.name} -> {target.name}")
             f.rename(target)
             renamed.append(target)
+            renamed_for_run = True
+
+        if not renamed_for_run:
+            run_prefix_any = f"stdns_output_{config_type}_run{run_num}"
+
+            for f in output_dir.glob(f"{run_prefix_any}*.json"):
+                suffix = f.name[len(run_prefix_any) : -len(".json")]
+                if suffix.startswith("_"):
+                    suffix = suffix[1:]
+                ts_part = suffix
+                new_name = f"stdns_output_{config_type}_{ts_part}_run{run_num}.json"
+                target = f.with_name(new_name)
+
+                if target.exists():
+                    print(f"WARNING: Cannot rename JSON (target exists): {f.name} -> {target.name}")
+                    continue
+
+                print(f"Renaming json (fallback): {f.name} -> {target.name}")
+                f.rename(target)
+                renamed.append(target)
 
     return renamed
 
@@ -533,27 +574,35 @@ def run_shared_normalization_pass(
     Run one shared, LLM-backed component-name normalization pass across ALL raw CSVs for
     a configuration (ignoring timestamp/date).
 
-    This delegates to the existing `scripts/normalize_outputs.py` implementation, which:
-    - loads all matching raw CSVs
-    - uses the canonical vocabulary cache
-    - calls the LLM for unknown names
-    - writes normalized CSVs to output/normalized/
+    This delegates to `scripts/normalize_outputs_global_granularity.py`, which enforces
+    primary-component granularity and uses the material-aware prompt while writing
+    normalized CSVs to output/normalized/.
 
     We intentionally do this ONCE (after raw files have been renamed back to the standard
     pattern), so normalization applies to all outputs of the same config_type.
     """
     pattern = f"output/raw/stdns_output_{config_type}_*.csv"
 
-    print("\nRunning shared normalization via scripts/normalize_outputs.py ...")
+    print("\nRunning shared normalization via scripts/normalize_outputs_global_granularity.py ...")
     print(f"  Pattern: {pattern}")
 
     cmd = [
         "uv",
         "run",
         "python",
-        "scripts/normalize_outputs.py",
+        "scripts/normalize_outputs_global_granularity.py",
         "--pattern",
         pattern,
+        "--group-by",
+        "technology",
+        "--output-dir",
+        "output/normalized",
+        "--global-vocab",
+        "data/component_canonical_vocab_global_primary.json",
+        "--model",
+        "ollama:qwen2.5:32b",
+        "--chunk-size",
+        "120",
     ]
 
     result = subprocess.run(cmd, cwd=output_dir.parent)
@@ -571,6 +620,7 @@ def run_parallel_pipeline(
     output_dir: Path,
     base_config_path: Path,
     cleanup_after: bool = True,
+    defer_shared_postprocess: bool = False,
 ) -> bool:
     """
     Run multiple pipeline instances in parallel.
@@ -581,17 +631,26 @@ def run_parallel_pipeline(
     debate_settings = parse_config_type(config_type)
 
     # Compute the ACTUAL debate config marker used in filenames by the orchestrator.
-    # Orchestrator logic encodes:
-    #   components: d{N} if enabled else v1
-    #   materials:  d{N} if enabled else v1
-    #   countries:  v{N} (voting) where N=num_agents_country if enabled else 1
-    # (The user-facing config_type string (e.g. d3d3v3) may not match this exactly.)
+    #
+    # Orchestrator logic (pipeline._build_debate_config_string) encodes:
+    #   components: d{N} if debate enabled, else v1
+    #   materials:  d{N} if debate enabled, else v1
+    #   countries:  v{N} where N = num_agents_country if country_debate enabled, else 1
+    #              (country always uses 'v' prefix — voting, never iterative debate)
+    #
+    # IMPORTANT: The user-facing config_type (e.g. "d3d3v3") is parsed by parse_config_type
+    # which sets enable_country_debate = (country_type == "d").  Since country is always "v"
+    # in the config_type string, enable_country_debate is always False, and the pipeline
+    # collapses num_agents_country to 1 in the debate string.
+    #
+    # We use config_type directly for output_csv_filename (to keep filenames readable),
+    # but filename_config_marker must match what the pipeline actually produces.
     filename_config_marker = (
         f"{'d' if debate_settings['enable_component_debate'] else 'v'}"
         f"{debate_settings['num_agents_component'] if debate_settings['enable_component_debate'] else 1}"
         f"{'d' if debate_settings['enable_material_debate'] else 'v'}"
         f"{debate_settings['num_agents_material'] if debate_settings['enable_material_debate'] else 1}"
-        f"v{debate_settings['num_agents_country'] if debate_settings['enable_country_debate'] else 1}"
+        f"v{debate_settings['num_agents_country']}"
     )
 
     date_prefix = get_today_date_prefix()
@@ -622,6 +681,7 @@ def run_parallel_pipeline(
         db_copies,
         project_dir,
         base_output_dir=output_dir,
+        filename_config_marker=filename_config_marker,
     )
 
     # Get existing files to exclude (standard location only)
@@ -634,7 +694,7 @@ def run_parallel_pipeline(
         known_files.add(f.name)
 
     # Also exclude any collision-proof per-run raw files already present (if rerunning the script)
-    pattern_runs = f"stdns_output_*_run*_{filename_config_marker}_{date_prefix}*.csv"
+    pattern_runs = f"stdns_output_{filename_config_marker}_run*_{date_prefix}*.csv"
     for f in raw_dir.glob(pattern_runs):
         known_files.add(f.name)
 
@@ -748,11 +808,9 @@ def run_parallel_pipeline(
         print("\nTo monitor progress:")
         print(f"  tail -f output/logs/{config_type}_run*.log")
         print("\nTo check file sizes (during parallel run):")
-        print(
-            f"  ls -la output/raw/stdns_output_{config_type}_run*_{config_type}_{date_prefix}*.csv"
-        )
+        print(f"  ls -la output/raw/stdns_output_{config_type}_run*_{date_prefix}*.csv")
         print("\nAfter completion, raw files will be renamed back to:")
-        print(f"  output/raw/stdns_output_{config_type}_{date_prefix}*.csv")
+        print(f"  output/raw/stdns_output_{config_type}_run*_{date_prefix}*.csv")
         print("\nTo stop all runs:")
         print(f"  pkill -f 'stdn -i config_{config_type}'")
 
@@ -778,20 +836,25 @@ def run_parallel_pipeline(
                     num_runs=num_runs,
                 )
 
-                # Step 2: Run one shared normalization pass across the consolidated raw outputs
-                run_shared_normalization_pass(
-                    output_dir=output_dir,
-                    config_type=filename_config_marker,
-                    date_prefix=date_prefix,
-                )
+                if defer_shared_postprocess:
+                    print(
+                        "\nDeferring shared normalization and JSON generation (defer_shared_postprocess=True)."
+                    )
+                else:
+                    # Step 2: Run one shared normalization pass across the consolidated raw outputs
+                    run_shared_normalization_pass(
+                        output_dir=output_dir,
+                        config_type=filename_config_marker,
+                        date_prefix=date_prefix,
+                    )
 
-                # Step 3: Generate JSON from normalized outputs (JSON should contain normalized components)
-                print("\nGenerating JSON from normalized outputs...")
-                generate_json_from_normalized_group(
-                    output_dir=output_dir,
-                    config_type=filename_config_marker,
-                    date_prefix=date_prefix,
-                )
+                    # Step 3: Generate JSON from normalized outputs (JSON should contain normalized components)
+                    print("\nGenerating JSON from normalized outputs...")
+                    generate_json_from_normalized_group(
+                        output_dir=output_dir,
+                        config_type=filename_config_marker,
+                        date_prefix=date_prefix,
+                    )
 
                 cleanup_temp_files(db_copies, config_files)
             except KeyboardInterrupt:
@@ -853,6 +916,11 @@ def main():
         action="store_true",
         help="Skip cleanup of temp database and config files after completion",
     )
+    parser.add_argument(
+        "--defer-shared-postprocess",
+        action="store_true",
+        help="Defer shared normalization and JSON generation to run once after all configs finish",
+    )
 
     args = parser.parse_args()
 
@@ -905,6 +973,7 @@ def main():
         output_dir=output_dir,
         base_config_path=base_config_path,
         cleanup_after=not args.no_cleanup,
+        defer_shared_postprocess=args.defer_shared_postprocess,
     )
 
     sys.exit(0 if success else 1)

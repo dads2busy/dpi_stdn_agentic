@@ -66,7 +66,7 @@ from pydantic import BaseModel, Field
 from pydantic_ai import Agent
 
 _RX_FILE = re.compile(
-    r"^stdns_output_(?P<config>[a-z0-9]+)_(?P<ts>\d{8}_\d{6})\.csv$",
+    r"^stdns_output_(?P<config>[a-z0-9]+)(?:_run\d+)?_(?P<ts>\d{8}_\d{6})\.csv$",
     re.IGNORECASE,
 )
 

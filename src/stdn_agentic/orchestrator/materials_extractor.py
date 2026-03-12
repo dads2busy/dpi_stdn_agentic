@@ -57,6 +57,9 @@ class MaterialsExtractor:
         debate_max_rounds: int = 3,
         debate_convergence_threshold: float = 0.8,
         debate_top_p: float = 0.0001,
+        debate_temperature: Optional[float] = None,
+        material_no_debate_top_p: Optional[float] = None,
+        material_no_debate_temperature: Optional[float] = None,
     ):
         """
         Initialize materials extractor.
@@ -72,6 +75,9 @@ class MaterialsExtractor:
             debate_max_rounds: Maximum debate rounds
             debate_convergence_threshold: Convergence threshold for debate
             debate_top_p: Top-p sampling parameter for debate
+            debate_temperature: Temperature for debate sampling
+            material_no_debate_top_p: Top-p sampling parameter for single-agent materials extraction
+            material_no_debate_temperature: Temperature for single-agent materials extraction
         """
         self.deps = deps
         self.materials_agent = get_materials_agent(model_name=model_name)
@@ -80,6 +86,15 @@ class MaterialsExtractor:
         self.use_debate = use_debate
         self.num_agents = num_agents
         self.max_retries = max_retries
+        self.material_debate_temperature = debate_temperature
+        self.material_no_debate_top_p = (
+            material_no_debate_top_p if material_no_debate_top_p is not None else debate_top_p
+        )
+        self.material_no_debate_temperature = (
+            material_no_debate_temperature
+            if material_no_debate_temperature is not None
+            else debate_temperature
+        )
 
         # Initialize material debater if using debate
         self.material_debater = None
@@ -90,6 +105,7 @@ class MaterialsExtractor:
                 max_rounds=debate_max_rounds,
                 convergence_threshold=debate_convergence_threshold,
                 debate_top_p=debate_top_p,
+                debate_temperature=debate_temperature,
             )
 
     # ========================================================================
@@ -202,7 +218,19 @@ class MaterialsExtractor:
     ) -> Optional[Any]:
         for attempt in range(self.max_retries):
             try:
-                result = await self.materials_agent.run(materials_prompt, deps=self.deps)
+                from dataclasses import replace
+
+                agent_deps = replace(
+                    self.deps,
+                    top_p=self.material_no_debate_top_p,
+                    temperature=self.material_no_debate_temperature,
+                )
+                logger.info(
+                    "Materials single-agent params: top_p=%.6f temperature=%s",
+                    self.material_no_debate_top_p,
+                    self.material_no_debate_temperature,
+                )
+                result = await self.materials_agent.run(materials_prompt, deps=agent_deps)
 
                 if not result or not result.output:
                     if attempt == self.max_retries - 1:
@@ -356,6 +384,11 @@ class MaterialsExtractor:
             return None
 
         logger.info("Using multi-agent debate for materials...")
+        logger.info(
+            "Materials debate params: top_p=%.6f temperature=%s",
+            self.material_debater.debate_top_p,
+            self.material_debater.debate_temperature,
+        )
 
         debate_result = await self.material_debater.run_full_debate(components, technology, usage)
 

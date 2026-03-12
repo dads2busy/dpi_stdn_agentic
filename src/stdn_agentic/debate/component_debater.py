@@ -62,6 +62,7 @@ class MultiAgentDebater:
         confidence_weight: float = 0.3,
         peer_support_boost: float = 0.15,
         debate_top_p: float = 0.0001,
+        debate_temperature: float | None = None,
     ) -> None:
         self.max_rounds = max_rounds
         self.convergence_threshold = convergence_threshold
@@ -69,6 +70,7 @@ class MultiAgentDebater:
         self.peer_support_boost = peer_support_boost
         self.debate_history: List[DebateRound] = []
         self.debate_top_p = debate_top_p
+        self.debate_temperature = debate_temperature
 
     async def _normalize_initial_proposals(
         self,
@@ -994,7 +996,11 @@ Components with low peer support should have lower confidence unless critically 
 
             try:
                 # Use very low Top-P for deterministic, focused refinements
-                debate_deps = replace(deps, top_p=self.debate_top_p)
+                debate_deps = replace(
+                    deps,
+                    top_p=self.debate_top_p,
+                    temperature=self.debate_temperature,
+                )
 
                 logger.debug(
                     "%s calling LLM: prompt=%d chars, candidates=%d, critiques=%d",

@@ -64,6 +64,10 @@ class CountryDataRepository:
         enable_llm_cache: bool = True,
         llm_cache_dir: str = "./data/llm_fallback_cache",
         llm_cache_ttl_hours: int = 720,
+        country_no_debate_top_p: float = 0.000001,
+        country_debate_top_p: float = 0.0001,
+        country_no_debate_temperature: float | None = None,
+        country_debate_temperature: float | None = None,
     ):
         """
         Initialize country data repository.
@@ -76,12 +80,18 @@ class CountryDataRepository:
             enable_llm_cache: Use LLM fallback cache
             llm_cache_dir: Directory for LLM cache files
             llm_cache_ttl_hours: Cache TTL in hours
+            country_no_debate_top_p: Top-p for single-agent LLM fallback
+            country_debate_top_p: Top-p for multi-agent voting fallback
         """
         self.database_path = database_path
         self.top_n = top_n
         self.deps = deps
         self.use_llm_fallback = use_llm_fallback
         self.enable_llm_cache = enable_llm_cache
+        self.country_no_debate_top_p = country_no_debate_top_p
+        self.country_debate_top_p = country_debate_top_p
+        self.country_no_debate_temperature = country_no_debate_temperature
+        self.country_debate_temperature = country_debate_temperature
 
         # Initialize USGS client
         self.usgs_client = USGSClient(database_path, top_n=top_n)
@@ -501,9 +511,21 @@ class CountryDataRepository:
         )
 
         try:
+            from dataclasses import replace
+
+            agent_deps = replace(
+                self.deps,
+                top_p=self.country_no_debate_top_p,
+                temperature=self.country_no_debate_temperature,
+            )
+            logger.info(
+                "Country single-agent params: top_p=%.6f temperature=%s",
+                self.country_no_debate_top_p,
+                self.country_no_debate_temperature,
+            )
             result = await self.country_agent.run(
                 prompt,
-                deps=self.deps,
+                deps=agent_deps,
                 model=self.deps.get_country_model(),
             )
 
@@ -550,14 +572,22 @@ class CountryDataRepository:
         Returns:
             List of country data dicts with debate-weighted confidence and reasoning
         """
+        from dataclasses import replace
+
         from ..debate import MaterialCountryDebater
 
+        debate_deps = replace(self.deps, temperature=self.country_debate_temperature)
+        logger.info(
+            "Country debate params: top_p=%.6f temperature=%s",
+            self.country_debate_top_p,
+            self.country_debate_temperature,
+        )
         debater = MaterialCountryDebater(
-            deps=self.deps,
+            deps=debate_deps,
             num_agents=num_agents,
             top_n_proposed=10,
             top_n_consensus=self.top_n,
-            debate_top_p=0.0001,
+            debate_top_p=self.country_debate_top_p,
         )
 
         debate_result = await debater.run_debate(material, year, usage)

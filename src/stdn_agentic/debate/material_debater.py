@@ -14,7 +14,7 @@ from __future__ import annotations
 
 import asyncio
 from collections import defaultdict
-from typing import Any
+from typing import Any, Optional
 
 from pydantic_ai import RunUsage
 
@@ -45,6 +45,7 @@ class MaterialDebater:
         confidence_weight: float = 0.3,
         peer_support_boost: float = 0.15,
         debate_top_p: float = 0.0001,
+        debate_temperature: Optional[float] = None,
     ) -> None:
         """
         Initialize material debater.
@@ -65,6 +66,7 @@ class MaterialDebater:
         self.peer_support_boost = peer_support_boost
         self.debate_history: list[MaterialDebateRound] = []
         self.debate_top_p = debate_top_p
+        self.debate_temperature = debate_temperature
 
     async def _check_ollama_health(self) -> bool:
         """Check if Ollama is responsive before starting debate."""
@@ -180,7 +182,11 @@ class MaterialDebater:
             try:
                 from dataclasses import replace
 
-                debate_deps = replace(self.deps, top_p=self.debate_top_p)
+                debate_deps = replace(
+                    self.deps,
+                    top_p=self.debate_top_p,
+                    temperature=self.debate_temperature,
+                )
 
                 if not debate_deps.model or not debate_deps.model.strip():
                     logger.error(f"{agent_id}: Model name is empty in deps")
@@ -784,7 +790,11 @@ class MaterialDebater:
             try:
                 from dataclasses import replace
 
-                debate_deps = replace(self.deps, top_p=self.debate_top_p)
+                debate_deps = replace(
+                    self.deps,
+                    top_p=self.debate_top_p,
+                    temperature=self.debate_temperature,
+                )
 
                 logger.debug("%s using top_p=%s", agent_id, self.debate_top_p)
 

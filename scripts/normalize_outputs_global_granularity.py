@@ -29,11 +29,11 @@ Key design choices
 3) Two modes:
    - v1 (default): global normalization over component names only (no technology context)
    - v2 (`--group-by technology`): normalize per-technology (chunked) with technology context,
-     write per-technology manifests, and still update a shared global mapping.
+     write per-technology manifests, and optionally scope the vocab per technology.
 
 4) Persistent mapping:
-   Writes/updates a global canonical mapping JSON so future runs can reuse mappings without
-   repeated LLM calls.
+   Writes/updates a canonical mapping JSON so future runs can reuse mappings without
+   repeated LLM calls. Vocab keys can be global or technology-scoped.
 
 Requirements
 ------------
@@ -139,6 +139,7 @@ class Manifest:
     model: str
     output_dir: str
     global_vocab_path: str
+    vocab_scope: str
     chunk_size: int
     non_primary_sentinel: str
     input_csvs: List[str]
@@ -171,6 +172,32 @@ def _norm_key(s: str) -> str:
     return t.lower()
 
 
+def _norm_tech(s: str) -> str:
+    """
+    Normalize a technology string for vocab scoping.
+    """
+    t = (s or "").strip()
+    t = _DASH_RE.sub("-", t)
+    t = _WS_RE.sub(" ", t)
+    t = t.strip(" \t\r\n.,;:()[]{}")
+    return t.lower()
+
+
+def make_vocab_key(raw_name: str, technology: str | None, vocab_scope: str) -> str:
+    if vocab_scope == "technology" and technology:
+        return f"{_norm_tech(technology)}|||{_norm_key(raw_name)}"
+    return _norm_key(raw_name)
+
+
+def iter_vocab_values_for_scope(
+    mappings: Dict[str, str], technology: str | None, vocab_scope: str
+) -> List[str]:
+    if vocab_scope != "technology" or not technology:
+        return list(mappings.values())
+    prefix = f"{_norm_tech(technology)}|||"
+    return [v for k, v in mappings.items() if k.startswith(prefix)]
+
+
 def load_global_vocab(path: Path) -> Dict[str, str]:
     """
     Load a global vocab mapping file.
@@ -181,7 +208,8 @@ def load_global_vocab(path: Path) -> Dict[str, str]:
         "mappings": { "<raw_key>": "<canonical>", ... }
       }
 
-    Where <raw_key> should be normalized via _norm_key(raw_name).
+    Where <raw_key> should be normalized via _norm_key(raw_name). If technology-scoped
+    vocab is used, keys are stored as "<technology>|||<raw_key>".
     """
     if not path.exists():
         return {}
@@ -433,6 +461,19 @@ Also:
   - "LFP Battery" ≠ "NMC Battery" when specified at the pack/module level
   - "OLED Display Module" ≠ "LCD Display Module"
   - "SiC Power Module" ≠ "Silicon Power Module" when specified as the primary power electronics module
+  - "DRAM Memory" ≠ "NAND Flash Memory"
+  - "GaN Power Device" ≠ "Silicon Power Device"
+
+- Preserve material-relevant distinctions by category when specified:
+  - Battery chemistry: Lithium-ion, Lead-acid, NiMH, LFP, Solid-state
+  - Display technology: OLED, LCD, LED, Mini-LED, Micro-LED
+  - Semiconductor type: Silicon, GaN, SiC when specified
+  - Memory type: DRAM, NAND Flash, NOR Flash, SRAM
+
+- Avoid overly generic names when material distinctions are present:
+  - Do NOT use just "Battery" if chemistry is specified
+  - Do NOT use just "Display" if display technology is specified
+  - Do NOT use just "Chip" if function/type is specified (e.g., Memory Chip, Power IC)
 
 - Merge when the difference is not material-relevant at the primary-component level.
   Examples (these SHOULD typically collapse):
@@ -515,6 +556,7 @@ def apply_mapping_to_csv(
     mapping_by_norm_key: Dict[str, str],
     non_primary_sentinel: str,
     drop_non_primary: bool,
+    vocab_scope: str,
 ) -> Tuple[Path, int, int]:
     """
     Apply canonical mapping to a CSV's `component` column.
@@ -531,17 +573,27 @@ def apply_mapping_to_csv(
         return out_path, 0, 0
 
     original = df["component"].copy()
+    use_tech_scope = vocab_scope == "technology" and "technology" in df.columns
 
-    def map_comp(x: object) -> object:
-        if pd.isna(x):
-            return x
-        s = str(x).strip()
+    def map_value(comp: object, tech: object | None) -> object:
+        if pd.isna(comp):
+            return comp
+        s = str(comp).strip()
         if not s:
-            return x
-        k = _norm_key(s)
+            return comp
+        tech_str = None
+        if tech is not None and not pd.isna(tech):
+            tech_str = str(tech).strip()
+        k = make_vocab_key(s, tech_str, vocab_scope)
         return mapping_by_norm_key.get(k, s)
 
-    df["component"] = df["component"].apply(map_comp)
+    if use_tech_scope:
+        df["component"] = df.apply(
+            lambda row: map_value(row.get("component"), row.get("technology")), axis=1
+        )
+    else:
+        df["component"] = df["component"].apply(lambda x: map_value(x, None))
+
     changed = int((original != df["component"]).sum())
 
     dropped = 0
@@ -562,6 +614,7 @@ def apply_mapping_to_json(
     mapping_by_norm_key: Dict[str, str],
     non_primary_sentinel: str,
     drop_non_primary: bool,
+    vocab_scope: str,
 ) -> Tuple[Path, int]:
     """
     Best-effort JSON rewrite. We normalize string values found under keys
@@ -575,35 +628,38 @@ def apply_mapping_to_json(
 
     changed = 0
 
-    def normalize_value(v: object) -> object:
+    def normalize_value(v: object, tech: str | None) -> object:
         nonlocal changed
         if isinstance(v, str):
             s = v.strip()
             if not s:
                 return v
-            k = _norm_key(s)
+            k = make_vocab_key(s, tech, vocab_scope)
             mapped = mapping_by_norm_key.get(k)
             if mapped and mapped != v:
                 changed += 1
                 return mapped
         return v
 
-    def walk(obj: object) -> object:
+    def walk(obj: object, current_tech: str | None = None) -> object:
         nonlocal changed
         if isinstance(obj, dict):
+            tech = current_tech
+            if "technology" in obj and isinstance(obj["technology"], str):
+                tech = obj["technology"].strip()
             # Optionally drop dicts that are explicitly a non-primary component record.
             if drop_non_primary:
                 for key in JSON_COMPONENT_KEYS:
                     if key in obj and isinstance(obj[key], str):
-                        mapped = normalize_value(obj[key])
+                        mapped = normalize_value(obj[key], tech)
                         if mapped == non_primary_sentinel:
                             return None
             new = {}
             for k, v in obj.items():
                 if k in JSON_COMPONENT_KEYS:
-                    new_v = normalize_value(v)
+                    new_v = normalize_value(v, tech)
                 else:
-                    new_v = walk(v)
+                    new_v = walk(v, tech)
                 if new_v is None:
                     continue
                 new[k] = new_v
@@ -611,7 +667,7 @@ def apply_mapping_to_json(
         if isinstance(obj, list):
             new_list = []
             for item in obj:
-                new_item = walk(item)
+                new_item = walk(item, current_tech)
                 if new_item is None:
                     continue
                 new_list.append(new_item)
@@ -678,7 +734,13 @@ async def main() -> None:
     p.add_argument(
         "--global-vocab",
         default="data/component_canonical_vocab_global_primary.json",
-        help="Path to global canonical mapping vocab JSON (raw_key -> canonical primary).",
+        help="Path to canonical mapping vocab JSON (raw_key -> canonical primary).",
+    )
+    p.add_argument(
+        "--vocab-scope",
+        choices=["global", "technology"],
+        default="global",
+        help="Keying strategy for vocab mappings. Use 'technology' with --group-by technology.",
     )
     p.add_argument(
         "--model",
@@ -699,7 +761,14 @@ async def main() -> None:
     p.add_argument(
         "--drop-non-primary",
         action="store_true",
-        help="If set, drop rows/objects mapped to the non-primary sentinel.",
+        default=True,
+        help="Drop rows/objects mapped to the non-primary sentinel (default: true).",
+    )
+    p.add_argument(
+        "--keep-non-primary",
+        action="store_false",
+        dest="drop_non_primary",
+        help="Opt out of dropping non-primary sentinel rows/objects.",
     )
     p.add_argument(
         "--manifest-path",
@@ -718,6 +787,13 @@ async def main() -> None:
         help="Optional cap on number of unique components (for testing). 0 = no cap.",
     )
     args = p.parse_args()
+
+    if args.vocab_scope == "technology" and args.group_by != "technology":
+        print(
+            "ERROR: --vocab-scope technology requires --group-by technology",
+            file=sys.stderr,
+        )
+        raise SystemExit(1)
 
     csv_paths_all = iter_csv_paths(args.pattern)
     if not csv_paths_all:
@@ -778,7 +854,7 @@ async def main() -> None:
         total_unknown_raw = 0
         total_unknown_reps = 0
 
-        existing_canonicals: List[str] = list(existing_vocab.values())
+        existing_canonicals_global: List[str] = list(existing_vocab.values())
 
         if args.dry_run:
             # Dry-run: compute counts per technology and overall.
@@ -790,7 +866,8 @@ async def main() -> None:
                 cached_raw: List[str] = []
                 unknown_raw: List[str] = []
                 for raw in raw_names:
-                    if _norm_key(raw) in mapping_by_norm_key:
+                    key = make_vocab_key(raw, tech, args.vocab_scope)
+                    if key in mapping_by_norm_key:
                         cached_raw.append(raw)
                     else:
                         unknown_raw.append(raw)
@@ -843,7 +920,8 @@ async def main() -> None:
             cached_raw: List[str] = []
             unknown_raw: List[str] = []
             for raw in raw_names:
-                if _norm_key(raw) in mapping_by_norm_key:
+                key = make_vocab_key(raw, tech, args.vocab_scope)
+                if key in mapping_by_norm_key:
                     cached_raw.append(raw)
                 else:
                     unknown_raw.append(raw)
@@ -852,6 +930,12 @@ async def main() -> None:
             total_cached += len(cached_raw)
             total_unknown_raw += len(unknown_raw)
             total_unknown_reps += len(reps)
+
+            existing_canonicals = (
+                list(iter_vocab_values_for_scope(mapping_by_norm_key, tech, args.vocab_scope))
+                if args.vocab_scope == "technology"
+                else existing_canonicals_global
+            )
 
             total_chunks = (len(reps) + args.chunk_size - 1) // args.chunk_size if reps else 0
             print(
@@ -880,12 +964,13 @@ async def main() -> None:
             # Expand rep mappings to all variants and update global mapping.
             new_added = 0
             for rep_raw, canon in new_mappings_raw.items():
-                rep_key = _norm_key(rep_raw)
+                rep_norm_key = _norm_key(rep_raw)
+                rep_key = make_vocab_key(rep_raw, tech, args.vocab_scope)
                 if rep_key not in mapping_by_norm_key or mapping_by_norm_key[rep_key] != canon:
                     mapping_by_norm_key[rep_key] = canon
                     new_added += 1
-                for variant_raw in norm_key_to_variants.get(rep_key, []):
-                    k = _norm_key(variant_raw)
+                for variant_raw in norm_key_to_variants.get(rep_norm_key, []):
+                    k = make_vocab_key(variant_raw, tech, args.vocab_scope)
                     if k not in mapping_by_norm_key or mapping_by_norm_key[k] != canon:
                         mapping_by_norm_key[k] = canon
                         new_added += 1
@@ -939,6 +1024,7 @@ async def main() -> None:
                 mapping_by_norm_key=mapping_by_norm_key,
                 non_primary_sentinel=args.non_primary_sentinel,
                 drop_non_primary=args.drop_non_primary,
+                vocab_scope=args.vocab_scope,
             )
             dropped_total += dropped
             output_csvs.append(str(out_path))
@@ -958,6 +1044,7 @@ async def main() -> None:
                 mapping_by_norm_key=mapping_by_norm_key,
                 non_primary_sentinel=args.non_primary_sentinel,
                 drop_non_primary=args.drop_non_primary,
+                vocab_scope=args.vocab_scope,
             )
             output_jsons.append(str(out_path))
             if i == 1 or i % 10 == 0 or i == len(json_paths):
@@ -965,15 +1052,23 @@ async def main() -> None:
                 sys.stdout.flush()
 
         # Write global manifest
+        mapping_note = (
+            "Vocabulary keys are technology-scoped: <technology>|||<norm_key>."
+            if args.vocab_scope == "technology"
+            else "Global mapping is keyed by normalized raw string (_norm_key)."
+        )
+        cross_tech_note = (
+            "Tech-scoped vocab prevents cross-technology leakage; identical raw strings may map differently per technology."
+            if args.vocab_scope == "technology"
+            else "If the same raw string appears in multiple technologies, the global mapping will unify it. "
+            "This is intentional; use the per-technology manifests to audit domain-specific decisions."
+        )
         notes = [
             "v2 mode enabled: group-by technology.",
             "Per-technology manifests written for auditability.",
-            "Global mapping is keyed by normalized raw string (_norm_key).",
+            mapping_note,
             "Granularity enforced via LLM prompt; parts/subassemblies promoted to primary components.",
-            (
-                "If the same raw string appears in multiple technologies, the global mapping will unify it. "
-                "This is intentional; use the per-technology manifests to audit domain-specific decisions."
-            ),
+            cross_tech_note,
         ]
         manifest = Manifest(
             version="1.0",
@@ -982,6 +1077,7 @@ async def main() -> None:
             model=args.model,
             output_dir=str(out_dir),
             global_vocab_path=str(global_vocab_path),
+            vocab_scope=args.vocab_scope,
             chunk_size=args.chunk_size,
             non_primary_sentinel=args.non_primary_sentinel,
             input_csvs=[str(p) for p in csv_paths],
@@ -1119,6 +1215,7 @@ async def main() -> None:
             mapping_by_norm_key=mapping_by_norm_key,
             non_primary_sentinel=args.non_primary_sentinel,
             drop_non_primary=args.drop_non_primary,
+            vocab_scope=args.vocab_scope,
         )
         dropped_total += dropped
         output_csvs.append(str(out_path))
@@ -1130,6 +1227,7 @@ async def main() -> None:
             mapping_by_norm_key=mapping_by_norm_key,
             non_primary_sentinel=args.non_primary_sentinel,
             drop_non_primary=args.drop_non_primary,
+            vocab_scope=args.vocab_scope,
         )
         output_jsons.append(str(out_path))
 
@@ -1139,6 +1237,7 @@ async def main() -> None:
         "Granularity enforced via LLM prompt: map parts/subassemblies to primary components.",
         "Non-primary items mapped to sentinel; optionally dropped with --drop-non-primary.",
         "CSV treated as source of truth; JSON rewritten best-effort.",
+        f"Vocab scope: {args.vocab_scope}.",
     ]
 
     manifest = Manifest(
@@ -1148,6 +1247,7 @@ async def main() -> None:
         model=args.model,
         output_dir=str(out_dir),
         global_vocab_path=str(global_vocab_path),
+        vocab_scope=args.vocab_scope,
         chunk_size=args.chunk_size,
         non_primary_sentinel=args.non_primary_sentinel,
         input_csvs=[str(p) for p in csv_paths],

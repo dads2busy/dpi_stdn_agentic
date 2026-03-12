@@ -1,0 +1,72 @@
+{
+  "_comment": "Experiment config - d3v1v1 with local Ollama models, 4 technologies",
+  "import_tech_list": "./data/tech_list_experiment.csv",
+  "model": "ollama:qwen2.5:32b",
+  "output_dir": "./output",
+  "output_csv_filename": "stdns_output",
+
+  "component_normalization_model": "ollama:qwen2.5:32b",
+
+  "materials_hs_codes_listing": "./data/hs_codes_and_usgs_names.csv",
+  "materials_column_name": "Elements_Compounds",
+
+  "usgs_database": "./data/world_mineral_commodity_reports_2022-2025_v8.db",
+  "top_n_countries": 5,
+  "enable_llm_fallback_cache": true,
+  "llm_fallback_cache_dir": "./data/llm_fallback_cache",
+  "llm_fallback_cache_ttl_hours": 720,
+  "generate_country_data": false,
+  "country_data_mode": "incremental",
+  "materials_to_update": null,
+
+  "years_to_query": [2024, 2023],
+  "write_nulls_to_output": true,
+  "component_debate_top_p": 0.01,
+  "component_no_debate_top_p": 1.0,
+  "component_debate_temperature": 0.03,
+  "component_no_debate_temperature": 1.5,
+  "component_debate_use_personas": false,
+  "material_debate_top_p": 0.9,
+  "material_no_debate_top_p": 1.0,
+  "material_debate_temperature": 0.9,
+  "material_no_debate_temperature": 1.5,
+  "country_debate_top_p": 0.9,
+  "country_no_debate_top_p": 1.0,
+  "country_debate_temperature": 0.9,
+  "country_no_debate_temperature": 1.5,
+  "materials_use_topp": true,
+  "materials_iteration_count": 10,
+  "materials_count_threshold": 5,
+
+  "enable_checkpoints": true,
+  "checkpoint_interval": 5,
+
+  "model_provider": "ollama",
+  "model_base_url": "http://localhost:11434/v1",
+  "model_api_key": null,
+  "model_temperature": 0.1,
+
+  "component_model": "ollama:qwen2.5:32b",
+  "materials_model": "ollama:qwen2.5:32b",
+  "country_model": "ollama:qwen2.5:32b",
+
+  "agent_retries": 5,
+
+  "generate_visualizations": false,
+
+  "fuzzy_material_matching": true,
+  "material_match_threshold": 0.75,
+  "component_validation_strict": false,
+  "parallel_processing": false,
+  "max_parallel_jobs": 3,
+
+  "log_level": "INFO",
+  "log_file": "./logs/stdn_agentic.log",
+  "log_agent_responses": false,
+
+  "component_timeout": 180,
+  "materials_timeout": 180,
+  "country_timeout": 120,
+  "request_limit": 50,
+  "total_tokens_limit": 100000
+}

@@ -72,7 +72,6 @@ class STDNOrchestrator:
         max_debate_rounds: int = 3,
         convergence_threshold: float = 0.8,
         save_transcripts: bool = True,
-        debate_top_p: float = 0.0001,
     ):
         """
         Initialize orchestrator with enhanced debate and error handling.
@@ -88,7 +87,6 @@ class STDNOrchestrator:
             max_debate_rounds: Max debate rounds
             convergence_threshold: Convergence threshold
             save_transcripts: Save debate transcripts
-            debate_top_p: Top-p sampling parameter for debate
         """
         self.config = config
 
@@ -103,7 +101,18 @@ class STDNOrchestrator:
         self.max_debate_rounds = max_debate_rounds
         self.convergence_threshold = convergence_threshold
         self.save_transcripts = save_transcripts
-        self.debate_top_p = debate_top_p
+        self.component_debate_top_p = config.component_debate_top_p
+        self.component_no_debate_top_p = config.component_no_debate_top_p
+        self.component_debate_temperature = config.component_debate_temperature
+        self.component_no_debate_temperature = config.component_no_debate_temperature
+        self.material_debate_top_p = config.material_debate_top_p
+        self.material_no_debate_top_p = config.material_no_debate_top_p
+        self.material_debate_temperature = config.material_debate_temperature
+        self.material_no_debate_temperature = config.material_no_debate_temperature
+        self.country_debate_top_p = config.country_debate_top_p
+        self.country_no_debate_top_p = config.country_no_debate_top_p
+        self.country_debate_temperature = config.country_debate_temperature
+        self.country_no_debate_temperature = config.country_no_debate_temperature
 
         # Checkpointing (config-controlled)
         self.enable_checkpoints = bool(getattr(config, "enable_checkpoints", False))
@@ -142,7 +151,8 @@ class STDNOrchestrator:
                 convergence_threshold=convergence_threshold,
                 confidence_weight=0.3,  # Weight for confidence in voting
                 peer_support_boost=0.15,  # Boost per supporting agent
-                debate_top_p=debate_top_p,
+                debate_top_p=self.component_debate_top_p,
+                debate_temperature=self.component_debate_temperature,
             )
         else:
             self.debater = None
@@ -161,6 +171,10 @@ class STDNOrchestrator:
             enable_llm_cache=config.enable_llm_fallback_cache,
             llm_cache_dir=config.llm_fallback_cache_dir,
             llm_cache_ttl_hours=config.llm_fallback_cache_ttl_hours,
+            country_no_debate_top_p=self.country_no_debate_top_p,
+            country_debate_top_p=self.country_debate_top_p,
+            country_no_debate_temperature=self.country_no_debate_temperature,
+            country_debate_temperature=self.country_debate_temperature,
         )
 
         # Output directories: raw and normalized
@@ -170,7 +184,10 @@ class STDNOrchestrator:
         # Track the per-run configuration string (e.g., v1v1v1, d3d3v3) so transcripts can include it.
         self.debate_config_str = self._build_debate_config_string()
 
-        output_filename = f"{config.output_csv_filename}_{self.debate_config_str}_{timestamp}.csv"
+        output_base = config.output_csv_filename
+        if self.debate_config_str not in output_base:
+            output_base = f"{output_base}_{self.debate_config_str}"
+        output_filename = f"{output_base}_{timestamp}.csv"
 
         # Set up output directory structure
         self.raw_output_dir = os.path.join(config.output_dir, "raw")
@@ -194,8 +211,12 @@ class STDNOrchestrator:
             debater=self.debater,
             reporter=self.reporter,
             timestamp=self.timestamp,
-            debate_top_p=self.debate_top_p,
+            debate_top_p=self.component_debate_top_p,
+            debate_temperature=self.component_debate_temperature,
+            component_no_debate_top_p=self.component_no_debate_top_p,
+            component_no_debate_temperature=self.component_no_debate_temperature,
             canonical_vocab=self.canonical_vocab,
+            use_component_personas=config.component_debate_use_personas,
         )
 
         # Plumb the transcript config tag through to the component extractor so transcript filenames
@@ -213,7 +234,10 @@ class STDNOrchestrator:
             max_retries=5,
             debate_max_rounds=self.max_debate_rounds,
             debate_convergence_threshold=self.convergence_threshold,
-            debate_top_p=self.debate_top_p,
+            debate_top_p=self.material_debate_top_p,
+            debate_temperature=self.material_debate_temperature,
+            material_no_debate_top_p=self.material_no_debate_top_p,
+            material_no_debate_temperature=self.material_no_debate_temperature,
         )
 
         # Initialize country data enricher
@@ -248,10 +272,11 @@ class STDNOrchestrator:
         mat_agents = self.num_agents_material if self.use_material_debate else 1
         mat_str = f"{mat_prefix}{mat_agents}"
 
-        # Country phase: v = voting (country uses voting, not iterative debate)
-        # When enabled, it's multi-agent voting; when disabled, single agent
-        country_agents = self.num_agents_country if self.use_country_debate else 1
-        country_str = f"v{country_agents}"
+        # Country phase: v = voting (country always uses voting, not iterative debate)
+        # Always use num_agents_country directly — even when country debate is disabled,
+        # the agent count is meaningful for the config type string (e.g., d3d3v3 means
+        # 3 country agents doing voting).
+        country_str = f"v{self.num_agents_country}"
 
         return f"{comp_str}{mat_str}{country_str}"
 

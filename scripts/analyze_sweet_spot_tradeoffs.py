@@ -590,12 +590,21 @@ def extract_plausible_component_from_judge_row(
 ) -> Optional[tuple[str, str, str, bool]]:
     """
     Extract (technology, config, raw_component_string, plausible_bool) from a judge JSONL row.
-    Returns None if required fields are missing.
+    Supports two schemas:
+    - verify_pruned_components.py: {technology: "<tech> <cfg>", component, verdict:{plausible_primary_component: bool}}
+    - judge_stage1_components_from_normalized_outputs.py: {technology, component, plausible: bool}
     """
     label = row.get("technology", "")
     tech, cfg = parse_technology_and_config_from_judge_label(str(label))
-    verdict = (row.get("verdict") or {}) if isinstance(row.get("verdict"), dict) else {}
-    plausible = verdict.get("plausible_primary_component", None)
+    if cfg == "unknown":
+        cfg = str(row.get("config", "unknown") or "unknown").strip().lower()
+
+    if "plausible" in row:
+        plausible = row.get("plausible", None)
+    else:
+        verdict = (row.get("verdict") or {}) if isinstance(row.get("verdict"), dict) else {}
+        plausible = verdict.get("plausible_primary_component", None)
+
     comp_raw = row.get("component", None)
     if plausible is None or comp_raw is None:
         return None
@@ -1273,19 +1282,19 @@ def main() -> int:
     )
     ap.add_argument(
         "--canonical-vocab",
-        default="data/component_canonical_vocab.json",
+        default="data/component_canonical_vocab_global_primary.json",
         help="Canonical vocab JSON used to map components to canonical names.",
     )
     ap.add_argument(
         "--judge-jsonl",
-        default="output/analysis/final_only_component_verification_ALL_by_config.jsonl",
-        help="Judge JSONL from verify_pruned_components.py (final-only, by config).",
+        default="output/analysis/stage1_component_judge_normalized.jsonl",
+        help="Judge JSONL from normalized runs (stage1_component_judge_normalized.jsonl).",
     )
     ap.add_argument("--logs-dir", default="output/logs", help="Run log directory.")
     ap.add_argument(
         "--configs",
         nargs="+",
-        default=["v1v1v1", "d2v1v1", "d3v1v1", "d4v1v1", "d5v1v1"],
+        default=["v1v1v1", "d2v1v1", "d3v1v1", "d4v1v1", "d5v1v1", "d6v1v1"],
         help="Config tags to include (space-separated).",
     )
     ap.add_argument(
@@ -1398,7 +1407,10 @@ def main() -> int:
             rounds_values.setdefault((tech, cfg), []).append(r)
 
     # --- Load plausibility inputs from judge JSONL ---
-    # Occurrence-based counts by (tech, cfg) of judged FINAL components:
+    # Build a tech+component plausibility map, and a per-tech plausible reference set.
+    judge_plausible_by_tech_comp: dict[tuple[str, str], bool] = {}
+
+    # Occurrence-based counts by (tech, cfg) of judged FINAL components (populated from normalized outputs):
     judged_counts_occ: dict[tuple[str, str], tuple[int, int]] = {}  # (total, not_plausible)
 
     # Deduped-canonical counts by (tech, cfg):
@@ -1417,33 +1429,12 @@ def main() -> int:
             extracted = extract_plausible_component_from_judge_row(row)
             if extracted is None:
                 continue
-            tech, cfg, comp_raw, plausible = extracted
-            if cfg not in configs_set:
-                continue
-            key = (tech, cfg)
+            tech, _cfg, comp_raw, plausible = extracted
 
-            # Occurrence-based counts
-            total, not_plaus = judged_counts_occ.get(key, (0, 0))
-            total += 1
-            if plausible is False:
-                not_plaus += 1
-            judged_counts_occ[key] = (total, not_plaus)
+            judge_plausible_by_tech_comp[(tech, comp_raw)] = plausible
 
-            # Canonicalize once for dedup + reference
+            # Canonicalize once for reference set
             canon = canonicalize_component(comp_raw, vocab)
-
-            # Deduped-canonical counts (only if canonicalization succeeded)
-            if canon:
-                seen = judged_dedup_seen.setdefault(key, set())
-                if canon not in seen:
-                    seen.add(canon)
-                    utotal, unot_plaus = judged_counts_dedup_canon.get(key, (0, 0))
-                    utotal += 1
-                    if plausible is False:
-                        unot_plaus += 1
-                    judged_counts_dedup_canon[key] = (utotal, unot_plaus)
-
-            # Reference set for silver recall proxy (only track plausible==True) on canonical names
             if plausible is True and canon:
                 plausible_reference_by_tech_canon.setdefault(tech, set()).add(canon)
     else:
@@ -1484,6 +1475,7 @@ def main() -> int:
                 continue
             try:
                 per_file_sets: dict[str, set[str]] = {}
+                per_file_raw: dict[str, set[str]] = {}
                 with fp.open("r", encoding="utf-8", errors="replace", newline="") as f:
                     reader = csv.DictReader(f)
                     for row in reader:
@@ -1491,6 +1483,7 @@ def main() -> int:
                         comp = (row.get("component") or "").strip()
                         if not tech or not comp:
                             continue
+                        per_file_raw.setdefault(tech, set()).add(comp)
                         canon = canonicalize_component(comp, vocab)
                         if not canon:
                             continue
@@ -1500,6 +1493,33 @@ def main() -> int:
                 for tech, s in per_file_sets.items():
                     produced_canon_by_tech_cfg.setdefault((tech, cfg), set()).update(s)
                     produced_canon_sizes_by_tech_cfg.setdefault((tech, cfg), []).append(len(s))
+
+                # Update plausibility counts using judge map (per-run occurrence, plus deduped canonical)
+                for tech, comps in per_file_raw.items():
+                    key = (tech, cfg)
+                    for comp in comps:
+                        plausible = judge_plausible_by_tech_comp.get((tech, comp))
+                        if plausible is None:
+                            continue
+
+                        total, not_plaus = judged_counts_occ.get(key, (0, 0))
+                        total += 1
+                        if plausible is False:
+                            not_plaus += 1
+                        judged_counts_occ[key] = (total, not_plaus)
+
+                        canon = canonicalize_component(comp, vocab)
+                        if not canon:
+                            continue
+                        seen = judged_dedup_seen.setdefault(key, set())
+                        if canon in seen:
+                            continue
+                        seen.add(canon)
+                        utotal, unot_plaus = judged_counts_dedup_canon.get(key, (0, 0))
+                        utotal += 1
+                        if plausible is False:
+                            unot_plaus += 1
+                        judged_counts_dedup_canon[key] = (utotal, unot_plaus)
             except Exception:
                 # Best-effort: skip unreadable files
                 continue

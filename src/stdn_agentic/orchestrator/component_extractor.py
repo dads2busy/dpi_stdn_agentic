@@ -47,8 +47,12 @@ class ComponentExtractor:
         reporter: Optional[DebateReporter] = None,
         timestamp: Optional[str] = None,
         debate_top_p: float = 0.0001,
+        debate_temperature: Optional[float] = None,
+        component_no_debate_top_p: Optional[float] = None,
+        component_no_debate_temperature: Optional[float] = None,
         canonical_vocab: Optional["CanonicalVocab"] = None,
         transcript_config_tag: Optional[str] = None,
+        use_component_personas: bool = False,
     ):
         """
         Initialize component extractor.
@@ -60,8 +64,12 @@ class ComponentExtractor:
             reporter: Optional DebateReporter instance
             timestamp: Optional timestamp for transcript filenames
             debate_top_p: Top-p sampling for debate
+            debate_temperature: Temperature for debate sampling
+            component_no_debate_top_p: Top-p sampling for single-agent component extraction
+            component_no_debate_temperature: Temperature for single-agent component extraction
             canonical_vocab: Optional canonical vocabulary for component normalization
             transcript_config_tag: Optional config string (e.g., v1v1v1, d3d3v3) to include in transcript filenames
+            use_component_personas: If True, use per-agent perspectives in debate prompts; if False, use single-agent prompt
         """
         self.deps = deps
         self.component_agent = get_component_agent(model_name=model_name)
@@ -69,8 +77,19 @@ class ComponentExtractor:
         self.reporter = reporter
         self.timestamp = timestamp or datetime.now().strftime("%Y%m%d_%H%M%S")
         self.debate_top_p = debate_top_p
+        self.component_debate_top_p = debate_top_p
+        self.component_debate_temperature = debate_temperature
+        self.component_no_debate_top_p = (
+            component_no_debate_top_p if component_no_debate_top_p is not None else debate_top_p
+        )
+        self.component_no_debate_temperature = (
+            component_no_debate_temperature
+            if component_no_debate_temperature is not None
+            else debate_temperature
+        )
         self.canonical_vocab = canonical_vocab
         self.transcript_config_tag = transcript_config_tag
+        self.use_component_personas = use_component_personas
 
         # The explicit transcript path created for the current technology during component extraction.
         # Downstream stages should prefer this over "latest transcript" globbing.
@@ -94,9 +113,21 @@ class ComponentExtractor:
             ComponentList with components, or None if extraction fails
         """
         try:
+            from dataclasses import replace
+
+            agent_deps = replace(
+                self.deps,
+                top_p=self.component_no_debate_top_p,
+                temperature=self.component_no_debate_temperature,
+            )
+            logger.info(
+                "Component single-agent params: top_p=%.6f temperature=%s",
+                self.component_no_debate_top_p,
+                self.component_no_debate_temperature,
+            )
             result = await self.component_agent.run(
                 f"Extract the primary components of a {technology}",
-                deps=self.deps,
+                deps=agent_deps,
             )
 
             if result and result.usage():
@@ -250,12 +281,24 @@ class ComponentExtractor:
     ) -> Optional[tuple[list, str, str]]:
         """Run a single agent to collect component proposals."""
         try:
-            perspective = self._get_agent_perspective(agent_num)
-            prompt = self._create_agent_prompt(technology, role, perspective)
+            if self.use_component_personas:
+                perspective = self._get_agent_perspective(agent_num)
+                prompt = self._create_agent_prompt(technology, role, perspective)
+            else:
+                prompt = f"Extract the primary components of a {technology}"
 
             from dataclasses import replace
 
-            agent_deps = replace(self.deps, top_p=self.debate_top_p)
+            agent_deps = replace(
+                self.deps,
+                top_p=self.component_debate_top_p,
+                temperature=self.component_debate_temperature,
+            )
+            logger.info(
+                "Component debate params: top_p=%.6f temperature=%s",
+                self.component_debate_top_p,
+                self.component_debate_temperature,
+            )
             result = await self.component_agent.run(prompt, deps=agent_deps)
 
             if not result or not result.output:

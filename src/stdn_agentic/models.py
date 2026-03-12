@@ -52,6 +52,7 @@ class STDNDependencies:
     client: ollama.Client
     model: str
     top_p: float
+    temperature: Optional[float] = None
     # Per-agent models (default to self.model if not specified)
     component_model: Optional[str] = None
     materials_model: Optional[str] = None
@@ -245,11 +246,84 @@ class ConfigModel(BaseModel):
     # LLM Generation Settings
     # ========================================================================
 
-    topp: float = Field(
+    component_debate_use_personas: bool = Field(
+        default=False,
+        description=(
+            "If true, multi-agent component debate uses per-agent personas/perspectives. "
+            "If false, debate agents use the same single-agent prompt."
+        ),
+    )
+    component_debate_top_p: float = Field(
+        default=0.0001,
+        ge=0.0,
+        le=1.0,
+        description="Top-p for component debate (multi-agent)",
+    )
+    component_no_debate_top_p: float = Field(
         default=0.000001,
         ge=0.0,
         le=1.0,
-        description="Top-p (nucleus) sampling parameter for generation",
+        description="Top-p for component extraction (single-agent)",
+    )
+    component_debate_temperature: Optional[float] = Field(
+        default=None,
+        ge=0.0,
+        le=2.0,
+        description="Temperature for component debate (multi-agent)",
+    )
+    component_no_debate_temperature: Optional[float] = Field(
+        default=None,
+        ge=0.0,
+        le=2.0,
+        description="Temperature for component extraction (single-agent)",
+    )
+    material_debate_top_p: float = Field(
+        default=0.0001,
+        ge=0.0,
+        le=1.0,
+        description="Top-p for materials debate (multi-agent)",
+    )
+    material_no_debate_top_p: float = Field(
+        default=0.000001,
+        ge=0.0,
+        le=1.0,
+        description="Top-p for materials extraction (single-agent)",
+    )
+    material_debate_temperature: Optional[float] = Field(
+        default=None,
+        ge=0.0,
+        le=2.0,
+        description="Temperature for materials debate (multi-agent)",
+    )
+    material_no_debate_temperature: Optional[float] = Field(
+        default=None,
+        ge=0.0,
+        le=2.0,
+        description="Temperature for materials extraction (single-agent)",
+    )
+    country_debate_top_p: float = Field(
+        default=0.0001,
+        ge=0.0,
+        le=1.0,
+        description="Top-p for country debate/voting (multi-agent fallback)",
+    )
+    country_no_debate_top_p: float = Field(
+        default=0.000001,
+        ge=0.0,
+        le=1.0,
+        description="Top-p for country extraction (single-agent fallback)",
+    )
+    country_debate_temperature: Optional[float] = Field(
+        default=None,
+        ge=0.0,
+        le=2.0,
+        description="Temperature for country debate/voting (multi-agent fallback)",
+    )
+    country_no_debate_temperature: Optional[float] = Field(
+        default=None,
+        ge=0.0,
+        le=2.0,
+        description="Temperature for country extraction (single-agent fallback)",
     )
     materials_use_topp: bool = Field(
         default=True, description="Whether to use top-p sampling for materials extraction"
