@@ -17,6 +17,7 @@ from ..agents.process_consumables_agent import (
     get_extraction_agent,
     get_judge_agent,
 )
+from ..agents.materials_agent import enhanced_material_match
 from ..models import STDNDependencies
 from ..logging_config import get_logger
 
@@ -82,6 +83,20 @@ class ProcessConsumablesExtractor:
             f"Stage 2b judge: {result.metadata['judge_removed']} removed, "
             f"{result.metadata['judge_added']} added, {result.metadata['final_items']} final"
         )
+
+        # Normalize material names against the ontology using the same fuzzy matching
+        # pipeline as Stage 2 constituent materials
+        ontology = self.deps.material_ontology_list
+        normalized_count = 0
+        for m in result.materials:
+            matched = enhanced_material_match(m.name, ontology)
+            if matched != m.name and matched in ontology:
+                logger.info(f"  Stage 2b normalized: '{m.name}' -> '{matched}'")
+                m.name = matched
+                normalized_count += 1
+        if normalized_count:
+            logger.info(f"  Stage 2b: {normalized_count} material names normalized to ontology")
+
         for m in result.materials:
             tag = " [judge_addition]" if m.extraction_provenance == "judge_addition" else ""
             logger.info(f"  Stage 2b material: {m.name} (confidence: {m.confidence}){tag}")
