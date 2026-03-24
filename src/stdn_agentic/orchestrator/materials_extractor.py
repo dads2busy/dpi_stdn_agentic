@@ -889,7 +889,7 @@ class MaterialsExtractor:
                 output_dir = Path(self.reporter.output_dir)
 
                 # Replace spaces with underscores to match filename format
-                tech_filename = technology.replace(" ", "_")
+                tech_filename = technology.replace("/", "-").replace(" ", "_")
 
                 # Find most recent component transcript
                 component_transcripts = list(output_dir.glob(f"{tech_filename}_*.txt"))

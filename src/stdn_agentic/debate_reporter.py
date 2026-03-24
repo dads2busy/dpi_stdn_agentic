@@ -72,7 +72,7 @@ class DebateReporter:
             Path to saved file
         """
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        filename = f"{technology.replace(' ', '_')}_{timestamp}.{file_format}"
+        filename = f"{technology.replace('/', '-').replace(' ', '_')}_{timestamp}.{file_format}"
         filepath = self.output_dir / filename
 
         if file_format == "json":

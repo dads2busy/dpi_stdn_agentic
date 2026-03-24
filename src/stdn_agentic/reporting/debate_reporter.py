@@ -72,7 +72,7 @@ class DebateReporter:
         if timestamp is None:
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 
-        tech_part = technology.replace(" ", "_")
+        tech_part = technology.replace("/", "-").replace(" ", "_")
         if config_tag:
             filename = f"{tech_part}_{config_tag}_{timestamp}.{file_format}"
         else:
