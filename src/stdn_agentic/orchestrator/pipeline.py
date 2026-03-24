@@ -53,6 +53,83 @@ logger = get_logger(__name__)
 
 
 # ============================================================================
+# Public helpers
+# ============================================================================
+
+
+def build_structured_json(csv_path: str) -> dict:
+    """Build structured JSON with typed dependency sections from flat CSV.
+
+    Returns dict keyed by technology name, each containing:
+    - constituent_dependencies: {components: [{name, confidence, materials: [{name, confidence, countries: [...]}]}]}
+    - process_consumables: {materials: [{name, confidence, extraction_provenance, rationale, countries: [...]}]}
+    """
+    with open(csv_path, "r", encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        rows = list(reader)
+
+    techs: dict = {}
+    for row in rows:
+        tech_name = row["technology"]
+        if tech_name not in techs:
+            techs[tech_name] = {
+                "constituent_dependencies": {"components": []},
+                "process_consumables": {"materials": []},
+            }
+        tech = techs[tech_name]
+        dep_type = row.get("dependency_type", "constituent")
+
+        country_conf = row.get("country_confidence", "0") or "0"
+        country_entry = {
+            "name": row.get("country", ""),
+            "confidence": float(country_conf) if country_conf else None,
+            "source": "authoritative" if float(country_conf) >= 0.95 else "inferred",
+        }
+
+        if dep_type == "process_consumable":
+            pc_mats = tech["process_consumables"]["materials"]
+            existing = next((m for m in pc_mats if m["name"] == row["material"]), None)
+            if existing is None:
+                mat_conf = row.get("material_confidence", "") or ""
+                existing = {
+                    "name": row["material"],
+                    "confidence": float(mat_conf) if mat_conf else None,
+                    "extraction_provenance": row.get("extraction_provenance", "extractor"),
+                    "rationale": row.get("material_reasoning", ""),
+                    "countries": [],
+                }
+                pc_mats.append(existing)
+            if row.get("country"):
+                existing["countries"].append(country_entry)
+        else:
+            comp_name = row.get("component", "")
+            comp_list = tech["constituent_dependencies"]["components"]
+            existing_comp = next((c for c in comp_list if c["name"] == comp_name), None)
+            if existing_comp is None:
+                comp_conf = row.get("component_confidence", "") or ""
+                existing_comp = {
+                    "name": comp_name,
+                    "confidence": float(comp_conf) if comp_conf else None,
+                    "materials": [],
+                }
+                comp_list.append(existing_comp)
+            mat_list = existing_comp["materials"]
+            existing_mat = next((m for m in mat_list if m["name"] == row["material"]), None)
+            if existing_mat is None:
+                mat_conf = row.get("material_confidence", "") or ""
+                existing_mat = {
+                    "name": row["material"],
+                    "confidence": float(mat_conf) if mat_conf else None,
+                    "countries": [],
+                }
+                mat_list.append(existing_mat)
+            if row.get("country"):
+                existing_mat["countries"].append(country_entry)
+
+    return techs
+
+
+# ============================================================================
 # STDN Orchestrator
 # ============================================================================
 
@@ -568,10 +645,8 @@ class STDNOrchestrator:
         """
         source_csv = csv_path or self.output_file
 
-        # Read the CSV file
-        with open(source_csv, "r", encoding="utf-8") as f:
-            reader = csv.DictReader(f)
-            data = list(reader)
+        # Build structured JSON with typed dependency sections
+        data = build_structured_json(source_csv)
 
         # Create JSON filename from the source CSV basename
         # Example:
