@@ -23,7 +23,6 @@ from ..agents.process_consumables_agent import (
 from ..agents.materials_agent import (
     _exact_match,
     _variant_match,
-    _chemical_symbol_match,
 )
 from ..models import STDNDependencies
 from ..logging_config import get_logger
@@ -141,9 +140,11 @@ class ProcessConsumablesExtractor:
         )
 
         # Normalize material names against the ontology using strict matching only.
-        # Process consumable names are often compound ("Photoresists and developers (TMAH)")
-        # which causes false positives with word-level, partial, and fuzzy matching.
-        # We only accept exact, variant, and chemical symbol matches.
+        # Process consumable names are often compound phrases ("Photoresists and developers
+        # (TMAH)", "Coolants and refrigerants (e.g., glycol-water)") which cause false
+        # positives with word-level, partial, fuzzy, and even chemical-symbol matching
+        # (the word "and" matches "Kyanite and Related Minerals" via symbol match).
+        # We only accept exact and variant matches for Stage 2b.
         ontology = self.deps.material_ontology_list
         normalized_count = 0
         for m in result.materials:
@@ -151,7 +152,6 @@ class ProcessConsumablesExtractor:
             matched = (
                 _exact_match(name_lower, ontology)
                 or _variant_match(name_lower, ontology)
-                or _chemical_symbol_match(name_lower, ontology)
             )
             if matched and matched != m.name and matched in ontology:
                 logger.info(f"  Stage 2b normalized: '{m.name}' -> '{matched}'")
