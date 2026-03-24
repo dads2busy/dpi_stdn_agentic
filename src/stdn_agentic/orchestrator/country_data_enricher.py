@@ -247,6 +247,9 @@ class CountryDataEnricher:
             if not material_name or not material_name.strip():
                 continue
             try:
+                # Look up HS code — available for ontology-matched materials
+                hs_code = self.country_repo.lookup_hs_code(material_name)
+
                 country_data = await self.country_repo.get_country_data(
                     material=material_name,
                     src_year=getattr(self.country_repo, "src_year", 2024),
@@ -255,7 +258,7 @@ class CountryDataEnricher:
                     use_debate=self.use_debate,
                     num_agents=self.num_agents,
                     transcript_path=transcript_path,
-                    hs_code=None,  # Process consumables may not have HS codes
+                    hs_code=hs_code,
                 )
                 if country_data:
                     for country_info in country_data:
