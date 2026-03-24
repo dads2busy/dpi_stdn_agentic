@@ -249,6 +249,16 @@ class STDNOrchestrator:
             num_agents=self.num_agents_country,
         )
 
+        # Stage 2b: Process Consumables (optional)
+        self.enable_process_consumables = getattr(config, 'enable_process_consumables', False)
+        if self.enable_process_consumables:
+            from ..orchestrator.process_consumables_extractor import ProcessConsumablesExtractor
+            pc_model = getattr(config, 'process_consumables_model', None) or config.model
+            self.process_consumables_extractor = ProcessConsumablesExtractor(
+                deps=self.deps,
+                model_name=pc_model,
+            )
+
     def _build_debate_config_string(self) -> str:
         """
         Build a compact string encoding the debate configuration for each phase.
@@ -396,6 +406,16 @@ class STDNOrchestrator:
                         exc_info=True,
                     )
 
+            # Stage 2b: Process Consumables (if enabled)
+            process_consumables_result = None
+            if self.enable_process_consumables:
+                from ..orchestrator.process_consumables_extractor import ProcessConsumablesResult
+                process_consumables_result = await self.process_consumables_extractor.extract_process_consumables(
+                    technology=tech,
+                    components=components,
+                    usage=usage,
+                )
+
             enriched_data = await self._enrich_with_country_data(
                 materials_list,
                 tech,
@@ -403,6 +423,16 @@ class STDNOrchestrator:
                 transcript_path=transcript_path,
                 component_confidence_map=component_confidence_map,
             )
+
+            # Stage 3 for process consumables
+            pc_enriched_data = []
+            if process_consumables_result and process_consumables_result.materials:
+                pc_enriched_data = await self.country_enricher.enrich_process_consumables(
+                    process_consumables=process_consumables_result,
+                    technology=tech,
+                    usage=usage,
+                    transcript_path=transcript_path,
+                )
 
             if self.save_transcripts and self.reporter and enriched_data:
                 # Prefer explicit transcript path (if known) to avoid cross-run contamination.
@@ -419,6 +449,7 @@ class STDNOrchestrator:
                 "component_objects": component_objects,
                 "materials": materials_list,
                 "enriched_data": enriched_data,
+                "pc_enriched_data": pc_enriched_data,
             }
 
         except Exception as e:
@@ -641,6 +672,9 @@ class STDNOrchestrator:
                     continue
 
                 # Apply normalization
+                # NOTE: Process consumable rows have empty component fields;
+                # the pd.notna(x) check below ensures they pass through untouched.
+                # TODO: normalize process consumable material names
                 original_components = df["component"].copy()
                 df["component"] = df["component"].apply(
                     lambda x: lower_mappings.get(str(x).lower(), x) if pd.notna(x) else x
@@ -848,6 +882,8 @@ For each input name, output the canonical form it should map to."""
                         "percentage",
                         "country_confidence",
                         "country_reasoning",
+                        "dependency_type",
+                        "extraction_provenance",
                     ],
                 )
                 writer.writeheader()
@@ -889,10 +925,16 @@ For each input name, output the canonical form it should map to."""
                             "percentage",
                             "country_confidence",
                             "country_reasoning",
+                            "dependency_type",
+                            "extraction_provenance",
                         ],
                     )
                     for row in result["enriched_data"]:
+                        row["dependency_type"] = "constituent"
+                        row["extraction_provenance"] = ""
                         writer.writerow(row)
+                    for row in result.get("pc_enriched_data", []):
+                        writer.writerow(row)  # already has dependency_type and extraction_provenance
 
                 logger.info("Output written to %s", self.output_file)
                 logger.info("Successfully processed: %s", tech)

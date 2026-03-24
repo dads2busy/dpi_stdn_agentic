@@ -230,6 +230,82 @@ class CountryDataEnricher:
         return enriched_data
 
     # ========================================================================
+    # Process Consumables Enrichment
+    # ========================================================================
+
+    async def enrich_process_consumables(
+        self,
+        process_consumables,  # ProcessConsumablesResult
+        technology: str,
+        usage: RunUsage,
+        transcript_path: Optional[Path] = None,
+    ) -> list[dict[str, Any]]:
+        """Enrich process consumables with country production data."""
+        enriched_data = []
+        for pc in process_consumables.materials:
+            material_name = pc.name
+            if not material_name or not material_name.strip():
+                continue
+            try:
+                country_data = await self.country_repo.get_country_data(
+                    material=material_name,
+                    src_year=getattr(self.country_repo, "src_year", 2024),
+                    meas_year=getattr(self.country_repo, "meas_year", 2023),
+                    usage=usage,
+                    use_debate=self.use_debate,
+                    num_agents=self.num_agents,
+                    transcript_path=transcript_path,
+                    hs_code=None,  # Process consumables may not have HS codes
+                )
+                if country_data:
+                    for country_info in country_data:
+                        enriched_data.append({
+                            "technology": technology,
+                            "component": "",
+                            "component_confidence": "",
+                            "component_reasoning": "",
+                            "material": material_name,
+                            "material_confidence": round(pc.confidence, 3),
+                            "material_reasoning": pc.reasoning,
+                            "hs_code": country_info.get("hs_code"),
+                            "country": country_info.get("country", "Unknown"),
+                            "meas_unit": country_info.get("meas_unit", ""),
+                            "amount": country_info.get("amount", 0.0),
+                            "percentage": round(country_info.get("percentage", 0.0), 2),
+                            "country_confidence": round(
+                                country_info.get("confidence", 0.0), 3
+                            ),
+                            "country_reasoning": country_info.get("reasoning", ""),
+                            "dependency_type": "process_consumable",
+                            "extraction_provenance": pc.extraction_provenance,
+                        })
+                elif self.write_nulls:
+                    enriched_data.append({
+                        "technology": technology,
+                        "component": "",
+                        "component_confidence": "",
+                        "component_reasoning": "",
+                        "material": material_name,
+                        "material_confidence": round(pc.confidence, 3),
+                        "material_reasoning": pc.reasoning,
+                        "hs_code": None,
+                        "country": None,
+                        "meas_unit": None,
+                        "amount": None,
+                        "percentage": None,
+                        "country_confidence": None,
+                        "country_reasoning": None,
+                        "dependency_type": "process_consumable",
+                        "extraction_provenance": pc.extraction_provenance,
+                    })
+            except Exception as e:
+                logger.error(
+                    f"Error getting country data for process consumable {material_name}: {e}",
+                    exc_info=True,
+                )
+        return enriched_data
+
+    # ========================================================================
     # Transcript Management
     # ========================================================================
 
@@ -270,7 +346,7 @@ class CountryDataEnricher:
                     return
             else:
                 # Replace spaces with underscores to match filename format
-                tech_filename = technology.replace(" ", "_")
+                tech_filename = technology.replace("/", "-").replace(" ", "_")
 
                 # Find most recent transcript for this technology
                 transcripts = list(output_dir.glob(f"{tech_filename}_*.txt"))

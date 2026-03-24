@@ -21,6 +21,15 @@ from .materials_agent import (
     MaterialWithConfidence,  # ADD THIS if not already there
     get_materials_agent,
 )
+from .process_consumables_agent import (
+    ProcessConsumable,
+    ProcessConsumablesList,
+    JudgeAction,
+    JudgeVerdict,
+    JudgeOutput,
+    get_extraction_agent,
+    get_judge_agent,
+)
 
 __all__ = [
     # Component agent
@@ -36,6 +45,14 @@ __all__ = [
     "CountryList",
     "CountryPercentage",
     "get_country_data_agent",
+    # Process consumables agent
+    "ProcessConsumable",
+    "ProcessConsumablesList",
+    "JudgeAction",
+    "JudgeVerdict",
+    "JudgeOutput",
+    "get_extraction_agent",
+    "get_judge_agent",
     # Factory
     "AgentFactory",
 ]
