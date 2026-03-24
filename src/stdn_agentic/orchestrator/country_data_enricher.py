@@ -491,28 +491,39 @@ class CountryDataEnricher:
             content.append("PROCESS CONSUMABLES (Stage 2b)\n")
             content.append("=" * 80 + "\n\n")
 
+            # Group by material
+            materials = {}
             for record in enriched_data:
-                material = record["material"]
-                content.append(f"  Material: {material}\n")
+                mat = record["material"]
+                if mat not in materials:
+                    materials[mat] = []
+                materials[mat].append(record)
 
-                if record.get("material_confidence"):
-                    content.append(f"  Confidence: {record['material_confidence']:.3f}\n")
+            for material, mat_records in sorted(materials.items()):
+                first = mat_records[0]
+                provenance = first.get("extraction_provenance", "unknown")
+                tag = " [judge_addition]" if provenance == "judge_addition" else ""
 
-                provenance = record.get("extraction_provenance", "unknown")
-                content.append(f"  Provenance: {provenance}\n")
+                content.append(f"  Material: {material}{tag}\n")
 
-                if record["country"]:
-                    content.append(
-                        f"    • {record['country']}: "
-                        f"{record['amount']} {record['meas_unit']} "
-                        f"({record['percentage']}%)\n"
-                    )
-                    if record.get("country_confidence"):
+                if first.get("material_confidence"):
+                    content.append(f"  Confidence: {first['material_confidence']:.3f}\n")
+
+                content.append(f"  Countries ({len(mat_records)}):\n")
+
+                for record in mat_records:
+                    if record["country"]:
                         content.append(
-                            f"      Confidence: {record['country_confidence']:.3f}\n"
+                            f"    • {record['country']}: "
+                            f"{record['amount']} {record['meas_unit']} "
+                            f"({record['percentage']}%)\n"
                         )
-                else:
-                    content.append("    • No country data available\n")
+                        if record.get("country_confidence"):
+                            content.append(
+                                f"      Confidence: {record['country_confidence']:.3f}\n"
+                            )
+                    else:
+                        content.append("    • No country data available\n")
 
                 content.append("\n")
 
