@@ -78,7 +78,13 @@ class ProcessConsumablesExtractor:
         logger.info(f"Stage 2b extraction proposed {extractor_count} items for {technology}")
         judge_output = await self._run_judge(technology, components, extraction_output, usage)
         result = ProcessConsumablesResult.from_judge_output(judge_output, extractor_count)
-        logger.info(f"Stage 2b judge: {result.metadata['judge_removed']} removed, {result.metadata['judge_added']} added, {result.metadata['final_items']} final")
+        logger.info(
+            f"Stage 2b judge: {result.metadata['judge_removed']} removed, "
+            f"{result.metadata['judge_added']} added, {result.metadata['final_items']} final"
+        )
+        for m in result.materials:
+            tag = " [judge_addition]" if m.extraction_provenance == "judge_addition" else ""
+            logger.info(f"  Stage 2b material: {m.name} (confidence: {m.confidence}){tag}")
         return result
 
     async def _run_extraction(self, technology: str, components: list[str], usage: Optional[RunUsage]) -> ProcessConsumablesList:
