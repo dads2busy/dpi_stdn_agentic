@@ -427,7 +427,29 @@ class STDNOrchestrator:
                 component_confidence_map,
             ) = self._prepare_components_and_confidence(components_result)
 
-            materials_list = await self._extract_materials_for_technology(components, tech, usage)
+            # Run Stage 2 (constituent materials) and Stage 2b (process consumables) in parallel
+            # — both depend only on Stage 1 output (components), not on each other.
+            import asyncio
+
+            materials_task = asyncio.ensure_future(
+                self._extract_materials_for_technology(components, tech, usage)
+            )
+
+            process_consumables_result = None
+            if self.enable_process_consumables:
+                pc_task = asyncio.ensure_future(
+                    self.process_consumables_extractor.extract_process_consumables(
+                        technology=tech,
+                        components=components,
+                        usage=usage,
+                    )
+                )
+                materials_list, process_consumables_result = await asyncio.gather(
+                    materials_task, pc_task
+                )
+            else:
+                materials_list = await materials_task
+
             if not materials_list or not materials_list.component_list:
                 logger.error("No materials extracted for %s", tech)
                 return None
@@ -482,16 +504,6 @@ class STDNOrchestrator:
                         e,
                         exc_info=True,
                     )
-
-            # Stage 2b: Process Consumables (if enabled)
-            process_consumables_result = None
-            if self.enable_process_consumables:
-                from ..orchestrator.process_consumables_extractor import ProcessConsumablesResult
-                process_consumables_result = await self.process_consumables_extractor.extract_process_consumables(
-                    technology=tech,
-                    components=components,
-                    usage=usage,
-                )
 
             enriched_data = await self._enrich_with_country_data(
                 materials_list,
