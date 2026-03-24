@@ -78,7 +78,7 @@ class TestProcessConsumablePrompts:
     def test_extraction_prompt_mentions_process_categories(self):
         prompt_lower = EXTRACTION_SYSTEM_PROMPT.lower()
         assert "process gas" in prompt_lower or "gases" in prompt_lower
-        assert "etchant" in prompt_lower
+        assert "cleaning" in prompt_lower or "sterilization" in prompt_lower
         assert "solvent" in prompt_lower
 
     def test_judge_prompt_allows_additions(self):

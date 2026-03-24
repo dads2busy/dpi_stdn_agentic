@@ -60,59 +60,83 @@ class JudgeOutput(BaseModel):
 # System Prompts
 # ============================================================================
 
-EXTRACTION_SYSTEM_PROMPT = """You are an expert in semiconductor and electronics manufacturing processes.
+EXTRACTION_SYSTEM_PROMPT = """You are an expert in manufacturing processes across diverse industries including \
+semiconductor fabrication, pharmaceuticals, biotechnology, energy, defense, agriculture, and general electronics.
 
 Your task is to identify PROCESS CONSUMABLES: materials that are CONSUMED DURING MANUFACTURING
 and do NOT become part of the final product.
 
-do NOT include materials that physically constitute the product structure. These are distinct from
-raw materials (which become part of the product) and from capital equipment.
+Do NOT include materials that physically constitute the product structure. Process consumables are
+distinct from raw materials (which become part of the product) and from capital equipment.
 
-CATEGORIES OF PROCESS CONSUMABLES to consider:
-- Deposition and reaction gases: reactive gases consumed in CVD/ALD/epitaxy (e.g., Silane,
-  Ammonia, Tungsten Hexafluoride, Dichlorosilane, TEOS, TMA, TiCl4)
-- Etch and chamber-clean gases: gases consumed in plasma etching and in-situ chamber cleaning
-  (e.g., Chlorine, Hydrogen Fluoride gas, SF6, NF3, CF4, C4F8, BCl3, Oxygen)
-- Environment and purge gases: gases used to create controlled atmospheres, purge optical paths,
-  prevent contamination, or maintain vacuum environments (e.g., Helium, Nitrogen, Argon). Helium
-  is critical in EUV lithography (optical path purge, source cooling), wafer backside cooling in
-  lithography chucks, and as a leak-detection tracer gas.
-- Carrier and cooling gases: gases used as carriers in ion implantation, vapor delivery, and for
-  gas-phase thermal management (e.g., Helium, Hydrogen, Argon). Helium is the standard wafer
-  backside cooling gas due to its high thermal conductivity.
-- Anneal and forming gases: gases consumed in thermal processing steps (e.g., Hydrogen,
-  Hydrogen/Nitrogen forming gas, Deuterium for reliability anneals)
-- Wet etchants: liquid chemical etchants such as Hydrofluoric acid, Nitric acid, Phosphoric acid,
-  Potassium Hydroxide, TMAH, Sulfuric acid, and Hydrogen Peroxide (often in mixtures like
-  Piranha, SC-1, SC-2, BOE)
-- Solvents: cleaning and stripping solvents (e.g., Acetone, IPA, NMP, PGMEA)
-- Photoresists and developers: light-sensitive polymer films and their developer chemistries,
-  applied and stripped during lithography
-- CMP slurries: abrasive chemical-mechanical planarization slurries and pad conditioners
-- Cooling and thermal management media: deionized water, liquid nitrogen, chilled fluids, and
-  gas-phase coolants (including Helium for wafer chuck cooling)
-- Ion implantation source materials: gases consumed as dopant sources (e.g., Boron Trifluoride,
-  Phosphine, Arsine, Xenon)
+CATEGORIES OF PROCESS CONSUMABLES to consider (with examples spanning multiple industries):
+
+1. Process gases — gases consumed in manufacturing reactions, deposition, or etching:
+   - Semiconductor: Silane, Ammonia, Tungsten Hexafluoride, Chlorine, NF3, SF6, CF4
+   - General: Oxygen (combustion, oxidation), Acetylene (welding), CO2 (carbonation, shielding)
+
+2. Environment, purge, and shielding gases — gases that create controlled atmospheres, prevent
+   contamination, purge optical paths, or shield processes from air:
+   - Helium (EUV lithography purge, leak detection, wafer backside cooling, cryogenic systems,
+     MRI magnet cooling, fiber optic manufacturing atmosphere)
+   - Nitrogen (inert blanketing in reactors, food packaging, cryogenic grinding)
+   - Argon (welding shielding gas, semiconductor sputtering, inert atmosphere for air-sensitive
+     chemistry)
+
+3. Carrier, cooling, and heat-transfer media — materials used for thermal management or as
+   transport media that are consumed or lost during use:
+   - Gases: Helium (highest thermal conductivity — wafer chuck cooling, cryocooler working
+     fluid), Nitrogen, CO2
+   - Liquids: deionized water, chilled glycol, liquid nitrogen, silicone oil, refrigerants
+     (R-134a, R-410A)
+
+4. Cleaning, sterilization, and surface preparation agents — chemicals consumed to clean,
+   sterilize, or prepare surfaces:
+   - Solvents: Acetone, IPA, NMP, PGMEA, ethanol, methanol
+   - Acids/bases: HF, HNO3, H2SO4, H3PO4, KOH, NaOH, H2O2
+   - Sterilants: ethylene oxide, peracetic acid, sodium hypochlorite, steam (autoclaving)
+   - Detergents and surfactants
+
+5. Reagents, media, and consumable chemistries — materials consumed in process-specific reactions:
+   - Semiconductor: photoresists, developers (TMAH), CMP slurries, etch chemistries
+   - Pharmaceutical: buffer solutions, culture media, chromatography resins, filter membranes,
+     excipient binders consumed in process (not in final product)
+   - Biotech: enzyme substrates, staining reagents, PCR primers, electrophoresis gels
+   - Agriculture: nutrient solutions, pH adjusters, seed treatment chemicals
+
+6. Lubricants, release agents, and process aids — materials that facilitate manufacturing but
+   are not part of the product:
+   - Mold release agents, die lubricants, magnesium stearate (tablet press lubricant)
+   - Vacuum pump oil, hydraulic fluid consumed through leakage/degradation
+   - Fluxes (soldering), anti-seize compounds, cutting fluids
+
+7. Dopant and implantation source materials — materials consumed as sources for doping or
+   ion implantation:
+   - Boron Trifluoride, Phosphine, Arsine, Xenon (semiconductor)
+   - Dopant gases or liquids specific to the technology
+
+8. Testing and quality-control consumables — materials consumed during in-process testing:
+   - Helium (leak detection — standard across vacuum systems, HVAC, medical devices)
+   - Calibration gases, reference standards consumed during use
 
 IMPORTANT CONTEXT:
-- You will receive a list of product components. Use this list as context for inferring which
-  manufacturing processes are likely involved (e.g., a silicon wafer implies photolithography,
-  etching, diffusion; a PCB implies soldering, cleaning).
-- Think broadly about ALL materials consumed during manufacturing, not just process chemistry.
-  Include gases needed to OPERATE equipment (e.g., Helium to purge EUV optical paths, Nitrogen
-  for inert atmospheres in furnaces), gases consumed during TESTING (e.g., Helium for leak
-  detection), and gases used for THERMAL MANAGEMENT (e.g., Helium for wafer backside cooling).
-- The materials ontology provided is a reference to guide naming conventions; it is NOT a
-  hard constraint. You may identify consumables not explicitly listed in the ontology if they
-  are clearly used in the inferred manufacturing process.
+- You will receive a technology name and its component list. Use these to infer which
+  manufacturing processes are involved, then identify what those processes consume.
+- Think broadly: include materials consumed to OPERATE equipment (e.g., Helium to purge EUV
+  optical paths), materials consumed during TESTING (e.g., Helium for leak detection), and
+  materials consumed for THERMAL MANAGEMENT (e.g., refrigerants, cooling gases).
+- Consider the full manufacturing lifecycle: fabrication, assembly, packaging, and testing.
+- The materials ontology provided is a reference for naming conventions; it is NOT a hard
+  constraint. You may identify consumables not in the ontology if they are clearly consumed
+  in the inferred manufacturing process.
 
 CONFIDENCE SCALE (0.0 to 1.0):
-- 0.9-1.0: Universally required for this type of manufacturing — virtually all fabs use it
-- 0.8-0.89: Very commonly used — standard across most process flows for these components
-- 0.7-0.79: Commonly used — typical in most implementations, some process variations skip it
+- 0.9-1.0: Universally required — virtually all manufacturers of this technology use it
+- 0.8-0.89: Very commonly used — standard across most process flows
+- 0.7-0.79: Commonly used — typical in most implementations, some variations skip it
 - 0.6-0.69: Moderately likely — used in many but not all process flows
 - 0.5-0.59: Uncertain — depends heavily on specific process choices
-- 0.3-0.49: Low confidence — used in some niche or older process flows
+- 0.3-0.49: Low confidence — used in niche or specialized variants only
 - 0.0-0.29: Very low confidence — rarely used or highly speculative
 
 For EACH consumable provide:
@@ -123,7 +147,7 @@ For EACH consumable provide:
 """
 
 JUDGE_SYSTEM_PROMPT = """You are a critical reviewer of process consumable extraction results for
-semiconductor and electronics manufacturing analysis.
+manufacturing supply chain analysis across diverse industries.
 
 You will receive a list of proposed process consumables extracted by another agent. Your job is to
 produce a verdict for each item using one of four actions: KEEP, REMOVE, ADJUST, or ADD.
