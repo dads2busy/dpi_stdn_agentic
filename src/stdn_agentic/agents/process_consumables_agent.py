@@ -21,10 +21,30 @@ class ProcessConsumable(BaseModel):
     confidence: float = Field(ge=0.0, le=1.0)
     reasoning: str
     extraction_provenance: str = Field(default="extractor")  # "extractor" or "judge_addition"
+    component: str = Field(default="")  # empty = assembly-level, populated = component-level
 
 
+class ComponentConsumables(BaseModel):
+    """Process consumables for a single component's fabrication."""
+
+    component: str
+    materials: List[ProcessConsumable]
+
+
+class ProcessConsumablesGrouped(BaseModel):
+    """Extraction agent output: grouped by assembly-level and component-level."""
+
+    assembly_consumables: List[ProcessConsumable] = Field(
+        description="Consumables used in final assembly/integration of the product from its components"
+    )
+    component_consumables: List[ComponentConsumables] = Field(
+        description="Consumables used to fabricate each individual component"
+    )
+
+
+# Keep flat list for backward compatibility with judge output
 class ProcessConsumablesList(BaseModel):
-    """Extraction agent output: list of proposed process consumables."""
+    """Flat list of process consumables (used for judge input/output)."""
 
     materials: List[ProcessConsumable]
 
@@ -43,6 +63,25 @@ class JudgeVerdict(BaseModel):
     action: JudgeAction
     confidence: float = Field(ge=0.0, le=1.0)
     justification: str
+    component: str = Field(default="")  # empty = assembly-level
+
+
+class ComponentJudgeVerdicts(BaseModel):
+    """Judge verdicts for a single component."""
+
+    component: str
+    verdicts: List[JudgeVerdict]
+
+
+class JudgeGroupedOutput(BaseModel):
+    """Judge output preserving component grouping."""
+
+    assembly_verdicts: List[JudgeVerdict] = Field(
+        description="Verdicts on assembly-level consumables"
+    )
+    component_verdicts: List[ComponentJudgeVerdicts] = Field(
+        description="Verdicts on each component's consumables"
+    )
 
 
 class JudgeOutput(BaseModel):
@@ -120,12 +159,21 @@ CATEGORIES OF PROCESS CONSUMABLES to consider (with examples spanning multiple i
    - Calibration gases, reference standards consumed during use
 
 IMPORTANT CONTEXT:
-- You will receive a technology name and its component list. Use these to infer which
-  manufacturing processes are involved, then identify what those processes consume.
+- You will receive a technology name and its component list.
+- You must identify process consumables at TWO levels:
+
+  1. ASSEMBLY-LEVEL: consumables used to assemble/integrate the final product from its
+     components (e.g., solder flux for PCB assembly, cleaning solvents between assembly steps,
+     Helium for leak testing the finished assembly).
+
+  2. COMPONENT-LEVEL: for EACH component, consumables used to FABRICATE that component.
+     This is critical — a component like "SiC MOSFET" or "FinFET Logic Die" has its own
+     manufacturing process (in a separate fab) that consumes process gases, etchants, etc.
+     Think about what each component's factory needs, not just the final assembly factory.
+
 - Think broadly: include materials consumed to OPERATE equipment (e.g., Helium to purge EUV
   optical paths), materials consumed during TESTING (e.g., Helium for leak detection), and
   materials consumed for THERMAL MANAGEMENT (e.g., refrigerants, cooling gases).
-- Consider the full manufacturing lifecycle: fabrication, assembly, packaging, and testing.
 - The materials ontology provided is a reference for naming conventions; it is NOT a hard
   constraint. You may identify consumables not in the ontology if they are clearly consumed
   in the inferred manufacturing process.
@@ -139,41 +187,51 @@ CONFIDENCE SCALE (0.0 to 1.0):
 - 0.3-0.49: Low confidence — used in niche or specialized variants only
 - 0.0-0.29: Very low confidence — rarely used or highly speculative
 
-For EACH consumable provide:
-1. name: standard chemical or trade name
-2. confidence: float 0.0–1.0 per the scale above
-3. reasoning: 1–2 sentences describing the manufacturing step(s) that consume this material
-   and why you assigned this confidence level
+OUTPUT FORMAT — you MUST return a structured response with two sections:
+
+1. assembly_consumables: list of consumables for final product assembly/integration.
+   For each: name, confidence, reasoning.
+
+2. component_consumables: list of objects, one per component. For each component:
+   - component: the component name (must match the provided component list)
+   - materials: list of consumables for that component's fabrication.
+     For each: name, confidence, reasoning.
 """
 
 JUDGE_SYSTEM_PROMPT = """You are a critical reviewer of process consumable extraction results for
 manufacturing supply chain analysis across diverse industries.
 
-You will receive a list of proposed process consumables extracted by another agent. Your job is to
-produce a verdict for each item using one of four actions: KEEP, REMOVE, ADJUST, or ADD.
+You will receive proposed process consumables organized in two sections:
+1. ASSEMBLY-LEVEL: consumables for the final product assembly/integration
+2. COMPONENT-LEVEL: consumables for each component's fabrication
+
+Your job is to produce a verdict for each item using one of four actions: KEEP, REMOVE, ADJUST, or ADD.
+You must preserve the grouping — assembly-level verdicts and per-component verdicts stay separate.
 
 REMOVAL criteria — remove items that are:
-- Hallucinated: no plausible manufacturing pathway consumes this material for the given components
-- Constituent materials: materials that physically remain in the final product (these are raw
-  materials, not consumables)
-- Too generic: entries like "water" or "chemicals" that provide no actionable supply-chain signal
-  without further specificity
+- Hallucinated: no plausible manufacturing pathway consumes this material
+- Constituent materials: materials that physically remain in the final product
+- Too generic: entries like "water" or "chemicals" without specificity
+- Misattributed: assigned to the wrong component or wrong level (assembly vs component)
 
 ADJUSTMENT criteria — adjust confidence when:
 - The stated confidence is inconsistent with how universally the material is used
 - New information (e.g., specific process node, technology generation) warrants a change
 
 ADDITION criteria — you may ADD consumables that are clearly missing, subject to:
-- Confidence for any ADD action must be capped at 0.7 (we do not allow high-confidence
-  hallucinated additions; if you are very sure, lower the cap still applies)
-- Only add items with strong manufacturing rationale tied to the inferred process steps
+- Confidence for any ADD action must be capped at 0.7
+- Only add items with strong manufacturing rationale
+- Specify which component or assembly level the addition belongs to
 
-REQUIRED FORMAT for every verdict:
-- name: the consumable name
-- action: one of "keep", "remove", "adjust", or "add"
-- confidence: revised confidence score (0.0–1.0; additions capped at 0.7)
-- justification: a concise 1–2 sentence rationale explaining why you chose this action and
-  confidence value. Every verdict MUST include a justification.
+REQUIRED FORMAT — return two sections:
+
+1. assembly_verdicts: list of verdicts for assembly-level consumables.
+   For each: name, action, confidence, justification.
+
+2. component_verdicts: list of objects, one per component. For each:
+   - component: the component name
+   - verdicts: list of verdicts for that component's consumables.
+     For each: name, action, confidence, justification.
 
 Be rigorous: it is better to remove a questionable item than to retain hallucinated consumables
 that would pollute downstream supply-chain analysis.
@@ -192,7 +250,7 @@ def _get_default_model() -> str:
 
 def get_extraction_agent(
     model_name: Optional[str] = None,
-) -> Agent[STDNDependencies, ProcessConsumablesList]:
+) -> Agent[STDNDependencies, ProcessConsumablesGrouped]:
     """Return a configured process-consumables extraction agent.
 
     Args:
@@ -207,7 +265,7 @@ def get_extraction_agent(
 
     return Agent(
         model=model_to_use,
-        output_type=ProcessConsumablesList,
+        output_type=ProcessConsumablesGrouped,
         deps_type=STDNDependencies,
         system_prompt=EXTRACTION_SYSTEM_PROMPT,
         retries=retries,
@@ -217,7 +275,7 @@ def get_extraction_agent(
 
 def get_judge_agent(
     model_name: Optional[str] = None,
-) -> Agent[STDNDependencies, JudgeOutput]:
+) -> Agent[STDNDependencies, JudgeGroupedOutput]:
     """Return a configured process-consumables judge agent.
 
     Args:
@@ -232,7 +290,7 @@ def get_judge_agent(
 
     return Agent(
         model=model_to_use,
-        output_type=JudgeOutput,
+        output_type=JudgeGroupedOutput,
         deps_type=STDNDependencies,
         system_prompt=JUDGE_SYSTEM_PROMPT,
         retries=retries,
@@ -243,9 +301,13 @@ def get_judge_agent(
 __all__ = [
     "ProcessConsumable",
     "ProcessConsumablesList",
+    "ProcessConsumablesGrouped",
+    "ComponentConsumables",
     "JudgeAction",
     "JudgeVerdict",
     "JudgeOutput",
+    "JudgeGroupedOutput",
+    "ComponentJudgeVerdicts",
     "EXTRACTION_SYSTEM_PROMPT",
     "JUDGE_SYSTEM_PROMPT",
     "get_extraction_agent",

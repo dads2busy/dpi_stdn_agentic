@@ -260,11 +260,14 @@ class CountryDataEnricher:
                     transcript_path=transcript_path,
                     hs_code=hs_code,
                 )
+                # Use component from the consumable (empty for assembly-level)
+                component_name = getattr(pc, "component", "") or ""
+
                 if country_data:
                     for country_info in country_data:
                         enriched_data.append({
                             "technology": technology,
-                            "component": "",
+                            "component": component_name,
                             "component_confidence": "",
                             "component_reasoning": "",
                             "material": material_name,
@@ -285,7 +288,7 @@ class CountryDataEnricher:
                 elif self.write_nulls:
                     enriched_data.append({
                         "technology": technology,
-                        "component": "",
+                        "component": component_name,
                         "component_confidence": "",
                         "component_reasoning": "",
                         "material": material_name,
