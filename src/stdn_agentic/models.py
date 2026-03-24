@@ -57,6 +57,7 @@ class STDNDependencies:
     component_model: Optional[str] = None
     materials_model: Optional[str] = None
     country_model: Optional[str] = None
+    process_consumables_model: Optional[str] = None
 
     # Model specifically for semantic component-name normalization mappings
     component_normalization_model: Optional[str] = None
@@ -83,6 +84,10 @@ class STDNDependencies:
     def get_country_model(self) -> str:
         """Get the model to use for country data."""
         return self.country_model or self.model
+
+    def get_process_consumables_model(self) -> str:
+        """Get the model to use for process consumables extraction."""
+        return self.process_consumables_model or self.model
 
 
 # ============================================================================
@@ -167,6 +172,14 @@ class ConfigModel(BaseModel):
     country_model: Optional[str] = Field(
         default=None,
         description="Model for country data (defaults to 'model' if not set)",
+    )
+    process_consumables_model: Optional[str] = Field(
+        default=None,
+        description="Model for process consumables extraction (defaults to 'model' if not set)",
+    )
+    enable_process_consumables: bool = Field(
+        default=False,
+        description="Enable Stage 2b: process consumables extraction",
     )
 
     # ========================================================================

@@ -136,6 +136,17 @@ async def process_all_technologies(config: ConfigModel, cli_args: argparse.Names
     else:
         enable_country_debate = os.getenv("ENABLE_COUNTRY_DEBATE", "true").lower() == "true"
 
+    if cli_args.enable_process_consumables is not None:
+        enable_process_consumables = cli_args.enable_process_consumables
+    else:
+        enable_process_consumables = getattr(config, 'enable_process_consumables', False)
+
+    # Store resolved value back on config so orchestrator can read it
+    config.enable_process_consumables = enable_process_consumables
+
+    if cli_args.process_consumables_model is not None:
+        config.process_consumables_model = cli_args.process_consumables_model
+
     # Number of agents
     if cli_args.num_agents_component is not None:
         num_agents_component = cli_args.num_agents_component
@@ -179,6 +190,7 @@ async def process_all_technologies(config: ConfigModel, cli_args: argparse.Names
         max_debate_rounds=max_debate_rounds,
         convergence_threshold=convergence_threshold,
         save_transcripts=save_transcripts,
+        # enable_process_consumables is stored on config; will be wired in Task 5
     )
 
     tech_list_path = Path(config.tech_list_path)
@@ -300,6 +312,20 @@ def main():
         default=None,
         metavar="BOOL",
         help="Enable multi-agent voting for country data (default: from .env or false)",
+    )
+    parser.add_argument(
+        "--enable-process-consumables",
+        type=_str_to_bool,
+        default=None,
+        metavar="BOOL",
+        help="Enable Stage 2b: process consumables extraction (default: from config or false)",
+    )
+    parser.add_argument(
+        "--process-consumables-model",
+        type=str,
+        default=None,
+        metavar="MODEL",
+        help="Model for process consumables agents (defaults to main model)",
     )
 
     # Number of agents arguments
