@@ -511,6 +511,13 @@ class STDNOrchestrator:
                     transcript_path=transcript_path,
                 )
 
+            if self.save_transcripts and self.reporter and pc_enriched_data and transcript_path is not None:
+                self.country_enricher.append_process_consumables_to_transcript(
+                    technology=tech,
+                    enriched_data=pc_enriched_data,
+                    transcript_path=transcript_path,
+                )
+
             if self.save_transcripts and self.reporter and enriched_data:
                 # Prefer explicit transcript path (if known) to avoid cross-run contamination.
                 if transcript_path is not None:

@@ -32,15 +32,19 @@ class ProcessConsumablesResult:
     @classmethod
     def from_judge_output(cls, judge_output: JudgeOutput, extractor_count: int) -> "ProcessConsumablesResult":
         kept = judge_output.kept_and_added
-        materials = [
-            ProcessConsumable(
-                name=v.name,
-                confidence=v.confidence,
-                reasoning=v.justification,
-                extraction_provenance="judge_addition" if v.action == JudgeAction.ADD else "extractor",
+        materials = []
+        for v in kept:
+            name = v.name
+            if name.lower().startswith("add:"):
+                name = name[4:].strip()
+            materials.append(
+                ProcessConsumable(
+                    name=name,
+                    confidence=v.confidence,
+                    reasoning=v.justification,
+                    extraction_provenance="judge_addition" if v.action == JudgeAction.ADD else "extractor",
+                )
             )
-            for v in kept
-        ]
         removed_count = sum(1 for v in judge_output.verdicts if v.action == JudgeAction.REMOVE)
         added_count = sum(1 for v in judge_output.verdicts if v.action == JudgeAction.ADD)
         return cls(

@@ -444,3 +444,107 @@ class CountryDataEnricher:
 
         except Exception as e:
             logger.error("Error appending country data to transcript: %s", e, exc_info=True)
+
+    def append_process_consumables_to_transcript(
+        self,
+        technology: str,
+        enriched_data: list[dict[str, Any]],
+        transcript_path: Optional[Path] = None,
+    ) -> None:
+        """
+        Append process consumables country data to a transcript.
+
+        Args:
+            technology: Technology name
+            enriched_data: List of enriched data records with dependency_type="process_consumable"
+            transcript_path: Explicit transcript path to append to (recommended)
+        """
+        if not self.reporter:
+            logger.warning("Reporter is None, cannot append process consumables data")
+            return
+
+        if not enriched_data:
+            logger.warning("No process consumables data to append")
+            return
+
+        try:
+            output_dir = Path(self.reporter.output_dir)
+
+            # Prefer explicit path when provided
+            if transcript_path is not None:
+                filepath = Path(transcript_path)
+                if not filepath.exists():
+                    logger.warning("Provided transcript path does not exist: %s", filepath)
+                    return
+            else:
+                tech_filename = technology.replace("/", "-").replace(" ", "_")
+                transcripts = list(output_dir.glob(f"{tech_filename}_*.txt"))
+                if not transcripts:
+                    logger.warning("No transcript found for %s", technology)
+                    return
+                filepath = max(transcripts, key=lambda p: p.stat().st_mtime)
+
+            # Build process consumables section
+            content = []
+            content.append("\n\n")
+            content.append("=" * 80 + "\n")
+            content.append("PROCESS CONSUMABLES (Stage 2b)\n")
+            content.append("=" * 80 + "\n\n")
+
+            for record in enriched_data:
+                material = record["material"]
+                content.append(f"  Material: {material}\n")
+
+                if record.get("material_confidence"):
+                    content.append(f"  Confidence: {record['material_confidence']:.3f}\n")
+
+                provenance = record.get("extraction_provenance", "unknown")
+                content.append(f"  Provenance: {provenance}\n")
+
+                if record["country"]:
+                    content.append(
+                        f"    • {record['country']}: "
+                        f"{record['amount']} {record['meas_unit']} "
+                        f"({record['percentage']}%)\n"
+                    )
+                    if record.get("country_confidence"):
+                        content.append(
+                            f"      Confidence: {record['country_confidence']:.3f}\n"
+                        )
+                else:
+                    content.append("    • No country data available\n")
+
+                content.append("\n")
+
+            # Summary statistics
+            content.append("=" * 80 + "\n")
+            content.append("SUMMARY\n")
+            content.append("=" * 80 + "\n")
+            content.append(f"Total records: {len(enriched_data)}\n")
+
+            unique_materials = len({r["material"] for r in enriched_data})
+            content.append(f"Unique materials: {unique_materials}\n")
+
+            countries_with_data = sum(1 for r in enriched_data if r["country"])
+            content.append(f"Records with country data: {countries_with_data}\n")
+
+            if countries_with_data > 0:
+                avg_confidence = (
+                    sum(
+                        r.get("country_confidence", 0)
+                        for r in enriched_data
+                        if r.get("country_confidence")
+                    )
+                    / countries_with_data
+                )
+                content.append(f"Average country confidence: {avg_confidence:.3f}\n")
+
+            # Append to file
+            with open(filepath, "a", encoding="utf-8") as f:
+                f.write("".join(content))
+                f.flush()
+
+            logger.info("Appended process consumables data to: %s", filepath.name)
+
+        except Exception as e:
+            logger.error("Error appending process consumables to transcript: %s", e, exc_info=True)
