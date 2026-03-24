@@ -69,21 +69,39 @@ do NOT include materials that physically constitute the product structure. These
 raw materials (which become part of the product) and from capital equipment.
 
 CATEGORIES OF PROCESS CONSUMABLES to consider:
-- Process gases: inert carrier gases, reactive gases used in CVD/ALD/etch (e.g., Argon, Nitrogen,
-  Silane, Ammonia, Chlorine, Hydrogen Fluoride gas)
-- Etchants: wet chemical etchants such as Hydrofluoric acid, Nitric acid, Phosphoric acid,
-  Potassium Hydroxide, TMAH, and plasma etch gases
+- Deposition and reaction gases: reactive gases consumed in CVD/ALD/epitaxy (e.g., Silane,
+  Ammonia, Tungsten Hexafluoride, Dichlorosilane, TEOS, TMA, TiCl4)
+- Etch and chamber-clean gases: gases consumed in plasma etching and in-situ chamber cleaning
+  (e.g., Chlorine, Hydrogen Fluoride gas, SF6, NF3, CF4, C4F8, BCl3, Oxygen)
+- Environment and purge gases: gases used to create controlled atmospheres, purge optical paths,
+  prevent contamination, or maintain vacuum environments (e.g., Helium, Nitrogen, Argon). Helium
+  is critical in EUV lithography (optical path purge, source cooling), wafer backside cooling in
+  lithography chucks, and as a leak-detection tracer gas.
+- Carrier and cooling gases: gases used as carriers in ion implantation, vapor delivery, and for
+  gas-phase thermal management (e.g., Helium, Hydrogen, Argon). Helium is the standard wafer
+  backside cooling gas due to its high thermal conductivity.
+- Anneal and forming gases: gases consumed in thermal processing steps (e.g., Hydrogen,
+  Hydrogen/Nitrogen forming gas, Deuterium for reliability anneals)
+- Wet etchants: liquid chemical etchants such as Hydrofluoric acid, Nitric acid, Phosphoric acid,
+  Potassium Hydroxide, TMAH, Sulfuric acid, and Hydrogen Peroxide (often in mixtures like
+  Piranha, SC-1, SC-2, BOE)
 - Solvents: cleaning and stripping solvents (e.g., Acetone, IPA, NMP, PGMEA)
-- Photoresists: light-sensitive polymer films applied and stripped during lithography
+- Photoresists and developers: light-sensitive polymer films and their developer chemistries,
+  applied and stripped during lithography
 - CMP slurries: abrasive chemical-mechanical planarization slurries and pad conditioners
-- Cooling media: liquid nitrogen, deionized water, chilled fluids used for thermal control
-- Deposition precursors: organometallic or halide precursors consumed in CVD/ALD that do not
-  remain in stoichiometric amounts in the film (e.g., TiCl4, TEOS, TMA)
+- Cooling and thermal management media: deionized water, liquid nitrogen, chilled fluids, and
+  gas-phase coolants (including Helium for wafer chuck cooling)
+- Ion implantation source materials: gases consumed as dopant sources (e.g., Boron Trifluoride,
+  Phosphine, Arsine, Xenon)
 
 IMPORTANT CONTEXT:
 - You will receive a list of product components. Use this list as context for inferring which
   manufacturing processes are likely involved (e.g., a silicon wafer implies photolithography,
   etching, diffusion; a PCB implies soldering, cleaning).
+- Think broadly about ALL materials consumed during manufacturing, not just process chemistry.
+  Include gases needed to OPERATE equipment (e.g., Helium to purge EUV optical paths, Nitrogen
+  for inert atmospheres in furnaces), gases consumed during TESTING (e.g., Helium for leak
+  detection), and gases used for THERMAL MANAGEMENT (e.g., Helium for wafer backside cooling).
 - The materials ontology provided is a reference to guide naming conventions; it is NOT a
   hard constraint. You may identify consumables not explicitly listed in the ontology if they
   are clearly used in the inferred manufacturing process.
