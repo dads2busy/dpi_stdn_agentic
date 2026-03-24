@@ -60,3 +60,41 @@ class TestProcessConsumableModels:
         jo = JudgeOutput(verdicts=verdicts)
         assert len(jo.verdicts) == 3
         assert len(jo.kept_and_added) == 2
+
+
+from stdn_agentic.agents.process_consumables_agent import (
+    EXTRACTION_SYSTEM_PROMPT,
+    JUDGE_SYSTEM_PROMPT,
+    get_extraction_agent,
+    get_judge_agent,
+)
+
+
+class TestProcessConsumablePrompts:
+    def test_extraction_prompt_excludes_constituent_materials(self):
+        assert "do not become part of the final product" in EXTRACTION_SYSTEM_PROMPT.lower() or \
+               "do NOT include materials that physically constitute" in EXTRACTION_SYSTEM_PROMPT
+
+    def test_extraction_prompt_mentions_process_categories(self):
+        prompt_lower = EXTRACTION_SYSTEM_PROMPT.lower()
+        assert "process gas" in prompt_lower or "gases" in prompt_lower
+        assert "etchant" in prompt_lower
+        assert "solvent" in prompt_lower
+
+    def test_judge_prompt_allows_additions(self):
+        assert "add" in JUDGE_SYSTEM_PROMPT.lower()
+        assert "0.7" in JUDGE_SYSTEM_PROMPT
+
+    def test_judge_prompt_requires_justification(self):
+        assert "justification" in JUDGE_SYSTEM_PROMPT.lower() or \
+               "rationale" in JUDGE_SYSTEM_PROMPT.lower()
+
+
+class TestAgentFactories:
+    def test_get_extraction_agent_returns_agent(self):
+        agent = get_extraction_agent(model_name="openai:gpt-4.1-mini")
+        assert agent is not None
+
+    def test_get_judge_agent_returns_agent(self):
+        agent = get_judge_agent(model_name="openai:gpt-4.1-mini")
+        assert agent is not None
