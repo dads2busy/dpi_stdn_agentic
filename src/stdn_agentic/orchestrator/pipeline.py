@@ -719,13 +719,15 @@ class STDNOrchestrator:
 
     async def _normalize_output(self) -> str:
         """
-        Normalize component names for all raw CSVs with the same debate configuration.
+        Normalize component and material names for all raw CSVs with the same debate configuration.
 
         This method:
         1. Finds all raw CSV files matching the current debate config (e.g., d3d3v3)
         2. Extracts unique component names across ALL matching files
-        3. Normalizes unknown names via LLM and updates the vocabulary
-        4. Re-normalizes ALL matching files with the complete vocabulary
+        3. Normalizes unknown component names via LLM and updates the vocabulary
+        4. Normalizes process consumable material names (strip parenthetical qualifiers)
+        5. Normalizes material name casing across all rows
+        6. Re-normalizes ALL matching files with the complete vocabulary
 
         This ensures consistency across all runs with the same configuration,
         even when new component names are discovered in later runs.
@@ -733,6 +735,7 @@ class STDNOrchestrator:
         Returns:
             Path to normalized output file for the current run
         """
+        import re
         from glob import glob
 
         import pandas as pd
@@ -794,24 +797,48 @@ class STDNOrchestrator:
                 if "component" not in df.columns:
                     continue
 
-                # Apply normalization
+                # Apply component normalization
                 # NOTE: Process consumable rows have empty component fields;
                 # the pd.notna(x) check below ensures they pass through untouched.
-                # TODO: normalize process consumable material names
                 original_components = df["component"].copy()
                 df["component"] = df["component"].apply(
                     lambda x: lower_mappings.get(str(x).lower(), x) if pd.notna(x) else x
                 )
 
+                # Normalize process consumable material names:
+                # Strip parenthetical qualifiers (e.g., "Helium (for leak testing)" → "Helium")
+                if "dependency_type" in df.columns and "material" in df.columns:
+                    pc_mask = df["dependency_type"] == "process_consumable"
+                    original_materials = df["material"].copy()
+                    df.loc[pc_mask, "material"] = (
+                        df.loc[pc_mask, "material"]
+                        .apply(lambda x: re.sub(r"\s*\(.*\)\s*$", "", str(x)).strip() if pd.notna(x) else x)
+                    )
+                    # Normalize material name casing (first-seen wins)
+                    mat_canonical: dict[str, str] = {}
+                    for mat in df["material"].dropna().unique():
+                        key = str(mat).lower()
+                        if key not in mat_canonical:
+                            mat_canonical[key] = mat
+                    df["material"] = df["material"].apply(
+                        lambda x: mat_canonical.get(str(x).lower(), x) if pd.notna(x) else x
+                    )
+                    mat_changes = (original_materials != df["material"]).sum()
+                else:
+                    mat_changes = 0
+
                 # Count changes
-                changes = (original_components != df["component"]).sum()
+                comp_changes = (original_components != df["component"]).sum()
 
                 # Save to normalized directory
                 normalized_path = os.path.join(
                     self.normalized_output_dir, os.path.basename(csv_path)
                 )
                 df.to_csv(normalized_path, index=False)
-                logger.info(f"  {os.path.basename(csv_path)}: {changes} components normalized")
+                logger.info(
+                    f"  {os.path.basename(csv_path)}: "
+                    f"{comp_changes} components, {mat_changes} materials normalized"
+                )
 
             except Exception as e:
                 logger.error("Error normalizing %s: %s", csv_path, e)
