@@ -178,7 +178,7 @@ class ConfigModel(BaseModel):
         description="Model for process consumables extraction (defaults to 'model' if not set)",
     )
     enable_process_consumables: bool = Field(
-        default=False,
+        default=True,
         description="Enable Stage 2b: process consumables extraction",
     )
     parallel_technologies: bool = Field(
