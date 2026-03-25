@@ -952,12 +952,16 @@ class STDNOrchestrator:
                     df["material"] = df["material"].apply(
                         lambda x: mat_canonical.get(str(x).lower(), x) if pd.notna(x) else x
                     )
-                    mat_changes = (original_materials != df["material"]).sum()
+                    # Count changes (use len difference + value changes on shared index)
+                    rows_added = len(df) - len(original_materials)
+                    shared = original_materials.index.intersection(df.index)
+                    mat_changes = int((original_materials.loc[shared] != df["material"].loc[shared]).sum()) + abs(rows_added)
                 else:
                     mat_changes = 0
 
                 # Count changes
-                comp_changes = (original_components != df["component"]).sum()
+                shared_comp = original_components.index.intersection(df.index)
+                comp_changes = int((original_components.loc[shared_comp] != df["component"].loc[shared_comp]).sum())
 
                 # Save to normalized directory
                 normalized_path = os.path.join(
