@@ -25,9 +25,11 @@ Checkpoint/resume:
   checkpoint on restart (for the same effective run configuration).
 """
 
+import asyncio
 import csv
 import json
 import os
+import time
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional
@@ -1060,6 +1062,167 @@ For each input name, output the canonical form it should map to."""
         logger.warning("Falling back to basic normalization")
         return {name: name.strip().title() for name in unknown_names}
 
+    async def _run_parallel(
+        self,
+        technologies: List[str],
+        role: str,
+        domain: str,
+        tech_roles: Optional[Dict[str, str]],
+        tech_domains: Optional[Dict[str, str]],
+    ) -> Dict[str, Any]:
+        """Process technologies concurrently with semaphore-based throttling.
+
+        Each technology gets its own CountryDataRepository and CountryDataEnricher
+        to avoid shared-state races. Results are written to CSV in the original
+        technology list order for deterministic output.
+        """
+
+        CSV_FIELDNAMES = [
+            "technology", "component", "component_confidence", "component_reasoning",
+            "material", "material_confidence", "material_reasoning", "hs_code",
+            "country", "meas_unit", "amount", "percentage",
+            "country_confidence", "country_reasoning", "dependency_type", "extraction_provenance",
+        ]
+
+        semaphore = asyncio.Semaphore(self.config.max_concurrent_technologies)
+        checkpoint_lock = asyncio.Lock()
+
+        # Checkpoint-based resume
+        checkpoint_path = Path(self.raw_output_dir) / "parallel_checkpoint.json"
+        completed_techs: set[str] = set()
+        if checkpoint_path.exists():
+            data = json.loads(checkpoint_path.read_text())
+            completed_techs = set(data.get("completed_technologies", []))
+            logger.info(
+                "Resuming parallel run: %d completed, %d remaining",
+                len(completed_techs),
+                len([t for t in technologies if t not in completed_techs]),
+            )
+
+        remaining_technologies = [t for t in technologies if t not in completed_techs]
+
+        # Collect results and failures keyed by technology name
+        all_results: Dict[str, Dict[str, Any]] = {}
+        failed_technologies: Dict[str, str] = {}
+        contexts: list[TechnologyContext] = []
+        successful = 0
+        failed = 0
+
+        async def _process_one(tech: str) -> None:
+            nonlocal successful, failed
+
+            tech_role = tech_roles.get(tech, role) if tech_roles else role
+            tech_domain = tech_domains.get(tech, domain) if tech_domains else domain
+
+            # Per-technology isolated state
+            tech_repo = CountryDataRepository(
+                database_path=self.config.usgs_database,
+                deps=self.deps,
+                top_n=5,
+                use_llm_fallback=True,
+                enable_llm_cache=self.config.enable_llm_fallback_cache,
+                llm_cache_dir=self.config.llm_fallback_cache_dir,
+                llm_cache_ttl_hours=self.config.llm_fallback_cache_ttl_hours,
+                country_no_debate_top_p=self.country_no_debate_top_p,
+                country_debate_top_p=self.country_debate_top_p,
+                country_no_debate_temperature=self.country_no_debate_temperature,
+                country_debate_temperature=self.country_debate_temperature,
+            )
+            tech_enricher = CountryDataEnricher(
+                country_repo=tech_repo,
+                reporter=self.reporter,
+                write_nulls=self.write_nulls,
+                use_debate=self.use_country_debate,
+                num_agents=self.num_agents_country,
+            )
+            ctx = TechnologyContext(
+                country_repo=tech_repo,
+                country_enricher=tech_enricher,
+            )
+            contexts.append(ctx)
+
+            t0 = time.monotonic()
+            try:
+                async with semaphore:
+                    result = await self.process_technology(
+                        tech,
+                        tech_role,
+                        tech_domain,
+                        ctx,
+                        use_material_debate=self.use_material_debate,
+                    )
+
+                if result and result["enriched_data"]:
+                    all_results[tech] = result
+                    successful += 1
+                    elapsed = time.monotonic() - t0
+                    logger.info(
+                        "[%d/%d] %s completed (%.1fs)",
+                        successful + failed, len(remaining_technologies), tech, elapsed,
+                    )
+
+                    # Checkpoint under lock
+                    async with checkpoint_lock:
+                        completed_techs.add(tech)
+                        checkpoint_data = {
+                            "completed_technologies": sorted(completed_techs),
+                            "timestamp": datetime.now().isoformat(),
+                        }
+                        tmp = checkpoint_path.with_suffix(".tmp")
+                        tmp.write_text(json.dumps(checkpoint_data, indent=2))
+                        tmp.rename(checkpoint_path)
+                else:
+                    failed += 1
+                    failed_technologies[tech] = "No enriched data returned"
+                    logger.warning("Failed to process: %s", tech)
+
+            except Exception as e:
+                failed += 1
+                failed_technologies[tech] = str(e)
+                logger.error("Error processing %s: %s", tech, e, exc_info=True)
+
+        # Run all technologies concurrently (semaphore limits actual concurrency)
+        await asyncio.gather(*[_process_one(tech) for tech in remaining_technologies])
+
+        # Write combined CSV in original technology list order for determinism
+        with open(self.output_file, "w", newline="") as f:
+            writer = csv.DictWriter(f, fieldnames=CSV_FIELDNAMES)
+            writer.writeheader()
+            for tech in technologies:  # original order (including previously completed)
+                result = all_results.get(tech)
+                if not result:
+                    continue
+                for row in result["enriched_data"]:
+                    row["dependency_type"] = "constituent"
+                    row["extraction_provenance"] = ""
+                    writer.writerow(row)
+                for row in result.get("pc_enriched_data", []):
+                    writer.writerow(row)
+
+        # Aggregate usage from all per-technology contexts
+        total_usage = RunUsage()
+        for ctx in contexts:
+            total_usage.incr(ctx.usage)
+
+        logger.info("=" * 60)
+        logger.info("Parallel STDN Generation Completed: %s", datetime.now())
+        logger.info("=" * 60)
+        logger.info("Successfully processed: %d/%d technologies", successful, len(technologies))
+        logger.info("Raw output saved to: %s", self.output_file)
+        logger.debug("Aggregated usage: %s", total_usage)
+
+        # Clean up checkpoint on full success
+        if checkpoint_path.exists():
+            checkpoint_path.unlink()
+
+        return {
+            "successful": successful,
+            "failed": failed,
+            "total": len(technologies),
+            "output_file": self.output_file,
+            "failed_technologies": failed_technologies,
+        }
+
     async def run_pipeline(
         self,
         technologies: List[str],
@@ -1147,6 +1310,42 @@ For each input name, output the canonical form it should map to."""
                     ],
                 )
                 writer.writeheader()
+
+        # Parallel technology processing branch
+        if self.config.parallel_technologies:
+            logger.info(
+                "Parallel mode enabled (max_concurrent=%d)",
+                self.config.max_concurrent_technologies,
+            )
+            parallel_result = await self._run_parallel(
+                technologies, role, domain, tech_roles, tech_domains,
+            )
+
+            # Post-processing: normalization and JSON output
+            normalized_file = None
+            if parallel_result["successful"] > 0:
+                skip_norm_env = os.getenv("SKIP_POSTPROCESS_NORMALIZATION", "").strip().lower()
+                skip_postprocess_norm_env = skip_norm_env in ("1", "true", "yes", "y", "on")
+                skip_postprocess_norm = (
+                    bool(getattr(self.config, "skip_postprocess_normalization", False))
+                    or skip_postprocess_norm_env
+                )
+
+                if skip_postprocess_norm:
+                    logger.info("Skipping post-processing normalization (parallel mode)")
+                else:
+                    normalized_file = await self._normalize_output()
+
+                skip_json = bool(getattr(self.config, "skip_json_output", False))
+                if skip_json:
+                    logger.info("Skipping JSON output (parallel mode)")
+                else:
+                    json_source_csv = normalized_file or self.output_file
+                    json_path = self._save_json_output(csv_path=json_source_csv)
+                    logger.info("JSON output written to: %s", json_path)
+
+            parallel_result["normalized_output_file"] = normalized_file
+            return parallel_result
 
         # Process each technology (with optional resume)
         for idx, tech in enumerate(technologies):
