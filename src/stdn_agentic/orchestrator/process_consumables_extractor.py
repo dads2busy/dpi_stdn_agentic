@@ -5,6 +5,7 @@ manufacturing process consumables at both the technology (assembly) level
 and the component (fabrication) level.
 """
 
+import re
 from dataclasses import dataclass, field
 from typing import Any, Optional
 
@@ -159,6 +160,19 @@ class ProcessConsumablesExtractor:
                 normalized_count += 1
         if normalized_count:
             logger.info(f"  Stage 2b: {normalized_count} material names normalized to ontology")
+
+        # Strip parenthetical qualifiers from material names so Stage 3 country
+        # enrichment can match them against USGS data (e.g. "Helium (for leak
+        # testing)" → "Helium" which matches HS code 280429 in the ontology).
+        stripped_count = 0
+        for m in result.materials:
+            stripped = re.sub(r"\s*\(.*\)\s*$", "", m.name).strip()
+            if stripped != m.name:
+                logger.info(f"  Stage 2b stripped qualifier: '{m.name}' -> '{stripped}'")
+                m.name = stripped
+                stripped_count += 1
+        if stripped_count:
+            logger.info(f"  Stage 2b: {stripped_count} parenthetical qualifiers stripped")
 
         # Log results grouped by level
         assembly_mats = [m for m in result.materials if not m.component]
