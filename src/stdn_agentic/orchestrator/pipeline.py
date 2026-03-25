@@ -26,8 +26,10 @@ Checkpoint/resume:
 """
 
 import asyncio
+import contextvars
 import csv
 import json
+import logging
 import os
 import time
 from datetime import datetime
@@ -53,6 +55,21 @@ from .materials_extractor import MaterialsExtractor
 from .technology_context import TechnologyContext
 
 logger = get_logger(__name__)
+
+_current_technology: contextvars.ContextVar[str] = contextvars.ContextVar(
+    "current_technology", default=""
+)
+
+
+class _TechnologyLogFilter(logging.Filter):
+    """Only passes log records matching the handler's technology."""
+
+    def __init__(self, tech_name: str):
+        super().__init__()
+        self.tech_name = tech_name
+
+    def filter(self, record):
+        return _current_technology.get("") == self.tech_name
 
 
 # ============================================================================
@@ -1111,6 +1128,8 @@ For each input name, output the canonical form it should map to."""
         async def _process_one(tech: str) -> None:
             nonlocal successful, failed
 
+            _current_technology.set(tech)
+
             tech_role = tech_roles.get(tech, role) if tech_roles else role
             tech_domain = tech_domains.get(tech, domain) if tech_domains else domain
 
@@ -1140,6 +1159,18 @@ For each input name, output the canonical form it should map to."""
                 country_enricher=tech_enricher,
             )
             contexts.append(ctx)
+
+            # Set up per-technology log file
+            tech_log_dir = Path("logs/technologies")
+            tech_log_dir.mkdir(parents=True, exist_ok=True)
+            safe_name = tech.replace("/", "_").replace(" ", "_")
+            tech_handler = logging.FileHandler(tech_log_dir / f"{safe_name}.log")
+            tech_handler.setFormatter(
+                logging.Formatter("%(asctime)s %(levelname)s %(name)s: %(message)s")
+            )
+            tech_handler.addFilter(_TechnologyLogFilter(tech))
+            root_logger = logging.getLogger()
+            root_logger.addHandler(tech_handler)
 
             t0 = time.monotonic()
             try:
@@ -1180,6 +1211,9 @@ For each input name, output the canonical form it should map to."""
                 failed += 1
                 failed_technologies[tech] = str(e)
                 logger.error("Error processing %s: %s", tech, e, exc_info=True)
+            finally:
+                root_logger.removeHandler(tech_handler)
+                tech_handler.close()
 
         # Run all technologies concurrently (semaphore limits actual concurrency)
         await asyncio.gather(*[_process_one(tech) for tech in remaining_technologies])
