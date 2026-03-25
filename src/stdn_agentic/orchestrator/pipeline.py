@@ -48,6 +48,7 @@ from .checkpoint import CheckpointManager
 from .component_extractor import ComponentExtractor
 from .country_data_enricher import CountryDataEnricher
 from .materials_extractor import MaterialsExtractor
+from .technology_context import TechnologyContext
 
 logger = get_logger(__name__)
 
@@ -421,9 +422,17 @@ class STDNOrchestrator:
         usage: RunUsage,
         transcript_path: Optional[Path] = None,
         component_confidence_map: Optional[dict] = None,
+        enricher: Optional[CountryDataEnricher] = None,
     ) -> list[dict[str, Any]]:
-        """Delegate to CountryDataEnricher."""
-        return await self.country_enricher.enrich_with_country_data(
+        """Delegate to CountryDataEnricher.
+
+        Args:
+            enricher: Optional enricher override. When provided (e.g. in parallel mode
+                      each technology task passes its own isolated enricher), this is
+                      used instead of ``self.country_enricher``.
+        """
+        active_enricher = enricher if enricher is not None else self.country_enricher
+        return await active_enricher.enrich_with_country_data(
             materials_list=materials_list,
             technology=technology,
             usage=usage,
@@ -436,7 +445,7 @@ class STDNOrchestrator:
         tech: str,
         role: str,
         domain: str,
-        usage: RunUsage,
+        ctx: TechnologyContext,
         use_material_debate: bool = False,
     ) -> Optional[Dict[str, Any]]:
         """Process a single technology through the complete STDN pipeline."""
@@ -445,10 +454,13 @@ class STDNOrchestrator:
         logger.info("=" * 60)
 
         try:
-            components_result = await self._run_component_extraction(tech, role, usage)
+            components_result = await self._run_component_extraction(tech, role, ctx.usage)
             if not components_result:
                 logger.error("No components extracted for %s", tech)
                 return None
+
+            # Capture the transcript path written during component extraction.
+            ctx.transcript_path = getattr(self.component_extractor, "last_transcript_path", None)
 
             (
                 components,
@@ -461,7 +473,7 @@ class STDNOrchestrator:
             import asyncio
 
             materials_task = asyncio.ensure_future(
-                self._extract_materials_for_technology(components, tech, usage)
+                self._extract_materials_for_technology(components, tech, ctx.usage)
             )
 
             process_consumables_result = None
@@ -470,7 +482,7 @@ class STDNOrchestrator:
                     self.process_consumables_extractor.extract_process_consumables(
                         technology=tech,
                         components=components,
-                        usage=usage,
+                        usage=ctx.usage,
                     )
                 )
                 materials_list, process_consumables_result = await asyncio.gather(
@@ -485,9 +497,9 @@ class STDNOrchestrator:
 
             logger.info("Extracted materials for %d components", len(materials_list.component_list))
 
-            # Prefer the explicit transcript path created during component extraction for this run.
-            # This avoids appending/enriching against an older transcript from a different run.
-            transcript_path = getattr(self.component_extractor, "last_transcript_path", None)
+            # Prefer the explicit transcript path captured from component extraction.
+            # Fall back to globbing only if extraction didn't produce a path.
+            transcript_path = ctx.transcript_path
             if not transcript_path:
                 transcript_path = self._get_latest_transcript_path(tech)
 
@@ -537,23 +549,24 @@ class STDNOrchestrator:
             enriched_data = await self._enrich_with_country_data(
                 materials_list,
                 tech,
-                usage,
+                ctx.usage,
                 transcript_path=transcript_path,
                 component_confidence_map=component_confidence_map,
+                enricher=ctx.country_enricher,
             )
 
             # Stage 3 for process consumables
             pc_enriched_data = []
             if process_consumables_result and process_consumables_result.materials:
-                pc_enriched_data = await self.country_enricher.enrich_process_consumables(
+                pc_enriched_data = await ctx.country_enricher.enrich_process_consumables(
                     process_consumables=process_consumables_result,
                     technology=tech,
-                    usage=usage,
+                    usage=ctx.usage,
                     transcript_path=transcript_path,
                 )
 
             if self.save_transcripts and self.reporter and pc_enriched_data and transcript_path is not None:
-                self.country_enricher.append_process_consumables_to_transcript(
+                ctx.country_enricher.append_process_consumables_to_transcript(
                     technology=tech,
                     enriched_data=pc_enriched_data,
                     transcript_path=transcript_path,
@@ -562,7 +575,7 @@ class STDNOrchestrator:
             if self.save_transcripts and self.reporter and enriched_data:
                 # Prefer explicit transcript path (if known) to avoid cross-run contamination.
                 if transcript_path is not None:
-                    self.country_enricher.append_country_data_to_transcript(
+                    ctx.country_enricher.append_country_data_to_transcript(
                         tech, enriched_data, transcript_path=transcript_path
                     )
                 else:
@@ -575,6 +588,7 @@ class STDNOrchestrator:
                 "materials": materials_list,
                 "enriched_data": enriched_data,
                 "pc_enriched_data": pc_enriched_data,
+                "transcript_path": ctx.transcript_path,
             }
 
         except Exception as e:
@@ -1143,11 +1157,16 @@ For each input name, output the canonical form it should map to."""
             tech_role = tech_roles.get(tech, role) if tech_roles else role
             tech_domain = tech_domains.get(tech, domain) if tech_domains else domain
 
+            ctx = TechnologyContext(
+                country_repo=self.country_repo,
+                country_enricher=self.country_enricher,
+                usage=usage,
+            )
             result = await self.process_technology(
                 tech,
                 tech_role,  # ← Use tech-specific role
                 tech_domain,  # ← Use tech-specific domain
-                usage,
+                ctx,
                 use_material_debate=self.use_material_debate,
             )
 
