@@ -11,6 +11,8 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any, Dict, Optional
 
+from filelock import FileLock
+
 # ============================================================================
 # Material Cache
 # ============================================================================
@@ -97,6 +99,7 @@ class MaterialCache:
             value: Value to cache (must be JSON-serializable)
         """
         cache_file = self._get_cache_path(key)
+        lock_file = cache_file.with_suffix(".lock")
 
         cache_data = {
             "timestamp": datetime.now().isoformat(),
@@ -104,8 +107,9 @@ class MaterialCache:
             "value": value,
         }
 
-        with open(cache_file, "w") as f:
-            json.dump(cache_data, f, indent=2, default=str)
+        with FileLock(lock_file, timeout=10):
+            with open(cache_file, "w") as f:
+                json.dump(cache_data, f, indent=2, default=str)
 
     def delete(self, key: str):
         """Delete a cache entry"""
