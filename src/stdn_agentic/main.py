@@ -147,6 +147,11 @@ async def process_all_technologies(config: ConfigModel, cli_args: argparse.Names
     if cli_args.process_consumables_model is not None:
         config.process_consumables_model = cli_args.process_consumables_model
 
+    if cli_args.parallel_technologies is not None:
+        config.parallel_technologies = cli_args.parallel_technologies
+    if cli_args.max_concurrent_technologies is not None:
+        config.max_concurrent_technologies = cli_args.max_concurrent_technologies
+
     # Number of agents
     if cli_args.num_agents_component is not None:
         num_agents_component = cli_args.num_agents_component
@@ -372,6 +377,20 @@ def main():
         default=None,
         metavar="BOOL",
         help="Save debate transcripts (default: from .env or true)",
+    )
+    parser.add_argument(
+        "--parallel-technologies",
+        type=_str_to_bool,
+        default=None,
+        metavar="BOOL",
+        help="Enable parallel technology processing (default: from config or false)",
+    )
+    parser.add_argument(
+        "--max-concurrent-technologies",
+        type=int,
+        default=None,
+        metavar="N",
+        help="Max concurrent technologies (default: from config or 10)",
     )
 
     args = parser.parse_args()

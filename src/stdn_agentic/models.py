@@ -181,6 +181,16 @@ class ConfigModel(BaseModel):
         default=False,
         description="Enable Stage 2b: process consumables extraction",
     )
+    parallel_technologies: bool = Field(
+        default=False,
+        description="Enable parallel processing of technologies within a single run",
+    )
+    max_concurrent_technologies: int = Field(
+        default=10,
+        ge=1,
+        le=200,
+        description="Max concurrent technologies when parallel_technologies is enabled",
+    )
 
     # ========================================================================
     # Normalization Model Configuration
