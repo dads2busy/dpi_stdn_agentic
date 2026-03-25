@@ -61,7 +61,7 @@ class TestProcessConsumablesPipelineIntegration:
 
 class TestJsonOutputStructure:
     def _write_test_csv(self, path: str):
-        """Write a minimal CSV with both dependency types."""
+        """Write a minimal CSV with constituent, assembly-level, and component-level rows."""
         fieldnames = [
             "technology", "component", "component_confidence", "component_reasoning",
             "material", "material_confidence", "material_reasoning", "hs_code",
@@ -70,6 +70,7 @@ class TestJsonOutputStructure:
             "extraction_provenance",
         ]
         rows = [
+            # Constituent material
             {
                 "technology": "SoC", "component": "Die", "component_confidence": "0.95",
                 "component_reasoning": "core", "material": "Silicon",
@@ -79,12 +80,32 @@ class TestJsonOutputStructure:
                 "country_confidence": "0.92", "country_reasoning": "USGS",
                 "dependency_type": "constituent", "extraction_provenance": "",
             },
+            # Assembly-level process consumable
             {
                 "technology": "SoC", "component": "", "component_confidence": "",
+                "component_reasoning": "", "material": "Solder flux",
+                "material_confidence": "0.9", "material_reasoning": "assembly soldering",
+                "hs_code": "", "country": "China", "meas_unit": "mt",
+                "amount": "100", "percentage": "45",
+                "country_confidence": "0.85", "country_reasoning": "inferred",
+                "dependency_type": "process_consumable", "extraction_provenance": "extractor",
+            },
+            # Component-level process consumable (Die)
+            {
+                "technology": "SoC", "component": "Die", "component_confidence": "",
                 "component_reasoning": "", "material": "Helium",
-                "material_confidence": "0.85", "material_reasoning": "CVD gas",
-                "hs_code": "", "country": "United States", "meas_unit": "mcf",
-                "amount": "500", "percentage": "55",
+                "material_confidence": "0.95", "material_reasoning": "EUV purge gas",
+                "hs_code": "280429", "country": "United States", "meas_unit": "mcf",
+                "amount": "500", "percentage": "35",
+                "country_confidence": "0.95", "country_reasoning": "USGS",
+                "dependency_type": "process_consumable", "extraction_provenance": "extractor",
+            },
+            {
+                "technology": "SoC", "component": "Die", "component_confidence": "",
+                "component_reasoning": "", "material": "Helium",
+                "material_confidence": "0.95", "material_reasoning": "EUV purge gas",
+                "hs_code": "280429", "country": "Qatar", "meas_unit": "mcf",
+                "amount": "400", "percentage": "39",
                 "country_confidence": "0.95", "country_reasoning": "USGS",
                 "dependency_type": "process_consumable", "extraction_provenance": "extractor",
             },
@@ -107,12 +128,24 @@ class TestJsonOutputStructure:
             assert "constituent_dependencies" in tech
             assert "process_consumables" in tech
 
+            # Constituent: Silicon under Die
             components = tech["constituent_dependencies"]["components"]
             assert any(c["name"] == "Die" for c in components)
             die = next(c for c in components if c["name"] == "Die")
             assert any(m["name"] == "Silicon" for m in die["materials"])
 
-            pc_materials = tech["process_consumables"]["materials"]
-            assert any(m["name"] == "Helium" for m in pc_materials)
-            helium = next(m for m in pc_materials if m["name"] == "Helium")
+            # Assembly-level: Solder flux with no component
+            assembly = tech["process_consumables"]["assembly_consumables"]
+            assert any(m["name"] == "Solder flux" for m in assembly)
+            flux = next(m for m in assembly if m["name"] == "Solder flux")
+            assert len(flux["countries"]) == 1
+
+            # Component-level: Helium under Die
+            comp_pc = tech["process_consumables"]["component_consumables"]
+            assert any(c["component"] == "Die" for c in comp_pc)
+            die_pc = next(c for c in comp_pc if c["component"] == "Die")
+            assert any(m["name"] == "Helium" for m in die_pc["materials"])
+            helium = next(m for m in die_pc["materials"] if m["name"] == "Helium")
             assert helium["extraction_provenance"] == "extractor"
+            # Two country rows for Helium under Die — should be 2, not duplicated
+            assert len(helium["countries"]) == 2

@@ -62,7 +62,9 @@ def build_structured_json(csv_path: str) -> dict:
 
     Returns dict keyed by technology name, each containing:
     - constituent_dependencies: {components: [{name, confidence, materials: [{name, confidence, countries: [...]}]}]}
-    - process_consumables: {materials: [{name, confidence, extraction_provenance, rationale, countries: [...]}]}
+    - process_consumables:
+        - assembly_consumables: [{name, confidence, extraction_provenance, rationale, countries: [...]}]
+        - component_consumables: [{component, materials: [{name, confidence, extraction_provenance, rationale, countries: [...]}]}]
     """
     with open(csv_path, "r", encoding="utf-8") as f:
         reader = csv.DictReader(f)
@@ -74,7 +76,10 @@ def build_structured_json(csv_path: str) -> dict:
         if tech_name not in techs:
             techs[tech_name] = {
                 "constituent_dependencies": {"components": []},
-                "process_consumables": {"materials": []},
+                "process_consumables": {
+                    "assembly_consumables": [],
+                    "component_consumables": [],
+                },
             }
         tech = techs[tech_name]
         dep_type = row.get("dependency_type", "constituent")
@@ -87,20 +92,44 @@ def build_structured_json(csv_path: str) -> dict:
         }
 
         if dep_type == "process_consumable":
-            pc_mats = tech["process_consumables"]["materials"]
-            existing = next((m for m in pc_mats if m["name"] == row["material"]), None)
-            if existing is None:
-                mat_conf = row.get("material_confidence", "") or ""
-                existing = {
-                    "name": row["material"],
-                    "confidence": float(mat_conf) if mat_conf else None,
-                    "extraction_provenance": row.get("extraction_provenance", "extractor"),
-                    "rationale": row.get("material_reasoning", ""),
-                    "countries": [],
-                }
-                pc_mats.append(existing)
-            if row.get("country"):
-                existing["countries"].append(country_entry)
+            pc_component = row.get("component", "").strip()
+
+            if not pc_component:
+                # Assembly-level consumable
+                pc_mats = tech["process_consumables"]["assembly_consumables"]
+                existing = next((m for m in pc_mats if m["name"] == row["material"]), None)
+                if existing is None:
+                    mat_conf = row.get("material_confidence", "") or ""
+                    existing = {
+                        "name": row["material"],
+                        "confidence": float(mat_conf) if mat_conf else None,
+                        "extraction_provenance": row.get("extraction_provenance", "extractor"),
+                        "rationale": row.get("material_reasoning", ""),
+                        "countries": [],
+                    }
+                    pc_mats.append(existing)
+                if row.get("country"):
+                    existing["countries"].append(country_entry)
+            else:
+                # Component-level consumable
+                comp_list = tech["process_consumables"]["component_consumables"]
+                existing_comp = next((c for c in comp_list if c["component"] == pc_component), None)
+                if existing_comp is None:
+                    existing_comp = {"component": pc_component, "materials": []}
+                    comp_list.append(existing_comp)
+                existing_mat = next((m for m in existing_comp["materials"] if m["name"] == row["material"]), None)
+                if existing_mat is None:
+                    mat_conf = row.get("material_confidence", "") or ""
+                    existing_mat = {
+                        "name": row["material"],
+                        "confidence": float(mat_conf) if mat_conf else None,
+                        "extraction_provenance": row.get("extraction_provenance", "extractor"),
+                        "rationale": row.get("material_reasoning", ""),
+                        "countries": [],
+                    }
+                    existing_comp["materials"].append(existing_mat)
+                if row.get("country"):
+                    existing_mat["countries"].append(country_entry)
         else:
             comp_name = row.get("component", "")
             comp_list = tech["constituent_dependencies"]["components"]
