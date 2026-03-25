@@ -826,6 +826,90 @@ class STDNOrchestrator:
                     df.loc[pc_mask, "material"] = (
                         df.loc[pc_mask, "material"].replace(form_mappings)
                     )
+
+                    # Split compound gas materials into separate rows
+                    gas_splits = {
+                        "Helium and Nitrogen gases": ["Helium", "Nitrogen"],
+                        "Argon and Nitrogen": ["Argon", "Nitrogen"],
+                        "Nitrogen and Argon": ["Argon", "Nitrogen"],
+                        "Nitrogen and Argon gases": ["Argon", "Nitrogen"],
+                        "Gases such as nitrogen and argon": ["Argon", "Nitrogen"],
+                        "High purity nitrogen and argon": ["Argon", "Nitrogen"],
+                        "Cooling gases": ["Helium", "Nitrogen"],
+                    }
+                    split_rows = []
+                    split_mask = pc_mask & df["material"].isin(gas_splits)
+                    for idx, row in df[split_mask].iterrows():
+                        targets = gas_splits[row["material"]]
+                        for target in targets:
+                            new_row = row.copy()
+                            new_row["material"] = target
+                            split_rows.append(new_row)
+                    if split_rows:
+                        df = df[~split_mask]
+                        df = pd.concat([df, pd.DataFrame(split_rows)], ignore_index=True)
+                        pc_mask = df["dependency_type"] == "process_consumable"
+
+                    # Merge compound material names into canonical base materials
+                    compound_mappings = {
+                        "Acetone and IPA": "Cleaning solvents",
+                        "Acetone and Isopropyl alcohol": "Cleaning solvents",
+                        "Cleaning Solvents and Detergents": "Cleaning solvents",
+                        "Cleaning acids and bases": "Cleaning solvents",
+                        "Cleaning detergents and surfactants": "Cleaning solvents",
+                        "Surface cleaning detergents and solvents": "Cleaning solvents",
+                        "Solvents for cleaning and degreasing": "Cleaning solvents",
+                        "Protective film and cleaning solvents": "Cleaning solvents",
+                        "Flux Removers and Degreasers": "Cleaning solvents",
+                        "Photoresist and developers": "Photoresists and developers",
+                        "Photoresist and Developer Chemicals": "Photoresists and developers",
+                        "Cutting fluids and coolants": "Cutting fluids",
+                        "Cutting fluids and lubricants": "Cutting fluids",
+                        "Metal cutting fluids and lubricants": "Cutting fluids",
+                        "Cutting and machining lubricants": "Cutting fluids",
+                        "Lubricants and cutting fluids": "Lubricants",
+                        "Lubricants and greases": "Lubricants",
+                        "Lubricants and release agents": "Lubricants",
+                        "Lubricants and anti-seize compounds": "Lubricants",
+                        "Lubricants and anti-seize agents": "Lubricants",
+                        "Anti-seize and lubricants": "Lubricants",
+                        "Anti-seize compounds and lubricants": "Lubricants",
+                        "Lubricants and hydraulic fluids": "Lubricants",
+                        "Lubricants and vacuum pump oils": "Lubricants",
+                        "Lubricants for fan motors and bearings": "Lubricants",
+                        "Lubricants for fans and pumps": "Lubricants",
+                        "Etchants and cleaning acids": "Etchants",
+                        "Etchants and cleaning chemicals": "Etchants",
+                        "Etch acids and gases": "Etchants",
+                        "Etch chemistries and cleaning acids": "Etchants",
+                        "Flux and solder paste": "Flux",
+                        "Flux and solder pastes": "Flux",
+                        "Flux and soldering materials": "Flux",
+                        "Flux and adhesives": "Flux",
+                        "Adhesives and Epoxy": "Adhesives",
+                        "Adhesives and bonding agents": "Adhesives",
+                        "Adhesives and encapsulants": "Adhesives",
+                        "Adhesives and epoxy resins": "Adhesives",
+                        "Adhesives and glue consumables": "Adhesives",
+                        "Adhesives and release agents": "Adhesives",
+                        "Adhesives and sealants": "Adhesives",
+                        "Adhesives and surface primers": "Adhesives",
+                        "Epoxy and Adhesives": "Adhesives",
+                        "Sealants and adhesives": "Adhesives",
+                        "Potting compounds and adhesives": "Adhesives",
+                        "Paints and coatings": "Paints and surface coatings",
+                        "Paints and Surface Coatings": "Paints and surface coatings",
+                        "Paints and coating chemicals": "Paints and surface coatings",
+                        "Paints and surface preparation chemicals": "Paints and surface coatings",
+                        "Paints and surface treatment chemicals": "Paints and surface coatings",
+                        "Painting and coating chemicals": "Paints and surface coatings",
+                        "Painting and coating materials": "Paints and surface coatings",
+                        "Paint and coating materials": "Paints and surface coatings",
+                        "Paint solvents and coatings": "Paints and surface coatings",
+                    }
+                    df.loc[pc_mask, "material"] = (
+                        df.loc[pc_mask, "material"].replace(compound_mappings)
+                    )
                     # Normalize material name casing (first-seen wins)
                     mat_canonical: dict[str, str] = {}
                     for mat in df["material"].dropna().unique():
