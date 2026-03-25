@@ -806,13 +806,25 @@ class STDNOrchestrator:
                 )
 
                 # Normalize process consumable material names:
-                # Strip parenthetical qualifiers (e.g., "Helium (for leak testing)" → "Helium")
+                # 1. Strip parenthetical qualifiers (e.g., "Helium (for leak testing)" → "Helium")
+                # 2. Merge physical-form variants into base material
                 if "dependency_type" in df.columns and "material" in df.columns:
                     pc_mask = df["dependency_type"] == "process_consumable"
                     original_materials = df["material"].copy()
                     df.loc[pc_mask, "material"] = (
                         df.loc[pc_mask, "material"]
                         .apply(lambda x: re.sub(r"\s*\(.*\)\s*$", "", str(x)).strip() if pd.notna(x) else x)
+                    )
+                    # Merge physical-form variants into base materials
+                    form_mappings = {
+                        "Liquid Helium": "Helium",
+                        "Liquid Nitrogen": "Nitrogen",
+                        "Cryogenic liquid nitrogen": "Nitrogen",
+                        "Cryogenic liquids": "Nitrogen",
+                        "Compressed Nitrogen or Air": "Nitrogen",
+                    }
+                    df.loc[pc_mask, "material"] = (
+                        df.loc[pc_mask, "material"].replace(form_mappings)
                     )
                     # Normalize material name casing (first-seen wins)
                     mat_canonical: dict[str, str] = {}
