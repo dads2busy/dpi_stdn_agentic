@@ -2,7 +2,7 @@
 
 Evaluation of naive single-shot LLM extraction against gold standard. Component names used as-is from LLM output (no canonical normalization).
 
-- **Date**: 2026-04-01 12:29
+- **Date**: 2026-04-15 09:05
 - **Extraction model**: `openai:gpt-4.1-mini`
 - **Judge model**: `openai:gpt-4.1`
 - **Normalization model**: `openai:gpt-4.1`
@@ -13,17 +13,17 @@ Evaluation of naive single-shot LLM extraction against gold standard. Component 
 
 | Technology | Union | Mean/run | Min | Max | Stability (Jaccard) |
 | --- | --- | --- | --- | --- | --- |
-| Pharmaceutical Lyophilizer | 46 | 11.4 | 10 | 13 | 0.088 |
-| Rotary tablet press | 35 | 12.8 | 12 | 14 | 0.284 |
-| Single-use bioreactor | 38 | 9.2 | 8 | 10 | 0.053 |
-| Smartphone | 58 | 18.0 | 15 | 20 | 0.171 |
+| Pharmaceutical Lyophilizer | 42 | 11.8 | 10 | 13 | 0.139 |
+| Rotary tablet press | 41 | 12.6 | 11 | 14 | 0.167 |
+| Single-use bioreactor | 38 | 8.8 | 8 | 10 | 0.043 |
+| Smartphone | 52 | 18.2 | 14 | 21 | 0.216 |
 
 ## Judge Validation Against Gold Standard
 
 | Technology | Gold Std | Naive | TP | FP | TN | FN | Precision | Recall | F1 |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Pharmaceutical Lyophilizer | 7 | 46 | 7 | 39 | 4 | 0 | 0.152 | 1.000 | 0.264 |
-| Rotary tablet press | 10 | 35 | 10 | 32 | 0 | 0 | 0.238 | 1.000 | 0.385 |
-| Single-use bioreactor | 11 | 38 | 10 | 37 | 1 | 1 | 0.213 | 0.909 | 0.345 |
-| Smartphone | 17 | 58 | 17 | 56 | 1 | 0 | 0.233 | 1.000 | 0.378 |
-| **AGGREGATE** | 45 | 177 | 44 | 164 | 6 | 1 | 0.212 | 0.978 | 0.348 |
+| Pharmaceutical Lyophilizer | 8 | 42 | 8 | 34 | 5 | 0 | 0.190 | 1.000 | 0.320 |
+| Rotary tablet press | 10 | 41 | 10 | 37 | 0 | 0 | 0.213 | 1.000 | 0.351 |
+| Single-use bioreactor | 9 | 38 | 9 | 34 | 4 | 0 | 0.209 | 1.000 | 0.346 |
+| Smartphone | 20 | 52 | 19 | 48 | 1 | 1 | 0.284 | 0.950 | 0.437 |
+| **AGGREGATE** | 47 | 173 | 46 | 153 | 10 | 1 | 0.231 | 0.979 | 0.374 |
