@@ -435,7 +435,8 @@ async def async_main(argv: Optional[List[str]] = None) -> int:
 
         # Save per-run JSON
         for run_idx, components in enumerate(runs):
-            out_file = output_dir / f"naive_components_{_norm_key(tech).replace(' ', '_')}_{run_idx + 1}.json"
+            safe_name = _norm_key(tech).replace(' ', '_').replace('/', '_')
+            out_file = output_dir / f"naive_components_{safe_name}_{run_idx + 1}.json"
             out_file.write_text(json.dumps({
                 "technology": tech,
                 "run": run_idx + 1,
