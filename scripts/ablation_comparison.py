@@ -99,17 +99,11 @@ def _load_structured_raw_stability(path: Path) -> float | None:
     if not path.exists():
         return None
     data = json.loads(path.read_text())
-    # Expect {"per_config": {"v1v1v1": [{"tech": ..., "median_jaccard": ...}, ...]}}
-    per_config = data.get("per_config", {})
-    techs = per_config.get("v1v1v1", [])
-    if not techs:
-        return None
-    jaccards = []
-    for t in techs:
-        val = t.get("median_jaccard")
-        if val is not None:
-            jaccards.append(float(val))
-    return statistics.median(jaccards) if jaccards else None
+    # The JSON has macro_by_agent_count: [{agent_count, macro_median_jaccard, ...}]
+    for entry in data.get("macro_by_agent_count", []):
+        if entry.get("agent_count") == 1:
+            return entry.get("macro_median_jaccard")
+    return None
 
 
 def _load_structured_raw_invalid(path: Path) -> float | None:
