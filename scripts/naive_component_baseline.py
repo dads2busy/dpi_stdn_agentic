@@ -345,6 +345,12 @@ def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
         help="Path to gold standard CSV.",
     )
     p.add_argument(
+        "--tech-list", default=None,
+        help="Path to tech list CSV (domain,tech,role columns). "
+             "When provided, runs on these techs instead of gold standard. "
+             "Gold standard comparison is skipped.",
+    )
+    p.add_argument(
         "--global-vocab", default=DEFAULT_VOCAB,
         help="Path to canonical vocab JSON (for gold standard normalization).",
     )
@@ -383,20 +389,32 @@ def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
 async def async_main(argv: Optional[List[str]] = None) -> int:
     args = parse_args(argv)
 
-    # 1. Load gold standard and normalize
-    gs_path = Path(args.goldstandard)
-    if not gs_path.exists():
-        print(f"ERROR: gold standard not found: {gs_path}", file=sys.stderr)
-        return 2
-    raw_gold = load_goldstandard(gs_path)
-    technologies = sorted(raw_gold.keys())
-    print(f"Gold standard: {len(technologies)} technologies")
+    # 1. Load technologies (from tech list or gold standard)
+    if args.tech_list:
+        import csv as csv_mod
+        tl_path = Path(args.tech_list)
+        if not tl_path.exists():
+            print(f"ERROR: tech list not found: {tl_path}", file=sys.stderr)
+            return 2
+        with open(tl_path, newline="", encoding="utf-8") as fh:
+            reader = csv_mod.DictReader(fh)
+            technologies = sorted(set(row["tech"].strip() for row in reader if row.get("tech", "").strip()))
+        gold_standard = None
+        print(f"Tech list: {len(technologies)} technologies (gold standard comparison skipped)")
+    else:
+        gs_path = Path(args.goldstandard)
+        if not gs_path.exists():
+            print(f"ERROR: gold standard not found: {gs_path}", file=sys.stderr)
+            return 2
+        raw_gold = load_goldstandard(gs_path)
+        technologies = sorted(raw_gold.keys())
+        print(f"Gold standard: {len(technologies)} technologies")
 
-    vocab = load_canonical_vocab(Path(args.global_vocab))
-    gold_standard = await normalize_goldstandard_components(
-        raw_gold, vocab, args.normalization_model, args.retries
-    )
-    print(f"Normalized gold standard: {sum(len(v) for v in gold_standard.values())} components")
+        vocab = load_canonical_vocab(Path(args.global_vocab))
+        gold_standard = await normalize_goldstandard_components(
+            raw_gold, vocab, args.normalization_model, args.retries
+        )
+        print(f"Normalized gold standard: {sum(len(v) for v in gold_standard.values())} components")
 
     # 2. Run naive extraction
     output_dir = Path(args.output_dir)
@@ -441,7 +459,8 @@ async def async_main(argv: Optional[List[str]] = None) -> int:
 
     all_raw_pairs: List[Tuple[str, str]] = []
     for tech in technologies:
-        for comp in raw_unions[tech] | gold_standard.get(tech, set()):
+        gs_comps = gold_standard.get(tech, set()) if gold_standard is not None else set()
+        for comp in raw_unions[tech] | gs_comps:
             all_raw_pairs.append((tech, comp))
 
     missing = [(t, c) for t, c in all_raw_pairs if _cache_key(t, c) not in cache]
@@ -475,10 +494,12 @@ async def async_main(argv: Optional[List[str]] = None) -> int:
     raw_tech_results: Dict[str, Dict[str, Any]] = {}
     raw_metrics: List[ValidationMetrics] = []
     for tech in technologies:
-        gs_comps = gold_standard.get(tech, set())
         naive_comps = raw_unions[tech]
-        m = compute_metrics(tech, gs_comps, naive_comps, cache)
-        raw_metrics.append(m)
+
+        if gold_standard is not None:
+            gs_comps = gold_standard.get(tech, set())
+            m = compute_metrics(tech, gs_comps, naive_comps, cache)
+            raw_metrics.append(m)
 
         run_sizes = [len(s) for s in raw_run_sets[tech]]
         raw_tech_results[tech] = {
@@ -542,7 +563,8 @@ async def async_main(argv: Optional[List[str]] = None) -> int:
     # 8. Judge normalized components (some may be new cache keys)
     all_norm_pairs: List[Tuple[str, str]] = []
     for tech in technologies:
-        for comp in norm_unions[tech] | gold_standard.get(tech, set()):
+        gs_comps = gold_standard.get(tech, set()) if gold_standard is not None else set()
+        for comp in norm_unions[tech] | gs_comps:
             all_norm_pairs.append((tech, comp))
 
     missing_norm = [(t, c) for t, c in all_norm_pairs if _cache_key(t, c) not in cache]
@@ -575,10 +597,12 @@ async def async_main(argv: Optional[List[str]] = None) -> int:
     norm_tech_results: Dict[str, Dict[str, Any]] = {}
     norm_metrics: List[ValidationMetrics] = []
     for tech in technologies:
-        gs_comps = gold_standard.get(tech, set())
         naive_comps = norm_unions[tech]
-        m = compute_metrics(tech, gs_comps, naive_comps, cache)
-        norm_metrics.append(m)
+
+        if gold_standard is not None:
+            gs_comps = gold_standard.get(tech, set())
+            m = compute_metrics(tech, gs_comps, naive_comps, cache)
+            norm_metrics.append(m)
 
         run_sizes = [len(s) for s in norm_run_sets[tech]]
         norm_tech_results[tech] = {
@@ -617,15 +641,16 @@ async def async_main(argv: Optional[List[str]] = None) -> int:
         nr = norm_tech_results[tech]
         print(f"{tech:30s} union={rr['union_size']:>3d} J={rr['jaccard']:.3f}   union={nr['union_size']:>3d} J={nr['jaccard']:.3f}")
 
-    # Aggregate judge metrics
-    for label, mlist in [("Raw", raw_metrics), ("Normalized", norm_metrics)]:
-        tp = sum(m.true_positive for m in mlist)
-        fp = sum(m.false_positive for m in mlist)
-        tn = sum(m.true_negative for m in mlist)
-        fn = sum(m.false_negative for m in mlist)
-        prec = tp / (tp + fp) if (tp + fp) > 0 else 0
-        rec = tp / (tp + fn) if (tp + fn) > 0 else 0
-        print(f"\n{label} aggregate: TP={tp} FP={fp} TN={tn} FN={fn} Prec={prec:.3f} Rec={rec:.3f}")
+    # Aggregate judge metrics (only when gold standard is available)
+    if gold_standard is not None:
+        for label, mlist in [("Raw", raw_metrics), ("Normalized", norm_metrics)]:
+            tp = sum(m.true_positive for m in mlist)
+            fp = sum(m.false_positive for m in mlist)
+            tn = sum(m.true_negative for m in mlist)
+            fn = sum(m.false_negative for m in mlist)
+            prec = tp / (tp + fp) if (tp + fp) > 0 else 0
+            rec = tp / (tp + fn) if (tp + fn) > 0 else 0
+            print(f"\n{label} aggregate: TP={tp} FP={fp} TN={tn} FN={fn} Prec={prec:.3f} Rec={rec:.3f}")
 
     return 0
 
