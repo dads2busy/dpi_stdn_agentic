@@ -569,6 +569,7 @@ def run_shared_normalization_pass(
     output_dir: Path,
     config_type: str,
     date_prefix: str,
+    normalization_model: str = "openai:gpt-4.1",
 ) -> None:
     """
     Run one shared, LLM-backed component-name normalization pass across ALL raw CSVs for
@@ -600,7 +601,7 @@ def run_shared_normalization_pass(
         "--global-vocab",
         "data/component_canonical_vocab_global_primary.json",
         "--model",
-        "ollama:qwen2.5:32b",
+        normalization_model,
         "--chunk-size",
         "120",
     ]
@@ -846,6 +847,9 @@ def run_parallel_pipeline(
                         output_dir=output_dir,
                         config_type=filename_config_marker,
                         date_prefix=date_prefix,
+                        normalization_model=base_config.get(
+                            "component_normalization_model", "openai:gpt-4.1"
+                        ),
                     )
 
                     # Step 3: Generate JSON from normalized outputs (JSON should contain normalized components)
