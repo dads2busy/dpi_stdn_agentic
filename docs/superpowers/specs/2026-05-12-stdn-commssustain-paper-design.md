@@ -84,7 +84,7 @@ Communications Sustainability uses Nature-style structure: Results lead; Methods
 | 3 | Discussion | ~1,000 words | New section |
 | 3.1 | Sustainability implications | — | When to use STDNs; limits |
 | 3.2 | Design lesson for automated sustainability-knowledge extraction | ~250 words | Reframes the normalization > debate finding as practitioner guidance for other groups building similar tools |
-| 4 | Methods | ~1,500 words | Condensed SIGIR Methodology |
+| 4 | Methods | ~1,500 words target (soft cap ~3,000 per Comms Sustainability guidelines; may exceed if necessary) | Condensed SIGIR Methodology |
 | 5 | Data Availability / Code Availability | short | Journal-specific blurbs |
 | — | Supplementary Information | unlimited | Extended ablation, prompts, per-tech tables, additional figures |
 | — | References | — | SIGIR bib + 15-25 new sustainability/critical-minerals citations |
