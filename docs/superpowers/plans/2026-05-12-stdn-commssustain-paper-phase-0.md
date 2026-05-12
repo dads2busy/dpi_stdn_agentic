@@ -113,17 +113,21 @@ Expected: A single commit with `.gitignore` added.
 
 The official template is hosted on Overleaf at https://www.overleaf.com/latex/templates/springer-nature-latex-template/myxmhdsbzkyd and as a download from https://support.nature.com/en/support/solutions/articles/6000250920-latex-template-package-for-article-book-submissions. The template archive contains a class file (`sn-jnl.cls`), a BibTeX style, and example `main.tex` files for several Springer Nature journal styles including `sn-nature` (the one we want).
 
-- [ ] **Step 1: Download the template archive**
+- [ ] **Step 1: Confirm the template archive is in place**
 
-User-driven step: open https://www.overleaf.com/latex/templates/springer-nature-latex-template/myxmhdsbzkyd in a browser, click "Download as ZIP," and save the archive to `~/Downloads/springer-nature-template.zip` (or equivalent). Alternatively, download from Nature support: https://support.nature.com/en/support/solutions/articles/6000250920-latex-template-package-for-article-book-submissions.
+The template has already been downloaded by the user to `~/Downloads/Springer_Nature_LaTeX_Template.zip`. Verify:
 
-If the user is working with Claude and prefers a CLI path, they may instead clone the Overleaf project locally via Overleaf's git remote feature; in that case substitute `git clone <overleaf-git-url>` for the manual download.
+```bash
+ls -la ~/Downloads/Springer_Nature_LaTeX_Template.zip
+```
 
-- [ ] **Step 2: Unpack the template into the repo**
+Expected: the file exists with a non-zero size.
+
+- [ ] **Step 2: Unpack the template into a scratch directory**
 
 ```bash
 cd ~/git/D-PI-2026-05-STDN-COMMS-SUSTAIN
-unzip ~/Downloads/springer-nature-template.zip -d /tmp/sn-template
+unzip ~/Downloads/Springer_Nature_LaTeX_Template.zip -d /tmp/sn-template
 ls /tmp/sn-template
 ```
 
