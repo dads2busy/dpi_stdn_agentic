@@ -2,7 +2,9 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Draft the Results section of the paper (five subsections leading with findings, ~2,500 words total), produce the three main-text figures (Fig 1 smartphone STDN reformatted; Fig 3 layer-wise ablation 2-panel; Fig 4 STDN representation + pipeline overview), and finalize the two main-text tables (Table 1 layer ablation; Table 2 gold-standard validation). End state: `results.tex` is a coherent journal-style Results section that references stable figure and table labels.
+**Goal:** Draft the Results section of the paper (five subsections leading with findings, ~2,500 words total), produce the three main-text figures (Fig 1 smartphone STDN reformatted; Fig 3 layer-wise ablation 2-panel; Fig 4 STDN representation + pipeline overview), and finalize the three main-text tables (Table 1a layer ablation — normalization; Table 1b layer ablation — debate; Table 2 gold-standard validation). End state: `results.tex` is a coherent journal-style Results section that references stable figure and table labels. **Display item count: 4 figures + 3 tables = 7, under the journal's 10-item cap.**
+
+**Note on Table 1 split:** the SIGIR ablation table mixed pre-normalization and post-normalization Jaccard values in a single column, which would confuse readers. We split it into Table 1a (naive vs naive+normalization; post-norm Jaccard) and Table 1b (structured no-debate vs +debate; pre-norm Jaccard + invalid rate). Each table compares like-with-like and maps cleanly to one Results subsection.
 
 **Architecture:** Figures and tables are produced first so that prose subsections can reference them by stable labels. Each Results subsection follows a strict pattern: lead sentence states the finding; one paragraph of evidence with numbers and reference to a figure or table; closing sentence on implications. Framing rule (normalization and debate are *complementary* contributors, debate is never dismissed) applies throughout.
 
@@ -127,63 +129,86 @@ git commit -m "refactor: replace merged SIGIR results.tex with Results skeleton 
 
 ---
 
-## Task 2: Table 1 — Layer ablation (numerical, clean Springer Nature format)
+## Task 2: Tables 1a + 1b — Layer ablation, split by metric
+
+**Note:** this task supersedes the original "Table 1" task. The SIGIR source table mixed pre-norm and post-norm Jaccard values in one column; we split into two tables, each comparing like-with-like and mapping to one Results subsection.
 
 **Files:**
-- Create: `sections/results.tex` (insert Table 1 block in §2.2 placeholder area)
+- Modify: `sections/results.tex` (replace single Table 1 block with Table 1a in §2.2 and Table 1b in §2.3)
 
-The migrated SIGIR layer ablation table is in `sections/results_sigir_source.tex.bak` (the original SIGIR `validity_robustness_cost.tex` line 149-152). It contains the rows: naive single-shot, naive + canonical normalization, structured no-debate, structured + debate at N=3. We reformat it for Springer Nature style.
+The migrated SIGIR layer ablation table is in `sections/results_sigir_source.tex.bak`. It contains four rows mixing two metrics. We split into two tables: Table 1a uses the post-normalization Jaccard column for the naive comparison; Table 1b uses pre-normalization Jaccard + invalid rate for the debate comparison.
 
-- [ ] **Step 1: Extract the SIGIR layer-ablation table block**
+Values verified against SIGIR by the previous dispatch:
+- Naive single-shot (post-norm Jaccard): 0.146; median #components 39.5
+- Naive + canonical normalization (post-norm Jaccard): 0.756; median #components 12.0
+- Structured pipeline N=1 (pre-norm Jaccard): 0.073; invalid rate 0.011; median #components 5.0
+- Structured pipeline + debate N=3 (pre-norm Jaccard): 0.147; invalid rate 0.000; median #components 4.0
 
-```bash
-cd ~/git/D-PI-2026-05-STDN-COMMS-SUSTAIN
-grep -A 30 "Layer ablation" sections/results_sigir_source.tex.bak | head -40
-```
+(Note: the invalid-rate values 0.011 and 0.000 from SIGIR's table differ from the spec abstract's 0.063 and 0.049. The discrepancy is because SIGIR's table reports a different invalid-rate metric than the abstract. Use SIGIR's table values; reconcile narrative with abstract in Task 9.)
 
-Note the exact columns and row values. They are the source of truth; do not invent numbers.
+- [ ] **Step 1: Remove the existing single Table 1 block from §2.2**
 
-- [ ] **Step 2: Insert the reformatted Table 1 into `sections/results.tex`**
+The previous dispatch inserted a single Table 1 with label `tab:ablation-norm` covering all four conditions. Locate and delete that block (the `\begin{table}` … `\end{table}` and its caption + tabular) before inserting the two replacement tables.
 
-Place the table inside §2.2 (Normalization Dominance) area, immediately after the subsection's `\label{sec:normalization-dominance}` line, with this structure (use Edit to insert):
+- [ ] **Step 2: Insert Table 1a into §2.2 (after `\label{sec:normalization-dominance}`)**
 
 ```latex
 \begin{table}[t]
 \centering
-\caption{Layer-wise ablation of STDN-GEN quality across 60 microelectronic technologies.
-Each row adds one mechanism on top of the row above. Stability is median pairwise Jaccard
-similarity across repeated runs; invalid rate is the deduped-canonical mean across runs
-(lower is better). Median component count characterizes output verbosity at each layer.}
-\label{tab:layer-ablation}
-\begin{tabular}{lcccc}
+\caption{Normalization ablation: canonical-vocabulary mapping applied to a naive
+single-shot LLM output. Median pairwise Jaccard similarity is measured
+\emph{post-normalization} (i.e., after canonical mapping), aggregated across
+60 microelectronic technologies. Canonical normalization alone delivers a
+roughly 5$\times$ stability improvement.}
+\label{tab:ablation-norm}
+\begin{tabular}{lcc}
 \toprule
-Configuration & Median Jaccard $\uparrow$ & Invalid rate $\downarrow$ & Median \#components & Notes \\
+Configuration & Median Jaccard $\uparrow$ & Median \#components \\
 \midrule
-Naive single-shot                 & 0.146 & --    & --   & Generic LLM prompt, no structure \\
-Naive + canonical normalization   & 0.756 & --    & --   & Same output mapped through ontology \\
-Structured pipeline ($N{=}1$)     & 0.788 & 0.063 & 6    & Extraction agents + normalization \\
-Structured pipeline + debate ($N{=}3$) & 0.798 & 0.049 & 6    & Add 3-agent component debate \\
+Naive single-shot                 & 0.146 & 39.5 \\
+Naive + canonical normalization   & 0.756 & 12.0 \\
 \bottomrule
 \end{tabular}
 \end{table}
 ```
 
-**Important:** the numerical values shown above are taken verbatim from the SIGIR draft. If your `grep` in Step 1 reveals different numbers, use the values you find — do not trust this template.
+- [ ] **Step 3: Insert Table 1b into §2.3 (after `\label{sec:debate-broadens}`)**
 
-- [ ] **Step 3: Build and visually verify the table renders**
+```latex
+\begin{table}[t]
+\centering
+\caption{Debate ablation: agreement-feedback-driven multi-agent debate added
+on top of the structured extraction pipeline. Median pairwise Jaccard is
+\emph{pre-normalization} (transcript-level), aggregated across 60 microelectronic
+technologies; invalid rate is the deduped-canonical mean across runs (lower is
+better). Debate roughly doubles transcript-level stability and reduces the
+invalid rate while broadening rather than tightening the explored component space.}
+\label{tab:ablation-debate}
+\begin{tabular}{lccc}
+\toprule
+Configuration & Pre-norm Jaccard $\uparrow$ & Invalid rate $\downarrow$ & Median \#components \\
+\midrule
+Structured pipeline ($N{=}1$)          & 0.073 & 0.011 & 5.0 \\
+Structured pipeline + debate ($N{=}3$) & 0.147 & 0.000 & 4.0 \\
+\bottomrule
+\end{tabular}
+\end{table}
+```
+
+- [ ] **Step 4: Build and visually verify both tables render**
 
 ```bash
 cd ~/git/D-PI-2026-05-STDN-COMMS-SUSTAIN
 latexmk -pdf main.tex 2>&1 | tail -5
 ```
 
-Expected: clean build; table appears in the Results section of the PDF.
+Expected: clean build; both tables appear, Table 1a in §2.2, Table 1b in §2.3.
 
-- [ ] **Step 4: Commit**
+- [ ] **Step 5: Commit**
 
 ```bash
 git add sections/results.tex
-git commit -m "feat: add Table 1 (layer ablation) in Springer Nature format"
+git commit -m "refactor: split Table 1 into 1a (normalization) + 1b (debate) to avoid mixed-metric column"
 ```
 
 ---
@@ -604,7 +629,7 @@ Replace the placeholder with content along these lines (the subagent must expand
 ```latex
 Ontology-backed canonical normalization is the dominant lever for
 producing stable STDN outputs across repeated runs. A layer-wise
-ablation across 60 microelectronic technologies (Table~\ref{tab:layer-ablation},
+ablation across 60 microelectronic technologies (Table~\ref{tab:ablation-norm},
 Figure~\ref{fig:layer-ablation}A) shows that simply mapping a naive
 single-shot LLM output through STDN-GEN's canonical vocabulary raises
 median pairwise Jaccard from 0.146 to 0.756 --- a roughly 5$\times$
@@ -662,8 +687,7 @@ variation to make outputs more consistent, debate broadens the
 \emph{set of components} the system explores across runs. Three
 empirical signatures of this difference are visible in our 60-technology
 benchmark. First, debate at $N{=}3$ lowers the deduped-canonical invalid
-rate from 0.063 to 0.049 (Table~\ref{tab:layer-ablation},
-Figure~\ref{fig:layer-ablation}B). Second, debate roughly doubles
+rate (Table~\ref{tab:ablation-debate}, Figure~\ref{fig:layer-ablation}B). Second, debate roughly doubles
 pre-normalization (transcript-level) stability, from 0.073 to 0.147 ---
 agents converge more during the debate itself even when the final canonical
 output is similar. Third, the post-normalization \emph{core ratio} ---
