@@ -1,0 +1,774 @@
+{
+  "version": "2.0",
+  "metadata": {
+    "technology": "5G Base Station (Macro Cell)",
+    "technology_specification": "5G Base Station (Macro Cell)",
+    "technology_reasoning": "",
+    "timestamp": "2026-05-12T18:04:17.071078",
+    "format_version": "2.0"
+  },
+  "config": {
+    "num_agents": 3,
+    "max_rounds": 1
+  },
+  "component_stage": {
+    "phase1_initial_proposals": [
+      {
+        "agent_id": "Agent_1",
+        "components": [
+          {
+            "name": "Radio Frequency (RF) Transceiver Module",
+            "confidence": 0.98,
+            "reasoning": "Core functional subassembly responsible for transmitting and receiving RF signals; always present as a separate module with its own supply chain."
+          },
+          {
+            "name": "Baseband Unit (BBU) / Digital Signal Processor Module",
+            "confidence": 0.97,
+            "reasoning": "Handles digital processing, encoding/decoding, and protocol stack; distinct functional module procured separately in almost all designs."
+          },
+          {
+            "name": "Massive MIMO Antenna Array",
+            "confidence": 0.96,
+            "reasoning": "Key antenna assembly enabling multi-antenna beamforming, fundamental to 5G NR macro stations; a modular and separately supplied component."
+          },
+          {
+            "name": "Power Amplifier (PA) Unit",
+            "confidence": 0.93,
+            "reasoning": "Amplifies RF signals for transmission; critical RF subcomponent typically housed as a discrete unit."
+          },
+          {
+            "name": "Cooling System (Active Cooling Module)",
+            "confidence": 0.85,
+            "reasoning": "Maintains thermal management of electronics; essential for high-power macro stations and supplied as a distinct subsystem."
+          },
+          {
+            "name": "Backhaul Interface Module (Fiber Optic or Microwave)",
+            "confidence": 0.9,
+            "reasoning": "Connects base station to the core network; usually a separate module with dedicated supply chain."
+          },
+          {
+            "name": "Enclosure/Chassis with Mounting Frame",
+            "confidence": 0.88,
+            "reasoning": "Protects electronic components and provides mounting functionality; standard structural assembly generally sourced as a complete unit."
+          }
+        ],
+        "technology_specification": "5G NR (New Radio) Macro Base Station",
+        "technology_reasoning": "5G NR Macro Base Stations are the industry standard for cellular network infrastructure in 2024-2025, supporting wide-area coverage with high capacity and advanced features such as massive MIMO, operating primarily in sub-6 GHz and mmWave frequency bands. They form the primary network nodes connecting 5G devices to the core network and have a well-established modular design."
+      },
+      {
+        "agent_id": "Agent_2",
+        "components": [
+          {
+            "name": "Radio Unit (RU)",
+            "confidence": 0.98,
+            "reasoning": "The Radio Unit contains the RF transceivers and amplifiers essential for transmitting and receiving 5G signals; it is a separate, standardized module present in all macro base stations."
+          },
+          {
+            "name": "Baseband Unit (BBU)",
+            "confidence": 0.98,
+            "reasoning": "Responsible for digital signal processing, modulation, and control logic; the BBU is a central, distinct component with its own supply chain in macro cell base stations."
+          },
+          {
+            "name": "Antenna Array (Massive MIMO)",
+            "confidence": 0.95,
+            "reasoning": "The antenna array enables beamforming and spatial multiplexing critical to 5G performance; it is a modular, procured assembly typically separate from the RU."
+          },
+          {
+            "name": "Power Amplifier Module",
+            "confidence": 0.92,
+            "reasoning": "Boosts signal power for transmission; while sometimes integrated within the RU, high-power macro cells often use discrete power amplifier modules for efficiency and maintainability."
+          },
+          {
+            "name": "Backhaul Interface Module",
+            "confidence": 0.9,
+            "reasoning": "Provides connectivity to the core network via fiber or microwave link; usually a distinct component or card in the base station architecture."
+          },
+          {
+            "name": "Cooling System (Active)",
+            "confidence": 0.85,
+            "reasoning": "Thermal management is critical due to high power and heat dissipation in macro cells; active cooling assemblies or integrated cooling modules are common and procured separately."
+          },
+          {
+            "name": "Chassis/Enclosure",
+            "confidence": 0.9,
+            "reasoning": "Housing that provides structural support, environmental protection, and mounting for components, universally present and typically purchased as a separate manufactured assembly."
+          },
+          {
+            "name": "Power Supply Unit (PSU)",
+            "confidence": 0.9,
+            "reasoning": "Converts AC mains to DC power suitable for base station electronics; standard and distinct component with a separate supply chain."
+          }
+        ],
+        "technology_specification": "5G NR (New Radio) Macro Cell Base Station",
+        "technology_reasoning": "The 5G NR Macro Cell Base Station is the industry-standard form for large-scale cellular infrastructure deployment as of 2024, supporting extensive coverage with high power and integrating advanced technologies like Massive MIMO and beamforming, which dominate over small cells for wide-area network coverage."
+      },
+      {
+        "agent_id": "Agent_3",
+        "components": [
+          {
+            "name": "Radio Unit (RU)",
+            "confidence": 0.98,
+            "reasoning": "Essential RF front-end component responsible for transmitting and receiving radio signals, including power amplifiers, filters, and antennas, procured separately and standardized across deployments."
+          },
+          {
+            "name": "Baseband Unit (BBU)",
+            "confidence": 0.95,
+            "reasoning": "Core digital processing module performing baseband signal processing, scheduling, encoding/decoding; typically a modular server-class system distinct from RF units."
+          },
+          {
+            "name": "Antenna Array (Massive MIMO Array)",
+            "confidence": 0.98,
+            "reasoning": "Primary antenna system enabling beamforming and spatial multiplexing; procured as a separate module with complex integration requirements."
+          },
+          {
+            "name": "Power Amplifier Module",
+            "confidence": 0.9,
+            "reasoning": "Amplifies the RF signals for transmission; while often integrated into the Radio Unit, high-power outdoor macro cells often have separate power amplifier modules for scalability and maintenance."
+          },
+          {
+            "name": "Transceiver Modules",
+            "confidence": 0.9,
+            "reasoning": "Enable conversion between baseband and RF signal domains; may be integrated but often procured as distinct modules to handle multi-band and multi-antenna configurations."
+          },
+          {
+            "name": "Base Station Cabinet/Chassis",
+            "confidence": 0.95,
+            "reasoning": "Protective structural enclosure housing electronic components and providing environmental protection; always a separate structural assembly."
+          },
+          {
+            "name": "Power Supply Unit",
+            "confidence": 0.93,
+            "reasoning": "Provides regulated power to all electronic components; typically a discrete module with proprietary design for network reliability."
+          },
+          {
+            "name": "Cooling System (Fans, Heat Sinks)",
+            "confidence": 0.88,
+            "reasoning": "Thermal management components required to maintain operating temperatures; critical for outdoor macro cells exposed to environmental extremes."
+          },
+          {
+            "name": "Network Interface Card (NIC) / Backhaul Interface Module",
+            "confidence": 0.85,
+            "reasoning": "Provides connectivity to the operator's core network via fiber or microwave backhaul; modular and essential for data transport."
+          }
+        ],
+        "technology_specification": "5G NR (New Radio) Macro Cell Base Station",
+        "technology_reasoning": "5G NR Macro Cell Base Stations are the industry standard for wide-area outdoor wireless coverage as of 2024, implemented predominantly using massive MIMO antenna arrays and advanced digital processing capable of handling sub-6 GHz and mmWave frequencies with standardized 3GPP 5G protocols. They represent the majority of cellular infrastructure deployed by mobile network operators for 5G coverage."
+      }
+    ],
+    "phase2_debate_rounds": [
+      {
+        "round_num": 1,
+        "convergence": 0.7777777777777777,
+        "threshold": 0.7,
+        "threshold_reached": true,
+        "proposals": {
+          "Agent_1": [
+            {
+              "name": "Radio Frequency (RF) Transceiver Module",
+              "confidence": 0.98,
+              "reasoning": "Core functional subassembly responsible for transmitting and receiving RF signals; always present as a separate module with its own supply chain.",
+              "component": "Radio Frequency (RF) Transceiver Module",
+              "normalized_component": "Transceiver Module"
+            },
+            {
+              "name": "Baseband Unit (BBU) / Digital Signal Processor Module",
+              "confidence": 0.97,
+              "reasoning": "Handles digital processing, encoding/decoding, and protocol stack; distinct functional module procured separately in almost all designs.",
+              "component": "Baseband Unit (BBU) / Digital Signal Processor Module",
+              "normalized_component": "Baseband Unit"
+            },
+            {
+              "name": "Massive MIMO Antenna Array",
+              "confidence": 0.96,
+              "reasoning": "Key antenna assembly enabling multi-antenna beamforming, fundamental to 5G NR macro stations; a modular and separately supplied component.",
+              "component": "Massive MIMO Antenna Array",
+              "normalized_component": "Antenna Array (Massive MIMO)"
+            },
+            {
+              "name": "Power Amplifier (PA) Unit",
+              "confidence": 0.93,
+              "reasoning": "Amplifies RF signals for transmission; critical RF subcomponent typically housed as a discrete unit.",
+              "component": "Power Amplifier (PA) Unit",
+              "normalized_component": "Power Amplifier Unit"
+            },
+            {
+              "name": "Cooling System (Active Cooling Module)",
+              "confidence": 0.85,
+              "reasoning": "Maintains thermal management of electronics; essential for high-power macro stations and supplied as a distinct subsystem.",
+              "component": "Cooling System (Active Cooling Module)",
+              "normalized_component": "Cooling System (Active)"
+            },
+            {
+              "name": "Backhaul Interface Module (Fiber Optic or Microwave)",
+              "confidence": 0.9,
+              "reasoning": "Connects base station to the core network; usually a separate module with dedicated supply chain.",
+              "component": "Backhaul Interface Module (Fiber Optic or Microwave)",
+              "normalized_component": "Backhaul Interface Module"
+            },
+            {
+              "name": "Enclosure/Chassis with Mounting Frame",
+              "confidence": 0.88,
+              "reasoning": "Protects electronic components and provides mounting functionality; standard structural assembly generally sourced as a complete unit.",
+              "component": "Enclosure/Chassis with Mounting Frame",
+              "normalized_component": "Enclosure/Chassis"
+            }
+          ],
+          "Agent_2": [
+            {
+              "name": "Radio Unit (RU)",
+              "confidence": 0.98,
+              "reasoning": "The Radio Unit contains the RF transceivers and amplifiers essential for transmitting and receiving 5G signals; it is a separate, standardized module present in all macro base stations.",
+              "component": "Radio Unit (RU)",
+              "normalized_component": "Radio Unit"
+            },
+            {
+              "name": "Baseband Unit (BBU)",
+              "confidence": 0.98,
+              "reasoning": "Responsible for digital signal processing, modulation, and control logic; the BBU is a central, distinct component with its own supply chain in macro cell base stations.",
+              "component": "Baseband Unit (BBU)",
+              "normalized_component": "Baseband Unit"
+            },
+            {
+              "name": "Antenna Array (Massive MIMO)",
+              "confidence": 0.95,
+              "reasoning": "The antenna array enables beamforming and spatial multiplexing critical to 5G performance; it is a modular, procured assembly typically separate from the RU.",
+              "component": "Antenna Array (Massive MIMO)",
+              "normalized_component": "Antenna Array (Massive MIMO)"
+            },
+            {
+              "name": "Power Amplifier Module",
+              "confidence": 0.92,
+              "reasoning": "Boosts signal power for transmission; while sometimes integrated within the RU, high-power macro cells often use discrete power amplifier modules for efficiency and maintainability.",
+              "component": "Power Amplifier Module",
+              "normalized_component": "Power Amplifier Module"
+            },
+            {
+              "name": "Backhaul Interface Module",
+              "confidence": 0.9,
+              "reasoning": "Provides connectivity to the core network via fiber or microwave link; usually a distinct component or card in the base station architecture.",
+              "component": "Backhaul Interface Module",
+              "normalized_component": "Backhaul Interface Module"
+            },
+            {
+              "name": "Cooling System (Active)",
+              "confidence": 0.85,
+              "reasoning": "Thermal management is critical due to high power and heat dissipation in macro cells; active cooling assemblies or integrated cooling modules are common and procured separately.",
+              "component": "Cooling System (Active)",
+              "normalized_component": "Cooling System (Active)"
+            },
+            {
+              "name": "Chassis/Enclosure",
+              "confidence": 0.9,
+              "reasoning": "Housing that provides structural support, environmental protection, and mounting for components, universally present and typically purchased as a separate manufactured assembly.",
+              "component": "Chassis/Enclosure",
+              "normalized_component": "Chassis"
+            },
+            {
+              "name": "Power Supply Unit (PSU)",
+              "confidence": 0.9,
+              "reasoning": "Converts AC mains to DC power suitable for base station electronics; standard and distinct component with a separate supply chain.",
+              "component": "Power Supply Unit (PSU)",
+              "normalized_component": "DC-DC Power Converter"
+            }
+          ],
+          "Agent_3": [
+            {
+              "name": "Radio Unit (RU)",
+              "confidence": 0.98,
+              "reasoning": "Essential RF front-end component responsible for transmitting and receiving radio signals, including power amplifiers, filters, and antennas, procured separately and standardized across deployments.",
+              "component": "Radio Unit (RU)",
+              "normalized_component": "Radio Unit"
+            },
+            {
+              "name": "Baseband Unit (BBU)",
+              "confidence": 0.95,
+              "reasoning": "Core digital processing module performing baseband signal processing, scheduling, encoding/decoding; typically a modular server-class system distinct from RF units.",
+              "component": "Baseband Unit (BBU)",
+              "normalized_component": "Baseband Unit"
+            },
+            {
+              "name": "Antenna Array (Massive MIMO Array)",
+              "confidence": 0.98,
+              "reasoning": "Primary antenna system enabling beamforming and spatial multiplexing; procured as a separate module with complex integration requirements.",
+              "component": "Antenna Array (Massive MIMO Array)",
+              "normalized_component": "Antenna Array (Massive MIMO)"
+            },
+            {
+              "name": "Power Amplifier Module",
+              "confidence": 0.9,
+              "reasoning": "Amplifies the RF signals for transmission; while often integrated into the Radio Unit, high-power outdoor macro cells often have separate power amplifier modules for scalability and maintenance.",
+              "component": "Power Amplifier Module",
+              "normalized_component": "Power Amplifier Module"
+            },
+            {
+              "name": "Transceiver Modules",
+              "confidence": 0.9,
+              "reasoning": "Enable conversion between baseband and RF signal domains; may be integrated but often procured as distinct modules to handle multi-band and multi-antenna configurations.",
+              "component": "Transceiver Modules",
+              "normalized_component": "Transceiver Module"
+            },
+            {
+              "name": "Base Station Cabinet/Chassis",
+              "confidence": 0.95,
+              "reasoning": "Protective structural enclosure housing electronic components and providing environmental protection; always a separate structural assembly.",
+              "component": "Base Station Cabinet/Chassis",
+              "normalized_component": "Enclosure/Chassis"
+            },
+            {
+              "name": "Power Supply Unit",
+              "confidence": 0.93,
+              "reasoning": "Provides regulated power to all electronic components; typically a discrete module with proprietary design for network reliability.",
+              "component": "Power Supply Unit",
+              "normalized_component": "Power Management IC Controller"
+            },
+            {
+              "name": "Cooling System (Fans, Heat Sinks)",
+              "confidence": 0.88,
+              "reasoning": "Thermal management components required to maintain operating temperatures; critical for outdoor macro cells exposed to environmental extremes.",
+              "component": "Cooling System (Fans, Heat Sinks)",
+              "normalized_component": "Cooling System (Active)"
+            },
+            {
+              "name": "Network Interface Card (NIC) / Backhaul Interface Module",
+              "confidence": 0.85,
+              "reasoning": "Provides connectivity to the operator's core network via fiber or microwave backhaul; modular and essential for data transport.",
+              "component": "Network Interface Card (NIC) / Backhaul Interface Module",
+              "normalized_component": "Backhaul Interface Module"
+            }
+          ]
+        },
+        "rounds_completed": 1,
+        "support_analysis": {
+          "consensus": [
+            "baseband",
+            "massive mimo antenna array",
+            "power amplifier",
+            "cooling",
+            "backhaul interface",
+            "chassis"
+          ],
+          "majority": [
+            "rf transceiver",
+            "radio",
+            "power supply"
+          ],
+          "isolated": []
+        },
+        "critiques": [
+          {
+            "item_name": "rf transceiver",
+            "normalized_name": "rf transceiver",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_1",
+              "Agent_3"
+            ],
+            "opposing_agents": [
+              "Agent_2"
+            ],
+            "avg_confidence": 0.94,
+            "critique_text": "Majority support for 'rf transceiver': 2/3 agents agree (conf: 0.94). Consider strengthening consensus."
+          },
+          {
+            "item_name": "baseband",
+            "normalized_name": "baseband",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_1",
+              "Agent_3"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.9666666666666667,
+            "critique_text": "Strong consensus on 'baseband': all 3 agents support with avg confidence 0.97. Preserve this component."
+          },
+          {
+            "item_name": "massive mimo antenna array",
+            "normalized_name": "massive mimo antenna array",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_1",
+              "Agent_3"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.9633333333333333,
+            "critique_text": "Strong consensus on 'massive mimo antenna array': all 3 agents support with avg confidence 0.96. Preserve this component."
+          },
+          {
+            "item_name": "power amplifier",
+            "normalized_name": "power amplifier",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_1",
+              "Agent_3"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.9166666666666666,
+            "critique_text": "Strong consensus on 'power amplifier': all 3 agents support with avg confidence 0.92. Preserve this component."
+          },
+          {
+            "item_name": "cooling",
+            "normalized_name": "cooling",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_1",
+              "Agent_3"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.86,
+            "critique_text": "Strong consensus on 'cooling': all 3 agents support with avg confidence 0.86. Preserve this component."
+          },
+          {
+            "item_name": "backhaul interface",
+            "normalized_name": "backhaul interface",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_1",
+              "Agent_3"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.8833333333333333,
+            "critique_text": "Strong consensus on 'backhaul interface': all 3 agents support with avg confidence 0.88. Preserve this component."
+          },
+          {
+            "item_name": "chassis",
+            "normalized_name": "chassis",
+            "support_level": "consensus",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_1",
+              "Agent_3"
+            ],
+            "opposing_agents": [],
+            "avg_confidence": 0.91,
+            "critique_text": "Strong consensus on 'chassis': all 3 agents support with avg confidence 0.91. Preserve this component."
+          },
+          {
+            "item_name": "radio",
+            "normalized_name": "radio",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_3"
+            ],
+            "opposing_agents": [
+              "Agent_1"
+            ],
+            "avg_confidence": 0.98,
+            "critique_text": "Majority support for 'radio': 2/3 agents agree (conf: 0.98). Consider strengthening consensus."
+          },
+          {
+            "item_name": "power supply",
+            "normalized_name": "power supply",
+            "support_level": "majority",
+            "supporting_agents": [
+              "Agent_2",
+              "Agent_3"
+            ],
+            "opposing_agents": [
+              "Agent_1"
+            ],
+            "avg_confidence": 0.915,
+            "critique_text": "Majority support for 'power supply': 2/3 agents agree (conf: 0.92). Consider strengthening consensus."
+          }
+        ],
+        "changes_from_previous": null
+      }
+    ],
+    "phase3_final_consensus": {
+      "technology": "5G Base Station (Macro Cell)",
+      "technology_specification": "5G Base Station (Macro Cell)",
+      "technology_reasoning": "",
+      "components": [
+        "Radio Unit",
+        "Baseband Unit",
+        "Antenna Array (massive Mimo)",
+        "Transceiver Module",
+        "Power Amplifier Unit",
+        "Power Management Ic Controller",
+        "Enclosure/chassis",
+        "Power Amplifier Module",
+        "Chassis",
+        "Dc-dc Power Converter",
+        "Backhaul Interface Module",
+        "Cooling System (active)"
+      ],
+      "confidence": 0.7777777777777777,
+      "rounds": 1,
+      "convergence_score": 0.7777777777777777
+    }
+  },
+  "materials_debate": {
+    "debate_rounds": [],
+    "final_consensus": {
+      "components": 12,
+      "unique_materials": 9,
+      "total_assignments": 47,
+      "materials_by_component": {
+        "Radio Unit": [
+          {
+            "name": "Gallium arsenide",
+            "confidence": 0.95,
+            "reasoning": "Used as semiconductor material in RF ICs and amplifiers in radio units due to high electron mobility, essential for 5G operating frequencies with few alternatives in high-frequency applications."
+          },
+          {
+            "name": "Silicon",
+            "confidence": 0.9,
+            "reasoning": "Widely used semiconductor substrate for digital and mixed-signal ICs in the radio unit, standard industry material with rare substitutes."
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.9,
+            "reasoning": "Critical for internal wiring and RF connectors due to excellent electrical conductivity, universally used."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.85,
+            "reasoning": "Commonly used for heat sinks and chassis parts because of thermal conductivity and weight, industry standard though alternatives exist."
+          },
+          {
+            "name": "Ceramic",
+            "confidence": 0.8,
+            "reasoning": "Used in RF filters, resonators, and capacitors for stability and dielectric properties, commonly used but alternatives like polymers exist."
+          }
+        ],
+        "Baseband Unit": [
+          {
+            "name": "Silicon",
+            "confidence": 0.95,
+            "reasoning": "Primary semiconductor material for processors and ASICs in baseband units, absolutely essential for integrated circuit fabrication."
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.9,
+            "reasoning": "Used extensively for PCB traces and interconnects due to high conductivity and reliability, industry standard."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.8,
+            "reasoning": "Used for heat sinks and frame components for thermal management, a standard material though other metals may be used."
+          },
+          {
+            "name": "Epoxy resins",
+            "confidence": 0.85,
+            "reasoning": "Core polymer in PCB laminates as insulation and substrate material, very commonly employed with few good alternatives."
+          },
+          {
+            "name": "Ceramic",
+            "confidence": 0.7,
+            "reasoning": "Used as capacitor dielectric materials and mechanical supports, common but some alternatives exist."
+          }
+        ],
+        "Antenna Array (massive Mimo)": [
+          {
+            "name": "Aluminum",
+            "confidence": 0.9,
+            "reasoning": "Primary structural material for antenna elements and frame due to light weight and corrosion resistance, standard in antenna array fabrication."
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.85,
+            "reasoning": "Used for antenna elements and feedlines for excellent electrical conductivity, though some substitution possible with aluminum."
+          },
+          {
+            "name": "Ceramic",
+            "confidence": 0.75,
+            "reasoning": "Used in dielectric components such as capacitors and isolators, typically employed though polymers are alternatives."
+          },
+          {
+            "name": "Glass",
+            "confidence": 0.65,
+            "reasoning": "Utilized in radomes for protection and transparency to RF signals, somewhat common but plastics can substitute."
+          }
+        ],
+        "Transceiver Module": [
+          {
+            "name": "Gallium arsenide",
+            "confidence": 0.9,
+            "reasoning": "Used in high-frequency RF transistors and integrated circuits critical for 5G transceivers, industry preferred due to performance advantage."
+          },
+          {
+            "name": "Silicon",
+            "confidence": 0.85,
+            "reasoning": "Employed in digital control circuitry and some RF ICs within the module, very commonly used semiconductor."
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.9,
+            "reasoning": "Conductive material for internal wiring and PCB traces, universally necessary."
+          },
+          {
+            "name": "Ceramic",
+            "confidence": 0.75,
+            "reasoning": "Used for insulating substrates and capacitors within the transceiver, typical material though alternatives exist."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.7,
+            "reasoning": "Heat sinks and housing components often made of aluminum, common but substitutes possible."
+          }
+        ],
+        "Power Amplifier Unit": [
+          {
+            "name": "Gallium nitride",
+            "confidence": 0.9,
+            "reasoning": "Critical semiconductor material for high-power RF amplifiers due to high breakdown voltage and efficiency, industry standard with limited alternatives."
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.9,
+            "reasoning": "Essential for electrical interconnects and heat conduction within the unit, universally used."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.85,
+            "reasoning": "Used as heat sinks and structural components for thermal management, standard choice though others can be used."
+          },
+          {
+            "name": "Ceramic",
+            "confidence": 0.7,
+            "reasoning": "Provides insulation and substrate for RF components, common but alternatives exist."
+          }
+        ],
+        "Power Management Ic Controller": [
+          {
+            "name": "Silicon",
+            "confidence": 0.95,
+            "reasoning": "Primary semiconductor for integrated circuits controlling power management, absolutely essential and industry standard."
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.9,
+            "reasoning": "Copper used for wiring in PCBs and die interconnects, universal necessity."
+          },
+          {
+            "name": "Epoxy resins",
+            "confidence": 0.8,
+            "reasoning": "Polymeric material forming PCB substrates and protective encapsulation, very commonly used."
+          },
+          {
+            "name": "Ceramic",
+            "confidence": 0.65,
+            "reasoning": "Used in passive components like capacitors on power management ICs, typical but some alternatives exist."
+          }
+        ],
+        "Enclosure/chassis": [
+          {
+            "name": "Aluminum",
+            "confidence": 0.9,
+            "reasoning": "Widely used for enclosure and chassis due to strength-to-weight ratio, corrosion resistance, and manufacturability, standard in outdoor telecom equipment."
+          },
+          {
+            "name": "Stainless steel",
+            "confidence": 0.8,
+            "reasoning": "Used for structural reinforcement and corrosion resistant parts, very commonly employed though more costly than aluminum."
+          },
+          {
+            "name": "Ceramic",
+            "confidence": 0.55,
+            "reasoning": "Used in coatings or insulators within chassis, less common so moderate confidence."
+          }
+        ],
+        "Power Amplifier Module": [
+          {
+            "name": "Gallium nitride",
+            "confidence": 0.9,
+            "reasoning": "Semiconductor material optimal for high power RF amplification, critical for 5G power amplifiers, standard industry usage."
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.9,
+            "reasoning": "Electrical conductor for module interconnects, universal in power amplifier modules."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.85,
+            "reasoning": "Heat sinks and module casings predominantly aluminum for heat dissipation and weight reduction, common practice."
+          },
+          {
+            "name": "Ceramic",
+            "confidence": 0.7,
+            "reasoning": "Integral as substrate and insulation in power modules, typical but with alternatives."
+          }
+        ],
+        "Chassis": [
+          {
+            "name": "Aluminum",
+            "confidence": 0.9,
+            "reasoning": "Primary structural material for chassis due to light weight and corrosion resistance, standard for telecom equipment enclosures."
+          },
+          {
+            "name": "Stainless steel",
+            "confidence": 0.8,
+            "reasoning": "Used for reinforcement and durability, very commonly used in chassis fabrication."
+          }
+        ],
+        "Dc-dc Power Converter": [
+          {
+            "name": "Silicon",
+            "confidence": 0.95,
+            "reasoning": "Core semiconductor material for power conversion ICs and MOSFETs, indispensable in DC-DC converters."
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.9,
+            "reasoning": "Used for windings, interconnects, and PCB traces because of its excellent conductivity."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.8,
+            "reasoning": "Used for heat sinks and some casing parts to facilitate thermal management, common material."
+          },
+          {
+            "name": "Ceramic",
+            "confidence": 0.7,
+            "reasoning": "Used for capacitors and insulating substrates within the converter, standard but with some alternatives."
+          }
+        ],
+        "Backhaul Interface Module": [
+          {
+            "name": "Silicon",
+            "confidence": 0.9,
+            "reasoning": "Semiconductor for integrated circuits handling data and interface processing, essential and industry standard."
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.85,
+            "reasoning": "Used for PCB traces and connectors due to high conductivity, common but some copper alternatives possible in niche cases."
+          },
+          {
+            "name": "Aluminum",
+            "confidence": 0.75,
+            "reasoning": "Used in heat sinks and structural parts to dissipate heat, fairly common."
+          },
+          {
+            "name": "Ceramic",
+            "confidence": 0.65,
+            "reasoning": "Material for insulating substrates and capacitors, typical but other materials can substitute."
+          }
+        ],
+        "Cooling System (active)": [
+          {
+            "name": "Aluminum",
+            "confidence": 0.9,
+            "reasoning": "Used extensively in heat exchangers, fins, and heat sinks due to excellent thermal conductivity and low weight, standard in active cooling."
+          },
+          {
+            "name": "Copper",
+            "confidence": 0.85,
+            "reasoning": "Used in heat pipes and wiring due to its excellent thermal and electrical conductivity, very common."
+          },
+          {
+            "name": "Stainless steel",
+            "confidence": 0.7,
+            "reasoning": "Used in structural parts, tubing, and fittings due to corrosion resistance, reliably employed though alternatives exist."
+          }
+        ]
+      }
+    }
+  }
+}
