@@ -414,7 +414,7 @@ git commit -m "feat: add Fig 1 (smartphone STDN) reformatted for journal column 
 - Create: `figures/fig3_layer_ablation_make.py` (the regeneration script, committed for reproducibility)
 - Modify: `sections/results.tex` (insert figure block in §2.2)
 
-The figure shows the layer-wise ablation ladder as a 2-panel figure: (A) median pairwise Jaccard stability across the four conditions (naive, naive+norm, structured no-debate, structured+debate); (B) deduped-canonical invalid rate across the same conditions. The data values match Table 1 exactly so the figure is essentially a visualization of the table.
+The figure shows the layer-wise ablation as a 2-panel figure mirroring the two tables: (A) the normalization ablation (post-norm Jaccard, 2 bars: 0.146 vs 0.756); (B) the debate ablation (pre-norm Jaccard, 2 bars: 0.073 vs 0.147). Invalid-rate values from Table 1b appear in the caption text. The figure is placed in §2.3 after both tables, serving as a visual summary of both ablations.
 
 - [ ] **Step 1: Create the matplotlib regeneration script**
 
@@ -422,13 +422,16 @@ Use Write to create `figures/fig3_layer_ablation_make.py`:
 
 ```python
 """
-Regenerates figures/fig3_layer_ablation.pdf — the 2-panel layer-wise ablation
-figure for Communications Sustainability paper.
+Regenerates figures/fig3_layer_ablation.pdf — the 2-panel layer-wise
+ablation figure for Communications Sustainability paper.
 
-CRITICAL: the STABILITY and INVALID lists below MUST match the values in
-Table 1 of sections/results.tex exactly. Those values were verified against
-the SIGIR source in Task 2. If you are updating numbers here, update
-Table 1 in the same commit.
+Panel A mirrors Table 1a (tab:ablation-norm): post-normalization Jaccard
+for naive vs naive+normalization.
+Panel B mirrors Table 1b (tab:ablation-debate): pre-normalization Jaccard
+for structured pipeline (N=1) vs structured+debate (N=3).
+
+CRITICAL: values below MUST match Tables 1a and 1b in sections/results.tex
+exactly. If updating numbers, update both Tables and this script together.
 
 Usage:
     cd ~/git/D-PI-2026-05-STDN-COMMS-SUSTAIN
@@ -439,43 +442,37 @@ import matplotlib.pyplot as plt
 import matplotlib.ticker as mticker
 from pathlib import Path
 
-CONDITIONS = [
-    "Naive\nsingle-shot",
-    "Naive +\nnormalization",
-    "Structured\n($N{=}1$)",
-    "Structured +\ndebate ($N{=}3$)",
-]
+# Panel A — normalization ablation (post-norm Jaccard)
+NORM_CONDITIONS = ["Naive\nsingle-shot", "Naive +\nnormalization"]
+NORM_JACCARD = [0.146, 0.756]
 
-STABILITY = [0.146, 0.756, 0.788, 0.798]
-INVALID = [None, None, 0.063, 0.049]
+# Panel B — debate ablation (pre-norm / transcript-level Jaccard)
+DEBATE_CONDITIONS = ["Structured\n($N{=}1$)", "Structured +\ndebate ($N{=}3$)"]
+DEBATE_JACCARD = [0.073, 0.147]
 
 fig, (ax_a, ax_b) = plt.subplots(1, 2, figsize=(7.0, 3.0))
 
-ax_a.bar(range(len(CONDITIONS)), STABILITY, color=["#888888", "#4477AA", "#228833", "#EE6677"])
-ax_a.set_xticks(range(len(CONDITIONS)))
-ax_a.set_xticklabels(CONDITIONS, fontsize=8)
-ax_a.set_ylabel("Median pairwise Jaccard")
+ax_a.bar(range(2), NORM_JACCARD, color=["#888888", "#4477AA"])
+ax_a.set_xticks(range(2))
+ax_a.set_xticklabels(NORM_CONDITIONS, fontsize=8)
+ax_a.set_ylabel("Median post-norm Jaccard")
 ax_a.set_ylim(0, 1)
-ax_a.set_title("(A) Run-to-run stability")
+ax_a.set_title("(A) Normalization ablation\n(post-normalization stability)")
 ax_a.yaxis.set_major_formatter(mticker.FormatStrFormatter("%.2f"))
-for i, v in enumerate(STABILITY):
+for i, v in enumerate(NORM_JACCARD):
     ax_a.text(i, v + 0.02, f"{v:.3f}", ha="center", fontsize=8)
 
-mask = [v is not None for v in INVALID]
-xs = [i for i, m in enumerate(mask) if m]
-vs = [v for v in INVALID if v is not None]
-ax_b.bar(xs, vs, color=["#228833", "#EE6677"])
-ax_b.set_xticks(range(len(CONDITIONS)))
-ax_b.set_xticklabels(CONDITIONS, fontsize=8)
-ax_b.set_ylabel("Mean invalid rate (deduped)")
-ax_b.set_ylim(0, 0.10)
-ax_b.set_title("(B) Validity (lower is better)")
+ax_b.bar(range(2), DEBATE_JACCARD, color=["#228833", "#EE6677"])
+ax_b.set_xticks(range(2))
+ax_b.set_xticklabels(DEBATE_CONDITIONS, fontsize=8)
+ax_b.set_ylabel("Median pre-norm Jaccard")
+ax_b.set_ylim(0, 0.25)
+ax_b.set_title("(B) Debate ablation\n(transcript-level stability)")
 ax_b.yaxis.set_major_formatter(mticker.FormatStrFormatter("%.2f"))
-for x, v in zip(xs, vs):
-    ax_b.text(x, v + 0.003, f"{v:.3f}", ha="center", fontsize=8)
-ax_b.text(0.5, 0.085, "Not applicable\n(no judgable\noutput)", ha="center", fontsize=7, color="gray")
+for i, v in enumerate(DEBATE_JACCARD):
+    ax_b.text(i, v + 0.005, f"{v:.3f}", ha="center", fontsize=8)
 
-fig.suptitle("Layer-wise ablation across 60 microelectronic technologies", fontsize=10)
+fig.suptitle("Layer-wise ablation of STDN-GEN across 60 microelectronic technologies", fontsize=10)
 fig.tight_layout()
 
 out = Path(__file__).parent / "fig3_layer_ablation.pdf"
@@ -500,21 +497,24 @@ open ~/git/D-PI-2026-05-STDN-COMMS-SUSTAIN/figures/fig3_layer_ablation.pdf
 
 Confirm: two side-by-side panels, axis labels legible, numbers above bars match Table 1.
 
-- [ ] **Step 4: Insert into `sections/results.tex` §2.2**
+- [ ] **Step 4: Insert into `sections/results.tex` §2.3 (after Table 1b)**
 
-Insert immediately after the Table 1 block (so the figure follows the table that motivates it):
+Insert immediately after the `\end{table}` line of Table 1b in §2.3, so the figure serves as a visual summary of both ablations:
 
 ```latex
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{figures/fig3_layer_ablation.pdf}
-\caption{Layer-wise ablation of STDN-GEN. (A) Median pairwise Jaccard stability
-across 60 microelectronic technologies. Canonical normalization alone (second bar)
-contributes the largest single jump; debate adds a smaller, complementary
-improvement on top of the structured pipeline (fourth bar). (B) Mean invalid rate
-(deduped-canonical) for the two pipeline configurations; debate at $N{=}3$ lowers
-the invalid rate by roughly 22\%. Naive conditions are not judgable for invalid rate
-because outputs are unstructured.}
+\caption{Layer-wise ablation of STDN-GEN, across 60 microelectronic
+technologies. (A) Normalization ablation: ontology-backed canonical mapping
+applied to a naive single-shot LLM output raises post-normalization Jaccard
+from 0.146 to 0.756 (Table~\ref{tab:ablation-norm}). (B) Debate ablation:
+agreement-feedback-driven debate at $N{=}3$ roughly doubles transcript-level
+(pre-normalization) Jaccard from 0.073 to 0.147
+(Table~\ref{tab:ablation-debate}), and the deduped-canonical invalid rate
+falls from 0.011 to 0.000. The two panels measure complementary aspects:
+panel~A shows normalization's effect on output consistency; panel~B shows
+debate's effect on transcript-level agreement.}
 \label{fig:layer-ablation}
 \end{figure}
 ```
