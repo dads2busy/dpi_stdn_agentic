@@ -1083,6 +1083,59 @@ For each input name, output the canonical form it should map to."""
         logger.warning("Falling back to basic normalization")
         return {name: name.strip().title() for name in unknown_names}
 
+    def _write_usage_json(
+        self,
+        contexts: "list[TechnologyContext]",
+        total_usage: RunUsage,
+    ) -> None:
+        """Write a per-technology + aggregate usage JSON sidecar file.
+
+        Non-fatal: logs a warning and returns if any error occurs.
+
+        Args:
+            contexts: Per-technology TechnologyContext objects (each with .tech_name and .usage).
+                      Pass an empty list when per-tech breakdown is not available.
+            total_usage: Aggregated RunUsage for the full run.
+        """
+        try:
+            usage_log_dir = Path(self.config.output_dir) / "usage_logs"
+            usage_log_dir.mkdir(parents=True, exist_ok=True)
+
+            usage_file = usage_log_dir / f"usage_{self.debate_config_str}_{self.timestamp}.json"
+
+            def _usage_dict(u: RunUsage) -> dict:
+                return {
+                    "input_tokens": u.input_tokens or 0,
+                    "output_tokens": u.output_tokens or 0,
+                    "total_tokens": u.total_tokens or 0,
+                    "requests": u.requests or 0,
+                    "cache_read_tokens": getattr(u, "cache_read_tokens", None) or 0,
+                    "cache_write_tokens": getattr(u, "cache_write_tokens", None) or 0,
+                }
+
+            per_technology = {
+                ctx.tech_name: _usage_dict(ctx.usage)
+                for ctx in contexts
+                if ctx.tech_name is not None
+            }
+
+            payload = {
+                "run_metadata": {
+                    "config_marker": self.debate_config_str,
+                    "timestamp": self.timestamp,
+                    "model": self.config.model,
+                    "output_file": str(self.output_file),
+                },
+                "per_technology": per_technology,
+                "aggregate": _usage_dict(total_usage),
+            }
+
+            usage_file.write_text(json.dumps(payload, indent=2))
+            logger.info("Usage log written to: %s", usage_file)
+
+        except Exception as exc:
+            logger.warning("Failed to write usage log (non-fatal): %s", exc)
+
     async def _run_parallel(
         self,
         technologies: List[str],
@@ -1161,6 +1214,7 @@ For each input name, output the canonical form it should map to."""
             ctx = TechnologyContext(
                 country_repo=tech_repo,
                 country_enricher=tech_enricher,
+                tech_name=tech,
             )
             contexts.append(ctx)
 
@@ -1248,6 +1302,9 @@ For each input name, output the canonical form it should map to."""
         logger.info("Successfully processed: %d/%d technologies", successful, len(technologies))
         logger.info("Raw output saved to: %s", self.output_file)
         logger.debug("Aggregated usage: %s", total_usage)
+
+        # Write per-technology usage JSON sidecar (non-fatal)
+        self._write_usage_json(contexts, total_usage)
 
         # Clean up checkpoint on full success
         if checkpoint_path.exists():
@@ -1504,6 +1561,10 @@ For each input name, output the canonical form it should map to."""
                     logger.warning("Failed to delete checkpoint after completion: %s", e)
 
         logger.debug("Usage: %s", usage)
+
+        # Write aggregate usage JSON sidecar (non-fatal).
+        # Sequential path shares a single RunUsage across all techs, so only aggregate is available.
+        self._write_usage_json([], usage)
 
         normalized_file = None
         if successful > 0:

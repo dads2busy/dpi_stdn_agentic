@@ -20,8 +20,10 @@ class TechnologyContext:
     - country_enricher: own enricher wrapping the per-tech repo
     - usage: own token/request counters
     - transcript_path: own transcript file path
+    - tech_name: technology name for usage logging
     """
     country_repo: CountryDataRepository
     country_enricher: CountryDataEnricher
     usage: RunUsage = field(default_factory=RunUsage)
     transcript_path: Optional[Path] = None
+    tech_name: Optional[str] = None
