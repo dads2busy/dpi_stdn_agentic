@@ -96,7 +96,10 @@ load_dotenv()
 # -----------------------------
 
 _RX_STDNS_OUTPUT_CFG = re.compile(
-    r"^stdns_output_(?P<config>[a-z0-9]+)_\d{8}_\d{6}\.csv$", re.IGNORECASE
+    # Allow an optional domain prefix (e.g., "biotech_", "pharma_") between
+    # "stdns_output_" and the config tag (e.g., "v1v1v1", "d3v1v1").
+    r"^stdns_output_(?:[a-z0-9._-]+?_)?(?P<config>[dv]\d+(?:[dv]\d+){0,3})_\d{8}_\d{6}\.csv$",
+    re.IGNORECASE,
 )
 
 NON_PRIMARY_SENTINEL_DEFAULT = "__NON_PRIMARY__"
@@ -786,6 +789,17 @@ async def main() -> None:
         default=0,
         help="Optional cap on number of unique components (for testing). 0 = no cap.",
     )
+    p.add_argument(
+        "--freeze-vocab",
+        action="store_true",
+        default=False,
+        help=(
+            "Freeze the canonical vocabulary: skip LLM calls for unknown components, "
+            "leave unknown raw names as-is (pass-through), and do NOT persist any new "
+            "entries to the vocab JSON. Use to produce a re-normalization that bounds "
+            "the vocabulary-maturity confound across domains."
+        ),
+    )
     args = p.parse_args()
 
     if args.vocab_scope == "technology" and args.group_by != "technology":
@@ -945,7 +959,7 @@ async def main() -> None:
             sys.stdout.flush()
 
             new_mappings_raw: Dict[str, str] = {}
-            if reps:
+            if reps and not args.freeze_vocab:
                 for chunk_idx, chunk in enumerate(chunked(reps, args.chunk_size), start=1):
                     print(f"  - chunk {chunk_idx}/{total_chunks} ({len(chunk)} names)")
                     sys.stdout.flush()
@@ -960,6 +974,17 @@ async def main() -> None:
                     )
                     new_mappings_raw.update(chunk_map)
                     existing_canonicals.extend(chunk_map.values())
+            elif reps and args.freeze_vocab:
+                # Frozen vocab: do not call the LLM. Unknown raw names pass through
+                # as-is (mapped to themselves) so they remain visible in the CSV. The
+                # global vocab JSON is not modified.
+                print(
+                    f"  - skipping LLM for {len(reps)} unknown names (frozen vocab; "
+                    f"pass-through)"
+                )
+                sys.stdout.flush()
+                for rep_raw in reps:
+                    new_mappings_raw[rep_raw] = rep_raw.strip()
 
             # Expand rep mappings to all variants and update global mapping.
             new_added = 0
@@ -1005,10 +1030,14 @@ async def main() -> None:
             print(f"  ✓ wrote per-tech manifest; new_mappings_added={new_added}")
             sys.stdout.flush()
 
-        # Persist global vocab after all technologies
-        print("Persisting global vocab...")
-        sys.stdout.flush()
-        save_global_vocab(global_vocab_path, mapping_by_norm_key)
+        # Persist global vocab after all technologies (skipped under --freeze-vocab).
+        if args.freeze_vocab:
+            print("Frozen vocab: NOT persisting any changes to vocab JSON.")
+            sys.stdout.flush()
+        else:
+            print("Persisting global vocab...")
+            sys.stdout.flush()
+            save_global_vocab(global_vocab_path, mapping_by_norm_key)
 
         # Rewrite CSVs + JSONs (global mapping applied everywhere) with progress output
         print(f"Rewriting {len(csv_paths)} CSVs to {out_dir}...")
@@ -1115,7 +1144,10 @@ async def main() -> None:
         print(f"Unknown normalized by LLM (norm-key reps sum over techs): {total_unknown_reps}")
         print(f"Dropped non-primary rows/objects: {dropped_total}")
         print(f"Wrote normalized CSVs to: {out_dir}")
-        print(f"Wrote global vocab: {global_vocab_path}")
+        if args.freeze_vocab:
+            print(f"Frozen vocab mode: vocab JSON {global_vocab_path} NOT modified.")
+        else:
+            print(f"Wrote global vocab: {global_vocab_path}")
         print(f"Wrote per-technology manifests to: {manifest_dir}")
         print(f"Wrote global manifest: {manifest_path}")
         return
@@ -1164,9 +1196,9 @@ async def main() -> None:
                 print(f"  - {s}")
         return
 
-    # LLM normalize unknown names in chunks
+    # LLM normalize unknown names in chunks (skipped under --freeze-vocab).
     new_mappings_raw: Dict[str, str] = {}
-    if unknown_reps:
+    if unknown_reps and not args.freeze_vocab:
         for chunk in chunked(unknown_reps, args.chunk_size):
             chunk_map = await llm_normalize_chunk(
                 names=chunk,
@@ -1178,6 +1210,15 @@ async def main() -> None:
             new_mappings_raw.update(chunk_map)
             # Update canonical examples to improve consistency across chunks
             existing_canonicals.extend(chunk_map.values())
+    elif unknown_reps and args.freeze_vocab:
+        # Frozen vocab: pass unknown raw names through unchanged; do not call the LLM
+        # and do not modify the vocab JSON.
+        print(
+            f"Frozen vocab: skipping LLM for {len(unknown_reps)} unknown names "
+            f"(pass-through)."
+        )
+        for rep_raw in unknown_reps:
+            new_mappings_raw[rep_raw] = rep_raw.strip()
 
     # Build global mapping keyed by normalized key
     #
@@ -1199,8 +1240,11 @@ async def main() -> None:
                 mapping_by_norm_key[k] = canon
                 new_added += 1
 
-    # Persist global vocab
-    save_global_vocab(global_vocab_path, mapping_by_norm_key)
+    # Persist global vocab (skipped under --freeze-vocab).
+    if args.freeze_vocab:
+        print("Frozen vocab: NOT persisting any changes to vocab JSON.")
+    else:
+        save_global_vocab(global_vocab_path, mapping_by_norm_key)
 
     # Rewrite CSVs + JSONs
     output_csvs: List[str] = []
@@ -1291,7 +1335,10 @@ async def main() -> None:
     print(f"New mappings added: {new_added}")
     print(f"Dropped non-primary rows/objects: {dropped_total}")
     print(f"Wrote normalized CSVs to: {out_dir}")
-    print(f"Wrote global vocab: {global_vocab_path}")
+    if args.freeze_vocab:
+        print(f"Frozen vocab mode: vocab JSON {global_vocab_path} NOT modified.")
+    else:
+        print(f"Wrote global vocab: {global_vocab_path}")
     print(f"Wrote manifest: {manifest_path}")
 
 
