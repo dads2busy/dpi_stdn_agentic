@@ -64,6 +64,19 @@ NAIVE_PROMPT = (
     "What are the primary manufacturing components of a {technology}? "
     "List each component on its own line."
 )
+NAIVE_SYSTEM_PROMPT = "You are a helpful assistant."
+
+ENGINEERED_PROMPT = (
+    "List the primary physical hardware components of a {technology}, "
+    "excluding raw materials, software, and services. Return as a JSON "
+    "array of component names."
+)
+ENGINEERED_SYSTEM_PROMPT = "You are an expert in industrial supply chain analysis."
+
+PROMPT_STYLES = {
+    "naive": (NAIVE_SYSTEM_PROMPT, NAIVE_PROMPT),
+    "engineered": (ENGINEERED_SYSTEM_PROMPT, ENGINEERED_PROMPT),
+}
 
 DEFAULT_GOLDSTANDARD = "data/goldstndrd.csv"
 DEFAULT_VOCAB = "data/component_canonical_vocab.json"
@@ -106,25 +119,52 @@ def parse_component_list(raw_text: str) -> List[str]:
     return components
 
 
+def parse_json_array(raw_text: str) -> List[str]:
+    """Parse a JSON array of strings from LLM output.
+
+    Tolerates ```json fences and leading/trailing prose. Falls back to
+    parse_component_list if no JSON array is found.
+    """
+    text = raw_text.strip()
+    # Strip markdown code fences
+    fence = re.search(r"```(?:json)?\s*(.*?)\s*```", text, re.DOTALL)
+    if fence:
+        text = fence.group(1).strip()
+    # Find the first JSON array in the text
+    match = re.search(r"\[.*\]", text, re.DOTALL)
+    if match:
+        try:
+            arr = json.loads(match.group(0))
+            if isinstance(arr, list):
+                return [str(x).strip() for x in arr if str(x).strip()]
+        except json.JSONDecodeError:
+            pass
+    # Fallback: treat as free-text list
+    return parse_component_list(raw_text)
+
+
 async def run_naive_extraction(
     technology: str,
     model: str,
     num_runs: int,
     retries: int,
+    prompt_style: str = "naive",
 ) -> List[List[str]]:
-    """Run the naive prompt num_runs times and return parsed component lists."""
+    """Run the chosen prompt num_runs times and return parsed component lists."""
+    system_prompt, user_prompt_template = PROMPT_STYLES[prompt_style]
+    parser = parse_json_array if prompt_style == "engineered" else parse_component_list
     agent = Agent(
         model=model,
-        system_prompt="You are a helpful assistant.",
+        system_prompt=system_prompt,
         retries=retries,
     )
 
     all_runs: List[List[str]] = []
     for run_idx in range(num_runs):
-        prompt = NAIVE_PROMPT.format(technology=technology)
+        prompt = user_prompt_template.format(technology=technology)
         result = await agent.run(prompt)
         raw_text = result.output  # str when no output_type specified
-        components = parse_component_list(raw_text)
+        components = parser(raw_text)
         all_runs.append(components)
         print(f"  Run {run_idx + 1}: {len(components)} components")
     return all_runs
@@ -259,19 +299,23 @@ def write_report(
     judge_model: str,
     normalization_model: str,
     num_runs: int,
+    prompt_style: str = "naive",
 ) -> None:
     """Write a markdown evaluation report."""
     out_path.parent.mkdir(parents=True, exist_ok=True)
     parts: List[str] = []
 
+    system_prompt, user_prompt = PROMPT_STYLES[prompt_style]
     parts.append(f"# {title}\n\n")
     parts.append(f"{description}\n\n")
     parts.append(f"- **Date**: {datetime.now().strftime('%Y-%m-%d %H:%M')}\n")
+    parts.append(f"- **Prompt style**: `{prompt_style}`\n")
     parts.append(f"- **Extraction model**: `{extraction_model}`\n")
     parts.append(f"- **Judge model**: `{judge_model}`\n")
     parts.append(f"- **Normalization model**: `{normalization_model}`\n")
     parts.append(f"- **Runs per technology**: {num_runs}\n")
-    parts.append(f"- **Prompt**: `{NAIVE_PROMPT}`\n\n")
+    parts.append(f"- **System prompt**: `{system_prompt}`\n")
+    parts.append(f"- **User prompt**: `{user_prompt}`\n\n")
 
     # Extraction summary
     parts.append("## Extraction Summary\n\n")
@@ -363,6 +407,12 @@ def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
         help="JSONL judge cache (shared with other scripts).",
     )
     p.add_argument(
+        "--prompt-style", choices=sorted(PROMPT_STYLES.keys()), default="naive",
+        help="Which baseline prompt to use: 'naive' (bare strawman) or "
+             "'engineered' (light prompt engineering: role, JSON output, "
+             "one-sentence exclusion).",
+    )
+    p.add_argument(
         "--runs", type=int, default=5,
         help="Number of runs per technology.",
     )
@@ -416,9 +466,20 @@ async def async_main(argv: Optional[List[str]] = None) -> int:
         )
         print(f"Normalized gold standard: {sum(len(v) for v in gold_standard.values())} components")
 
-    # 2. Run naive extraction
-    output_dir = Path(args.output_dir)
+    # 2. Run extraction (style is naive or engineered)
+    style = args.prompt_style
+    system_prompt, user_prompt_template = PROMPT_STYLES[style]
+    # Default output dir picks up a style suffix so engineered runs don't
+    # collide with strawman naive runs.
+    base_out = Path(args.output_dir)
+    if base_out.name == "naive" and style != "naive":
+        output_dir = base_out.parent / f"naive_{style}"
+    else:
+        output_dir = base_out
     output_dir.mkdir(parents=True, exist_ok=True)
+    file_prefix = "naive_components" if style == "naive" else f"naive_{style}_components"
+    print(f"Prompt style: {style}")
+    print(f"Output dir:   {output_dir}")
 
     # {tech: [[run1_components], [run2_components], ...]}
     all_extractions: Dict[str, List[List[str]]] = {}
@@ -430,18 +491,21 @@ async def async_main(argv: Optional[List[str]] = None) -> int:
             model=args.extraction_model,
             num_runs=args.runs,
             retries=args.retries,
+            prompt_style=style,
         )
         all_extractions[tech] = runs
 
         # Save per-run JSON
         for run_idx, components in enumerate(runs):
             safe_name = _norm_key(tech).replace(' ', '_').replace('/', '_')
-            out_file = output_dir / f"naive_components_{safe_name}_{run_idx + 1}.json"
+            out_file = output_dir / f"{file_prefix}_{safe_name}_{run_idx + 1}.json"
             out_file.write_text(json.dumps({
                 "technology": tech,
                 "run": run_idx + 1,
+                "prompt_style": style,
                 "model": args.extraction_model,
-                "prompt": NAIVE_PROMPT.format(technology=tech),
+                "system_prompt": system_prompt,
+                "prompt": user_prompt_template.format(technology=tech),
                 "timestamp_utc": datetime.now(timezone.utc).isoformat(),
                 "components": components,
             }, indent=2, ensure_ascii=False), encoding="utf-8")
@@ -513,12 +577,15 @@ async def async_main(argv: Optional[List[str]] = None) -> int:
 
     # 6. Write raw report
     analysis_dir = Path(args.analysis_dir)
+    report_suffix = "" if style == "naive" else f"_{style}"
+    raw_report_path = analysis_dir / f"naive_baseline{report_suffix}_raw.md"
     write_report(
-        out_path=analysis_dir / "naive_baseline_raw.md",
-        title="Naive Component Baseline (Raw)",
+        out_path=raw_report_path,
+        title=f"Naive Component Baseline ({style.title()}, Raw)",
         description=(
-            "Evaluation of naive single-shot LLM extraction against gold standard. "
-            "Component names used as-is from LLM output (no canonical normalization)."
+            f"Evaluation of single-shot LLM extraction (prompt style: {style}) "
+            "against gold standard. Component names used as-is from LLM output "
+            "(no canonical normalization)."
         ),
         tech_results=raw_tech_results,
         metrics_list=raw_metrics,
@@ -526,8 +593,9 @@ async def async_main(argv: Optional[List[str]] = None) -> int:
         judge_model=args.judge_model,
         normalization_model=args.normalization_model,
         num_runs=args.runs,
+        prompt_style=style,
     )
-    print(f"\nRaw report: {analysis_dir / 'naive_baseline_raw.md'}")
+    print(f"\nRaw report: {raw_report_path}")
 
     # 7. Normalize naive output through canonical vocab
     print("\nNormalizing naive output through canonical vocab...")
@@ -615,12 +683,14 @@ async def async_main(argv: Optional[List[str]] = None) -> int:
         }
 
     # 10. Write normalized report
+    norm_report_path = analysis_dir / f"naive_baseline{report_suffix}_normalized.md"
     write_report(
-        out_path=analysis_dir / "naive_baseline_normalized.md",
-        title="Naive Component Baseline (Normalized)",
+        out_path=norm_report_path,
+        title=f"Naive Component Baseline ({style.title()}, Normalized)",
         description=(
-            "Evaluation of naive single-shot LLM extraction against gold standard. "
-            "Component names normalized through canonical vocabulary before evaluation."
+            f"Evaluation of single-shot LLM extraction (prompt style: {style}) "
+            "against gold standard. Component names normalized through canonical "
+            "vocabulary before evaluation."
         ),
         tech_results=norm_tech_results,
         metrics_list=norm_metrics,
@@ -628,12 +698,13 @@ async def async_main(argv: Optional[List[str]] = None) -> int:
         judge_model=args.judge_model,
         normalization_model=args.normalization_model,
         num_runs=args.runs,
+        prompt_style=style,
     )
-    print(f"Normalized report: {analysis_dir / 'naive_baseline_normalized.md'}")
+    print(f"Normalized report: {norm_report_path}")
 
     # 11. Print summary comparison
     print("\n" + "=" * 70)
-    print("SUMMARY: NAIVE BASELINE")
+    print(f"SUMMARY: BASELINE ({style.upper()})")
     print("=" * 70)
     print(f"\n{'':30s} {'RAW':>20s} {'NORMALIZED':>20s}")
     print("-" * 70)
