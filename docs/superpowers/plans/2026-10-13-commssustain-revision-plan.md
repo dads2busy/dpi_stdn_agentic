@@ -19,6 +19,7 @@
 - At most 10 display items in main text.
 - Every new pipeline run uses the same model configuration as the submitted benchmark (`component_model`, `materials_model`, `country_model` = `openai:gpt-4.1-mini`; `component_normalization_model` = `openai:gpt-4.1`).
 - The convergence threshold actually used in all submitted benchmark runs is **τ = 0.7**, round cap **R = 3** (verified from `.env` and every transcript). The manuscript's "τ = 0.95" is an error and must be corrected and disclosed.
+- Paper build: `main.tex` is GENERATED. Edit `main_src.tex` and `sections/*.tex`, then run `python3 scripts/inline_sections.py` before `latexmk -pdf main.tex`. Never edit `main.tex` directly (added 2026-10-19).
 - Resubmission package: point-by-point response, marked-up PDF (changes in a different colour), clean PDF, and the editors' formatting/policy table with the right-hand column filled in.
 
 ## Review Focus
