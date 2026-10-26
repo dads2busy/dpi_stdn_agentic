@@ -19,7 +19,7 @@
 - At most 10 display items in main text.
 - Every new pipeline run uses the same model configuration as the submitted benchmark (`component_model`, `materials_model`, `country_model` = `openai:gpt-4.1-mini`; `component_normalization_model` = `openai:gpt-4.1`).
 - The convergence threshold actually used in all submitted benchmark runs is **τ = 0.7**, round cap **R = 3** (verified from `.env` and every transcript). The manuscript's "τ = 0.95" is an error and must be corrected and disclosed.
-- Paper build: `main.tex` is GENERATED. Edit `main_src.tex` and `sections/*.tex`, then run `python3 scripts/inline_sections.py` before `latexmk -pdf main.tex`. Never edit `main.tex` directly (added 2026-10-19).
+- Paper build: `main.tex` `\input`s `sections/*.tex` (Overleaf pulls it from GitHub as-is). Edit sections directly. Only at resubmission run `python3 scripts/inline_sections.py` to write the gitignored single-file `main_flat.tex` for upload (changed 2026-10-26).
 - Resubmission package: point-by-point response, marked-up PDF (changes in a different colour), clean PDF, and the editors' formatting/policy table with the right-hand column filled in.
 
 ## Review Focus
@@ -45,7 +45,7 @@ Failure modes a reader of the revised paper is most likely to hit, each pinned t
 **Interfaces:**
 - Produces: git tag `submitted-v1` on the paper repo that Task 3.2 diffs against.
 
-- [ ] **Step 1: Tag the submitted commit before any edit**
+- [x] **Step 1: Tag the submitted commit before any edit**
 
 ```bash
 cd ~/git/D-PI-2026-05-STDN-COMMS-SUSTAIN
@@ -54,14 +54,14 @@ git tag
 ```
 Expected: `submitted-v1` listed.
 
-- [ ] **Step 2: Confirm every stated 0.95 location**
+- [x] **Step 2: Confirm every stated 0.95 location**
 
 ```bash
 grep -n "0\.95\|tau" sections/*.tex | grep -v "confidence"
 ```
 Expected: hits in `methods.tex` (convergence paragraph) and possibly `supplementary.tex` S.4. Note each.
 
-- [ ] **Step 3: Replace the convergence paragraph**
+- [x] **Step 3: Replace the convergence paragraph**
 
 Replace from "In all experiments we use $\tau = 0.95$ and $R = 3$." through "Sensitivity to these choices is an open question for future ablation." with:
 
@@ -76,7 +76,7 @@ reports sensitivity to both $\tau$ and $R$.
 ```
 (`sec:sensitivity` is created in Task 2.3.)
 
-- [ ] **Step 4: Build and commit**
+- [x] **Step 4: Build and commit**
 
 ```bash
 latexmk -pdf main.tex >/dev/null 2>&1; grep -c "Undefined" main.log
@@ -401,7 +401,7 @@ git commit -m "feat(revision): materials resolution post-pass to elemental/compo
 
 ### Task 0.4: Ask the user for the biotech/pharma list provenance (blocks Task 2.1 only)
 
-- [ ] **Step 1:** Send the user the single question: "How were `data/tech_list_biotechnology_products.csv` and `data/tech_list_pharmaceutical_products.csv` constructed (source lists, LLM-assisted, expert-curated), and what inclusion criteria were applied?" Record the answer in paper-repo memory `project_tech_list_provenance.md`.
+- [x] **Step 1:** Send the user the single question: "How were `data/tech_list_biotechnology_products.csv` and `data/tech_list_pharmaceutical_products.csv` constructed (source lists, LLM-assisted, expert-curated), and what inclusion criteria were applied?" Record the answer in paper-repo memory `project_tech_list_provenance.md`.
 
 ---
 
@@ -559,16 +559,16 @@ with `w` = rescaled WGI political-stability (0 best … 10 worst) or `1−HDI` r
 
 **Files:** Modify `sections/methods.tex` (new subsection "Benchmark construction" before "LLM Judge"); modify `sections/supplementary.tex` Appendix A preamble.
 
-- [ ] **Step 1:** Write the subsection from the Task 0.4 answer: per-domain source, inclusion criteria (sub-domain stratification 12 × 5, product-level technologies with documented bills of materials, exclusion of pure services and raw materials), the role-prompt column, and an explicit comparability caveat (microelectronics list predates the other two; the sub-domain structure was matched).
-- [ ] **Step 2:** Add a three-column table of sub-domains per domain to Appendix A.
-- [ ] **Step 3:** Build; commit.
+- [x] **Step 1:** Write the subsection from the Task 0.4 answer: per-domain source, inclusion criteria (sub-domain stratification 12 × 5, product-level technologies with documented bills of materials, exclusion of pure services and raw materials), the role-prompt column, and an explicit comparability caveat (microelectronics list predates the other two; the sub-domain structure was matched).
+- [x] **Step 2:** Add a three-column table of sub-domains per domain to Appendix A.
+- [x] **Step 3:** Build; commit.
 
 ### Task 2.2: Methods — evaluation-metrics summary table (Reviewer 1.3)
 
 **Files:** Modify `sections/methods.tex` (new table `tab:metrics`).
 
-- [ ] **Step 1:** Add a four-column table: metric, definition, what it measures (stability vs validity vs cost), where reported. Rows: post-normalization pairwise Jaccard; pre-normalization (transcript-level) Jaccard; core ratio; occurrence-based invalid rate; deduped-canonical invalid rate; judge recall and lower-bound precision vs gold standard; final convergence score; rounds; runtime; cost. Cross-reference every metric's first use to this table.
-- [ ] **Step 2:** Build; commit.
+- [x] **Step 1:** Add a four-column table: metric, definition, what it measures (stability vs validity vs cost), where reported. Rows: post-normalization pairwise Jaccard; pre-normalization (transcript-level) Jaccard; core ratio; occurrence-based invalid rate; deduped-canonical invalid rate; judge recall and lower-bound precision vs gold standard; final convergence score; rounds; runtime; cost. Cross-reference every metric's first use to this table.
+- [x] **Step 2:** Build; commit.
 
 ### Task 2.3: Results — new evidence (Reviewers 1.2, 1.5, 2.1, 3)
 
