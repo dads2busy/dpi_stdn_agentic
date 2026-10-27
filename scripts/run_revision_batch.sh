@@ -98,6 +98,13 @@ run_batch() {
     local tag="$1" config_type="$2" base_config="$3" tau="$4" rounds="$5"
     local marker="logs/.revision_${tag}_start"
 
+    # Sequential-mode CheckpointManager keys its files on a hash of the run config, so a checkpoint left by
+    # an interrupted earlier run with an identical config makes a new run skip technologies (2026-10-27:
+    # an April run-5 checkpoint made the fxmicro d3 run 5 skip all 60).
+    if compgen -G ".checkpoints/*.json" > /dev/null; then
+        log "ERROR: stale .checkpoints/*.json exist; move them to output/aborted/ first. Not starting $tag."
+        exit 1
+    fi
     if compgen -G "$CHECKPOINT_GLOB" > /dev/null; then
         log "ERROR: stale checkpoint(s) $(echo $CHECKPOINT_GLOB) exist (an earlier batch was interrupted)."
         log "       Run 'abort <batch>' for that batch first. Not starting $tag."
