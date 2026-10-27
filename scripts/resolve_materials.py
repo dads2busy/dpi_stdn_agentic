@@ -15,7 +15,7 @@ import csv
 import glob
 import os
 
-NEW_FIELDS = ["material_resolved", "material_level", "material_elements", "resolution_provenance"]
+NEW_FIELDS = ["material_resolved", "material_level", "material_elements", "resolution_provenance", "country_source"]
 COUNTRY_FIELDS = ["country", "percentage", "country_confidence", "country_reasoning", "meas_unit", "amount"]
 
 
@@ -43,8 +43,14 @@ def _blank_country(row):
     return {**row, **{f: "" for f in COUNTRY_FIELDS if f in row or f in ("country", "percentage")}}
 
 
-def resolve_rows(rows, mapping):
+def load_hs_codes(path="data/hs_codes_and_usgs_names.csv"):
+    return {r["Elements_Compounds"]: r["HS_Code"] for r in csv.DictReader(open(path))}
+
+
+def resolve_rows(rows, mapping, hs_codes=None):
+    """hs_codes: ontology name -> HS code; mapped rows take their constituent's code ("" if not in the ontology)."""
     lower = {_key(k): v for k, v in mapping.items()}
+    hs_codes = hs_codes or {}
     out = []
     for r in rows:
         tgt = lower.get(_key(r["material"]))
@@ -60,8 +66,11 @@ def resolve_rows(rows, mapping):
                         "material_elements": el, "resolution_provenance": "identity"})
         else:
             for name, lvl, el in tgt:
-                out.append({**_blank_country(r), "material_resolved": name, "material_level": lvl,
-                            "material_elements": el, "resolution_provenance": "map"})
+                row = {**_blank_country(r), "material_resolved": name, "material_level": lvl,
+                       "material_elements": el, "resolution_provenance": "map"}
+                if "hs_code" in r:
+                    row["hs_code"] = hs_codes.get(name, "")
+                out.append(row)
     # Normalized CSVs carry one row per country, so a blanked expansion repeats once per
     # original country row; keep the first of each identical row.
     seen, deduped = set(), []
@@ -77,17 +86,23 @@ def resolve_rows(rows, mapping):
 
 def fill_countries(rows, lookup):
     """Give each mapped row one row per producing country from lookup(material) -> [country dicts].
-    Identity rows, non-materials, and materials lookup returns nothing for stay as they are."""
+    Identity rows, non-materials, and materials lookup returns nothing for stay as they are.
+    Sets country_source: `original` (identity rows keep the pipeline's shares), `usgs` or `llm_cache`
+    (refetched), or "" (no data)."""
     out = []
     for r in rows:
-        data = lookup(r["material_resolved"]) if r["resolution_provenance"] == "map" and r["material_resolved"] else []
+        if r["resolution_provenance"] != "map":
+            out.append({**r, "country_source": "original"})
+            continue
+        data = lookup(r["material_resolved"]) if r["material_resolved"] else []
         if not data:
-            out.append(r)
+            out.append({**r, "country_source": ""})
             continue
         for c in data:
-            row = {**r, "country": c.get("country", ""), "percentage": c.get("percentage", "")}
+            row = {**r, "country": c.get("country", ""), "percentage": c.get("percentage", ""),
+                   "country_source": c.get("source", "")}
             for field, key in [("country_confidence", "confidence"), ("country_reasoning", "reasoning"),
-                               ("meas_unit", "meas_unit"), ("amount", "amount"), ("hs_code", "hs_code")]:
+                               ("meas_unit", "meas_unit"), ("amount", "amount")]:
                 if field in r:
                     row[field] = c.get(key, "")
             out.append(row)
@@ -107,14 +122,15 @@ def usgs_lookup(src_year=2024, meas_year=2023):
 
     def lookup(material):
         if material not in memo:
-            data = repo.query_usgs(material, src_year, meas_year)
-            if data:
-                for c in data:
-                    c.setdefault("confidence", 0.95)
-                    c.setdefault("reasoning", f"USGS Mineral Commodity Summaries {src_year}/{meas_year} (resolution refetch)")
-            else:
+            data = [{"confidence": 0.95, **c, "source": "usgs",
+                     "reasoning": f"USGS Mineral Commodity Summaries {src_year}/{meas_year} (resolution refetch)"}
+                    for c in repo.query_usgs(material, src_year, meas_year)]
+            if not data:
                 hs = repo.lookup_hs_code(material)
-                data = (cache.get_countries(hs_code=hs, usgs_name=material, src_year=src_year, meas_year=meas_year) or []) if hs else []
+                cached = cache.get_countries(hs_code=hs, usgs_name=material, src_year=src_year, meas_year=meas_year) if hs else None
+                data = [{**c, "source": "llm_cache",
+                         "reasoning": f"LLM fallback cache (previously computed) - no USGS data available for {material}"}
+                        for c in cached or []]
             memo[material] = data
         return memo[material]
 
@@ -130,6 +146,7 @@ def main():
     ap.add_argument("--no-refetch", action="store_true", help="leave mapped rows with blank country fields")
     a = ap.parse_args()
     mapping = load_map(a.map)
+    hs_codes = load_hs_codes()
     lookup = None if a.no_refetch else usgs_lookup()
     os.makedirs(a.out, exist_ok=True)
     for f in sorted(glob.glob(a.pattern)):
@@ -137,7 +154,7 @@ def main():
         if not rows:
             print(f, "empty, skipped")
             continue
-        out = resolve_rows(rows, mapping)
+        out = resolve_rows(rows, mapping, hs_codes)
         if lookup:
             out = fill_countries(out, lookup)
         fields = list(rows[0].keys()) + NEW_FIELDS
