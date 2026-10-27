@@ -29,9 +29,11 @@
 # - Normalization maps new names with the LLM (as the submitted runs did) against
 #   a COPY of the vocab, so data/component_canonical_vocab_global_primary.json is
 #   untouched. (--freeze-vocab is not used: it passes unknown names through raw.)
-# - output/raw/parallel_checkpoint.json is shared by all runs and keyed only by
-#   technology name; a stale one makes the next batch silently skip technologies.
-#   A batch refuses to start if it exists; `abort` quarantines it.
+# - Each run checkpoints to output/raw/<output_base>_parallel_checkpoint.json
+#   (before 2026-10-27 all runs shared one file, so late-starting replicates
+#   skipped technologies other replicates had finished). A stale checkpoint makes
+#   the next batch silently skip technologies, so a batch refuses to start if any
+#   exists; `abort` quarantines them.
 
 set -e
 export PYTHONUNBUFFERED=1
@@ -44,7 +46,7 @@ mkdir -p logs
 
 SUBMITTED_VOCAB="data/component_canonical_vocab_global_primary.json"
 REVISION_VOCAB="data/component_canonical_vocab_global_primary_revision.json"
-CHECKPOINT="output/raw/parallel_checkpoint.json"
+CHECKPOINT_GLOB="output/raw/*parallel_checkpoint.json"
 
 log() {
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] $*"
@@ -82,8 +84,8 @@ run_batch() {
     local tag="$1" config_type="$2" base_config="$3" tau="$4" rounds="$5"
     local marker="logs/.revision_${tag}_start"
 
-    if [ -e "$CHECKPOINT" ]; then
-        log "ERROR: stale $CHECKPOINT exists (an earlier batch was interrupted)."
+    if compgen -G "$CHECKPOINT_GLOB" > /dev/null; then
+        log "ERROR: stale checkpoint(s) $(echo $CHECKPOINT_GLOB) exist (an earlier batch was interrupted)."
         log "       Run 'abort <batch>' for that batch first. Not starting $tag."
         exit 1
     fi
@@ -128,7 +130,9 @@ abort_batch() {
             mv "$f" "$dest/"; n=$((n + 1))
         done < <(find output -type f -newer "$marker" -name "*_${config_type}_*" -not -name "*_${tag}_${config_type}_*" -not -path "output/logs/*" -not -path "output/aborted/*")
     fi
-    [ -e "$CHECKPOINT" ] && mv "$CHECKPOINT" "$dest/" && n=$((n + 1))
+    for f in $CHECKPOINT_GLOB; do
+        [ -e "$f" ] && mv "$f" "$dest/" && n=$((n + 1))
+    done
     rm -f data/*_"${config_type}"_run*.db config_"${config_type}"_run*.json
     log "Moved $n partial files to $dest; removed temp DB/config copies"
 }

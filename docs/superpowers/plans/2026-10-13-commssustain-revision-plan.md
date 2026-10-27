@@ -98,7 +98,7 @@ Expected: one undefined reference (`sec:sensitivity`) until Task 2.3; no other e
 
 Wall-clock reference: the 2026-04-14 microelectronics rerun completed each five-run config batch across 60 technologies in about one hour. The full batch below is roughly 7 batches, so under one working day of machine time. API cost is well under $20 at the measured $0.004 per technology.
 
-- [ ] **Step 1: Build the 20-technology τ subset, stratified by sub-domain**
+- [x] **Step 1: Build the 20-technology τ subset, stratified by sub-domain**
 
 ```bash
 cd ~/git/dpi_stdn_agentic
@@ -119,7 +119,7 @@ EOF
 ```
 Expected: `20 technologies written`. Record the seed in the Methods text (Task 2.3).
 
-- [ ] **Step 2: Create the config files**
+- [x] **Step 2: Create the config files**
 
 ```bash
 cd ~/git/dpi_stdn_agentic
@@ -131,7 +131,7 @@ grep -n "tech_list\|num_agents" config_biotech_d5v1v1.json config_micro_tau_subs
 ```
 Expected: the subset config points to the new CSV. Agent counts are set by `--config-type` in the launcher, not by the JSON, so the d5 copies need no further edit.
 
-- [ ] **Step 3: Write the batch script**
+- [x] **Step 3: Write the batch script**
 
 ```bash
 cat > scripts/run_revision_batch.sh <<'EOF'
@@ -161,7 +161,7 @@ chmod +x scripts/run_revision_batch.sh
 
 Note: `load_dotenv()` in `src/stdn_agentic/__init__.py` does not override variables already in the environment, so the `env` assignments win over `.env`. The `d6d6v6` max-cost run used the same mechanism.
 
-- [ ] **Step 4: Verify env override on a one-technology smoke test before the full batch**
+- [x] **Step 4: Verify env override on a one-technology smoke test before the full batch**
 
 ```bash
 cd ~/git/dpi_stdn_agentic
@@ -171,7 +171,7 @@ uv run python -c "import json,sys; d=json.load(open('$f')); print(d['component_s
 ```
 Expected: `0.95`. If it prints `0.7`, stop and fix the override before launching.
 
-- [ ] **Step 5: Launch and record**
+- [x] **Step 5: Launch and record**
 
 ```bash
 nohup bash scripts/run_revision_batch.sh > logs/revision_batch.log 2>&1 &
@@ -185,7 +185,7 @@ for f in output/raw/stdns_output_d3v1v1_<ts>*.csv; do mv "$f" "${f/d3v1v1/tau085
 ```
 Repeat for `tau095` and `r5`. Transcripts carry `threshold` and round count internally and need no rename.
 
-- [ ] **Step 6: Normalize the new raw outputs with the frozen vocabulary**
+- [x] **Step 6: Normalize the new raw outputs with the frozen vocabulary**
 
 Use the same script and arguments as the April rerun (`scripts/run_micro_rerun.sh` lines 50–56), adding `--freeze-vocab` so the vocabulary is not grown by the new runs:
 
@@ -205,12 +205,14 @@ ls output/normalized | grep -c -E "biotech_d5|pharma_d5|tau0|r5_"
 ```
 Expected: 25 normalized files. `--freeze-vocab` keeps the comparison on the same vocabulary as the submitted analysis (the Supplementary vocab-maturity argument); unseen names still get mapped, but the mapping is not persisted.
 
-- [ ] **Step 7: Commit configs, script, and tech subset**
+- [x] **Step 7: Commit configs, script, and tech subset**
 
 ```bash
 git add config_biotech_d5v1v1.json config_pharma_d5v1v1.json config_micro_tau_subset.json data/tech_list_micro_tau_subset.csv scripts/run_revision_batch.sh
 git commit -m "feat(revision): configs and batch script for N=5 cross-domain and tau/R sensitivity runs"
 ```
+
+**As run (done 2026-10-27):** 7 batches incl. `gold_d5`, 35 normalized files. Tech subset is `data/tech_list_tau_subset.csv` (20 micro + 4 gold-standard). Deviations to protect submitted data: `--defer-shared-postprocess`; new files renamed `_<tag>_<config_type>_`; normalized against a copy (`data/component_canonical_vocab_global_primary_revision.json`) without `--freeze-vocab` (the flag passes unknown names through raw). Replicates shared one `parallel_checkpoint.json`, so biotech run 5 and pharma runs 4–5 skipped techs; fixed with per-run checkpoints, the three replicates rerun, the short ones quarantined in `output/aborted/checkpoint_race_20261027/`.
 
 ### Task 0.3: Materials resolution to elemental/compound forms (Reviewer 2 main concern)
 

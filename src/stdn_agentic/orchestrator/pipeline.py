@@ -314,6 +314,7 @@ class STDNOrchestrator:
         if self.debate_config_str not in output_base:
             output_base = f"{output_base}_{self.debate_config_str}"
         output_filename = f"{output_base}_{timestamp}.csv"
+        self.output_base = output_base
 
         # Set up output directory structure
         self.raw_output_dir = os.path.join(config.output_dir, "raw")
@@ -1161,8 +1162,9 @@ For each input name, output the canonical form it should map to."""
         semaphore = asyncio.Semaphore(self.config.max_concurrent_technologies)
         checkpoint_lock = asyncio.Lock()
 
-        # Checkpoint-based resume
-        checkpoint_path = Path(self.raw_output_dir) / "parallel_checkpoint.json"
+        # Checkpoint-based resume. Keyed by output base (e.g. stdns_output_d5v1v1_run3)
+        # so concurrent replicates in parallel_runs.py don't skip each other's technologies.
+        checkpoint_path = Path(self.raw_output_dir) / f"{self.output_base}_parallel_checkpoint.json"
         completed_techs: set[str] = set()
         if checkpoint_path.exists():
             data = json.loads(checkpoint_path.read_text())
