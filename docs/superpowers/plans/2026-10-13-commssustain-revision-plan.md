@@ -228,7 +228,7 @@ git commit -m "feat(revision): configs and batch script for N=5 cross-domain and
 
 Design decision: a post-pass, not a Stage 2 rerun. Stage 2 hard-filters materials against the ontology (`_filter_materials_not_in_ontology`), so the ontology is the lever; the post-pass applies the tightened ontology to every existing output without re-spending the benchmark. A small end-to-end rerun on the three vignette technologies (Step 8) shows the same tightening working inside the pipeline.
 
-- [ ] **Step 1: Author the resolution map**
+- [x] **Step 1: Author the resolution map**
 
 One row per ontology entry. Columns: `source,level,resolved,resolved_level,note`. `level` classifies the source entry; `resolved` lists constituents separated by `|`. Examples that must be present:
 
@@ -247,7 +247,7 @@ Peltier elements,not_material,Bismuth telluride,compound,component; resolved to 
 ```
 Every one of the 388 entries must appear (Step 3 tests this). Compounds additionally resolve to elements in a second column `elements` (e.g. `Barium titanate` → `Barium|Titanium`), so analyses can be run at compound or element level.
 
-- [ ] **Step 2: Write the failing test**
+- [x] **Step 2: Write the failing test**
 
 ```python
 # src/stdn_agentic/tests/unit/test_resolve_materials.py
@@ -275,14 +275,14 @@ def test_identity_row_untouched():
     assert len(out) == 1 and out[0]["resolution_provenance"] == "identity" and out[0]["country"] == "CHILE"
 ```
 
-- [ ] **Step 3: Run it to verify it fails**
+- [x] **Step 3: Run it to verify it fails**
 
 ```bash
 cd ~/git/dpi_stdn_agentic && uv run pytest src/stdn_agentic/tests/unit/test_resolve_materials.py -v
 ```
 Expected: FAIL with `ModuleNotFoundError: scripts.resolve_materials`.
 
-- [ ] **Step 4: Implement `scripts/resolve_materials.py`**
+- [x] **Step 4: Implement `scripts/resolve_materials.py`**
 
 ```python
 #!/usr/bin/env python3
@@ -333,7 +333,7 @@ def main():
 if __name__ == "__main__": main()
 ```
 
-- [ ] **Step 5: Re-fetch USGS country shares for mapped rows**
+- [x] **Step 5: Re-fetch USGS country shares for mapped rows**
 
 Mapped rows have blank `country`. Fill them by calling the existing repository the pipeline uses:
 
@@ -346,7 +346,7 @@ EOF
 ```
 Follow `src/stdn_agentic/orchestrator/country_data_enricher.py` lines 65–235 for the exact call (USGS-first, LLM fallback cache second). Write the result as `output/resolved/<file>.csv` in place. Materials with no USGS coverage after resolution are left with `country=""` and counted in the report.
 
-- [ ] **Step 6: Run tests; run the pass on all normalized outputs**
+- [x] **Step 6: Run tests; run the pass on all normalized outputs**
 
 ```bash
 uv run pytest src/stdn_agentic/tests/unit/test_resolve_materials.py -v
@@ -354,7 +354,7 @@ uv run python scripts/resolve_materials.py --pattern "output/normalized/stdns_ou
 ```
 Expected: 3 tests PASS; one resolved CSV per normalized CSV.
 
-- [ ] **Step 7: Write the resolution report**
+- [x] **Step 7: Write the resolution report**
 
 ```bash
 uv run python - <<'EOF' > output/analysis/material_resolution_report.md
@@ -375,7 +375,7 @@ cat output/analysis/material_resolution_report.md
 ```
 Expected: `element + compound` share rises substantially; `not_material` rows are now flagged rather than silently counted.
 
-- [ ] **Step 8: End-to-end check on the three vignette technologies with a tightened ontology**
+- [x] **Step 8: End-to-end check on the three vignette technologies with a tightened ontology**
 
 Create `data/hs_codes_and_usgs_names_strict.csv` by dropping every `generic` and `not_material` source row from the ontology, then rerun the vignette config against it:
 
@@ -394,12 +394,14 @@ uv run python scripts/parallel_runs.py --config-type d5v1v1 --num-runs 3 --base-
 ```
 Expected: the 5G antenna row no longer reads "ceramic"; record what it reads instead for Fig. 3b (Task 2.5).
 
-- [ ] **Step 9: Commit**
+- [x] **Step 9: Commit**
 
 ```bash
 git add data/material_resolution_map.csv data/hs_codes_and_usgs_names_strict.csv scripts/resolve_materials.py src/stdn_agentic/tests/unit/test_resolve_materials.py output/analysis/material_resolution_report.md config_vignettes_strict.json
 git commit -m "feat(revision): materials resolution post-pass to elemental/compound forms (Reviewer 2)"
 ```
+
+**As run (done 2026-10-27):** map has 388 rows (212 compound, 105 generic, 69 element, 2 not_material) plus an `elements` column; output adds `material_elements`. Country shares for mapped rows are refetched inside `resolve_materials.py` (USGS, then LLM fallback cache, no live LLM): 419,525 rows filled, 90 left blank (Potassium, Beryllium oxide, Cesium antimonide). Report (`scripts/material_resolution_report.py`, material-node counts): element+compound share 71.8%→93.3% micro, 64.5%→96.0% biotech, 61.7%→98.1% pharma. Step 8 ran at d3v1v1 (the submitted vignette config) on Cobot Arm + 5G Base Station, tagged `vigstrict_`, with the Task 0.2 safety pattern; 5G antenna now reads Aluminum/Copper plus Silicon dioxide, Silver/Silicon carbide, or Silver/Silicon/PET across 3 runs. Caution for Task 2.5: Neodymium (cobot) appeared in 1/3 strict runs and GaAs (5G) in 2/3. Deviations are ledgered in `.superpowers/sdd/2026-10-13-commssustain-revision-plan/progress.md`.
 
 ### Task 0.4: Ask the user for the biotech/pharma list provenance (blocks Task 2.1 only)
 
