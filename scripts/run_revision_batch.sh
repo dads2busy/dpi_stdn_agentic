@@ -18,6 +18,8 @@
 #   bash scripts/run_revision_batch.sh abort tau085     # stop a batch, quarantine partial outputs
 #   nohup bash scripts/run_revision_batch.sh gold_d5 tau085 > logs/revision_batch.log 2>&1 &
 # Batches: biotech_d5 pharma_d5 gold_d5 tau085 tau095 tau095r5 r5
+# Post-fix (f948c3e): fxmicro_v1 fxmicro_d3 fxbiotech_v1 fxbiotech_d3 fxpharma_v1 fxpharma_d3
+#   fxctl fxtau085 fxtau095 fxr1 fxr2, then normalize_fix
 #
 # Safety: the submitted results must not change.
 # - --defer-shared-postprocess: parallel_runs.py otherwise re-normalizes EVERY
@@ -62,6 +64,18 @@ batch_spec() {
         tau095)     echo "tau095   d3v1v1 config_tau_subset.json               0.95 3" ;;
         tau095r5)   echo "tau095r5 d3v1v1 config_tau_subset.json               0.95 5" ;;
         r5)         echo "r5       d3v1v1 config_tau_subset.json               0.7  5" ;;
+        # After the round-1 agent_id fix (f948c3e): cross-domain v1/d3 in one session, and the tau/R subset.
+        fxmicro_v1)   echo "fxmicro   v1v1v1 config_micro_v1v1v1.json     0.7  3" ;;
+        fxmicro_d3)   echo "fxmicro   d3v1v1 config_micro_d3v1v1.json     0.7  3" ;;
+        fxbiotech_v1) echo "fxbiotech v1v1v1 config_biotech_v1v1v1.json   0.7  3" ;;
+        fxbiotech_d3) echo "fxbiotech d3v1v1 config_biotech_d3v1v1.json   0.7  3" ;;
+        fxpharma_v1)  echo "fxpharma  v1v1v1 config_pharma_v1v1v1.json    0.7  3" ;;
+        fxpharma_d3)  echo "fxpharma  d3v1v1 config_pharma_d3v1v1.json    0.7  3" ;;
+        fxctl)        echo "fxctl     d3v1v1 config_tau_subset.json       0.7  3" ;;
+        fxtau085)     echo "fxtau085  d3v1v1 config_tau_subset.json       0.85 3" ;;
+        fxtau095)     echo "fxtau095  d3v1v1 config_tau_subset.json       0.95 3" ;;
+        fxr1)         echo "fxr1      d3v1v1 config_tau_subset.json       0.7  1" ;;
+        fxr2)         echo "fxr2      d3v1v1 config_tau_subset.json       0.7  2" ;;
         *) echo "Unknown batch: $1" >&2; return 1 ;;
     esac
 }
@@ -156,6 +170,26 @@ normalize_all() {
     log "Normalized revision files: $(ls output/normalized | grep -cE 'biotech_d5|pharma_d5|gold_d5|tau08|tau09|r5_d3')"
 }
 
+normalize_fix() {
+    log "Normalizing post-fix outputs against a copy of the submitted vocab"
+    [ -f "$REVISION_VOCAB" ] || cp "$SUBMITTED_VOCAB" "$REVISION_VOCAB"
+    local pat
+    for pat in fxmicro_v1v1v1 fxmicro_d3v1v1 fxbiotech_v1v1v1 fxbiotech_d3v1v1 fxpharma_v1v1v1 fxpharma_d3v1v1 \
+               fxctl_d3v1v1 fxtau085_d3v1v1 fxtau095_d3v1v1 fxr1_d3v1v1 fxr2_d3v1v1; do
+        ls output/raw/stdns_output_${pat}_*.csv >/dev/null 2>&1 || { log "  skip $pat (no raw files)"; continue; }
+        log "  $pat"
+        uv run python scripts/normalize_outputs_global_granularity.py \
+            --pattern "output/raw/stdns_output_${pat}_*.csv" \
+            --group-by technology \
+            --output-dir output/normalized \
+            --manifest-dir output/normalized/manifests_revision \
+            --global-vocab "$REVISION_VOCAB" \
+            --model openai:gpt-4.1 \
+            --chunk-size 120
+    done
+    log "Normalized post-fix files: $(ls output/normalized | grep -c '_fx')"
+}
+
 if [ $# -eq 0 ]; then
     sed -n '2,20p' "$0"; exit 1
 fi
@@ -166,7 +200,7 @@ fi
 
 # Validate all names before starting anything
 for b in "$@"; do
-    [ "$b" = "normalize" ] || batch_spec "$b" > /dev/null
+    [ "$b" = "normalize" ] || [ "$b" = "normalize_fix" ] || batch_spec "$b" > /dev/null
 done
 
 # Keep the Mac from idle-sleeping while batches run (closing the lid still sleeps it)
@@ -177,6 +211,8 @@ fi
 for b in "$@"; do
     if [ "$b" = "normalize" ]; then
         normalize_all
+    elif [ "$b" = "normalize_fix" ]; then
+        normalize_fix
     else
         # shellcheck disable=SC2046
         run_batch $(batch_spec "$b")
