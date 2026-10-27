@@ -1505,7 +1505,11 @@ Components with low peer support should have lower confidence unless critically 
         current_proposals: Dict[str, List[Dict[str, Any]]],
     ) -> List[Dict[str, Any]]:
         all_final_proposals: List[Dict[str, Any]] = []
-        for agent_props in current_proposals.values():
+        for agent_id, agent_props in current_proposals.items():
+            # Round-1 proposals carry no agent_id; without it, consensus pools every proposal under one
+            # agent and drops the multi-agent support requirement. Set in place so the transcript records it.
+            for prop in agent_props:
+                prop.setdefault("agent_id", agent_id)
             all_final_proposals.extend(agent_props)
         return all_final_proposals
 
