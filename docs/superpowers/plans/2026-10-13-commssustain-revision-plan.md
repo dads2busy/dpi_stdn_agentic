@@ -424,7 +424,7 @@ git commit -m "feat(revision): materials resolution post-pass to elemental/compo
 
 Reconstruction rule: for round *r*, apply the same consensus rule the pipeline uses, `ComponentDebater.build_adaptive_consensus` (`src/stdn_agentic/debate/component_debater.py:583`), to that round's proposals with that round's `convergence` score; the min-support fraction is 2/3 at high convergence and 1/3 at low (see `_compute_min_support`, line 737). Import and call it rather than re-implementing.
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```python
 # src/stdn_agentic/tests/unit/test_sensitivity_tau_rounds.py
@@ -443,9 +443,9 @@ def test_consensus_at_round_matches_pipeline_final_when_last_round_used(sample_t
 ```
 Add a `sample_transcript` fixture loading one real `d3v1v1` transcript from `output/transcripts/`.
 
-- [ ] **Step 2: Run to verify it fails** — `uv run pytest src/stdn_agentic/tests/unit/test_sensitivity_tau_rounds.py -v` → FAIL, module missing.
+- [x] **Step 2: Run to verify it fails** — `uv run pytest src/stdn_agentic/tests/unit/test_sensitivity_tau_rounds.py -v` → FAIL, module missing.
 
-- [ ] **Step 3: Implement**
+- [x] **Step 3: Implement**
 
 ```python
 # scripts/sensitivity_tau_rounds.py
@@ -473,7 +473,7 @@ def per_tech_median_jaccard(sets_by_tech):
 ```
 Then a `main()` that groups the five `d3v1v1` runs per technology, builds sets for each scenario, normalizes names by direct lookup in `data/component_canonical_vocab_global_primary.json` (the same frozen vocabulary the Step 6 normalization used; names absent from it are kept verbatim and counted), writes the markdown table, and reads the rerun normalized CSVs for the τ=0.85/0.95/R=5 columns.
 
-- [ ] **Step 4: Run tests, run analysis, inspect**
+- [x] **Step 4: Run tests, run analysis, inspect**
 
 ```bash
 uv run pytest src/stdn_agentic/tests/unit/test_sensitivity_tau_rounds.py -v
@@ -481,7 +481,9 @@ uv run python scripts/sensitivity_tau_rounds.py > output/analysis/sensitivity_ta
 ```
 Expected: the "stop at final round" column reproduces the submitted d3 micro median (0.327) within rounding; the sign of the micro debate effect (Δ vs v1 = 0.500) is reported for every scenario.
 
-- [ ] **Step 5: Commit** — `git add scripts/sensitivity_tau_rounds.py src/stdn_agentic/tests/unit/test_sensitivity_tau_rounds.py output/analysis/sensitivity_tau_rounds.md && git commit -m "feat(revision): tau/R sensitivity analysis (Reviewer 1.5)"`
+- [x] **Step 5: Commit** — `git add scripts/sensitivity_tau_rounds.py src/stdn_agentic/tests/unit/test_sensitivity_tau_rounds.py output/analysis/sensitivity_tau_rounds.md && git commit -m "feat(revision): tau/R sensitivity analysis (Reviewer 1.5)"`
+
+**As run (done 2026-10-27):** replay uses `MultiAgentDebater.build_adaptive_consensus_semantic` (the pipeline's path); recorded final reproduces 0.327 exactly (0/2197 unmapped); replay at actual stop 0.313. Early-round names needed the normalizer's LLM pass (new `data/component_canonical_vocab_sensitivity.json`), without which R=1 reads 0.144 instead of 0.288. Results, micro 60 techs, v1 = 0.500: R=1 0.288, R=2 0.286, τ=0.6 0.284, τ=0.5 0.250 — debate below v1 in every scenario. Reruns on 24 techs vs same-session τ=0.7 control (r5, 0.334): τ=0.85 0.374 (11/11/2), τ=0.95 0.302 (8/15/1), τ=0.95 R=5 0.360 (11/11/2) — no systematic τ effect. Run with `uv run python -m scripts.sensitivity_tau_rounds`.
 
 ### Task 1.2: Mechanism analysis for the domain-dependent debate effect
 
