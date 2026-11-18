@@ -230,7 +230,9 @@ class MaterialsExtractor:
                     self.material_no_debate_top_p,
                     self.material_no_debate_temperature,
                 )
-                result = await self.materials_agent.run(materials_prompt, deps=agent_deps)
+                result = await self.materials_agent.run(
+                    materials_prompt, deps=agent_deps, model_settings=agent_deps.sampling_settings()
+                )
 
                 if not result or not result.output:
                     if attempt == self.max_retries - 1:

@@ -527,6 +527,7 @@ class CountryDataRepository:
                 prompt,
                 deps=agent_deps,
                 model=self.deps.get_country_model(),
+                model_settings=agent_deps.sampling_settings(),
             )
 
             if result and result.output:

@@ -192,7 +192,9 @@ class MaterialDebater:
                     logger.error(f"{agent_id}: Model name is empty in deps")
                     break
 
-                result = await agent.run(prompt, deps=debate_deps)
+                result = await agent.run(
+                    prompt, deps=debate_deps, model_settings=debate_deps.sampling_settings()
+                )
 
                 proposals = self._phase1_extract_proposals(agent_id, result)
                 if not proposals:
@@ -798,7 +800,9 @@ class MaterialDebater:
 
                 logger.debug("%s using top_p=%s", agent_id, self.debate_top_p)
 
-                result = await agent.run(prompt, deps=debate_deps)
+                result = await agent.run(
+                    prompt, deps=debate_deps, model_settings=debate_deps.sampling_settings()
+                )
 
                 if result and result.output and result.output.component_list:
                     proposals: list[MaterialProposal] = []

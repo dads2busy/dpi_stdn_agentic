@@ -139,7 +139,9 @@ class MaterialCountryDebater:
                 prompt = self._create_expert_prompt(material, year)
 
                 # Use debate_deps with low top_p
-                result = await agent.run(prompt, deps=debate_deps)
+                result = await agent.run(
+                    prompt, deps=debate_deps, model_settings=debate_deps.sampling_settings()
+                )
 
                 if result and result.output:
                     country_list = result.output.country_list
