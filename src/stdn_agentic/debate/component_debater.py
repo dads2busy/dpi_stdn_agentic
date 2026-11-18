@@ -1011,7 +1011,10 @@ Components with low peer support should have lower confidence unless critically 
                 )
 
                 result = await debate_agent.run(
-                    prompt, deps=debate_deps, model=deps.get_component_model()
+                    prompt,
+                    deps=debate_deps,
+                    model=deps.get_component_model(),
+                    model_settings=debate_deps.sampling_settings(),
                 )
 
                 if result and result.output and result.output.components:

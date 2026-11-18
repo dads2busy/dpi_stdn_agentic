@@ -62,6 +62,13 @@ class STDNDependencies:
     # Model specifically for semantic component-name normalization mappings
     component_normalization_model: Optional[str] = None
 
+    def sampling_settings(self) -> dict:
+        """pydantic-ai model_settings for this call's sampling (top_p, and temperature when set)."""
+        settings = {"top_p": self.top_p}
+        if self.temperature is not None:
+            settings["temperature"] = self.temperature
+        return settings
+
     def get_component_model(self) -> str:
         """Get the model to use for component extraction."""
         return self.component_model or self.model

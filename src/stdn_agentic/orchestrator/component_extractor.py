@@ -128,6 +128,7 @@ class ComponentExtractor:
             result = await self.component_agent.run(
                 f"Extract the primary components of a {technology}",
                 deps=agent_deps,
+                model_settings=agent_deps.sampling_settings(),
             )
 
             if result and result.usage():
@@ -299,7 +300,9 @@ class ComponentExtractor:
                 self.component_debate_top_p,
                 self.component_debate_temperature,
             )
-            result = await self.component_agent.run(prompt, deps=agent_deps)
+            result = await self.component_agent.run(
+                prompt, deps=agent_deps, model_settings=agent_deps.sampling_settings()
+            )
 
             if not result or not result.output:
                 logger.warning("No response from Agent_%d", agent_num)
