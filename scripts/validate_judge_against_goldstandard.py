@@ -298,6 +298,9 @@ def load_pipeline_components(
     """
     run_files = iter_run_csvs(normalized_dir)
     tech_to_components: Dict[str, Set[str]] = defaultdict(set)
+    # Gold-standard and pipeline technology names can differ in case ("Rotary tablet press" vs
+    # "Rotary Tablet Press"); key pipeline rows by the gold-standard spelling.
+    by_lower = {t.lower(): t for t in technologies}
 
     for rf in run_files:
         if configs and rf.config not in configs:
@@ -316,8 +319,10 @@ def load_pipeline_components(
                 comp = (row.get(comp_col) or "").strip()
                 if not tech or not comp:
                     continue
-                if technologies and tech not in technologies:
-                    continue
+                if technologies:
+                    if tech.lower() not in by_lower:
+                        continue
+                    tech = by_lower[tech.lower()]
                 tech_to_components[tech].add(comp)
 
     return dict(tech_to_components)

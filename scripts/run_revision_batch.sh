@@ -76,6 +76,13 @@ batch_spec() {
         fxtau095)     echo "fxtau095  d3v1v1 config_tau_subset.json       0.95 3" ;;
         fxr1)         echo "fxr1      d3v1v1 config_tau_subset.json       0.7  1" ;;
         fxr2)         echo "fxr2      d3v1v1 config_tau_subset.json       0.7  2" ;;
+        # Debate-utility Test 2 (docs/prereg/2026-11-18-debate-utility.md); d3 at 0.03 is the existing fxctl batch.
+        t003v1)       echo "t003v1    v1v1v1 config_tau_subset.json       0.7  3" ;;
+        t07v1)        echo "t07v1     v1v1v1 config_tau_subset_t07.json   0.7  3" ;;
+        t07d3)        echo "t07d3     d3v1v1 config_tau_subset_t07.json   0.7  3" ;;
+        # Test 3: near-greedy sampling, applied after the 2026-11-18 sampling fix.
+        g0v1)         echo "g0v1      v1v1v1 config_tau_subset.json       0.7  3" ;;
+        g0d3)         echo "g0d3      d3v1v1 config_tau_subset.json       0.7  3" ;;
         *) echo "Unknown batch: $1" >&2; return 1 ;;
     esac
 }
