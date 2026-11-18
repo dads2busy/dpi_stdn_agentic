@@ -1,6 +1,6 @@
 # Concentration indices: HHI vs governance- (WGI) and development- (HDI) weighted HHI
 
-231 materials with country shares in `output/resolved` (37 USGS-sourced, 194 LLM-estimated, labelled). WGI = Political Stability (PV.EST) 2023, rescaled 0 best–10 worst; HDI 2022, scored 10·(1−HDI). OTHER and unscored countries get the share-weighted mean score of named producers. Imputed: OTHER (32 uses), TWN (20 uses), NCL (1 uses), PRK (1 uses).
+231 materials with country shares in `output/resolved` (37 USGS-sourced, 194 LLM-estimated, labelled). WGI = Political Stability (PV.EST) 2023, rescaled 0 best–10 worst; HDI 2022, scored 10·(1−HDI). OTHER and unscored countries get the share-weighted mean score of named producers. Imputed: OTHER (32 uses), TWN (20 uses), PRK (1 uses), NCL (1 uses).
 
 - all (n=231): Spearman HHI vs HHI_WGI: ρ = 0.975 (p = 5.9e-151)
 - all (n=231): Spearman HHI vs HHI_HDI: ρ = 0.868 (p = 1.3e-71)
@@ -26,15 +26,15 @@
 | Bismuth | usgs | 4 | CHN (80) | 6,525 | yes | 3.49 | 1.40 | 10 | 10 | 11 |
 | Tungsten hexafluoride | llm | 1 | CHN (79) | 6,341 | yes | 3.40 | 1.34 | 11 | 11 | 13 |
 | Graphite | usgs | 38 | CHN (77) | 6,009 | yes | 3.25 | 1.30 | 12 | 14 | 14 |
-| Guanidine hydrochloride | llm | 1 | CHN (75) | 5,808 | yes | 3.13 | 1.23 | 13 | 15 | 15 |
-| Neodymium | llm | 14 | CHN (75) | 5,808 | yes | 3.12 | 1.21 | 14 | 16 | 16 |
+| Gallium arsenide | llm | 81 | CHN (75) | 5,808 | yes | 3.09 | 1.20 | 13 | 18 | 18 |
+| Guanidine hydrochloride | llm | 1 | CHN (75) | 5,808 | yes | 3.13 | 1.23 | 14 | 15 | 15 |
 | Octadecylsilane | llm | 4 | CHN (75) | 5,808 | yes | 3.11 | 1.21 | 15 | 17 | 17 |
-| Gallium arsenide | llm | 81 | CHN (75) | 5,808 | yes | 3.09 | 1.20 | 16 | 18 | 18 |
+| Neodymium | llm | 14 | CHN (75) | 5,808 | yes | 3.12 | 1.21 | 16 | 16 | 16 |
 | Cobalt | usgs | 10 | COD (74) | 5,544 | yes | 4.94 | 2.86 | 17 | 2 | 1 |
 | Iridium | llm | 1 | ZAF (70) | 5,218 | yes | 3.27 | 1.46 | 18 | 12 | 9 |
 | Aluminum gallium arsenide | llm | 44 | CHN (70) | 5,218 | yes | 2.78 | 1.06 | 19 | 22 | 23 |
-| SYBR Green I dye | llm | 1 | CHN (70) | 5,208 | yes | 2.79 | 1.06 | 20 | 21 | 22 |
-| Platinum | llm | 33 | ZAF (70) | 5,208 | yes | 3.27 | 1.45 | 21 | 13 | 10 |
+| Platinum | llm | 33 | ZAF (70) | 5,208 | yes | 3.27 | 1.45 | 20 | 13 | 10 |
+| SYBR Green I dye | llm | 1 | CHN (70) | 5,208 | yes | 2.79 | 1.06 | 21 | 21 | 22 |
 | Barium | llm | 2 | CHN (70) | 5,154 | yes | 2.80 | 1.12 | 22 | 20 | 20 |
 | Vanadium | usgs | 15 | CHN (68) | 5,148 | yes | 2.83 | 1.09 | 23 | 19 | 21 |
 | Barium titanate | llm | 163 | CHN (70) | 5,136 | yes | 2.73 | 1.06 | 24 | 24 | 25 |
@@ -55,16 +55,16 @@
 | Gallium nitride | llm | 32 | CHN (60) | 4,158 | yes | 2.19 | 0.80 | 39 | 41 | 44 |
 | Boron nitride | llm | 5 | CHN (60) | 4,138 | yes | 2.28 | 0.93 | 40 | 38 | 34 |
 | N,N'-Methylenebisacrylamide | llm | 1 | CHN (60) | 4,058 | yes | 2.19 | 0.86 | 41 | 40 | 39 |
-| Agarose | llm | 8 | CHN (60) | 4,038 | yes | 2.12 | 0.79 | 42 | 50 | 49 |
-| EDTA | llm | 2 | CHN (60) | 4,038 | yes | 2.17 | 0.86 | 43 | 42 | 40 |
+| EDTA | llm | 2 | CHN (60) | 4,038 | yes | 2.17 | 0.86 | 42 | 42 | 40 |
+| Polyvinylidene fluoride | llm | 7 | CHN (60) | 4,038 | yes | 2.13 | 0.79 | 43 | 49 | 50 |
 | Hafnium oxide | llm | 1 | CHN (60) | 4,038 | yes | 2.16 | 0.80 | 44 | 44 | 47 |
-| Polyvinylidene fluoride | llm | 7 | CHN (60) | 4,038 | yes | 2.13 | 0.79 | 45 | 49 | 50 |
+| Agarose | llm | 8 | CHN (60) | 4,038 | yes | 2.12 | 0.79 | 45 | 50 | 49 |
 | Beryllium | usgs | 2 | USA (58) | 4,018 | yes | 2.15 | 0.41 | 46 | 45 | 118 |
 | Polyacrylamide | llm | 5 | CHN (60) | 3,999 | yes | 2.15 | 0.82 | 47 | 46 | 42 |
 | Ethanol | llm | 9 | USA (56) | 3,972 | yes | 2.16 | 0.43 | 48 | 43 | 108 |
 | Nucleotides | llm | 2 | CHN (60) | 3,963 | yes | 2.11 | 0.80 | 49 | 53 | 48 |
-| Fluorine | llm | 2 | CHN (60) | 3,935 | yes | 2.13 | 0.84 | 50 | 48 | 41 |
-| Hydrofluoric acid | llm | 2 | CHN (60) | 3,935 | yes | 2.12 | 0.80 | 51 | 51 | 45 |
+| Hydrofluoric acid | llm | 2 | CHN (60) | 3,935 | yes | 2.12 | 0.80 | 50 | 51 | 45 |
+| Fluorine | llm | 2 | CHN (60) | 3,935 | yes | 2.13 | 0.84 | 51 | 48 | 41 |
 | Arsenic | usgs | 1 | PER (45) | 3,806 | yes | 2.28 | 0.87 | 52 | 39 | 38 |
 | Indium gallium arsenide | llm | 25 | CHN (55) | 3,708 | yes | 1.83 | 0.70 | 53 | 63 | 60 |
 | Tris buffer | llm | 2 | CHN (55) | 3,658 | yes | 1.97 | 0.73 | 54 | 57 | 55 |
@@ -81,8 +81,8 @@
 | Phosphorus | llm | 23 | CHN (53) | 3,281 | yes | 1.80 | 0.73 | 65 | 66 | 54 |
 | Lithium | usgs | 24 | AUS (48) | 3,252 | yes | 1.22 | 0.28 | 66 | 132 | 180 |
 | Boron carbide | llm | 11 | TUR (50) | 3,250 | yes | 2.10 | 0.46 | 67 | 54 | 102 |
-| Polyimide | llm | 92 | CHN (50) | 3,250 | yes | 1.65 | 0.59 | 68 | 76 | 72 |
-| RNA polymerase | llm | 1 | USA (50) | 3,250 | yes | 1.64 | 0.26 | 69 | 79 | 191 |
+| RNA polymerase | llm | 1 | USA (50) | 3,250 | yes | 1.64 | 0.26 | 68 | 79 | 191 |
+| Polyimide | llm | 92 | CHN (50) | 3,250 | yes | 1.65 | 0.59 | 69 | 76 | 72 |
 | Chloroform | llm | 1 | CHN (50) | 3,250 | yes | 1.75 | 0.65 | 70 | 67 | 66 |
 | Sulfur hexafluoride | llm | 1 | CHN (50) | 3,208 | yes | 1.66 | 0.58 | 71 | 75 | 73 |
 | Iron | llm | 175 | CHN (50) | 3,177 | yes | 1.64 | 0.62 | 72 | 77 | 69 |
@@ -90,8 +90,8 @@
 | dNTPs | llm | 5 | CHN (45) | 3,138 | yes | 1.66 | 0.53 | 74 | 74 | 81 |
 | Antibiotics | llm | 5 | CHN (50) | 3,089 | yes | 1.69 | 0.68 | 75 | 72 | 63 |
 | Antimony | usgs | 15 | CHN (48) | 3,072 | yes | 1.69 | 0.72 | 76 | 73 | 56 |
-| Titanium nitride | llm | 11 | CHN (45) | 3,000 | yes | 1.52 | 0.50 | 77 | 88 | 87 |
-| PEEK | llm | 2 | CHN (45) | 3,000 | yes | 1.54 | 0.50 | 78 | 85 | 90 |
+| PEEK | llm | 2 | CHN (45) | 3,000 | yes | 1.54 | 0.50 | 77 | 85 | 90 |
+| Titanium nitride | llm | 11 | CHN (45) | 3,000 | yes | 1.52 | 0.50 | 78 | 88 | 87 |
 | Aluminum nitride | llm | 11 | CHN (45) | 2,988 | yes | 1.40 | 0.50 | 79 | 106 | 86 |
 | Boron | llm | 179 | TUR (47) | 2,970 | yes | 1.92 | 0.40 | 80 | 60 | 125 |
 | Polysulfone | llm | 9 | CHN (45) | 2,958 | yes | 1.52 | 0.49 | 81 | 87 | 91 |
@@ -99,41 +99,41 @@
 | Recombinant proteins | llm | 1 | USA (45) | 2,863 | yes | 1.51 | 0.31 | 83 | 89 | 165 |
 | Polyethersulfone | llm | 17 | CHN (45) | 2,858 | yes | 1.45 | 0.49 | 84 | 96 | 94 |
 | Oxygen | llm | 9 | CHN (45) | 2,858 | yes | 1.57 | 0.57 | 85 | 83 | 74 |
-| Protease inhibitors | llm | 1 | IND (40) | 2,850 | yes | 1.72 | 0.79 | 86 | 71 | 51 |
-| Deuterium | llm | 1 | USA (40) | 2,850 | yes | 1.61 | 0.47 | 87 | 80 | 97 |
-| Fetal bovine serum | llm | 1 | USA (45) | 2,850 | yes | 1.44 | 0.23 | 88 | 98 | 202 |
-| Carbon | llm | 60 | CHN (45) | 2,850 | yes | 1.60 | 0.63 | 89 | 81 | 68 |
-| Horseradish peroxidase (HRP) | llm | 1 | USA (40) | 2,850 | yes | 1.46 | 0.34 | 90 | 93 | 146 |
-| DNA polymerase | llm | 5 | USA (40) | 2,850 | yes | 1.45 | 0.33 | 91 | 95 | 154 |
+| Deuterium | llm | 1 | USA (40) | 2,850 | yes | 1.61 | 0.47 | 86 | 80 | 97 |
+| Fetal bovine serum | llm | 1 | USA (45) | 2,850 | yes | 1.44 | 0.23 | 87 | 98 | 202 |
+| DNA polymerase | llm | 5 | USA (40) | 2,850 | yes | 1.45 | 0.33 | 88 | 95 | 154 |
+| Horseradish peroxidase (HRP) | llm | 1 | USA (40) | 2,850 | yes | 1.46 | 0.34 | 89 | 93 | 146 |
+| Protease inhibitors | llm | 1 | IND (40) | 2,850 | yes | 1.72 | 0.79 | 90 | 71 | 51 |
+| Carbon | llm | 60 | CHN (45) | 2,850 | yes | 1.60 | 0.63 | 91 | 81 | 68 |
 | Collagenase | llm | 1 | USA (40) | 2,850 | yes | 1.45 | 0.33 | 92 | 97 | 155 |
 | Indium phosphide | llm | 15 | CHN (48) | 2,816 | yes | 1.43 | 0.53 | 93 | 99 | 78 |
 | Helium | usgs | 9 | QAT (39) | 2,815 | yes | 1.15 | 0.29 | 94 | 143 | 176 |
 | Nickel | usgs | 177 | IDN (50) | 2,807 | yes | 1.72 | 0.80 | 95 | 70 | 46 |
-| Avidin | llm | 1 | USA (40) | 2,800 | yes | 1.43 | 0.33 | 96 | 100 | 156 |
-| Streptavidin | llm | 1 | USA (40) | 2,800 | yes | 1.46 | 0.36 | 97 | 92 | 135 |
-| Ferrous sulfate | llm | 2 | CHN (45) | 2,799 | yes | 1.54 | 0.56 | 98 | 86 | 76 |
-| Titanium | llm | 93 | CHN (45) | 2,799 | yes | 1.49 | 0.60 | 99 | 91 | 71 |
+| Streptavidin | llm | 1 | USA (40) | 2,800 | yes | 1.46 | 0.36 | 96 | 92 | 135 |
+| Avidin | llm | 1 | USA (40) | 2,800 | yes | 1.43 | 0.33 | 97 | 100 | 156 |
+| Titanium | llm | 93 | CHN (45) | 2,799 | yes | 1.49 | 0.60 | 98 | 91 | 71 |
+| Ferrous sulfate | llm | 2 | CHN (45) | 2,799 | yes | 1.54 | 0.56 | 99 | 86 | 76 |
 | Zirconium dioxide | llm | 163 | AUS (43) | 2,782 | yes | 1.20 | 0.40 | 100 | 136 | 121 |
 | Alexa Fluor dyes | llm | 5 | USA (40) | 2,750 | yes | 1.34 | 0.24 | 101 | 117 | 196 |
 | DNA primers | llm | 8 | USA (40) | 2,713 | yes | 1.40 | 0.32 | 102 | 105 | 160 |
 | Silane | llm | 1 | CHN (47) | 2,707 | yes | 1.42 | 0.50 | 103 | 101 | 88 |
 | Ammonium persulfate | llm | 1 | CHN (45) | 2,689 | yes | 1.38 | 0.48 | 104 | 108 | 96 |
-| Insulin | llm | 1 | USA (40) | 2,658 | yes | 1.45 | 0.40 | 105 | 94 | 120 |
-| Acrylonitrile butadiene styrene | llm | 57 | CHN (40) | 2,658 | yes | 1.32 | 0.42 | 106 | 122 | 116 |
-| Photoresist | llm | 14 | KOR (35) | 2,650 | yes | 0.80 | 0.20 | 107 | 197 | 209 |
+| Acrylonitrile butadiene styrene | llm | 57 | CHN (40) | 2,658 | yes | 1.32 | 0.42 | 105 | 122 | 116 |
+| Insulin | llm | 1 | USA (40) | 2,658 | yes | 1.45 | 0.40 | 106 | 94 | 120 |
+| Gelatin | llm | 2 | CHN (40) | 2,650 | yes | 1.42 | 0.45 | 107 | 103 | 104 |
 | Polyethylene glycol (PEG) | llm | 8 | CHN (40) | 2,650 | yes | 1.37 | 0.44 | 108 | 110 | 106 |
 | Dextran | llm | 1 | CHN (40) | 2,650 | yes | 1.38 | 0.44 | 109 | 109 | 107 |
 | Acrylamide | llm | 7 | CHN (40) | 2,650 | yes | 1.32 | 0.41 | 110 | 125 | 117 |
-| Gelatin | llm | 2 | CHN (40) | 2,650 | yes | 1.42 | 0.45 | 111 | 103 | 104 |
+| Photoresist | llm | 14 | KOR (35) | 2,650 | yes | 0.80 | 0.20 | 111 | 197 | 209 |
 | Chromium | usgs | 175 | ZAF (44) | 2,621 | yes | 1.64 | 0.70 | 112 | 78 | 59 |
 | Hydrogen peroxide | llm | 4 | CHN (40) | 2,614 | yes | 1.35 | 0.43 | 113 | 116 | 112 |
 | Ammonium hydroxide | llm | 2 | CHN (40) | 2,599 | yes | 1.41 | 0.48 | 114 | 104 | 95 |
 | CMP slurries | llm | 2 | CHN (44) | 2,593 | yes | 1.34 | 0.46 | 115 | 118 | 100 |
 | Sulfuric acid | llm | 1 | CHN (45) | 2,568 | yes | 1.40 | 0.53 | 116 | 107 | 80 |
 | Thermal interface materials | llm | 2 | CHN (45) | 2,566 | yes | 1.33 | 0.47 | 117 | 120 | 99 |
-| Cycloolefin | llm | 4 | JPN (35) | 2,558 | yes | 0.94 | 0.32 | 118 | 172 | 164 |
-| Growth factors | llm | 1 | USA (35) | 2,558 | yes | 1.33 | 0.35 | 119 | 119 | 137 |
-| Titanium dioxide | llm | 32 | CHN (45) | 2,558 | yes | 1.42 | 0.57 | 120 | 102 | 75 |
+| Titanium dioxide | llm | 32 | CHN (45) | 2,558 | yes | 1.42 | 0.57 | 118 | 102 | 75 |
+| Cycloolefin | llm | 4 | JPN (35) | 2,558 | yes | 0.94 | 0.32 | 119 | 172 | 164 |
+| Growth factors | llm | 1 | USA (35) | 2,558 | yes | 1.33 | 0.35 | 120 | 119 | 137 |
 | Polyvinyl chloride | llm | 51 | CHN (46) | 2,554 | yes | 1.36 | 0.51 | 121 | 113 | 85 |
 | Chromium oxide | llm | 2 | ZAF (40) | 2,550 | yes | 1.56 | 0.65 | 122 | 84 | 65 |
 | Epoxy resins | llm | 171 | CHN (40) | 2,550 | yes | 1.24 | 0.41 | 123 | 131 | 119 |
@@ -143,14 +143,14 @@
 | Tantalum | usgs | 24 | COD (41) | 2,500 |  | 1.96 | 1.19 | 127 | 58 | 19 |
 | Calcium phosphate | llm | 2 | CHN (40) | 2,473 |  | 1.36 | 0.50 | 128 | 111 | 89 |
 | Epoxy molding compounds | llm | 1 | CHN (45) | 2,437 |  | 1.27 | 0.46 | 129 | 129 | 103 |
-| Polymethyl methacrylate | llm | 113 | CHN (40) | 2,433 |  | 1.20 | 0.40 | 130 | 134 | 123 |
-| Nylon | llm | 4 | CHN (40) | 2,433 |  | 1.30 | 0.46 | 131 | 128 | 101 |
+| Nylon | llm | 4 | CHN (40) | 2,433 |  | 1.30 | 0.46 | 130 | 128 | 101 |
+| Polymethyl methacrylate | llm | 113 | CHN (40) | 2,433 |  | 1.20 | 0.40 | 131 | 134 | 123 |
 | Diamond (industrial) | usgs | 7 | RUS (40) | 2,415 |  | 1.59 | 0.61 | 132 | 82 | 70 |
 | Selenium | usgs | 2 | CHN (42) | 2,406 |  | 1.16 | 0.43 | 133 | 141 | 109 |
 | Cadmium telluride | llm | 2 | CHN (35) | 2,400 |  | 1.15 | 0.34 | 134 | 142 | 140 |
 | Flux | llm | 1 | CHN (46) | 2,393 |  | 1.32 | 0.52 | 135 | 126 | 84 |
-| Ammonium sulfate | llm | 3 | CHN (40) | 2,389 |  | 1.35 | 0.53 | 136 | 114 | 79 |
-| Phosphoric acid | llm | 3 | CHN (40) | 2,389 |  | 1.31 | 0.47 | 137 | 127 | 98 |
+| Phosphoric acid | llm | 3 | CHN (40) | 2,389 |  | 1.31 | 0.47 | 136 | 127 | 98 |
+| Ammonium sulfate | llm | 3 | CHN (40) | 2,389 |  | 1.35 | 0.53 | 137 | 114 | 79 |
 | Polycarbonate | llm | 171 | CHN (35) | 2,319 |  | 1.14 | 0.34 | 138 | 145 | 145 |
 | Argon | llm | 24 | USA (35) | 2,283 |  | 1.21 | 0.27 | 139 | 133 | 184 |
 | Separator wetting agents | llm | 1 | CHN (41) | 2,275 |  | 1.16 | 0.40 | 140 | 140 | 124 |
@@ -177,8 +177,8 @@
 | Photoresists | llm | 1 | CHN (28) | 1,933 |  | 0.77 | 0.26 | 161 | 200 | 189 |
 | Hydrochloric acid | llm | 1 | CHN (35) | 1,933 |  | 1.04 | 0.34 | 162 | 155 | 141 |
 | Wet Etch Chemicals | llm | 1 | CHN (34) | 1,915 |  | 0.95 | 0.31 | 163 | 171 | 168 |
-| Polypropylene | llm | 122 | CHN (30) | 1,914 |  | 1.01 | 0.29 | 164 | 157 | 175 |
-| Acetic acid | llm | 9 | CHN (30) | 1,914 |  | 0.98 | 0.29 | 165 | 164 | 178 |
+| Acetic acid | llm | 9 | CHN (30) | 1,914 |  | 0.98 | 0.29 | 164 | 164 | 178 |
+| Polypropylene | llm | 122 | CHN (30) | 1,914 |  | 1.01 | 0.29 | 165 | 157 | 175 |
 | Photolithography Chemicals | llm | 1 | CHN (34) | 1,877 |  | 0.89 | 0.30 | 166 | 183 | 169 |
 | Surface Preparation Chemicals | llm | 2 | CHN (37) | 1,867 |  | 0.99 | 0.35 | 167 | 160 | 136 |
 | Anti-corrosion agents | llm | 1 | CHN (36) | 1,863 |  | 0.99 | 0.35 | 168 | 159 | 139 |
@@ -194,8 +194,8 @@
 | Sodium hydroxide | llm | 7 | CHN (30) | 1,789 |  | 0.94 | 0.28 | 178 | 175 | 181 |
 | Surface Treatment Chemicals | llm | 1 | CHN (37) | 1,789 |  | 0.94 | 0.34 | 179 | 173 | 147 |
 | III-V Semiconductor Precursors | llm | 1 | CHN (32) | 1,777 |  | 0.88 | 0.27 | 180 | 186 | 186 |
-| Glucose | llm | 4 | USA (30) | 1,769 |  | 0.97 | 0.27 | 181 | 165 | 185 |
-| Polyethylene terephthalate | llm | 152 | CHN (30) | 1,769 |  | 0.91 | 0.32 | 182 | 176 | 162 |
+| Polyethylene terephthalate | llm | 152 | CHN (30) | 1,769 |  | 0.91 | 0.32 | 181 | 176 | 162 |
+| Glucose | llm | 4 | USA (30) | 1,769 |  | 0.97 | 0.27 | 182 | 165 | 185 |
 | Paints and surface coatings | llm | 1 | CHN (37) | 1,763 |  | 0.94 | 0.34 | 183 | 174 | 142 |
 | Adhesives | llm | 1 | CHN (36) | 1,709 |  | 0.90 | 0.31 | 184 | 181 | 166 |
 | Etch Chemistries | llm | 1 | CHN (30) | 1,705 |  | 0.83 | 0.25 | 185 | 195 | 195 |
@@ -250,9 +250,9 @@
 
 - Top-10 by HHI_WGI but not by HHI: Cobalt
 - Top-10 by HHI but not by HHI_WGI: Cesium
-- Largest rises under HHI_WGI (rank HHI → HHI_WGI): Tantalum 127→58 (HHI 2,500); Diamond (industrial) 132→82 (HHI 2,415); Chromium oxide 122→84 (HHI 2,550); Chromium 112→78 (HHI 2,621); Tin 210→180 (HHI 1,324); Tantalum oxide 157→130 (HHI 2,012); Nickel 95→70 (HHI 2,807); Ammonium sulfate 136→114 (HHI 2,389)
+- Largest rises under HHI_WGI (rank HHI → HHI_WGI): Tantalum 127→58 (HHI 2,500); Diamond (industrial) 132→82 (HHI 2,415); Chromium oxide 122→84 (HHI 2,550); Chromium 112→78 (HHI 2,621); Tin 210→180 (HHI 1,324); Tantalum oxide 157→130 (HHI 2,012); Nickel 95→70 (HHI 2,807); Ammonium sulfate 137→114 (HHI 2,389)
 - Top-10 by HHI_HDI but not by HHI: Cobalt, Iridium, Platinum
 - Top-10 by HHI but not by HHI_HDI: Bismuth, Cesium, Tungsten
-- Largest rises under HHI_HDI (rank HHI → HHI_HDI): Tantalum 127→19 (HHI 2,500); Tantalum oxide 157→52 (HHI 2,012); Tin 210→127 (HHI 1,324); Manganese 149→77 (HHI 2,081); Diamond (industrial) 132→70 (HHI 2,415); Ammonium sulfate 136→79 (HHI 2,389); Chromium oxide 122→65 (HHI 2,550); Silicon 194→138 (HHI 1,651)
+- Largest rises under HHI_HDI (rank HHI → HHI_HDI): Tantalum 127→19 (HHI 2,500); Tantalum oxide 157→52 (HHI 2,012); Tin 210→127 (HHI 1,324); Manganese 149→77 (HHI 2,081); Diamond (industrial) 132→70 (HHI 2,415); Ammonium sulfate 137→79 (HHI 2,389); Chromium oxide 122→65 (HHI 2,550); Silicon 194→138 (HHI 1,651)
 
-Neodymium: HHI 5,808 (rank 14), HHI_WGI 3.12 (rank 16), HHI_HDI 1.21 (rank 16); 14 technologies.
+Neodymium: HHI 5,808 (rank 16), HHI_WGI 3.12 (rank 16), HHI_HDI 1.21 (rank 16); 14 technologies.

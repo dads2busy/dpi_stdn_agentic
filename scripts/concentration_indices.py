@@ -154,6 +154,12 @@ def main():
         for i, r in enumerate(sorted(rows, key=lambda r: -r[key]), 1):
             r[f"rank_{key}"] = i
 
+    with open("output/analysis/concentration_indices.csv", "w", newline="") as f:
+        cols = ["material", "src", "n_tech", "top", "top_share", "hhi", "wgi", "hdi", "wgi_noother",
+                "rank_hhi", "rank_wgi", "rank_hdi"]
+        w = csv.DictWriter(f, fieldnames=cols, extrasaction="ignore")
+        w.writeheader()
+        w.writerows(sorted(rows, key=lambda r: r["rank_hhi"]))
     print("# Concentration indices: HHI vs governance- (WGI) and development- (HDI) weighted HHI\n")
     nu = sum(r["src"] == "usgs" for r in rows)
     print(f"{len(rows)} materials with country shares in `output/resolved` ({nu} USGS-sourced, {len(rows) - nu} "
