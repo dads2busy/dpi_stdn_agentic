@@ -192,13 +192,16 @@ def make_vocab_key(raw_name: str, technology: str | None, vocab_scope: str) -> s
     return _norm_key(raw_name)
 
 
-def iter_vocab_values_for_scope(
-    mappings: Dict[str, str], technology: str | None, vocab_scope: str
+def tech_canonicals(
+    raw_names: Sequence[str],
+    technology: str,
+    mappings: Dict[str, str],
+    vocab_scope: str,
+    non_primary_sentinel: str,
 ) -> List[str]:
-    if vocab_scope != "technology" or not technology:
-        return list(mappings.values())
-    prefix = f"{_norm_tech(technology)}|||"
-    return [v for k, v in mappings.items() if k.startswith(prefix)]
+    """Canonicals already assigned to this technology's raw names (sentinel excluded), for the prompt."""
+    out = {mappings.get(make_vocab_key(r, technology, vocab_scope)) for r in raw_names}
+    return sorted(out - {None, non_primary_sentinel})
 
 
 def load_global_vocab(path: Path) -> Dict[str, str]:
@@ -420,15 +423,15 @@ def build_granularity_prompt(
     Build a strict prompt that enforces primary-component granularity.
     Optionally include technology context (v2 mode) to reduce ambiguity.
     """
-    # Provide a small sample of existing canonical names to bias toward consistency.
+    # Show every existing canonical name the caller passes (callers pass the target
+    # technology's canonicals). An earlier version showed only the first 60 names of the
+    # whole vocab alphabetically, so mappings depended on vocab state and order.
     canonical_examples = ""
-    if existing_canonicals:
-        uniq = sorted(set(existing_canonicals))
-        sample = uniq[: min(60, len(uniq))]
+    uniq = sorted(set(existing_canonicals or []) - {non_primary_sentinel})
+    if uniq:
         canonical_examples = (
             "\nEXISTING CANONICAL PRIMARY COMPONENT NAMES (use exact spelling when applicable):\n"
-            + ", ".join(sample)
-            + ("\n..." if len(uniq) > len(sample) else "")
+            + ", ".join(uniq)
             + "\n"
         )
 
@@ -868,8 +871,6 @@ async def main() -> None:
         total_unknown_raw = 0
         total_unknown_reps = 0
 
-        existing_canonicals_global: List[str] = list(existing_vocab.values())
-
         if args.dry_run:
             # Dry-run: compute counts per technology and overall.
             per_tech_reports: Dict[str, Dict[str, object]] = {}
@@ -945,10 +946,8 @@ async def main() -> None:
             total_unknown_raw += len(unknown_raw)
             total_unknown_reps += len(reps)
 
-            existing_canonicals = (
-                list(iter_vocab_values_for_scope(mapping_by_norm_key, tech, args.vocab_scope))
-                if args.vocab_scope == "technology"
-                else existing_canonicals_global
+            existing_canonicals = tech_canonicals(
+                raw_names, tech, mapping_by_norm_key, args.vocab_scope, args.non_primary_sentinel
             )
 
             total_chunks = (len(reps) + args.chunk_size - 1) // args.chunk_size if reps else 0
